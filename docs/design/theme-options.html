@@ -1,0 +1,784 @@
+<title>Nourishly Theme Options</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Figtree:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* ---------- page chrome tokens: light is the bare :root set ---------- */
+:root{
+  --p-bg:#f4f3f0; --p-surface:#fbfaf8; --p-surface-2:#eeece7; --p-line:#dedbd4;
+  --p-ink:#1b1a17; --p-ink-2:#57544d; --p-ink-3:#8a877f;
+  --p-accent:#7a4f2b; --p-accent-ink:#fbfaf8; --p-accent-soft:#efe4d8;
+  --p-shadow:0 1px 2px rgba(24,20,14,.05), 0 8px 24px -12px rgba(24,20,14,.16);
+  --r:14px; --r-sm:9px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --p-bg:#131211; --p-surface:#1b1a18; --p-surface-2:#242220; --p-line:#33302c;
+    --p-ink:#f2efe9; --p-ink-2:#b6b1a7; --p-ink-3:#858077;
+    --p-accent:#d9a06a; --p-accent-ink:#17150f; --p-accent-soft:#33281d;
+    --p-shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --p-bg:#131211; --p-surface:#1b1a18; --p-surface-2:#242220; --p-line:#33302c;
+  --p-ink:#f2efe9; --p-ink-2:#b6b1a7; --p-ink-3:#858077;
+  --p-accent:#d9a06a; --p-accent-ink:#17150f; --p-accent-soft:#33281d;
+  --p-shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+  color-scheme:dark;
+}
+
+/* ---------- per-theme preview tokens ---------- */
+.th-haldi{--bg:#f7f3ec;--surface:#fffdf8;--surface-2:#f1ebe0;--line:#e2d9c8;--ink:#211c14;--ink-2:#5a5044;--ink-3:#8a7f6e;--accent:#9c6408;--accent-ink:#fffdf8;--accent-soft:#f6e7c8;--track:#eae1d0;--ok:#2e7d4f;--low:#a06d0c;--high:#7a5ea8;--display:'Fraunces', Georgia, serif;--body:'IBM Plex Sans', system-ui, sans-serif;--s1:#b5451f;--s2:#2b6ba8;--s3:#d9a017;--s4:#3f8a4f;}
+.th-neem{--bg:#f3f6f2;--surface:#ffffff;--surface-2:#eaf0e8;--line:#d8e2d5;--ink:#15201a;--ink-2:#4a5750;--ink-3:#7c8a82;--accent:#2f7a4f;--accent-ink:#ffffff;--accent-soft:#dcece1;--track:#e2ebe0;--ok:#2e7d4f;--low:#a06d0c;--high:#7a5ea8;--display:'Figtree', system-ui, sans-serif;--body:'Figtree', system-ui, sans-serif;--s1:#b8532b;--s2:#3f6fa8;--s3:#c99a12;--s4:#2e8556;}
+.th-indigo{--bg:#f2f3f8;--surface:#ffffff;--surface-2:#e9ebf4;--line:#d6d9e8;--ink:#161829;--ink-2:#4b4f66;--ink-3:#7b8098;--accent:#3b4d9e;--accent-ink:#ffffff;--accent-soft:#dfe3f4;--track:#e3e6f1;--ok:#2e7d4f;--low:#a06d0c;--high:#7a5ea8;--display:'IBM Plex Sans', system-ui, sans-serif;--body:'IBM Plex Sans', system-ui, sans-serif;--s1:#c1572d;--s2:#1f6fa5;--s3:#c7961a;--s4:#0f8a5e;}
+.th-kora{--bg:#f6f6f4;--surface:#ffffff;--surface-2:#eeeeeb;--line:#e0e0dc;--ink:#1a1a18;--ink-2:#55554f;--ink-3:#87877f;--accent:#2f4858;--accent-ink:#ffffff;--accent-soft:#e3e8ec;--track:#e8e8e4;--ok:#2e7d4f;--low:#a06d0c;--high:#7a5ea8;--display:'IBM Plex Sans', system-ui, sans-serif;--body:'IBM Plex Sans', system-ui, sans-serif;--s1:#b04f22;--s2:#2a6f9e;--s3:#b08a1c;--s4:#25845a;}
+.th-nilgiri{--bg:#f0f5f5;--surface:#ffffff;--surface-2:#e6eeee;--line:#d3e0e0;--ink:#0f1e1e;--ink-2:#44585a;--ink-3:#75898b;--accent:#0e7c72;--accent-ink:#ffffff;--accent-soft:#d5eae7;--track:#dfeaea;--ok:#2e7d4f;--low:#a06d0c;--high:#7a5ea8;--display:'Figtree', system-ui, sans-serif;--body:'Figtree', system-ui, sans-serif;--s1:#d1683c;--s2:#5566cc;--s3:#d9a422;--s4:#2f8a4f;}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .th-haldi{--bg:#171410;--surface:#201c17;--surface-2:#2a251e;--line:#39322a;--ink:#f6f0e6;--ink-2:#c0b5a4;--ink-3:#8e8375;--accent:#e0a72c;--accent-ink:#1a1610;--accent-soft:#3a2f18;--track:#332c24;--ok:#4aa873;--low:#d0a03a;--high:#a893d8;--display:'Fraunces', Georgia, serif;--body:'IBM Plex Sans', system-ui, sans-serif;--s1:#cf5f2e;--s2:#4a8fd4;--s3:#c08207;--s4:#1f9a68;}:root:not([data-theme="light"]) .th-neem{--bg:#111512;--surface:#181d19;--surface-2:#212722;--line:#2e372f;--ink:#eaf1ec;--ink-2:#adbcb2;--ink-3:#7d8b82;--accent:#4faa78;--accent-ink:#0f140f;--accent-soft:#1c2f24;--track:#28302a;--ok:#4aa873;--low:#d0a03a;--high:#a893d8;--display:'Figtree', system-ui, sans-serif;--body:'Figtree', system-ui, sans-serif;--s1:#cf6330;--s2:#4f8ad0;--s3:#b8860a;--s4:#2b9c62;}:root:not([data-theme="light"]) .th-indigo{--bg:#0f1119;--surface:#161927;--surface-2:#1e2233;--line:#2b3045;--ink:#e9ebf6;--ink-2:#a8adc4;--ink-3:#787e96;--accent:#8b99ea;--accent-ink:#0e1018;--accent-soft:#232847;--track:#242940;--ok:#4aa873;--low:#d0a03a;--high:#a893d8;--display:'IBM Plex Sans', system-ui, sans-serif;--body:'IBM Plex Sans', system-ui, sans-serif;--s1:#d16536;--s2:#3f92cf;--s3:#bb8a0c;--s4:#2a9b6e;}:root:not([data-theme="light"]) .th-kora{--bg:#131313;--surface:#1a1a19;--surface-2:#232322;--line:#31312f;--ink:#f0f0ec;--ink-2:#b3b3ac;--ink-3:#83837c;--accent:#9fbcce;--accent-ink:#121212;--accent-soft:#242c31;--track:#2a2a28;--ok:#4aa873;--low:#d0a03a;--high:#a893d8;--display:'IBM Plex Sans', system-ui, sans-serif;--body:'IBM Plex Sans', system-ui, sans-serif;--s1:#c66236;--s2:#3f8cc4;--s3:#b3860f;--s4:#2f9868;}:root:not([data-theme="light"]) .th-nilgiri{--bg:#0c1414;--surface:#121b1c;--surface-2:#1a2526;--line:#263435;--ink:#e6f2f1;--ink-2:#a3b8b7;--ink-3:#748887;--accent:#2cc4b0;--accent-ink:#08110f;--accent-soft:#123230;--track:#1f2c2c;--ok:#4aa873;--low:#d0a03a;--high:#a893d8;--display:'Figtree', system-ui, sans-serif;--body:'Figtree', system-ui, sans-serif;--s1:#d46b3c;--s2:#7182e0;--s3:#b8860a;--s4:#35a166;}}
+:root[data-theme="dark"] .th-haldi{--bg:#171410;--surface:#201c17;--surface-2:#2a251e;--line:#39322a;--ink:#f6f0e6;--ink-2:#c0b5a4;--ink-3:#8e8375;--accent:#e0a72c;--accent-ink:#1a1610;--accent-soft:#3a2f18;--track:#332c24;--ok:#4aa873;--low:#d0a03a;--high:#a893d8;--display:'Fraunces', Georgia, serif;--body:'IBM Plex Sans', system-ui, sans-serif;--s1:#cf5f2e;--s2:#4a8fd4;--s3:#c08207;--s4:#1f9a68;}:root[data-theme="dark"] .th-neem{--bg:#111512;--surface:#181d19;--surface-2:#212722;--line:#2e372f;--ink:#eaf1ec;--ink-2:#adbcb2;--ink-3:#7d8b82;--accent:#4faa78;--accent-ink:#0f140f;--accent-soft:#1c2f24;--track:#28302a;--ok:#4aa873;--low:#d0a03a;--high:#a893d8;--display:'Figtree', system-ui, sans-serif;--body:'Figtree', system-ui, sans-serif;--s1:#cf6330;--s2:#4f8ad0;--s3:#b8860a;--s4:#2b9c62;}:root[data-theme="dark"] .th-indigo{--bg:#0f1119;--surface:#161927;--surface-2:#1e2233;--line:#2b3045;--ink:#e9ebf6;--ink-2:#a8adc4;--ink-3:#787e96;--accent:#8b99ea;--accent-ink:#0e1018;--accent-soft:#232847;--track:#242940;--ok:#4aa873;--low:#d0a03a;--high:#a893d8;--display:'IBM Plex Sans', system-ui, sans-serif;--body:'IBM Plex Sans', system-ui, sans-serif;--s1:#d16536;--s2:#3f92cf;--s3:#bb8a0c;--s4:#2a9b6e;}:root[data-theme="dark"] .th-kora{--bg:#131313;--surface:#1a1a19;--surface-2:#232322;--line:#31312f;--ink:#f0f0ec;--ink-2:#b3b3ac;--ink-3:#83837c;--accent:#9fbcce;--accent-ink:#121212;--accent-soft:#242c31;--track:#2a2a28;--ok:#4aa873;--low:#d0a03a;--high:#a893d8;--display:'IBM Plex Sans', system-ui, sans-serif;--body:'IBM Plex Sans', system-ui, sans-serif;--s1:#c66236;--s2:#3f8cc4;--s3:#b3860f;--s4:#2f9868;}:root[data-theme="dark"] .th-nilgiri{--bg:#0c1414;--surface:#121b1c;--surface-2:#1a2526;--line:#263435;--ink:#e6f2f1;--ink-2:#a3b8b7;--ink-3:#748887;--accent:#2cc4b0;--accent-ink:#08110f;--accent-soft:#123230;--track:#1f2c2c;--ok:#4aa873;--low:#d0a03a;--high:#a893d8;--display:'Figtree', system-ui, sans-serif;--body:'Figtree', system-ui, sans-serif;--s1:#d46b3c;--s2:#7182e0;--s3:#b8860a;--s4:#35a166;}
+
+/* ---------- base ---------- */
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--p-bg); color:var(--p-ink);
+  font-family:'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+  font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{margin:0; text-wrap:balance}
+p{margin:0}
+ul{margin:0; padding-left:1.05em}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--p-accent); outline-offset:2px; border-radius:4px}
+
+.wrap{max-width:1180px; margin:0 auto; padding:0 24px}
+
+/* ---------- top bar ---------- */
+.bar{
+  position:sticky; top:0; z-index:20; background:color-mix(in srgb, var(--p-bg) 88%, transparent);
+  backdrop-filter:blur(10px); border-bottom:1px solid var(--p-line);
+}
+.barin{display:flex; align-items:center; gap:18px; padding:11px 0; flex-wrap:wrap}
+.brand{font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:700; font-size:16px; letter-spacing:-.01em; white-space:nowrap}
+.brand span{color:var(--p-ink-3); font-weight:500}
+.nav{display:flex; gap:2px; margin-left:auto; flex-wrap:wrap}
+.nav a{
+  text-decoration:none; font-size:13px; font-weight:500; color:var(--p-ink-2);
+  padding:5px 10px; border-radius:99px;
+}
+.nav a:hover{background:var(--p-surface-2); color:var(--p-ink)}
+.toggle{
+  display:inline-flex; align-items:center; gap:7px; border:1px solid var(--p-line);
+  background:var(--p-surface); color:var(--p-ink); border-radius:99px; padding:6px 13px;
+  font:inherit; font-size:13px; font-weight:600; cursor:pointer; white-space:nowrap;
+}
+.toggle:hover{border-color:var(--p-ink-3)}
+.toggle svg{width:15px; height:15px; display:block}
+
+/* ---------- intro ---------- */
+.intro{padding:52px 0 8px; max-width:66ch}
+.kicker{
+  font-size:12px; font-weight:600; letter-spacing:.09em; text-transform:uppercase;
+  color:var(--p-accent); margin-bottom:14px;
+}
+.intro h1{
+  font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:700;
+  font-size:clamp(30px, 4.4vw, 46px); line-height:1.08; letter-spacing:-.025em; margin-bottom:16px;
+}
+.lede{font-size:17px; color:var(--p-ink-2); line-height:1.6}
+.lede + .lede{margin-top:12px}
+.note{
+  margin-top:26px; padding:15px 17px; background:var(--p-surface); border:1px solid var(--p-line);
+  border-left:3px solid var(--p-accent); border-radius:var(--r-sm); font-size:14px; color:var(--p-ink-2);
+}
+.note b{color:var(--p-ink)}
+
+/* ---------- theme section ---------- */
+.theme{
+  display:grid; grid-template-columns:minmax(0,1fr) 372px; gap:44px; align-items:start;
+  padding:46px 0; border-top:1px solid var(--p-line); scroll-margin-top:64px;
+}
+.theme:first-of-type{border-top:none}
+.teyebrow{font-size:11px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--p-ink-3)}
+.tname{
+  font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:700;
+  font-size:34px; letter-spacing:-.02em; line-height:1.1; margin-top:6px;
+}
+.ttag{font-size:15px; color:var(--p-accent); font-weight:600; margin-top:2px}
+.tblurb{margin-top:14px; color:var(--p-ink-2); max-width:56ch}
+
+.swatches{margin-top:22px; display:flex; flex-direction:column; gap:7px}
+.swrow{display:flex; align-items:center; gap:7px}
+.swlab{font-size:11px; font-weight:600; color:var(--p-ink-3); width:40px; letter-spacing:.03em}
+.sw{width:30px; height:22px; border-radius:5px; border:1px solid rgba(128,128,128,.28); display:block}
+.tface{margin-top:14px; font-size:13px; color:var(--p-ink-3)}
+.swcap{margin-top:8px; font-size:11.5px; color:var(--p-ink-3)}
+.tbest{
+  margin-top:16px; font-size:13.5px; color:var(--p-ink-2); padding:10px 13px;
+  background:var(--p-surface); border:1px solid var(--p-line); border-radius:var(--r-sm);
+}
+.tbest span{font-weight:700; color:var(--p-ink); letter-spacing:.01em}
+
+.tlists{display:grid; grid-template-columns:1fr 1fr; gap:22px; margin-top:22px}
+.tlists h3{
+  font-size:11px; font-weight:600; letter-spacing:.09em; text-transform:uppercase;
+  color:var(--p-ink-3); margin-bottom:7px;
+}
+.tlists ul{font-size:13.5px; color:var(--p-ink-2); line-height:1.5}
+.tlists li{margin-bottom:5px}
+.tlists li::marker{color:var(--p-accent)}
+.cons li::marker{color:var(--p-ink-3)}
+
+/* ---------- phone preview ---------- */
+.phone{
+  background:var(--bg); border:1px solid var(--line); border-radius:22px;
+  box-shadow:var(--p-shadow); overflow:hidden; position:sticky; top:70px;
+}
+.pv{
+  padding:16px; display:flex; flex-direction:column; gap:13px;
+  font-family:var(--body), system-ui, sans-serif; color:var(--ink);
+  font-size:14px; font-variant-numeric:tabular-nums;
+}
+.pvtop{display:flex; justify-content:space-between; align-items:flex-start; gap:10px}
+.pvdate{font-family:var(--display); font-weight:700; font-size:15px; letter-spacing:-.01em}
+.pvwho{font-size:12px; color:var(--ink-3); margin-top:1px}
+
+.pvring{
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--r);
+  padding:14px; display:grid; grid-template-columns:104px 1fr; gap:14px; align-items:center; position:relative;
+}
+.pvring svg{width:104px; height:104px; display:block; grid-column:1}
+.pvringtxt{
+  position:absolute; left:14px; top:50%; transform:translateY(-50%);
+  width:104px; text-align:center; pointer-events:none;
+}
+.pvbig{font-family:var(--display); font-size:27px; font-weight:700; line-height:1; letter-spacing:-.02em}
+.pvsub{font-size:10.5px; color:var(--ink-3); margin-top:3px; letter-spacing:.02em}
+.pvringside{display:flex; flex-direction:column; gap:6px; min-width:0}
+.kv{display:flex; justify-content:space-between; gap:8px; font-size:12.5px; border-bottom:1px dotted var(--line); padding-bottom:5px}
+.kv:last-child{border-bottom:none; padding-bottom:0}
+.kv span{color:var(--ink-3)}
+.kv b{font-weight:600}
+
+.pvsec{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:12px 14px}
+.mrow{display:grid; grid-template-columns:52px 1fr 74px; align-items:center; gap:9px; padding:5px 0}
+.mname{font-size:12.5px; color:var(--ink-2); font-weight:600}
+.mtrack{position:relative; height:9px; background:var(--track); border-radius:99px; overflow:visible}
+.mfill{position:absolute; left:0; top:0; bottom:0; border-radius:99px; box-shadow:0 0 0 2px var(--surface)}
+.mtick{position:absolute; top:-3px; bottom:-3px; width:2px; background:var(--ink-2); border-radius:2px; opacity:.65}
+.mval{font-size:12.5px; text-align:right; white-space:nowrap}
+.mval b{font-weight:700}
+.mmuted{color:var(--ink-3); font-size:11.5px}
+
+.quick{display:flex; gap:6px; margin-top:9px}
+.qbtn{
+  flex:1; font:inherit; font-size:12px; font-weight:600; cursor:pointer;
+  background:var(--accent); color:var(--accent-ink); border:1px solid transparent;
+  border-radius:99px; padding:7px 4px;
+}
+.qbtn-alt{background:var(--accent-soft); color:var(--ink); border-color:var(--line)}
+
+.chips{display:flex; flex-wrap:wrap; gap:6px}
+.chip{
+  display:inline-flex; align-items:center; gap:5px; font-size:11.5px; font-weight:600;
+  background:var(--surface-2); color:var(--ink-2); border:1px solid var(--line);
+  border-radius:99px; padding:4px 10px;
+}
+.chip b{color:var(--ink); font-weight:700}
+.chip-score{background:var(--accent-soft); color:var(--ink); border-color:transparent; font-size:12px}
+.dot{width:7px; height:7px; border-radius:50%; display:block; flex:none}
+.chip-ok .dot{background:var(--ok)}
+.chip-low .dot{background:var(--low)}
+.chip-data .dot{background:var(--ink-3)}
+
+.meal{font-family:var(--display); display:flex; justify-content:space-between; align-items:baseline; gap:8px; font-size:13px; font-weight:600; padding-top:9px}
+.pvsec .meal:first-child{padding-top:0}
+.mealkcal{color:var(--ink-2); font-weight:600; font-size:12.5px}
+.items{font-size:11.5px; color:var(--ink-3); line-height:1.45; margin-top:2px}
+.meal-empty .mealname{color:var(--ink-3)}
+.mealadd{color:var(--accent); font-size:12px; font-weight:700}
+
+/* ---------- how to choose ---------- */
+.close{padding:46px 0 72px; border-top:1px solid var(--p-line)}
+.close h2{
+  font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:700;
+  font-size:26px; letter-spacing:-.02em; margin-bottom:16px;
+}
+.qgrid{display:grid; grid-template-columns:repeat(auto-fit, minmax(230px,1fr)); gap:16px; margin-top:6px}
+.qcard{background:var(--p-surface); border:1px solid var(--p-line); border-radius:var(--r-sm); padding:16px 17px}
+.qcard h3{font-size:14px; font-weight:700; margin-bottom:6px}
+.qcard p{font-size:13.5px; color:var(--p-ink-2); line-height:1.5}
+.qcard .pick{margin-top:9px; font-size:12.5px; font-weight:600; color:var(--p-accent)}
+.fixed{margin-top:30px; font-size:13.5px; color:var(--p-ink-2); max-width:70ch}
+.fixed code{
+  font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:12.5px;
+  background:var(--p-surface-2); padding:1px 5px; border-radius:4px;
+}
+
+@media (max-width:920px){
+  .theme{grid-template-columns:1fr; gap:26px}
+  .phone{position:static; max-width:372px}
+  .nav{display:none}
+}
+@media (prefers-reduced-motion: reduce){
+  *{animation:none !important; transition:none !important; scroll-behavior:auto !important}
+}
+</style>
+<div class="bar">
+  <div class="wrap barin">
+    <div class="brand">Nourishly <span>· theme options</span></div>
+    <nav class="nav"><a href="#haldi">Haldi</a><a href="#neem">Neem</a><a href="#indigo">Indigo</a><a href="#kora">Kora</a><a href="#nilgiri">Nilgiri</a></nav>
+    <button type="button" class="toggle" id="modeBtn" aria-live="polite">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" id="modeIcon"></svg>
+      <span id="modeLabel">Light</span>
+    </button>
+  </div>
+</div>
+
+<main class="wrap">
+  <div class="intro">
+    <div class="kicker">Decision · pick one</div>
+    <h1>Five directions for how Nourishly should look</h1>
+    <p class="lede">Each option below is a complete token set — surfaces, ink, accent, and the four macro colours — shown on the same dashboard so you are comparing the theme and nothing else. The toggle switches every preview between its light and dark variant at once.</p>
+    <p class="lede">The data is a plausible Thursday: thepla and chaas for breakfast, a rotli-dal-shaak lunch, dinner still to log.</p>
+    <div class="note"><b>All ten palettes are validated, not eyeballed.</b> Every theme's four macro hues passed colour-blindness separation, chroma, lightness-band and contrast checks in <em>both</em> light and dark — so the choice below is purely about character. Nothing here is a compromise on legibility.</div>
+  </div>
+
+  <section class="theme" id="haldi">
+  <div class="tinfo">
+    <div class="teyebrow">Option 1</div>
+    <h2 class="tname">Haldi</h2>
+    <p class="ttag">Warm kitchen light</p>
+    <p class="tblurb">Turmeric on warm paper. The palette of a spice tin and an afternoon kitchen — the only direction here that feels like it belongs to the food it tracks.</p>
+    <div class="swatches"><div class="swrow"><span class="swlab">Light</span><span class="sw" style="background:#9c6408" title="#9c6408"></span><span class="sw" style="background:#b5451f" title="#b5451f"></span><span class="sw" style="background:#2b6ba8" title="#2b6ba8"></span><span class="sw" style="background:#d9a017" title="#d9a017"></span><span class="sw" style="background:#3f8a4f" title="#3f8a4f"></span></div><div class="swrow"><span class="swlab">Dark</span><span class="sw" style="background:#e0a72c" title="#e0a72c"></span><span class="sw" style="background:#cf5f2e" title="#cf5f2e"></span><span class="sw" style="background:#4a8fd4" title="#4a8fd4"></span><span class="sw" style="background:#c08207" title="#c08207"></span><span class="sw" style="background:#1f9a68" title="#1f9a68"></span></div></div>
+    <p class="swcap">Accent, then the four macro hues — protein, carbs, fat, fibre</p>
+    <p class="tface">Type — Fraunces for figures · IBM Plex Sans for UI</p>
+    <p class="tbest"><span>Best if</span> you want the app to feel like it belongs to the kitchen.</p>
+    <div class="tlists">
+      <div><h3>Strengths</h3><ul><li>Distinctly Indian without costume-drama clichés</li><li>Warm neutrals are easy on the eyes for a morning app</li><li>Gold accent reads as achievement, not alarm</li></ul></div>
+      <div><h3>Trade-offs</h3><ul class="cons"><li>Warm grounds can feel dated if the type is careless</li><li>Gold on white needs care to stay AA legible</li></ul></div>
+    </div>
+  </div>
+  <div class="phone th-haldi">
+    <div class="pv">
+      <div class="pvtop">
+        <div><div class="pvdate">Thursday, 9 September</div><div class="pvwho">Keyur · General health</div></div>
+        <span class="chip chip-score">Good <b>78</b></span>
+      </div>
+
+      <div class="pvring">
+        <svg viewBox="0 0 120 120" role="img" aria-label="1,640 of 2,050 kilocalories, 410 remaining">
+          <circle cx="60" cy="60" r="46" fill="none" stroke="var(--track)" stroke-width="11"></circle>
+          <circle cx="60" cy="60" r="46" fill="none" stroke="var(--accent-soft)" stroke-width="11"
+                  stroke-dasharray="46.24 242.78" stroke-dashoffset="-208.1"
+                  transform="rotate(-90 60 60)"></circle>
+          <circle cx="60" cy="60" r="46" fill="none" stroke="var(--accent)" stroke-width="11" stroke-linecap="round"
+                  stroke-dasharray="184.98 104.05" transform="rotate(-90 60 60)"></circle>
+          <line x1="24.81" y1="48.57" x2="7.69" y2="43.0"
+                stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round"></line>
+        </svg>
+        <div class="pvringtxt">
+          <div class="pvbig">410</div>
+          <div class="pvsub">kcal left</div>
+        </div>
+        <div class="pvringside">
+          <div class="kv"><span>Eaten</span><b>1,640</b></div>
+          <div class="kv"><span>Target</span><b>2,050</b></div>
+          <div class="kv"><span>Band</span><b>1,845–2,255</b></div>
+        </div>
+      </div>
+
+      <div class="pvsec">
+      <div class="mrow">
+        <span class="mname">Protein</span>
+        <span class="mtrack"><span class="mfill" style="width:69.1%;background:var(--s1)"></span><span class="mtick" style="left:80.0%"></span></span>
+        <span class="mval"><b>82</b><span class="mmuted">/95g</span></span>
+      </div>
+      <div class="mrow">
+        <span class="mname">Carbs</span>
+        <span class="mtrack"><span class="mfill" style="width:66.0%;background:var(--s2)"></span><span class="mtick" style="left:80.0%"></span></span>
+        <span class="mval"><b>198</b><span class="mmuted">/240g</span></span>
+      </div>
+      <div class="mrow">
+        <span class="mname">Fat</span>
+        <span class="mtrack"><span class="mfill" style="width:69.7%;background:var(--s3)"></span><span class="mtick" style="left:80.0%"></span></span>
+        <span class="mval"><b>54</b><span class="mmuted">/62g</span></span>
+      </div>
+      <div class="mrow">
+        <span class="mname">Fibre</span>
+        <span class="mtrack"><span class="mfill" style="width:49.7%;background:var(--s4)"></span><span class="mtick" style="left:80.0%"></span></span>
+        <span class="mval"><b>18</b><span class="mmuted">/29g</span></span>
+      </div>
+      </div>
+
+      <div class="pvsec">
+        <div class="mrow">
+          <span class="mname">Water</span>
+          <span class="mtrack"><span class="mfill" style="width:49.2%;background:var(--accent)"></span><span class="mtick" style="left:80.0%"></span></span>
+          <span class="mval"><b>1.6</b><span class="mmuted">/2.6L</span></span>
+        </div>
+        <div class="quick">
+          <button type="button" class="qbtn">+250 ml</button>
+          <button type="button" class="qbtn">+500 ml</button>
+          <button type="button" class="qbtn qbtn-alt">Custom</button>
+        </div>
+      </div>
+
+      <div class="chips">
+        <span class="chip chip-ok"><span class="dot"></span>Protein on track</span>
+        <span class="chip chip-low"><span class="dot"></span>Fibre 11 g short</span>
+        <span class="chip chip-data"><span class="dot"></span>Micros: 58% covered — not scored</span>
+      </div>
+
+      <div class="pvsec">
+        <div class="meal"><span class="mealname">Breakfast</span><span class="mealkcal">410</span></div>
+        <div class="items">2 Thepla · Chaas 1 glass</div>
+        <div class="meal"><span class="mealname">Lunch</span><span class="mealkcal">760</span></div>
+        <div class="items">3 Rotli · Gujarati dal · Bhinda nu shaak · Rice</div>
+        <div class="meal"><span class="mealname">Snack</span><span class="mealkcal">190</span></div>
+        <div class="items">Khakhra · Filter coffee</div>
+        <div class="meal meal-empty"><span class="mealname">Dinner</span><span class="mealadd">+ Add</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="theme" id="neem">
+  <div class="tinfo">
+    <div class="teyebrow">Option 2</div>
+    <h2 class="tname">Neem</h2>
+    <p class="ttag">Fresh and plain-spoken</p>
+    <p class="tblurb">Green-forward and crisp. The expected choice for a nutrition app, executed with restraint — no gradients, no glow, just clean surfaces and one confident accent.</p>
+    <div class="swatches"><div class="swrow"><span class="swlab">Light</span><span class="sw" style="background:#2f7a4f" title="#2f7a4f"></span><span class="sw" style="background:#b8532b" title="#b8532b"></span><span class="sw" style="background:#3f6fa8" title="#3f6fa8"></span><span class="sw" style="background:#c99a12" title="#c99a12"></span><span class="sw" style="background:#2e8556" title="#2e8556"></span></div><div class="swrow"><span class="swlab">Dark</span><span class="sw" style="background:#4faa78" title="#4faa78"></span><span class="sw" style="background:#cf6330" title="#cf6330"></span><span class="sw" style="background:#4f8ad0" title="#4f8ad0"></span><span class="sw" style="background:#b8860a" title="#b8860a"></span><span class="sw" style="background:#2b9c62" title="#2b9c62"></span></div></div>
+    <p class="swcap">Accent, then the four macro hues — protein, carbs, fat, fibre</p>
+    <p class="tface">Type — Figtree throughout</p>
+    <p class="tbest"><span>Best if</span> you want zero explanation — it reads as a health app instantly.</p>
+    <div class="tlists">
+      <div><h3>Strengths</h3><ul><li>Instantly legible as a health app; zero learning curve</li><li>White surfaces make the charts the loudest thing on screen</li><li>Green accent tests well for 'on track' without extra colour</li></ul></div>
+      <div><h3>Trade-offs</h3><ul class="cons"><li>The most conventional of the five — safe, not memorable</li><li>Green accent sits close to the 'on target' status hue</li></ul></div>
+    </div>
+  </div>
+  <div class="phone th-neem">
+    <div class="pv">
+      <div class="pvtop">
+        <div><div class="pvdate">Thursday, 9 September</div><div class="pvwho">Keyur · General health</div></div>
+        <span class="chip chip-score">Good <b>78</b></span>
+      </div>
+
+      <div class="pvring">
+        <svg viewBox="0 0 120 120" role="img" aria-label="1,640 of 2,050 kilocalories, 410 remaining">
+          <circle cx="60" cy="60" r="46" fill="none" stroke="var(--track)" stroke-width="11"></circle>
+          <circle cx="60" cy="60" r="46" fill="none" stroke="var(--accent-soft)" stroke-width="11"
+                  stroke-dasharray="46.24 242.78" stroke-dashoffset="-208.1"
+                  transform="rotate(-90 60 60)"></circle>
+          <circle cx="60" cy="60" r="46" fill="none" stroke="var(--accent)" stroke-width="11" stroke-linecap="round"
+                  stroke-dasharray="184.98 104.05" transform="rotate(-90 60 60)"></circle>
+          <line x1="24.81" y1="48.57" x2="7.69" y2="43.0"
+                stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round"></line>
+        </svg>
+        <div class="pvringtxt">
+          <div class="pvbig">410</div>
+          <div class="pvsub">kcal left</div>
+        </div>
+        <div class="pvringside">
+          <div class="kv"><span>Eaten</span><b>1,640</b></div>
+          <div class="kv"><span>Target</span><b>2,050</b></div>
+          <div class="kv"><span>Band</span><b>1,845–2,255</b></div>
+        </div>
+      </div>
+
+      <div class="pvsec">
+      <div class="mrow">
+        <span class="mname">Protein</span>
+        <span class="mtrack"><span class="mfill" style="width:69.1%;background:var(--s1)"></span><span class="mtick" style="left:80.0%"></span></span>
+        <span class="mval"><b>82</b><span class="mmuted">/95g</span></span>
+      </div>
+      <div class="mrow">
+        <span class="mname">Carbs</span>
+        <span class="mtrack"><span class="mfill" style="width:66.0%;background:var(--s2)"></span><span class="mtick" style="left:80.0%"></span></span>
+        <span class="mval"><b>198</b><span class="mmuted">/240g</span></span>
+      </div>
+      <div class="mrow">
+        <span class="mname">Fat</span>
+        <span class="mtrack"><span class="mfill" style="width:69.7%;background:var(--s3)"></span><span class="mtick" style="left:80.0%"></span></span>
+        <span class="mval"><b>54</b><span class="mmuted">/62g</span></span>
+      </div>
+      <div class="mrow">
+        <span class="mname">Fibre</span>
+        <span class="mtrack"><span class="mfill" style="width:49.7%;background:var(--s4)"></span><span class="mtick" style="left:80.0%"></span></span>
+        <span class="mval"><b>18</b><span class="mmuted">/29g</span></span>
+      </div>
+      </div>
+
+      <div class="pvsec">
+        <div class="mrow">
+          <span class="mname">Water</span>
+          <span class="mtrack"><span class="mfill" style="width:49.2%;background:var(--accent)"></span><span class="mtick" style="left:80.0%"></span></span>
+          <span class="mval"><b>1.6</b><span class="mmuted">/2.6L</span></span>
+        </div>
+        <div class="quick">
+          <button type="button" class="qbtn">+250 ml</button>
+          <button type="button" class="qbtn">+500 ml</button>
+          <button type="button" class="qbtn qbtn-alt">Custom</button>
+        </div>
+      </div>
+
+      <div class="chips">
+        <span class="chip chip-ok"><span class="dot"></span>Protein on track</span>
+        <span class="chip chip-low"><span class="dot"></span>Fibre 11 g short</span>
+        <span class="chip chip-data"><span class="dot"></span>Micros: 58% covered — not scored</span>
+      </div>
+
+      <div class="pvsec">
+        <div class="meal"><span class="mealname">Breakfast</span><span class="mealkcal">410</span></div>
+        <div class="items">2 Thepla · Chaas 1 glass</div>
+        <div class="meal"><span class="mealname">Lunch</span><span class="mealkcal">760</span></div>
+        <div class="items">3 Rotli · Gujarati dal · Bhinda nu shaak · Rice</div>
+        <div class="meal"><span class="mealname">Snack</span><span class="mealkcal">190</span></div>
+        <div class="items">Khakhra · Filter coffee</div>
+        <div class="meal meal-empty"><span class="mealname">Dinner</span><span class="mealadd">+ Add</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="theme" id="indigo">
+  <div class="tinfo">
+    <div class="teyebrow">Option 3</div>
+    <h2 class="tname">Indigo</h2>
+    <p class="ttag">Calm instrument</p>
+    <p class="tblurb">Deep indigo on cool paper — the colour of block-printed cloth, used as a tool's chrome rather than as decoration. Reads as something you consult, not something that nags.</p>
+    <div class="swatches"><div class="swrow"><span class="swlab">Light</span><span class="sw" style="background:#3b4d9e" title="#3b4d9e"></span><span class="sw" style="background:#c1572d" title="#c1572d"></span><span class="sw" style="background:#1f6fa5" title="#1f6fa5"></span><span class="sw" style="background:#c7961a" title="#c7961a"></span><span class="sw" style="background:#0f8a5e" title="#0f8a5e"></span></div><div class="swrow"><span class="swlab">Dark</span><span class="sw" style="background:#8b99ea" title="#8b99ea"></span><span class="sw" style="background:#d16536" title="#d16536"></span><span class="sw" style="background:#3f92cf" title="#3f92cf"></span><span class="sw" style="background:#bb8a0c" title="#bb8a0c"></span><span class="sw" style="background:#2a9b6e" title="#2a9b6e"></span></div></div>
+    <p class="swcap">Accent, then the four macro hues — protein, carbs, fat, fibre</p>
+    <p class="tface">Type — IBM Plex Sans throughout</p>
+    <p class="tbest"><span>Best if</span> the household reads numbers more than it reads charts.</p>
+    <div class="tlists">
+      <div><h3>Strengths</h3><ul><li>Feels like an instrument: serious, quiet, precise</li><li>Cool neutrals keep four macro hues clearly separated</li><li>Best of the five for dense numeric screens</li></ul></div>
+      <div><h3>Trade-offs</h3><ul class="cons"><li>Least 'food' of the five — could feel clinical</li><li>Dark mode needs care not to drift toward navy mush</li></ul></div>
+    </div>
+  </div>
+  <div class="phone th-indigo">
+    <div class="pv">
+      <div class="pvtop">
+        <div><div class="pvdate">Thursday, 9 September</div><div class="pvwho">Keyur · General health</div></div>
+        <span class="chip chip-score">Good <b>78</b></span>
+      </div>
+
+      <div class="pvring">
+        <svg viewBox="0 0 120 120" role="img" aria-label="1,640 of 2,050 kilocalories, 410 remaining">
+          <circle cx="60" cy="60" r="46" fill="none" stroke="var(--track)" stroke-width="11"></circle>
+          <circle cx="60" cy="60" r="46" fill="none" stroke="var(--accent-soft)" stroke-width="11"
+                  stroke-dasharray="46.24 242.78" stroke-dashoffset="-208.1"
+                  transform="rotate(-90 60 60)"></circle>
+          <circle cx="60" cy="60" r="46" fill="none" stroke="var(--accent)" stroke-width="11" stroke-linecap="round"
+                  stroke-dasharray="184.98 104.05" transform="rotate(-90 60 60)"></circle>
+          <line x1="24.81" y1="48.57" x2="7.69" y2="43.0"
+                stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round"></line>
+        </svg>
+        <div class="pvringtxt">
+          <div class="pvbig">410</div>
+          <div class="pvsub">kcal left</div>
+        </div>
+        <div class="pvringside">
+          <div class="kv"><span>Eaten</span><b>1,640</b></div>
+          <div class="kv"><span>Target</span><b>2,050</b></div>
+          <div class="kv"><span>Band</span><b>1,845–2,255</b></div>
+        </div>
+      </div>
+
+      <div class="pvsec">
+      <div class="mrow">
+        <span class="mname">Protein</span>
+        <span class="mtrack"><span class="mfill" style="width:69.1%;background:var(--s1)"></span><span class="mtick" style="left:80.0%"></span></span>
+        <span class="mval"><b>82</b><span class="mmuted">/95g</span></span>
+      </div>
+      <div class="mrow">
+        <span class="mname">Carbs</span>
+        <span class="mtrack"><span class="mfill" style="width:66.0%;background:var(--s2)"></span><span class="mtick" style="left:80.0%"></span></span>
+        <span class="mval"><b>198</b><span class="mmuted">/240g</span></span>
+      </div>
+      <div class="mrow">
+        <span class="mname">Fat</span>
+        <span class="mtrack"><span class="mfill" style="width:69.7%;background:var(--s3)"></span><span class="mtick" style="left:80.0%"></span></span>
+        <span class="mval"><b>54</b><span class="mmuted">/62g</span></span>
+      </div>
+      <div class="mrow">
+        <span class="mname">Fibre</span>
+        <span class="mtrack"><span class="mfill" style="width:49.7%;background:var(--s4)"></span><span class="mtick" style="left:80.0%"></span></span>
+        <span class="mval"><b>18</b><span class="mmuted">/29g</span></span>
+      </div>
+      </div>
+
+      <div class="pvsec">
+        <div class="mrow">
+          <span class="mname">Water</span>
+          <span class="mtrack"><span class="mfill" style="width:49.2%;background:var(--accent)"></span><span class="mtick" style="left:80.0%"></span></span>
+          <span class="mval"><b>1.6</b><span class="mmuted">/2.6L</span></span>
+        </div>
+        <div class="quick">
+          <button type="button" class="qbtn">+250 ml</button>
+          <button type="button" class="qbtn">+500 ml</button>
+          <button type="button" class="qbtn qbtn-alt">Custom</button>
+        </div>
+      </div>
+
+      <div class="chips">
+        <span class="chip chip-ok"><span class="dot"></span>Protein on track</span>
+        <span class="chip chip-low"><span class="dot"></span>Fibre 11 g short</span>
+        <span class="chip chip-data"><span class="dot"></span>Micros: 58% covered — not scored</span>
+      </div>
+
+      <div class="pvsec">
+        <div class="meal"><span class="mealname">Breakfast</span><span class="mealkcal">410</span></div>
+        <div class="items">2 Thepla · Chaas 1 glass</div>
+        <div class="meal"><span class="mealname">Lunch</span><span class="mealkcal">760</span></div>
+        <div class="items">3 Rotli · Gujarati dal · Bhinda nu shaak · Rice</div>
+        <div class="meal"><span class="mealname">Snack</span><span class="mealkcal">190</span></div>
+        <div class="items">Khakhra · Filter coffee</div>
+        <div class="meal meal-empty"><span class="mealname">Dinner</span><span class="mealadd">+ Add</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="theme" id="kora">
+  <div class="tinfo">
+    <div class="teyebrow">Option 4</div>
+    <h2 class="tname">Kora</h2>
+    <p class="ttag">Quiet chrome, loud data</p>
+    <p class="tblurb">Named for undyed cotton. The interface itself is nearly colourless — every hue on screen belongs to your data. The most restrained option, and the one that ages slowest.</p>
+    <div class="swatches"><div class="swrow"><span class="swlab">Light</span><span class="sw" style="background:#2f4858" title="#2f4858"></span><span class="sw" style="background:#b04f22" title="#b04f22"></span><span class="sw" style="background:#2a6f9e" title="#2a6f9e"></span><span class="sw" style="background:#b08a1c" title="#b08a1c"></span><span class="sw" style="background:#25845a" title="#25845a"></span></div><div class="swrow"><span class="swlab">Dark</span><span class="sw" style="background:#9fbcce" title="#9fbcce"></span><span class="sw" style="background:#c66236" title="#c66236"></span><span class="sw" style="background:#3f8cc4" title="#3f8cc4"></span><span class="sw" style="background:#b3860f" title="#b3860f"></span><span class="sw" style="background:#2f9868" title="#2f9868"></span></div></div>
+    <p class="swcap">Accent, then the four macro hues — protein, carbs, fat, fibre</p>
+    <p class="tface">Type — IBM Plex Sans throughout</p>
+    <p class="tbest"><span>Best if</span> you expect to add nutrients and charts over the years.</p>
+    <div class="tlists">
+      <div><h3>Strengths</h3><ul><li>Colour means data and nothing else — the clearest chart reading</li><li>Never looks dated; no trend to fall out of</li><li>Works best if you add nutrients or charts later</li></ul></div>
+      <div><h3>Trade-offs</h3><ul class="cons"><li>Little personality; can read as unfinished to some</li><li>Relies entirely on typography and spacing being right</li></ul></div>
+    </div>
+  </div>
+  <div class="phone th-kora">
+    <div class="pv">
+      <div class="pvtop">
+        <div><div class="pvdate">Thursday, 9 September</div><div class="pvwho">Keyur · General health</div></div>
+        <span class="chip chip-score">Good <b>78</b></span>
+      </div>
+
+      <div class="pvring">
+        <svg viewBox="0 0 120 120" role="img" aria-label="1,640 of 2,050 kilocalories, 410 remaining">
+          <circle cx="60" cy="60" r="46" fill="none" stroke="var(--track)" stroke-width="11"></circle>
+          <circle cx="60" cy="60" r="46" fill="none" stroke="var(--accent-soft)" stroke-width="11"
+                  stroke-dasharray="46.24 242.78" stroke-dashoffset="-208.1"
+                  transform="rotate(-90 60 60)"></circle>
+          <circle cx="60" cy="60" r="46" fill="none" stroke="var(--accent)" stroke-width="11" stroke-linecap="round"
+                  stroke-dasharray="184.98 104.05" transform="rotate(-90 60 60)"></circle>
+          <line x1="24.81" y1="48.57" x2="7.69" y2="43.0"
+                stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round"></line>
+        </svg>
+        <div class="pvringtxt">
+          <div class="pvbig">410</div>
+          <div class="pvsub">kcal left</div>
+        </div>
+        <div class="pvringside">
+          <div class="kv"><span>Eaten</span><b>1,640</b></div>
+          <div class="kv"><span>Target</span><b>2,050</b></div>
+          <div class="kv"><span>Band</span><b>1,845–2,255</b></div>
+        </div>
+      </div>
+
+      <div class="pvsec">
+      <div class="mrow">
+        <span class="mname">Protein</span>
+        <span class="mtrack"><span class="mfill" style="width:69.1%;background:var(--s1)"></span><span class="mtick" style="left:80.0%"></span></span>
+        <span class="mval"><b>82</b><span class="mmuted">/95g</span></span>
+      </div>
+      <div class="mrow">
+        <span class="mname">Carbs</span>
+        <span class="mtrack"><span class="mfill" style="width:66.0%;background:var(--s2)"></span><span class="mtick" style="left:80.0%"></span></span>
+        <span class="mval"><b>198</b><span class="mmuted">/240g</span></span>
+      </div>
+      <div class="mrow">
+        <span class="mname">Fat</span>
+        <span class="mtrack"><span class="mfill" style="width:69.7%;background:var(--s3)"></span><span class="mtick" style="left:80.0%"></span></span>
+        <span class="mval"><b>54</b><span class="mmuted">/62g</span></span>
+      </div>
+      <div class="mrow">
+        <span class="mname">Fibre</span>
+        <span class="mtrack"><span class="mfill" style="width:49.7%;background:var(--s4)"></span><span class="mtick" style="left:80.0%"></span></span>
+        <span class="mval"><b>18</b><span class="mmuted">/29g</span></span>
+      </div>
+      </div>
+
+      <div class="pvsec">
+        <div class="mrow">
+          <span class="mname">Water</span>
+          <span class="mtrack"><span class="mfill" style="width:49.2%;background:var(--accent)"></span><span class="mtick" style="left:80.0%"></span></span>
+          <span class="mval"><b>1.6</b><span class="mmuted">/2.6L</span></span>
+        </div>
+        <div class="quick">
+          <button type="button" class="qbtn">+250 ml</button>
+          <button type="button" class="qbtn">+500 ml</button>
+          <button type="button" class="qbtn qbtn-alt">Custom</button>
+        </div>
+      </div>
+
+      <div class="chips">
+        <span class="chip chip-ok"><span class="dot"></span>Protein on track</span>
+        <span class="chip chip-low"><span class="dot"></span>Fibre 11 g short</span>
+        <span class="chip chip-data"><span class="dot"></span>Micros: 58% covered — not scored</span>
+      </div>
+
+      <div class="pvsec">
+        <div class="meal"><span class="mealname">Breakfast</span><span class="mealkcal">410</span></div>
+        <div class="items">2 Thepla · Chaas 1 glass</div>
+        <div class="meal"><span class="mealname">Lunch</span><span class="mealkcal">760</span></div>
+        <div class="items">3 Rotli · Gujarati dal · Bhinda nu shaak · Rice</div>
+        <div class="meal"><span class="mealname">Snack</span><span class="mealkcal">190</span></div>
+        <div class="items">Khakhra · Filter coffee</div>
+        <div class="meal meal-empty"><span class="mealname">Dinner</span><span class="mealadd">+ Add</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="theme" id="nilgiri">
+  <div class="tinfo">
+    <div class="teyebrow">Option 5</div>
+    <h2 class="tname">Nilgiri</h2>
+    <p class="ttag">Built for night</p>
+    <p class="tblurb">Designed dark-first, with the light mode derived from it rather than the other way round. Teal on near-black — for logging dinner at 11pm without being dazzled.</p>
+    <div class="swatches"><div class="swrow"><span class="swlab">Light</span><span class="sw" style="background:#0e7c72" title="#0e7c72"></span><span class="sw" style="background:#d1683c" title="#d1683c"></span><span class="sw" style="background:#5566cc" title="#5566cc"></span><span class="sw" style="background:#d9a422" title="#d9a422"></span><span class="sw" style="background:#2f8a4f" title="#2f8a4f"></span></div><div class="swrow"><span class="swlab">Dark</span><span class="sw" style="background:#2cc4b0" title="#2cc4b0"></span><span class="sw" style="background:#d46b3c" title="#d46b3c"></span><span class="sw" style="background:#7182e0" title="#7182e0"></span><span class="sw" style="background:#b8860a" title="#b8860a"></span><span class="sw" style="background:#35a166" title="#35a166"></span></div></div>
+    <p class="swcap">Accent, then the four macro hues — protein, carbs, fat, fibre</p>
+    <p class="tface">Type — Figtree throughout</p>
+    <p class="tbest"><span>Best if</span> most logging happens after dark.</p>
+    <div class="tlists">
+      <div><h3>Strengths</h3><ul><li>The best dark mode of the five, by design not by inversion</li><li>Teal accent is uncommon in this category — memorable</li><li>High contrast helps at low screen brightness</li></ul></div>
+      <div><h3>Trade-offs</h3><ul class="cons"><li>Light mode is the weaker half — it is the derived one</li><li>Teal can read 'tech product' more than 'household app'</li></ul></div>
+    </div>
+  </div>
+  <div class="phone th-nilgiri">
+    <div class="pv">
+      <div class="pvtop">
+        <div><div class="pvdate">Thursday, 9 September</div><div class="pvwho">Keyur · General health</div></div>
+        <span class="chip chip-score">Good <b>78</b></span>
+      </div>
+
+      <div class="pvring">
+        <svg viewBox="0 0 120 120" role="img" aria-label="1,640 of 2,050 kilocalories, 410 remaining">
+          <circle cx="60" cy="60" r="46" fill="none" stroke="var(--track)" stroke-width="11"></circle>
+          <circle cx="60" cy="60" r="46" fill="none" stroke="var(--accent-soft)" stroke-width="11"
+                  stroke-dasharray="46.24 242.78" stroke-dashoffset="-208.1"
+                  transform="rotate(-90 60 60)"></circle>
+          <circle cx="60" cy="60" r="46" fill="none" stroke="var(--accent)" stroke-width="11" stroke-linecap="round"
+                  stroke-dasharray="184.98 104.05" transform="rotate(-90 60 60)"></circle>
+          <line x1="24.81" y1="48.57" x2="7.69" y2="43.0"
+                stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round"></line>
+        </svg>
+        <div class="pvringtxt">
+          <div class="pvbig">410</div>
+          <div class="pvsub">kcal left</div>
+        </div>
+        <div class="pvringside">
+          <div class="kv"><span>Eaten</span><b>1,640</b></div>
+          <div class="kv"><span>Target</span><b>2,050</b></div>
+          <div class="kv"><span>Band</span><b>1,845–2,255</b></div>
+        </div>
+      </div>
+
+      <div class="pvsec">
+      <div class="mrow">
+        <span class="mname">Protein</span>
+        <span class="mtrack"><span class="mfill" style="width:69.1%;background:var(--s1)"></span><span class="mtick" style="left:80.0%"></span></span>
+        <span class="mval"><b>82</b><span class="mmuted">/95g</span></span>
+      </div>
+      <div class="mrow">
+        <span class="mname">Carbs</span>
+        <span class="mtrack"><span class="mfill" style="width:66.0%;background:var(--s2)"></span><span class="mtick" style="left:80.0%"></span></span>
+        <span class="mval"><b>198</b><span class="mmuted">/240g</span></span>
+      </div>
+      <div class="mrow">
+        <span class="mname">Fat</span>
+        <span class="mtrack"><span class="mfill" style="width:69.7%;background:var(--s3)"></span><span class="mtick" style="left:80.0%"></span></span>
+        <span class="mval"><b>54</b><span class="mmuted">/62g</span></span>
+      </div>
+      <div class="mrow">
+        <span class="mname">Fibre</span>
+        <span class="mtrack"><span class="mfill" style="width:49.7%;background:var(--s4)"></span><span class="mtick" style="left:80.0%"></span></span>
+        <span class="mval"><b>18</b><span class="mmuted">/29g</span></span>
+      </div>
+      </div>
+
+      <div class="pvsec">
+        <div class="mrow">
+          <span class="mname">Water</span>
+          <span class="mtrack"><span class="mfill" style="width:49.2%;background:var(--accent)"></span><span class="mtick" style="left:80.0%"></span></span>
+          <span class="mval"><b>1.6</b><span class="mmuted">/2.6L</span></span>
+        </div>
+        <div class="quick">
+          <button type="button" class="qbtn">+250 ml</button>
+          <button type="button" class="qbtn">+500 ml</button>
+          <button type="button" class="qbtn qbtn-alt">Custom</button>
+        </div>
+      </div>
+
+      <div class="chips">
+        <span class="chip chip-ok"><span class="dot"></span>Protein on track</span>
+        <span class="chip chip-low"><span class="dot"></span>Fibre 11 g short</span>
+        <span class="chip chip-data"><span class="dot"></span>Micros: 58% covered — not scored</span>
+      </div>
+
+      <div class="pvsec">
+        <div class="meal"><span class="mealname">Breakfast</span><span class="mealkcal">410</span></div>
+        <div class="items">2 Thepla · Chaas 1 glass</div>
+        <div class="meal"><span class="mealname">Lunch</span><span class="mealkcal">760</span></div>
+        <div class="items">3 Rotli · Gujarati dal · Bhinda nu shaak · Rice</div>
+        <div class="meal"><span class="mealname">Snack</span><span class="mealkcal">190</span></div>
+        <div class="items">Khakhra · Filter coffee</div>
+        <div class="meal meal-empty"><span class="mealname">Dinner</span><span class="mealadd">+ Add</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  <section class="close">
+    <h2>How to choose</h2>
+    <div class="qgrid">
+      <div class="qcard">
+        <h3>Who opens it most?</h3>
+        <p>If someone in the house wants two numbers and no jargon, the quieter themes carry less visual noise per glance.</p>
+        <p class="pick">→ Kora or Indigo</p>
+      </div>
+      <div class="qcard">
+        <h3>When is it opened?</h3>
+        <p>Logging happens right after eating — often at night. If most logging is after dark, pick the theme whose dark mode was designed first.</p>
+        <p class="pick">→ Nilgiri</p>
+      </div>
+      <div class="qcard">
+        <h3>Should it feel like food?</h3>
+        <p>Only one option takes its palette from the kitchen rather than from software convention. That is either the point or a distraction.</p>
+        <p class="pick">→ Haldi</p>
+      </div>
+      <div class="qcard">
+        <h3>Want zero surprises?</h3>
+        <p>The conventional choice is conventional because it works. No one will ever be confused about what the app is for.</p>
+        <p class="pick">→ Neem</p>
+      </div>
+    </div>
+    <p class="fixed">Whichever you pick, these hold: the macro tick marks show your target, so a bar is read against a goal rather than filled to an edge. Over-target is never red — <code>above</code> uses a violet, deliberately, because a food tracker should not scold. Every status carries a label and a dot, never colour alone. And the score is withheld when coverage is too thin — the <code>58% covered</code> chip is that rule showing its work.</p>
+  </section>
+</main>
+
+<script>
+(function(){
+  var root=document.documentElement, btn=document.getElementById('modeBtn'),
+      label=document.getElementById('modeLabel'), icon=document.getElementById('modeIcon');
+  var SUN='<circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path>';
+  var MOON='<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path>';
+  function paint(mode){
+    root.setAttribute('data-theme', mode);
+    label.textContent = mode==='dark' ? 'Dark' : 'Light';
+    icon.innerHTML = mode==='dark' ? MOON : SUN;
+    btn.setAttribute('aria-label','Previews in '+mode+' mode. Switch to '+(mode==='dark'?'light':'dark')+'.');
+  }
+  var start = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  paint(start);
+  btn.addEventListener('click', function(){
+    paint(root.getAttribute('data-theme')==='dark' ? 'light' : 'dark');
+  });
+})();
+</script>
