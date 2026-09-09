@@ -16,7 +16,7 @@ Generic framework comparisons are useless. The evaluation below is scored agains
 | D2 | Heavy, correct, testable numeric domain logic shared across platforms | TO-2, §20 |
 | D3 | Rich, custom data visualisation: progress rings, target-marked bars, trend lines, all theme- and accessibility-aware | §27.11 |
 | D4 | Long, smooth scrolling lists (search results, day breakdowns, monthly views) on mid-range Android | NFR-P-08 |
-| D5 | Camera + barcode (Phase 2), local notifications (Phase 2), health-platform integration (Phase 3), widgets (Future) | §10 |
+| D5 | Camera + barcode, local notifications, health-platform integration — **all in the first release**; widgets and watch (v1.1) | §9.1 |
 | D6 | Reliable background sync scheduling | NFR-E-02 |
 | D7 | Fast iteration by **one developer**, indefinitely | TO-7 |
 | D8 | Low long-term maintenance burden: few dependencies, slow churn, predictable upgrades | NFR-M-* |
@@ -127,16 +127,20 @@ The matrix is a communication device, not the decision. The decision rests on th
 
 **3. Solo-developer throughput is the binding constraint.** This eliminates C and D on effort grounds regardless of their technical merits. Between A and B, throughput is close to a tie, so the tiebreakers are consistency (A) and OTA updates plus native-module breadth (B) — and for a chart-heavy, offline-first product, consistency wins.
 
-### 11.5 The honest case for React Native, and when to switch
+### 11.5 The case for React Native — evaluated and closed
 
-React Native + Expo is a defensible choice, and this recommendation should be reversed if **any** of the following is true:
+> **DECIDED IN REVIEW (2026-09-09): Flutter. Open question Q-15 is closed and this section is retained as a record of what was weighed, not as a live option.**
+
+React Native + Expo was a defensible alternative, and would have been the better answer if **any** of the following had held:
 
 1. **The developer is materially more productive in TypeScript than in Dart.** Framework advantages are smaller than developer-fluency advantages. This single factor outweighs the entire matrix above.
 2. **A web application is on the roadmap within 12 months.** Shared TS domain logic between React Native and a React web app is a large, real win that Flutter cannot match.
 3. **Rapid OTA hot-fixing is judged business-critical.** EAS Update is a genuine operational advantage for a one-person team, subject to the platforms' rules on what may be updated out of band.
 4. **The roadmap becomes dominated by deep native integrations** (widgets, watch, Live Activities), where Expo's module ecosystem and config plugins reduce friction.
 
-None of these currently holds, so the recommendation stands — but they should be checked explicitly before implementation begins (§37).
+None held, and the framework decision is now final. The one condition worth restating, because it is the only thing that would have overturned the analysis: **developer fluency outweighs every row of the matrix above.** That was considered and settled in favour of Flutter.
+
+The two capabilities forfeited by this decision — over-the-air JS updates and code reuse with a React web app — are addressed as follows: OTA is replaced by staged rollouts plus a remotely-toggleable configuration delivered with catalog deltas (§12.5); web reuse is replaced by the versioned calculation specification and golden vectors (§20.3), which make a second implementation verifiable rather than guesswork.
 
 ---
 
@@ -144,7 +148,9 @@ None of these currently holds, so the recommendation stands — but they should 
 
 ### 12.1 Recommendation
 
-> **Build Nourishly with Flutter, using a feature-first modular Clean Architecture, SQLite (Drift) as the on-device source of truth, and Supabase as the managed backend — with sync built into the data model from day one but switched on in Phase 2.** *(ADR-001, ADR-002, ADR-003, ADR-006)*
+> **Build Nourishly with Flutter, using a feature-first modular Clean Architecture, SQLite (Drift) as the on-device source of truth, and Supabase as the managed backend — live at first release.** *(ADR-001, ADR-002, ADR-003, ADR-006 revised)*
+
+*Both halves are now decisions rather than proposals: Flutter was confirmed in review, and the backend was moved into the first release.*
 
 ### 12.2 Recommended stack
 
@@ -156,16 +162,20 @@ None of these currently holds, so the recommendation stands — but they should 
 | Local database | **SQLite via Drift** | Typed SQL, migrations, reactive streams, transactions, FTS5, direct aggregate SQL for daily rollups | Isar (fast but single-maintainer risk and weaker relational aggregation), Hive (no query engine), ObjectBox (licensing/sync model), Realm (**rejected — Atlas Device Sync is deprecated**) |
 | Full-text search | **SQLite FTS5** with a custom tokenizer configuration and a transliteration column | Offline, fast at 30k rows, no extra dependency; transliteration column handles "paneer"/"panir" and Devanagari input | Client-side fuzzy libs (slower, no index), remote search (violates NFR-O-01) |
 | Key–value / prefs | `shared_preferences` for non-sensitive; `flutter_secure_storage` for tokens (NFR-S-02) | — | — |
-| Navigation | **`go_router`** | Declarative, deep-linkable (needed for notification taps in Phase 2), typed routes | Navigator 2.0 by hand (too costly), auto_route (codegen-heavy) |
+| Navigation | **`go_router`** | Declarative, deep-linkable (needed for notification deep links, which ship in v1.0), typed routes | Navigator 2.0 by hand (too costly), auto_route (codegen-heavy) |
 | Charts | **Custom `CustomPainter` widgets** for the ring and macro bars; a lightweight chart package (e.g. `fl_chart`) for line/bar trends, wrapped behind an internal `NourishlyChart` API | Bespoke primitives are the product's signature UI and must be accessible; the wrapper means the third-party dependency can be replaced without touching feature code | Adopting a chart library wholesale (loses control of accessibility and theming) |
 | Serialisation | `freezed` + `json_serializable` | Immutable models, exhaustive unions, generated equality — essential for a value-object-heavy domain | Hand-written (error-prone at this model size) |
-| Backend | **Supabase** — Postgres, GoTrue auth, Row Level Security, Storage, Edge Functions | Relational model matches the domain; RLS gives DB-enforced isolation (NFR-S-04); can be self-hosted, so it is an exit-able dependency | Firebase (NoSQL model is a poor fit for nutrient aggregation; vendor lock-in is harder to exit), custom backend (unjustifiable ops cost for a solo dev at this stage), AWS Amplify (heavier) |
+| Backend | **Supabase** — Postgres, GoTrue auth, Row Level Security, Storage, Edge Functions. **Live at first release** | Relational model matches the domain; RLS gives DB-enforced isolation (NFR-S-04); can be self-hosted, so it is an exit-able dependency. With the backend now in scope from day one, the managed-service choice matters more, not less: it is what keeps operations inside a solo developer's capacity (§31.6) | Firebase (NoSQL model is a poor fit for nutrient aggregation; vendor lock-in is harder to exit), custom backend (unjustifiable ops cost), AWS Amplify (heavier) |
 | Auth | Supabase Auth + Sign in with Apple + Google Sign-In + email OTP | §18 | — |
+| Barcode scanning | `mobile_scanner`, behind the `BarcodeScanner` port | Mature, actively maintained, wraps MLKit/AVFoundation; the port makes replacement a one-file change | ML Kit direct via platform channels (more work, no benefit) |
+| Local notifications | `flutter_local_notifications` + `timezone`, behind the `ReminderScheduler` port | Covers scheduling, quiet hours, and reboot rescheduling on both platforms | Server push (unnecessary — nothing in v1.0 requires server-initiated notification) |
+| Health platforms | A thin per-platform adapter behind `HealthDataPort` (HealthKit / Health Connect) | Nutrient type mapping and consent differ enough per platform that a shared plugin abstraction leaks; an explicit adapter is clearer and safer for a consent-sensitive surface | A general-purpose health plugin (convenient, but obscures per-platform consent semantics) |
+| Localisation | Flutter `intl` + ARB files, English + Hindi at launch | Standard; strings externalised from the first commit | — |
 | Analytics | Privacy-preserving, event-only, **no nutrition or health payloads** (NFR-S-05); self-hosted or minimal vendor | Deliberately constrained | — |
 | Crash reporting | Sentry with PII scrubbing and a redaction test (NFR-S-08) | — | Firebase Crashlytics (pulls in more Google SDK surface) |
 | CI/CD | GitHub Actions + Fastlane (or Codemagic if Actions runner cost becomes an issue) | — | — |
 
-*[ASSUMPTION A-3] Supabase's free/low tier is adequate through early adoption. Re-evaluate at ~10k MAU (§31.5).*
+*[ASSUMPTION A-3] Supabase's low tier is adequate through early adoption. Because the backend is now live from launch rather than deferred, the cost begins on day one with no revenue against it — see §31.5 and open question Q-21.*
 
 ### 12.3 Package/module layout
 
@@ -208,12 +218,12 @@ nourishly/
 
 **The load-bearing rule:** `nutrition_core` and `nourishly_domain` must not import Flutter, Drift, or any HTTP client. Enforced in CI by an import lint (NFR-M-02). This is what makes the calculation engine testable in milliseconds, portable to a server if server-side recompute is ever needed, and immune to UI refactors.
 
-### 12.4 What is deliberately *not* adopted in the MVP
+### 12.4 What is deliberately *not* adopted
 
 | Not adopted | Why |
 |---|---|
-| A code-generation-heavy API client / GraphQL | No backend traffic in MVP; premature |
-| A remote feature-flag service | A local config file plus a catalog-delta-delivered config covers it |
+| GraphQL | The API is a batch synchronisation surface, not a flexible query surface (§24.5). GraphQL solves a problem this product does not have, and adds a schema layer to maintain |
+| A remote feature-flag service | A local config file plus a catalog-delta-delivered config covers it — and this doubles as the kill-switch mechanism that compensates for having no OTA code updates (§12.5) |
 | A dependency-injection framework beyond Riverpod | Riverpod is sufficient; a second DI mechanism is pure cost |
 | Melos / heavy monorepo tooling | Path dependencies suffice at this size; adopt only if the package count grows |
 | A design-system package published externally | Internal package is enough |

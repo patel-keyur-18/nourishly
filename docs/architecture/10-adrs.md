@@ -6,20 +6,22 @@
 
 ## 32. Architecture Decision Records
 
-**Status of all ADRs: Proposed** — pending review and finalisation (§37). Each records context, the options weighed, the decision, its rationale, the trade-offs accepted, and what it implies for the future.
+**Status after the review of 2026-09-09:** ADR-001 and ADR-006 are **Accepted** (ADR-006 revised — the backend now ships at launch). ADR-002 through ADR-005 and ADR-007 through ADR-009 are **Accepted** on the reviewer's instruction to proceed with the recommendations. **ADR-010 remains Proposed pending nutrition-professional review** (Q-6) — it is the one decision that should not be locked without outside expertise.
+
+Each ADR records context, the options weighed, the decision, its rationale, the trade-offs accepted, and what it implies for the future.
 
 | ADR | Decision | Confidence |
 |---|---|---|
-| [ADR-001](#adr-001--cross-platform-technology-flutter) | Flutter for the client | High, with a named reversal condition |
+| [ADR-001](#adr-001--cross-platform-technology-flutter) | Flutter for the client | **Decided** — Q-15 closed |
 | [ADR-002](#adr-002--mobile-architecture-feature-first-modular-clean-architecture) | Feature-first modular Clean Architecture | High |
 | [ADR-003](#adr-003--local-database-sqlite-via-drift) | SQLite via Drift | High |
 | [ADR-004](#adr-004--offline-first-strategy-local-source-of-truth) | Local source of truth, offline-first | Very high |
 | [ADR-005](#adr-005--synchronisation-strategy-outbox--delta-pull-with-domain-aware-merge) | Outbox + delta pull, domain-aware merge | High |
-| [ADR-006](#adr-006--backend-strategy-sync-ready-model-now-managed-backend-in-phase-2) | Sync-ready model now, managed backend in Phase 2 | Medium-high |
+| [ADR-006](#adr-006--backend-strategy-full-backend-at-launch-revised) | **Revised:** full backend at launch | **Decided** by the reviewer |
 | [ADR-007](#adr-007--authentication-strategy-guest-first-no-signup-wall) | Guest-first, no signup wall | Very high |
 | [ADR-008](#adr-008--food-nutrition-data-owned-curated-catalog-from-open-sources) | Owned curated catalog from open sources | High, one legal dependency |
 | [ADR-009](#adr-009--reporting-materialised-daily-summaries-on-demand-periods) | Materialised dailies, on-demand periods | High |
-| [ADR-010](#adr-010--nutrition-scoring-capped-weighted-sub-scores-with-coverage-gating) | Capped weighted sub-scores with coverage gating | Medium — needs expert review |
+| [ADR-010](#adr-010--nutrition-scoring-capped-weighted-sub-scores-with-coverage-gating) | Capped weighted sub-scores with coverage gating | Medium — **still needs expert review (Q-6)** |
 
 ---
 
@@ -29,7 +31,7 @@
 
 **Options considered.** Flutter · React Native + Expo · Kotlin Multiplatform (with Compose MP or two native UIs) · fully native (SwiftUI + Compose) · PWA/Capacitor.
 
-**Decision.** **Flutter**, on the stable channel, with Dart 3.
+**Decision.** **Flutter**, on the stable channel, with Dart 3. *(Confirmed by the reviewer, 2026-09-09. Q-15 is closed and this decision is final for v1.0.)*
 
 **Rationale.**
 1. Flutter owns its rendering pipeline, so the bespoke, animated, accessible charts that constitute this product's signature UI are implemented once and behave identically on both platforms. For a chart-heavy app this is a compounding advantage over the product's whole life.
@@ -46,7 +48,9 @@
 
 **Future implications.** Committing to Flutter forecloses cheap code reuse with a React web app. If a web client becomes a priority, the options are Flutter Web (adequate for an app-like surface, poor for a marketing/SEO site) or a separate web implementation with the calculation rules re-implemented against the golden vectors (§20.3) — which is precisely why those vectors exist.
 
-**Reversal condition.** Revisit if (a) the developer is materially more productive in TypeScript, (b) a web app enters the 12-month roadmap, (c) OTA hot-fixing becomes business-critical, or (d) the roadmap becomes dominated by deep native integrations. Any of these makes React Native + Expo the better answer (§11.5).
+**Reversal condition — now closed.** The decision was taken with the four reversal conditions (developer TypeScript fluency, a near-term web app, business-critical OTA hot-fixing, a native-integration-dominated roadmap) explicitly on the table. None applies. Flutter is final for v1.0.
+
+The one forfeited capability that needs an active substitute is OTA hot-fixing: it is replaced by staged rollouts plus a remotely-toggleable configuration delivered through the catalog delta channel, which — now that the catalog channel ships at launch (ADR-006 revised) — is available from day one. That was not true under the staged plan, so this decision is better supported now than when it was made.
 
 ---
 
@@ -117,12 +121,12 @@
 1. Matches actual usage: the moments of highest logging intent are often the moments of worst connectivity.
 2. It is an architectural guarantee rather than a feature: `LogFoodUseCase` has no network dependency, so a connectivity error in the logging path is structurally impossible (NFR-O-02).
 3. Every read is local, so performance is uniform and independent of network conditions (NFR-P-01…07).
-4. It enables an MVP with no backend at all (ADR-006), removing the largest engineering and operational cost from the critical path.
+4. It makes the backend optional to *capability* rather than load-bearing: the app is complete without it, and the server adds durability and reach rather than function.
 5. It is the strongest privacy property the product has: with no account, data never leaves the device (PR-1).
-6. A backend outage degrades the app to exactly its MVP behaviour — everything works, nothing syncs. Backend incidents become P2.
+6. A backend outage leaves the app fully working and merely not syncing. Backend incidents are P2 — the property that makes solo operation of production infrastructure viable (§13.5).
 
 **Trade-offs accepted.**
-- Device loss without an account means data loss. Mitigated by export in MVP and sync in Phase 2, and stated honestly to users rather than glossed over.
+- Device loss while in guest mode means data loss. Mitigated by account-based sync from launch (ADR-006 revised) and by account-free local export, and stated honestly to users rather than glossed over.
 - Sync becomes genuinely harder than in a server-authoritative model — the client must reconcile rather than accept. Addressed by ADR-005 and by modelling choices that make most conflicts impossible.
 - The catalog must be bundled, increasing app size.
 
@@ -132,7 +136,7 @@
 
 ### ADR-005 — Synchronisation strategy: outbox + delta pull with domain-aware merge
 
-**Context.** Phase 2 must synchronise a local source of truth across devices, tolerating long offline periods, partial failures, lost acknowledgements, and untrustworthy device clocks, without ever losing or duplicating a user's data.
+**Context.** The product must synchronise a local source of truth across devices from its first release, tolerating long offline periods, partial failures, lost acknowledgements, and untrustworthy device clocks, without ever losing or duplicating a user's data.
 
 **Options considered.**
 - **A. Full state replacement** — upload/download everything. Simple; unusable at scale and destructive on conflict.
@@ -158,41 +162,44 @@
 5. Server-assigned sequence numbers make ordering independent of untrustworthy device clocks.
 
 **Trade-offs accepted.**
-- More implementation complexity than naive LWW — an estimated 2–3 weeks of Phase 2.
+- More implementation complexity than naive LWW — an estimated 2–3 weeks, now on the pre-launch critical path rather than in a later phase.
 - Tombstones consume storage and require a purge job.
 - LWW still loses one side of a genuine concurrent edit; retained in a local conflict log for 30 days for diagnostics rather than prompting the user, since asking a single user to adjudicate their own edit is bad UX.
 
-**Future implications.** The MVP schema must carry UUID keys, timestamps, tombstones, `owner_id`, and sync-state columns from the first migration. This is the load-bearing consequence of ADR-006 and the reason that decision is safe.
+**Future implications.** The schema must carry UUID keys, timestamps, tombstones, `owner_id`, and sync-state columns from the very first migration. This was the load-bearing prerequisite that made ADR-006's reversal a sequencing change rather than a redesign — and it remains mandatory, because these columns cannot be retrofitted onto a populated production database without pain.
 
 ---
 
-### ADR-006 — Backend strategy: sync-ready model now, managed backend in Phase 2
+### ADR-006 — Backend strategy: full backend at launch *(revised)*
 
-**Context.** A backend enables cross-device sync, backup, and catalog updates. It is also the largest single engineering and operational cost in the plan, and none of it is needed to validate the core product hypothesis.
+> **Status: Accepted (revised 2026-09-09).** Supersedes the original proposal, which recommended shipping with no backend and adding one in a second phase. The reviewer chose to ship the complete application. The superseded reasoning is retained below because it names the risks this decision accepts.
+
+**Context.** A backend enables cross-device sync, cloud backup, account recovery, and over-the-air food-catalog updates. It is also the largest single engineering and operational cost in the plan, and it brings production operations and a live regulatory surface with it.
 
 **Options considered.**
-- **A. No backend ever.** Cheapest. Rejected: device loss means data loss; users who change phones churn permanently; catalog corrections need an app-store release.
-- **B. Full backend from day one.** Most capable. Rejected for the MVP: auth + sync + ops is roughly 5–7 weeks that delays learning without improving the thing being learned.
-- **C. Hybrid — build the model sync-ready, ship no backend in MVP, add a managed backend in Phase 2.** ✅
+- **A. No backend ever.** Cheapest. Rejected: device loss means data loss; users who change phones churn permanently; catalog corrections would require an app-store release.
+- **B. Sync-ready model now, managed backend in a second phase.** *Originally recommended.* Ships ~14–18 weeks; defers the largest subsystem until the core product is validated by real users; no servers to operate during the highest-uncertainty period.
+- **C. Full backend in the first release.** ✅ **Chosen by the reviewer.**
 
-**Decision.** **Option C**, with **Supabase** (Postgres + Auth + RLS + Storage + Edge Functions) as the Phase 2 platform. MVP ships with **no servers to operate**.
+**Decision.** **Option C.** Supabase (Postgres + Auth + RLS + Storage + Edge Functions) is live at first release. Accounts, multi-device synchronisation, cloud backup, guest→account migration, over-the-air catalog deltas, and barcode resolution against a hosted catalog all ship in v1.0.
 
-**Rationale.**
-1. The MVP's real need is "don't lose my data", which export satisfies. Sync satisfies "use it on two devices" — a want that only appears after the product has proven useful.
-2. Shipping ~6 weeks earlier means learning ~6 weeks earlier, and the food catalog is far more likely to be wrong than the sync design.
-3. The cost of *retrofitting* sync is enormous (rewriting keys, adding tombstones, migrating every existing user's database). The cost of *designing for it now* is roughly a day of schema work. Doing the cheap thing now and the expensive thing never is the whole point of the decision.
-4. Supabase's relational model matches the domain; RLS enforces isolation at the database rather than only in application code; and because it is Postgres and self-hostable, it is an exitable dependency.
-5. No servers in the MVP means no ops, no on-call, and no infrastructure cost during the highest-uncertainty phase.
+**Rationale for the decision as taken.**
+1. **Users only migrate devices once before they judge you.** A guest-only first release loses every user who changes phones before the sync release lands, and those users do not come back. Shipping backup at launch removes the product's most avoidable churn cause (P-6).
+2. **Over-the-air catalog delivery materially de-risks the largest scope risk in the plan.** Under Option B the launch catalog had to be right, because fixing it meant an app-store release. With deltas live at launch, the curated Indian tier can start smaller and grow continuously against real search-failure telemetry (§31.6). R-1 shrinks as a direct consequence — a genuine synergy rather than a consolation.
+3. **Nothing is thrown away or rebuilt.** The schema, ID scheme, tombstones, and outbox were already designed for sync, so this is a sequencing change, not a redesign. The engineering is additive.
+4. **A complete product is a defensible product.** Reviewing against competitors that all have accounts and sync, launching without them invites a first impression that is hard to correct.
 
-**Trade-offs accepted.**
-- MVP users lose data if they lose their device without exporting. Stated plainly in onboarding.
-- No catalog updates without an app release in the MVP.
-- Some Phase 2 work (auth, migration flows) is deferred rather than eliminated.
-- A dependency on a managed vendor, mitigated by the self-hostable OSS core and by avoiding proprietary features in the hot path.
+**Trade-offs accepted — these are real and should be revisited if the schedule slips.**
+- **~7 additional weeks** of engineering (auth, sync engine, migration, RLS, backend test infrastructure), contributing to a 32–38 week runway against 14–18.
+- **Roughly four extra months before any real user touches the product** (R-20). The two largest uncertainties in this design — catalog coverage (A-18) and logging speed (R-4) — can only be settled by real users. *Mitigation, which is now a schedule requirement rather than a suggestion: dogfooding from week 9 and a closed beta from week 20 (§36).*
+- **Production operations from day one** — backup verification, monitoring, patching, incident response (§13.5).
+- **A live compliance surface from day one** — DPDP data-fiduciary obligations, including statutory breach notification, attach at launch rather than at a later phase (§30.1). Legal review becomes a prerequisite for *building* the backend, not for launching it.
+- **Infrastructure cost from day one with no revenue** (§31.5, Q-21).
+- **Two subsystems whose bugs are unrecoverable now ship without a prior local-only shakedown period**: guest→account migration (R-5) and sync (R-6). Both are elevated to Critical risks as a direct result of this decision.
 
-**Future implications.** The MVP schema **must** include UUID keys, `owner_id`, `created_at`/`updated_at`, `deleted_at`, sync-state columns, and an outbox table, even though nothing reads them at first. Skipping this to save a day would invalidate the whole decision.
+**The architectural risk this introduces, stated plainly.** A working API sitting there is a standing temptation to put a network call on a path that does not need one. It is always easier to call a server than to write the offline path. AP-1 and ADR-004 are unchanged, and §16.1 now says so explicitly — but the discipline is now a matter of ongoing vigilance rather than of physical impossibility. **Every pull request that adds a network call to a read or write path should be treated as an architecture change.**
 
----
+**Future implications.** With the backend live, later additions (server push, hosted AI parsing, professional sharing) become infrastructure decisions rather than build-a-backend projects. The corresponding hazard is scope gravity: capabilities become easy to add because the platform is there, not because a requirement demanded them. §29.3's decision to keep notifications local despite having a backend available is the reference example of resisting that pull.
 
 ### ADR-007 — Authentication strategy: guest-first, no signup wall
 
@@ -200,7 +207,7 @@
 
 **Options considered.** Account required upfront · account required after N days · **guest-first with optional accounts** · device-identity-only (no accounts ever).
 
-**Decision.** **Guest-first.** Full functionality, forever, with no account. Optional accounts in Phase 2 via Sign in with Apple, Google Sign-In, and email OTP. No passwords.
+**Decision.** **Guest-first.** Full functionality, forever, with no account. Optional accounts — available from the first release — via Sign in with Apple, Google Sign-In, and email OTP. No passwords.
 
 **Rationale.**
 1. The first-run experience should reach the first logged food in under 90 seconds; an account wall makes that impossible.
@@ -217,6 +224,8 @@
 
 **Future implications.** The `owner_id` sentinel must exist from the first schema version. Any future feature requiring server identity (family sharing, dietician access) must degrade gracefully for guests rather than forcing an upgrade.
 
+**Interaction with ADR-006 as revised.** Because sync now ships at launch, guest→account migration is live from the first release and is the modal path into an account rather than a later special case. It carries no prior period of local-only operation in which to find its bugs, which is why R-5 is a Critical risk and why §18.5's verification step (reconcile per-entity counts before claiming success) is a hard requirement rather than a refinement.
+
 ---
 
 ### ADR-008 — Food nutrition data: owned curated catalog from open sources
@@ -225,7 +234,7 @@
 
 **Options considered.** Commercial nutrition API (Nutritionix, Edamam, FatSecret, Spoonacular) · public data only (USDA FDC, Open Food Facts) · fully user-generated · **owned curated catalog built from open sources plus manual Indian curation** · a hybrid with a commercial API as the primary source.
 
-**Decision.** **Own the catalog.** Build it offline from public-domain and open-licensed sources, add a hand-curated Indian tier of 1,500–2,500 items with correct household measures, bundle it in the app, and update it by delta in Phase 2. Keep a `FoodDataProvider` port so third-party providers can be added later as *enrichment*, never as a dependency.
+**Decision.** **Own the catalog.** Build it offline from public-domain and open-licensed sources, add a hand-curated Indian tier of 1,500–2,500 items with correct household measures, bundle it in the app, and update it by over-the-air delta from the first release. Keep a `FoodDataProvider` port so third-party providers can be added later as *enrichment*, never as a dependency.
 
 **Rationale.**
 1. **Most commercial nutrition APIs prohibit persistent local caching. Offline-first requires it. They are architecturally incompatible** — this single constraint, not cost, is decisive (§19.3).
@@ -237,7 +246,7 @@
 
 **Trade-offs accepted.**
 - **3–4 weeks of manual curation** — the largest single non-engineering cost in the plan and the biggest scope risk (§33, R-1).
-- The catalog ages between releases until delta updates ship in Phase 2.
+- ~~The catalog ages between releases.~~ **No longer a trade-off:** delta updates ship at launch (ADR-006 revised), so the catalog improves continuously. This is the clearest benefit the full-application decision delivers to this ADR, and it lowers R-1.
 - Bundling adds 25–45 MB to the app.
 - A legal dependency: Indian food-composition source licensing must be verified before use ([OPEN Q-1]). Fallback if it cannot be cleared: build the Indian tier from USDA ingredient data plus published dish compositions, with an explicit accuracy caveat.
 - ODbL share-alike obligations for Open Food Facts data must be understood and complied with ([OPEN Q-2]).

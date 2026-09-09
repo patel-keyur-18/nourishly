@@ -18,26 +18,28 @@ The product problem is not "can we sum calories." Calorie summing is trivial. Th
 
 ### Recommended technical direction
 
+*Confirmed in review, 2026-09-09: Flutter (ADR-001) and full-application launch (ADR-006, revised).*
+
 | Concern | Recommendation | ADR |
 |---|---|---|
-| Client framework | Flutter (Dart) | ADR-001 |
+| Client framework | **Flutter (Dart)** — decided | ADR-001 |
 | Client architecture | Feature-first modular Clean Architecture; pure-Dart `nutrition_core` domain package; Riverpod for DI/state | ADR-002 |
 | Local storage | SQLite via Drift, on-device source of truth | ADR-003 |
 | Offline model | Offline-first; local write-through; UI never blocks on network | ADR-004 |
 | Sync | Outbox + delta pull with server sequence cursor; append-only log semantics make most conflicts structurally impossible | ADR-005 |
-| Backend | Managed BaaS (Supabase: Postgres + Auth + RLS + Edge Functions). Sync-ready from day one, sync *switched on* in Phase 2 | ADR-006 |
-| Auth | Guest-first, no signup wall. Apple / Google / email OTP when the user opts in. Guest→account migration designed in from the start | ADR-007 |
-| Food data | Owned, curated catalog assembled from public-domain and open sources + hand-curated Indian food set; bundled seed + delta updates; provider adapter for future third parties | ADR-008 |
+| Backend | **Managed BaaS (Supabase: Postgres + Auth + RLS + Edge Functions), live at first release** | ADR-006 |
+| Auth | Guest-first, no signup wall. Apple / Google / email OTP when the user opts in. Lossless guest→account migration | ADR-007 |
+| Food data | Owned, curated catalog assembled from public-domain and open sources + hand-curated Indian food set; bundled seed + over-the-air deltas; provider adapter for barcode and future sources | ADR-008 |
 | Reporting | Materialised daily summaries; weekly/monthly aggregated on demand over those summaries | ADR-009 |
 | Scoring | Transparent composite of capped, individually-visible sub-scores with explicit data-coverage gating | ADR-010 |
 
-### MVP in one line
+### v1.0 in one line
 
-Guest-mode, offline-first food and water logging against a curated Indian + international food catalog, with a daily dashboard, a daily performance summary, and a weekly report — shipped before cloud sync, barcode scanning, or AI logging.
+Guest-mode, offline-first food and water logging against a curated Indian and international catalog, with barcode scanning, recipes, personalised targets, daily/weekly/monthly reports, reminders, health-platform integration, and full cross-device sync and backup — in English and Hindi, at first release.
 
-Estimated to a working, shippable MVP: **14–18 weeks of solo full-time work** (§36), of which roughly a quarter is food-catalog curation rather than software.
+Estimated to a shippable v1.0: **32–38 weeks of solo full-time work** (§36), of which roughly three weeks is food-catalog curation rather than software, and roughly seven weeks is the backend, auth, and synchronisation subsystem.
 
----
+**The schedule risk this creates, and its mitigation, are stated in §9.5 and must not be skipped.**
 
 ## 2. Product Vision
 
@@ -59,7 +61,7 @@ Nourishly is a **wellness and self-knowledge tool**, explicitly not a medical de
 
 - Not a fitness/exercise tracker (integration, yes; ownership, no).
 - Not a meal-delivery or recipe-commerce product.
-- Not a coaching or dietician marketplace in the MVP (Future, §10).
+- Not a coaching or dietician marketplace in v1.0 (Future, §10).
 - Not a social network. No feeds, no comparison to other users.
 
 ---
@@ -89,12 +91,14 @@ Nourishly is a **wellness and self-knowledge tool**, explicitly not a medical de
 | TO-4 | History is immutable by construction | Snapshotted nutrients + effective-dated targets (§20.4, §20.5) |
 | TO-5 | The domain layer has zero dependency on Flutter, on the database, or on the network | Enables fast unit testing and a possible future non-Flutter client (§14) |
 | TO-6 | Sync is additive, idempotent, and resumable | Partial sync must never corrupt state (§17) |
-| TO-7 | Solo-developer operable | No component requires ops attention more often than weekly (§31) |
+| TO-7 | Solo-developer operable | No component requires ops attention more often than weekly. With the backend live from launch (ADR-006 revised), this constraint tightens: managed services only, no bespoke infrastructure, and an incident posture that tolerates backend downtime because the client keeps working (§31.6) |
 
-### 3.3 Explicit non-goals for v1
+### 3.3 Explicit non-goals for v1.0
 
-- Multi-user / family accounts.
-- Server-side heavy analytics or ML.
+- Multi-user / family / household accounts.
+- Server-side heavy analytics or machine learning.
+- Server-side computation of nutrition totals, targets, scores, or reports — these stay on the device (AP-5).
+- AI-assisted logging (photo or natural language) — deferred to v1.1 with its seams built in (§9.4).
 - Web client.
 - Real-time collaboration of any kind.
 - Anything requiring regulatory clearance as a medical device.
@@ -108,9 +112,9 @@ Nourishly is a **wellness and self-knowledge tool**, explicitly not a medical de
 | P-1 | "Logging takes too long, so I stop." | The dominant churn reason in food-tracking apps. Every extra screen compounds across 4–6 logging events per day. | Recents-first search, meal templates, one-tap repeat, quick-add water chips (§27.5, §27.8) |
 | P-2 | "The app doesn't know my food." | Global databases are built around Western supermarket items. "2 rotis and a katori of dal" has no clean entry in most of them. | Curated Indian food set with household measures as first-class servings (§19.4) |
 | P-3 | "I don't know what the numbers mean." | Users see 1,800 kcal / 62 g protein and cannot judge it. | Personalised targets + plain-language daily verdict + capped sub-scores (§21) |
-| P-4 | "I only find out I did badly after the day is over." | Retrospective-only feedback cannot change behaviour. | Live dashboard with remaining-budget framing; midday nudges (Post-MVP, §29) |
+| P-4 | "I only find out I did badly after the day is over." | Retrospective-only feedback cannot change behaviour. | Live dashboard with remaining-budget framing; conditional reminders (§29) |
 | P-5 | "I can't see whether I'm actually improving." | Single-day view gives no signal against day-to-day noise. | Weekly/monthly trends with moving averages and period-over-period comparison (§25) |
-| P-6 | "I lose everything when I change phones." | Local-only apps punish device migration. | Optional account with sync and export from Phase 2; export available in MVP (§30.6) |
+| P-6 | "I lose everything when I change phones." | Local-only apps punish device migration. | Optional account with cross-device sync and cloud backup at launch; full data export regardless (§30.6) |
 | P-7 | "No signal at the restaurant / on the train." | Logging happens exactly where connectivity is worst. | Offline-first with bundled food catalog (§16) |
 | P-8 | "I don't trust that the app isn't selling my health data." | Nutrition data is sensitive; users are increasingly aware. | Guest mode by default, no third-party analytics on health data, in-app export and deletion (§30) |
 | P-9 | "It tells me I'm deficient in things I'm probably not." | Sparse micronutrient data misread as zeros. | Coverage-gated micronutrient reporting (§21.5) |
@@ -119,7 +123,7 @@ Nourishly is a **wellness and self-knowledge tool**, explicitly not a medical de
 
 ## 5. User Personas
 
-*[ASSUMPTION A-2] Personas are constructed from the stated product brief (personal use, India-first, general wellness). They are hypotheses for validation, not research findings. Validate with 8–12 user interviews before locking MVP scope (§37).*
+*[ASSUMPTION A-2] Personas are constructed from the stated product brief (personal use, India-first, general wellness). They are hypotheses for validation, not research findings. Validate with 8–12 user interviews before locking v1.0 scope (§37).*
 
 ### Persona 1 — Ananya, 29, Bengaluru — "The Consistency Seeker" *(primary)*
 Software engineer, mostly vegetarian, eats a mix of home-cooked Indian food and office cafeteria meals. Goal: general health and "eating enough protein." Tracks in bursts, abandons when logging gets tedious.
@@ -132,7 +136,7 @@ Software engineer, mostly vegetarian, eats a mix of home-cooked Indian food and 
 Lifts four days a week. Goal: muscle gain at a modest surplus. Wants macro precision and will tolerate more setup for more accuracy.
 - **Needs:** custom foods and recipes for his repeated meals; accurate macro targets; weekly adherence trend.
 - **Frustrations:** apps that hide macros behind a paywall; being unable to save "post-workout meal" as one entry.
-- **Design implications:** meal templates as an MVP feature, not a nicety; per-gram entry; target overrides.
+- **Design implications:** meal templates and recipes as launch features, not niceties; per-gram entry; target overrides.
 - **Devices:** iPhone, good connectivity.
 
 ### Persona 3 — Meera, 46, Ahmedabad — "The Health-Nudged Adult" *(secondary)*
@@ -218,155 +222,161 @@ Search fails → "Create custom food" is offered inline at the bottom of results
 
 ## 7. Functional Requirements
 
-Priority key: **M** = MVP · **S** = Should-have (MVP if time allows) · **P** = Post-MVP · **F** = Future.
+Priority key: **1** = v1.0 must-have · **S** = v1.0 should-have · **1.1** = first post-launch release · **F** = future.
+
+*Revised after the review decision to ship the complete application (§9). Requirements previously deferred to Post-MVP — accounts, sync, barcode, reminders, recipes, health integration, monthly reports, Hindi — are now v1.0.*
 
 ### 7.1 User & Profile Management
 
 | ID | Requirement | Pri |
 |---|---|---|
-| FR-U-01 | Use the app fully in guest mode with no account | M |
-| FR-U-02 | Create/edit profile: date of birth (or age), biological sex, height, weight, activity level | M |
-| FR-U-03 | Select a primary goal: general health, weight maintenance, weight loss, weight gain, muscle gain, improved hydration, nutrition consistency | M |
-| FR-U-04 | System derives daily targets (energy, macros, water, micros) from profile + goal, with the derivation explained in plain language | M |
-| FR-U-05 | Manually override any derived target; overrides are marked as user-set and survive profile changes until reset | M |
-| FR-U-06 | Profile changes take effect from the change date forward and do not alter historical targets or scores | M |
-| FR-U-07 | Set unit preferences: metric/imperial, ml/L/fl oz, kg/lb, cm/ft-in | M |
-| FR-U-08 | Set week start day (Sun/Mon) and daily rollover time | S |
-| FR-U-09 | Choose up to 3 "focus nutrients" promoted onto the dashboard | S |
-| FR-U-10 | Create an account (Apple / Google / email OTP) and migrate guest data | P |
-| FR-U-11 | Sign out; local data behaviour on sign-out is explicit and confirmed by the user | P |
-| FR-U-12 | Delete account and all server data from within the app | P |
-| FR-U-13 | Export all personal data (JSON + CSV) | M |
-| FR-U-14 | Record body weight over time as a series | S |
+| FR-U-01 | Use the app fully in guest mode with no account | 1 |
+| FR-U-02 | Create/edit profile: date of birth (or age), biological sex, height, weight, activity level | 1 |
+| FR-U-03 | Select a primary goal: general health, weight maintenance, weight loss, weight gain, muscle gain, improved hydration, nutrition consistency | 1 |
+| FR-U-04 | System derives daily targets (energy, macros, water, micros) from profile + goal, with the derivation explained in plain language | 1 |
+| FR-U-05 | Manually override any derived target; overrides are marked as user-set and survive profile changes until reset | 1 |
+| FR-U-06 | Profile changes take effect from the change date forward and do not alter historical targets or scores | 1 |
+| FR-U-07 | Set unit preferences: metric/imperial, ml/L/fl oz, kg/lb, cm/ft-in | 1 |
+| FR-U-08 | Set week start day (Sun/Mon) and daily rollover time | 1 |
+| FR-U-09 | Choose up to 3 "focus nutrients" promoted onto the dashboard | 1 |
+| FR-U-10 | Create an account (Apple / Google / email OTP) and migrate guest data | 1 |
+| FR-U-11 | Sign out; local data behaviour on sign-out is explicit and confirmed by the user | 1 |
+| FR-U-12 | Delete account and all server data from within the app | 1 |
+| FR-U-13 | Export all personal data (JSON + CSV) | 1 |
+| FR-U-14 | Record body weight over time as a series | 1 |
 | FR-U-15 | Set a "reason for tracking" that tunes which insights are surfaced | F |
+| FR-U-16 | Record an optional dietary preference (vegetarian, vegan, eggetarian, Jain, halal, none) that improves search ranking and insight suggestions; skippable, and framed as sensitive data (§30.1) | 1 |
 
 ### 7.2 Food Catalog & Food Management
 
 | ID | Requirement | Pri |
 |---|---|---|
-| FR-F-01 | Search the catalog by name with fuzzy/prefix matching, fully offline | M |
-| FR-F-02 | Search results rank recents and favourites above general catalog matches | M |
-| FR-F-03 | View a food's detail: nutrients per serving and per 100 g, available servings, data provenance and quality tier | M |
-| FR-F-04 | Filter/scope search (e.g. Indian foods, my foods) | S |
-| FR-F-05 | Create a custom food with name, servings, and nutrients; only name + one serving + energy are mandatory | M |
-| FR-F-06 | Edit and delete custom foods; deleting a food already logged does not alter past entries | M |
-| FR-F-07 | Mark/unmark any food as a favourite | M |
-| FR-F-08 | Recently logged foods list, ordered by recency and frequency | M |
-| FR-F-09 | Each food carries one or more named servings with a gram/ml weight (including household measures: katori, roti, glass, cup, tbsp, piece) | M |
-| FR-F-10 | Log by direct weight/volume as an alternative to a named serving | M |
-| FR-F-11 | Catalog updates delivered incrementally without an app-store release | P |
-| FR-F-12 | Report a data error on a catalog food | P |
-| FR-F-13 | Barcode scan to resolve a packaged food | P |
-| FR-F-14 | Create a recipe from ingredients; nutrients computed per portion, with cooking yield factor | F |
+| FR-F-01 | Search the catalog by name with fuzzy/prefix matching, fully offline | 1 |
+| FR-F-02 | Search results rank recents and favourites above general catalog matches | 1 |
+| FR-F-03 | View a food's detail: nutrients per serving and per 100 g, available servings, data provenance and quality tier | 1 |
+| FR-F-04 | Filter/scope search (e.g. Indian foods, my foods) | 1 |
+| FR-F-05 | Create a custom food with name, servings, and nutrients; only name + one serving + energy are mandatory | 1 |
+| FR-F-06 | Edit and delete custom foods; deleting a food already logged does not alter past entries | 1 |
+| FR-F-07 | Mark/unmark any food as a favourite | 1 |
+| FR-F-08 | Recently logged foods list, ordered by recency and frequency | 1 |
+| FR-F-09 | Each food carries one or more named servings with a gram/ml weight (including household measures: katori, roti, glass, cup, tbsp, piece) | 1 |
+| FR-F-10 | Log by direct weight/volume as an alternative to a named serving | 1 |
+| FR-F-11 | Catalog updates delivered incrementally without an app-store release | 1 |
+| FR-F-12 | Report a data error on a catalog food | S |
+| FR-F-13 | Barcode scan to resolve a packaged food | 1 |
+| FR-F-14 | Create a recipe from ingredients; nutrients computed per portion, with cooking yield factor | 1 |
 | FR-F-15 | Duplicate detection when creating a custom food that closely matches a catalog food | S |
 
 ### 7.3 Meal Logging
 
 | ID | Requirement | Pri |
 |---|---|---|
-| FR-M-01 | Log a food to a meal slot: breakfast, lunch, dinner, snack | M |
+| FR-M-01 | Log a food to a meal slot: breakfast, lunch, dinner, snack | 1 |
 | FR-M-02 | Meal slot pre-selected based on time of day and the user's own historical pattern | S |
-| FR-M-03 | Set quantity as a multiplier of a chosen serving (supports fractional values) | M |
-| FR-M-04 | Log to any date, not just today (back-fill) | M |
-| FR-M-05 | Edit or delete a log entry | M |
-| FR-M-06 | Move an entry between meal slots | S |
-| FR-M-07 | Copy a meal, a day, or a set of entries to another date | S |
-| FR-M-08 | Save a set of entries as a named meal template ("My breakfast") | M |
-| FR-M-09 | Log a meal template in one action | M |
-| FR-M-10 | Edit and delete meal templates | M |
-| FR-M-11 | Define custom meal categories beyond the default four | S |
-| FR-M-12 | Attach an optional note or photo to an entry | P |
-| FR-M-13 | Log a meal by natural-language description | F |
-| FR-M-14 | Log a meal from a photo | F |
+| FR-M-03 | Set quantity as a multiplier of a chosen serving (supports fractional values) | 1 |
+| FR-M-04 | Log to any date, not just today (back-fill) | 1 |
+| FR-M-05 | Edit or delete a log entry | 1 |
+| FR-M-06 | Move an entry between meal slots | 1 |
+| FR-M-07 | Copy a meal, a day, or a set of entries to another date | 1 |
+| FR-M-08 | Save a set of entries as a named meal template ("My breakfast") | 1 |
+| FR-M-09 | Log a meal template in one action | 1 |
+| FR-M-10 | Edit and delete meal templates | 1 |
+| FR-M-11 | Define custom meal categories beyond the default four | 1 |
+| FR-M-12 | Attach an optional note or photo to an entry | S |
+| FR-M-13 | Log a meal by natural-language description | 1.1 |
+| FR-M-14 | Log a meal from a photo | 1.1 |
 
 ### 7.4 Water & Hydration
 
 | ID | Requirement | Pri |
 |---|---|---|
-| FR-W-01 | Log water with one tap from configurable quick-add amounts | M |
-| FR-W-02 | Log a custom amount | M |
-| FR-W-03 | Configure quick-add amounts and the display unit (ml / L / fl oz) | M |
-| FR-W-04 | Daily water target derived from profile, manually overridable | M |
-| FR-W-05 | Live daily hydration progress on the dashboard | M |
-| FR-W-06 | Undo a water log immediately after logging | M |
-| FR-W-07 | Edit/delete any past water entry | M |
-| FR-W-08 | Historical water view (day / week / month) | M |
-| FR-W-09 | Beverages other than water (tea, coffee, juice, milk) contribute both their nutrients and a configurable hydration fraction | S |
-| FR-W-10 | Water reminders on a schedule or after inactivity | P |
-| FR-W-11 | Home-screen widget / watch complication for one-tap water | F |
+| FR-W-01 | Log water with one tap from configurable quick-add amounts | 1 |
+| FR-W-02 | Log a custom amount | 1 |
+| FR-W-03 | Configure quick-add amounts and the display unit (ml / L / fl oz) | 1 |
+| FR-W-04 | Daily water target derived from profile, manually overridable | 1 |
+| FR-W-05 | Live daily hydration progress on the dashboard | 1 |
+| FR-W-06 | Undo a water log immediately after logging | 1 |
+| FR-W-07 | Edit/delete any past water entry | 1 |
+| FR-W-08 | Historical water view (day / week / month) | 1 |
+| FR-W-09 | Beverages other than water (tea, coffee, juice, milk) contribute both their nutrients and a configurable hydration fraction | 1 |
+| FR-W-10 | Water reminders on a schedule or after inactivity | 1 |
+| FR-W-11 | Home-screen widget / watch complication for one-tap water | 1.1 |
 
 ### 7.5 Nutrition Tracking
 
 | ID | Requirement | Pri |
 |---|---|---|
-| FR-N-01 | Compute daily totals for every tracked nutrient from all entries | M |
-| FR-N-02 | Track macros: energy, protein, carbohydrate, fat, fibre | M |
-| FR-N-03 | Track macro sub-components: saturated fat, added/total sugar | S |
+| FR-N-01 | Compute daily totals for every tracked nutrient from all entries | 1 |
+| FR-N-02 | Track macros: energy, protein, carbohydrate, fat, fibre | 1 |
+| FR-N-03 | Track macro sub-components: saturated fat, added/total sugar | 1 |
 | FR-N-04 | Track micros: vitamins A, B1, B2, B3, B6, B9, B12, C, D, E, K; calcium, iron, magnesium, potassium, sodium, zinc | M (data-permitting, §21.5) |
-| FR-N-05 | Support adding new nutrients without a schema change or app release | M |
-| FR-N-06 | Distinguish *unknown* from *zero* for every nutrient value, everywhere | M |
-| FR-N-07 | Show, per nutrient, the % of the day's energy covered by foods that actually report it | M |
-| FR-N-08 | Compare every tracked nutrient against that day's effective target | M |
-| FR-N-09 | Classify each nutrient as below / within / above target, using target-type-appropriate bands | M |
-| FR-N-10 | Per-meal nutrient subtotals | S |
-| FR-N-11 | Nutrient contributions attributed to individual foods ("what gave me most of my sodium") | S |
+| FR-N-05 | Support adding new nutrients without a schema change or app release | 1 |
+| FR-N-06 | Distinguish *unknown* from *zero* for every nutrient value, everywhere | 1 |
+| FR-N-07 | Show, per nutrient, the % of the day's energy covered by foods that actually report it | 1 |
+| FR-N-08 | Compare every tracked nutrient against that day's effective target | 1 |
+| FR-N-09 | Classify each nutrient as below / within / above target, using target-type-appropriate bands | 1 |
+| FR-N-10 | Per-meal nutrient subtotals | 1 |
+| FR-N-11 | Nutrient contributions attributed to individual foods ("what gave me most of my sodium") | 1 |
 
 ### 7.6 Daily Report & Performance
 
 | ID | Requirement | Pri |
 |---|---|---|
-| FR-D-01 | Daily summary: energy, macros, micros, water, all against targets | M |
-| FR-D-02 | Daily Nourishment Score (0–100) with all sub-scores individually visible | M |
-| FR-D-03 | Every score is explainable: tapping it shows exactly what contributed | M |
-| FR-D-04 | Score is withheld, with a stated reason, when data coverage or day completeness is insufficient | M |
-| FR-D-05 | List nutrients below target ("gaps") | M |
-| FR-D-06 | List nutrients above the upper limit ("excesses") | M |
-| FR-D-07 | 2–4 plain-language insights per day, drawn from a reviewed rule set | M |
-| FR-D-08 | Meal-by-meal breakdown with each meal's energy and macro share | M |
-| FR-D-09 | Goal completion percentages per target | M |
+| FR-D-01 | Daily summary: energy, macros, micros, water, all against targets | 1 |
+| FR-D-02 | Daily Nourishment Score (0–100) with all sub-scores individually visible | 1 |
+| FR-D-03 | Every score is explainable: tapping it shows exactly what contributed | 1 |
+| FR-D-04 | Score is withheld, with a stated reason, when data coverage or day completeness is insufficient | 1 |
+| FR-D-05 | List nutrients below target ("gaps") | 1 |
+| FR-D-06 | List nutrients above the upper limit ("excesses") | 1 |
+| FR-D-07 | 2–4 plain-language insights per day, drawn from a reviewed rule set | 1 |
+| FR-D-08 | Meal-by-meal breakdown with each meal's energy and macro share | 1 |
+| FR-D-09 | Goal completion percentages per target | 1 |
 | FR-D-10 | Share/export a daily summary | S |
-| FR-D-11 | Insights suggest concrete, food-level next actions | S |
+| FR-D-11 | Insights suggest concrete, food-level next actions | 1 |
 
 ### 7.7 Weekly Report
 
 | ID | Requirement | Pri |
 |---|---|---|
-| FR-WK-01 | Daily averages for energy, macros, water, score over the week | M |
-| FR-WK-02 | Count of days each target was met | M |
-| FR-WK-03 | Score trend across the seven days | M |
-| FR-WK-04 | Best day and weakest day, with the reason | M |
-| FR-WK-05 | Most frequently missed and most frequently exceeded nutrients | M |
-| FR-WK-06 | Logging consistency (days logged, meals logged per day) shown alongside every average, so averages are never read without their denominator | M |
-| FR-WK-07 | Comparison to previous week, shown only when both weeks are sufficiently logged | S |
-| FR-WK-08 | Weekday vs weekend pattern analysis | P |
+| FR-WK-01 | Daily averages for energy, macros, water, score over the week | 1 |
+| FR-WK-02 | Count of days each target was met | 1 |
+| FR-WK-03 | Score trend across the seven days | 1 |
+| FR-WK-04 | Best day and weakest day, with the reason | 1 |
+| FR-WK-05 | Most frequently missed and most frequently exceeded nutrients | 1 |
+| FR-WK-06 | Logging consistency (days logged, meals logged per day) shown alongside every average, so averages are never read without their denominator | 1 |
+| FR-WK-07 | Comparison to previous week, shown only when both weeks are sufficiently logged | 1 |
+| FR-WK-08 | Weekday vs weekend pattern analysis | S |
 | FR-WK-09 | Weekly report export/share | S |
 
 ### 7.8 Monthly Report
 
 | ID | Requirement | Pri |
 |---|---|---|
-| FR-MO-01 | Monthly averages for all headline metrics | S |
-| FR-MO-02 | Month-long trend charts with a moving average | S |
-| FR-MO-03 | Goal consistency: % of days targets were met | S |
-| FR-MO-04 | Chronically deficient and chronically exceeded nutrients | S |
-| FR-MO-05 | Comparison against the previous month | S |
-| FR-MO-06 | Calendar heat-map of daily scores | P |
+| FR-MO-01 | Monthly averages for all headline metrics | 1 |
+| FR-MO-02 | Month-long trend charts with a moving average | 1 |
+| FR-MO-03 | Goal consistency: % of days targets were met | 1 |
+| FR-MO-04 | Chronically deficient and chronically exceeded nutrients | 1 |
+| FR-MO-05 | Comparison against the previous month | 1 |
+| FR-MO-06 | Calendar heat-map of daily scores | S |
 | FR-MO-07 | Correlation between logging consistency and score | F |
 
 ### 7.9 Platform, Sync & System
 
 | ID | Requirement | Pri |
 |---|---|---|
-| FR-S-01 | All logging, viewing, and reporting functions work with no network | M |
-| FR-S-02 | Data survives app restart, OS update, and app update | M |
-| FR-S-03 | Local data export produces a complete, re-importable archive | M |
-| FR-S-04 | Background sync when signed in and connected | P |
-| FR-S-05 | Sync status is visible and its failures are actionable, never silent | P |
-| FR-S-06 | Multi-device consistency for a signed-in user | P |
-| FR-S-07 | Local notifications for reminders and the end-of-day summary | P |
-| FR-S-08 | Apple Health / Health Connect read-write | F |
-| FR-S-09 | Full dark mode and dynamic type support | M |
-| FR-S-10 | Screen-reader accessible across all primary flows | M |
+| FR-S-01 | All logging, viewing, and reporting functions work with no network | 1 |
+| FR-S-02 | Data survives app restart, OS update, and app update | 1 |
+| FR-S-03 | Local data export produces a complete, re-importable archive | 1 |
+| FR-S-04 | Background sync when signed in and connected | 1 |
+| FR-S-05 | Sync status is visible and its failures are actionable, never silent | 1 |
+| FR-S-06 | Multi-device consistency for a signed-in user | 1 |
+| FR-S-07 | Local notifications for reminders and the end-of-day summary | 1 |
+| FR-S-08 | Apple Health / Health Connect read-write | 1 |
+| FR-S-09 | Full dark mode and dynamic type support | 1 |
+| FR-S-10 | Screen-reader accessible across all primary flows | 1 |
+| FR-S-11 | Full English and Hindi localisation; language follows the OS setting and is overridable | 1 |
+| FR-S-12 | Sync conflicts are resolved without user intervention; the losing version is retained locally for diagnostics | 1 |
+| FR-S-13 | Catalog delta updates applied in the background on unmetered connections, without an app-store release | 1 |
 
 ---
 
@@ -405,7 +415,7 @@ Priority key: **M** = MVP · **S** = Should-have (MVP if time allows) · **P** =
 
 | ID | Requirement |
 |---|---|
-| NFR-O-01 | 100% of MVP functionality available offline, indefinitely, with no degradation notice |
+| NFR-O-01 | 100% of core functionality — logging, viewing, reporting, target management — available offline, indefinitely, with no degradation notice. Only sign-in, sync, barcode lookup of unknown products, catalog delta download, and health-platform exchange may require connectivity, and each degrades to an always-available manual path |
 | NFR-O-02 | The app never shows a network error for a logging action |
 | NFR-O-03 | Offline-created records are indistinguishable from online ones once synced |
 | NFR-O-04 | Outbox survives process death and device restart |
@@ -457,7 +467,7 @@ Priority key: **M** = MVP · **S** = Should-have (MVP if time allows) · **P** =
 | NFR-E-02 | Sync runs opportunistically on OS-scheduled background windows and on foreground resume; never on a timer |
 | NFR-E-03 | Catalog delta updates on unmetered connections by default, user-overridable |
 | NFR-E-04 | Local storage after two years of daily logging < 150 MB excluding photos |
-| NFR-E-05 | No wake locks; no foreground services on Android for MVP functionality |
+| NFR-E-05 | No wake locks; no foreground services on Android for core functionality |
 
 ### 8.8 Scalability *(see §31 for the analysis)*
 
@@ -470,107 +480,108 @@ Priority key: **M** = MVP · **S** = Should-have (MVP if time allows) · **P** =
 
 ---
 
-## 9. MVP Scope
+## 9. v1.0 Launch Scope
 
-**MVP goal:** a person in India can install the app, log a day of Indian and international food and water entirely offline, and get a daily summary and weekly report they find accurate and useful — without creating an account.
+**Decision (review, 2026-09-09): Nourishly ships as a complete application, not a staged MVP.** ADR-006 is reversed — the backend, accounts, multi-device sync, barcode scanning, reminders, recipes, health-platform integration, and Hindi localisation are all in the first public release. See [ADR-006 (revised)](./10-adrs.md#adr-006--backend-strategy-full-backend-at-launch-revised).
 
-### 9.1 Must Have
+**v1.0 goal:** a person in India can install Nourishly, log everything they eat and drink — home-cooked Indian food, packaged goods by barcode, and their own recipes — entirely offline, get honest daily, weekly, and monthly feedback, and have all of it backed up and available on any device they sign in to.
+
+### 9.1 Must Have — v1.0
 
 | Area | Included |
 |---|---|
-| Onboarding | Skippable value intro; profile setup (age, sex, height, weight, activity, goal); derived targets with plain-language explanation; guest mode as the default |
-| Food catalog | Bundled on-device catalog: ~1,500–2,500 curated Indian foods and dishes with household measures + ~8–15k international/generic items. Offline full-text search |
-| Food logging | Search, recents, favourites, custom foods, meal templates; four meal slots; serving + quantity; back-dating; edit/delete |
-| Water | Quick-add chips, custom amount, unit preference, daily target, undo, history |
-| Nutrition | 5 macros + saturated fat + sugar + 17 micronutrients where data exists; unknown ≠ zero; per-nutrient coverage |
-| Targets | Derived energy/macro/water/micro targets; manual overrides; effective-dated |
-| Daily dashboard | Energy ring, macro bars, water progress, focus nutrients, meal list, remaining budget |
-| Daily report | Verdict sentence, Daily Nourishment Score with visible sub-scores, gaps, excesses, 2–4 insights, meal breakdown |
-| Weekly report | Averages, days-met counts, score trend, best/weak day, most-missed nutrients, consistency denominator |
-| Data ownership | Full JSON + CSV export; local backup snapshot |
-| Platform | iOS + Android; dark mode; dynamic type; screen-reader support; English |
+| **Onboarding** | Skippable value intro; profile setup (age, sex, height, weight, activity, goal); optional dietary preference; derived targets with a plain-language explanation; guest mode as the default path |
+| **Food catalog** | Bundled on-device catalog (~12–15k items): ~1,500–2,500 curated Indian foods and dishes with household measures, plus generic and international items. Offline full-text search. **Over-the-air catalog delta updates**; long-tail items resolved on demand and cached |
+| **Food logging** | Search, recents, favourites, custom foods, meal templates; four default meal slots plus custom categories; serving + quantity; back-dating; copy meal/day; edit/delete |
+| **Barcode scanning** | Camera scan resolving against the catalog and Open Food Facts; graceful offline and unknown-product paths |
+| **Recipes** | Multi-ingredient recipes with cooking yield factor; nutrients computed per portion; recipes usable anywhere a food is usable |
+| **Water** | Quick-add chips, custom amount, unit preference, derived daily target, undo, history; beverage hydration contribution |
+| **Nutrition** | 5 macros + saturated fat + sugar + 17 micronutrients where data exists; unknown ≠ zero; per-nutrient coverage; per-meal subtotals; nutrient contribution attribution |
+| **Targets** | Derived energy/macro/water/micro targets; manual overrides; effective-dated and versioned |
+| **Daily dashboard** | Energy ring, macro bars, water progress, focus nutrients, meal list, remaining budget |
+| **Daily report** | Verdict sentence, Daily Nourishment Score with visible sub-scores, gaps, excesses, 2–4 insights, meal breakdown |
+| **Weekly report** | Averages with denominators, days-met counts, score trend, best/weak day, most-missed nutrients, consistency, previous-week comparison |
+| **Monthly report** | Monthly averages, trend chart with moving average, goal consistency, chronic gaps and excesses, previous-month comparison |
+| **Accounts** | Guest mode (default, full functionality) + Sign in with Apple + Google Sign-In + email OTP; **lossless guest→account migration** |
+| **Sync & backup** | Multi-device synchronisation, cloud backup, device migration, sign-out and account deletion |
+| **Reminders** | Local notifications: water, meal logging, end-of-day summary; quiet hours; conditional firing |
+| **Health platforms** | Apple Health and Health Connect read/write with per-direction, per-type consent |
+| **Body metrics** | Weight series feeding target derivation |
+| **Data ownership** | Full JSON + CSV export; in-app account and data deletion; local backup snapshot |
+| **Platform** | iOS + Android; **English and Hindi**; dark mode; dynamic type; screen-reader support |
 
-### 9.2 Should Have *(ship in MVP if it does not delay it)*
+### 9.2 Should Have — in v1.0 if it does not delay it
 
-- Monthly report (averages, trend chart, consistency).
-- Beverage hydration contribution (FR-W-09).
-- Copy meal / copy day (FR-M-07).
-- Custom meal categories (FR-M-11).
-- Focus nutrients on the dashboard (FR-U-09).
-- Body-weight series (FR-U-14).
-- Duplicate detection on custom food creation (FR-F-15).
-- Per-meal nutrient subtotals (FR-N-10).
+- Daily summary share card.
+- Weekday vs weekend split in the weekly report.
+- Score heat-map calendar in the monthly report.
+- Food data error reporting from within food detail.
+- Duplicate detection when creating a custom food that matches a catalog item.
+- Nutrient retention factors for cooked recipes.
 
 ### 9.3 Nice to Have
 
-- Daily summary share card.
-- Weekday/weekend split in the weekly report.
-- Nutrient contribution attribution (FR-N-11).
-- Hindi localisation.
+- Additional Indian language beyond Hindi.
+- Meal-slot auto-selection learned from the user's own historical pattern (rather than clock alone).
+- Post-migration duplicate review screen.
 
-### 9.4 Explicitly Out of Scope for MVP
+### 9.4 Explicitly Out of Scope for v1.0
 
 | Excluded | Why | Where it lands |
 |---|---|---|
-| Accounts, sign-in, cloud sync | Highest-effort subsystem; guest mode + export covers the real MVP need (not losing data). Data model is built sync-ready so nothing is thrown away | Phase 2 |
-| Barcode scanning | Needs a packaged-goods database, camera permission, and a scan-to-match pipeline. Real value, but not on the critical path to proving the core loop | Phase 2 |
-| Any AI feature (photo, natural language) | Accuracy is unproven, cost is per-request, and it cannot work offline. Building the MVP so it *can* be added is the correct MVP-stage investment | Phase 3+ |
-| Recipes / multi-ingredient composition | Significant data-model and UX surface. Custom foods + meal templates cover ~80% of the need at ~10% of the cost | Phase 3 |
-| Notifications and reminders | Requires permission UX, scheduling, and careful tone work. Ports designed in MVP, implementation later | Phase 2 |
-| Apple Health / Health Connect | Integration surface with its own review requirements | Phase 3 |
-| Exercise, weight-goal projection, meal planning, grocery lists | Scope adjacent to a different product | Future |
-| Social, sharing, family accounts, dietician marketplace | Different product | Future |
-| Web client | No evidence of need | Future |
-| Multi-language beyond English | Adds cost to every screen; validate demand first | Phase 2 (Hindi first) |
+| **AI food photo recognition** | Accuracy is unproven, and a silently-wrong auto-log corrupts the data every report is built on. Per-request cost is unmodelled, and it cannot work offline — which contradicts the product's core architectural property | v1.1, gated on an accuracy and economics analysis |
+| **Natural-language meal logging** | Same reasoning. The `MealParser` port and the confirmation UI it would feed both exist in v1.0, so adding it later is an adapter, not a redesign | v1.1 |
+| **Home-screen widgets / watch app / complications** | Genuine value for one-tap water, but each requires platform-native implementation (WidgetKit, Glance) outside the Flutter surface. Real work, low architectural risk, safely deferred | v1.1 |
+| **Exercise and activity tracking** | Health-platform integration already surfaces the useful part (energy expenditure as a target input). Owning exercise logging is a different product | Future |
+| **Meal planning, grocery lists** | Adjacent product, no shared architecture beyond the catalog | Future |
+| **Family / shared tracking, social features** | Requires a different consent and tenancy model; conflicts with the safety posture in §27.14 | Future |
+| **Dietician / professional access** | Requires a scoped, revocable, audited sharing model and a different privacy basis | Future |
+| **Web client** | No evidence of need | Future |
 
-### 9.5 The MVP's deliberate bet
+*This is a considered decision made under the reviewer's instruction to prioritise quality. The line is drawn at features that either cannot work offline or would put unvalidated automation in front of the data everything else depends on. Every one of them has its architectural seam built in v1.0 (§10.1), so promoting any of them is an additive change. If you want AI logging in the first release, say so — it is the one exclusion likely to be contested.*
 
-The bet is that **an offline, fast, Indian-food-literate logger with honest daily and weekly feedback is more valuable than a feature-complete logger with a mediocre food database.** Consequently the largest single MVP investment is *catalog curation* (§19.4) — roughly 3–4 weeks of non-engineering work. Reviewers should push back here if they disagree, because it is the load-bearing assumption of the plan.
+### 9.5 The consequence to accept
 
----
+Shipping the complete application means **roughly 32–38 weeks of solo full-time work before the first public release** (§36), against 14–18 for the staged alternative. The risk this creates is not technical but informational: **eight to nine months elapse before real users touch the product**, and the largest uncertainties in this design — whether the food catalog covers what people actually eat (A-18), and whether logging is genuinely fast enough (R-4) — can only be settled by real users.
+
+The mitigation, built into the roadmap rather than bolted on: **daily dogfooding from week 9** and a **closed beta from week 20**, both well before feature completion. This preserves the "ship the whole thing" decision while cutting feedback latency by roughly four months. Do not skip it — it is the single most valuable schedule item in §36.
 
 ## 10. Future Scope
 
-Classification drives *architecture readiness*, not commitment. Each item lists the seam that must exist in the MVP so the feature does not force a redesign later.
+Post-launch work, classified so that architecture readiness is decided now and commitment is not. Each item names the seam that exists in v1.0 so the feature does not force a redesign.
 
-### 10.1 Post-MVP (Phase 2 — the next 3–4 months)
+### 10.1 v1.1 — the first post-launch release (target: 8–12 weeks after launch)
 
-| Feature | Required MVP seam |
+| Feature | Seam that already exists in v1.0 |
 |---|---|
-| Accounts + cloud sync + multi-device | UUID PKs, `updated_at` + tombstones, outbox table, sync metadata on every syncable entity (§17) |
-| Guest → account migration | An `owner_id` on every user-owned row that is a local sentinel until sign-in |
-| Barcode scanning | `FoodExternalRef` table keyed by (source, external_id); a `FoodDataProvider` port with a catalog implementation (§19.6) |
-| Catalog delta updates | Versioned catalog with `catalog_version` and monotonic `revision` per food |
-| Notifications & reminders | `ReminderRule` entity + a `ReminderScheduler` port with a local-notification adapter (§29) |
-| Monthly report (if not in MVP) | Materialised daily summaries make this nearly free (§25) |
-| Hindi localisation | All strings externalised from day one; no concatenated sentences |
-| Food error reporting | Provenance and `food_version` already on every food |
+| **Natural-language logging** ("two rotis, paneer curry, a bowl of rice") | A `MealParser` port returning candidate `(food, serving, quantity)` triples into the **existing** confirmation UI. The AI proposes; the user confirms; nothing bypasses the normal logging path or writes an entry unreviewed |
+| **Photo / image meal recognition** | The same port, plus the media store and per-use consent gate designed in §30.4 |
+| **Home-screen water widget, watch complication** | Water quick-add is already an independent, idempotent, offline write with no dependencies |
+| **Additional Indian languages** | All strings externalised from the first commit; no sentence assembled by concatenation |
+| **Adaptive targets** (targets that respond to logged weight trend) | The target engine is already versioned, effective-dated, and pluggable (§20.4) |
+| **Post-migration duplicate review** | UUID-keyed merge already makes duplicates visible and self-correctable rather than lossy |
+| **Server-side catalog search for the long tail** | `FoodDataProvider` port; on-demand resolution already in the logging path |
 
-### 10.2 Future / Advanced (Phase 3+)
+### 10.2 v2 and beyond
 
-| Feature | Required MVP seam |
+| Feature | Seam / prerequisite |
 |---|---|
-| Natural-language logging ("two rotis, paneer curry, a bowl of rice") | A `MealParser` port returning candidate `(food, serving, quantity)` triples into the *existing* confirmation UI — the AI proposes, the user confirms, and nothing bypasses the normal logging path |
-| Photo / image recognition logging | Same port; plus a media store abstraction and an explicit consent gate for uploading images |
-| Recipes & ingredients | `FoodItem` already supports a `kind` discriminator; recipe = a food whose nutrients are computed from components with a yield factor |
-| Apple Health / Health Connect | A `HealthDataPort` with per-nutrient mapping and explicit user consent per direction |
-| Wearables / watch app | Water quick-add is already an independent, idempotent write |
-| Weight & exercise tracking | Weight series in MVP-Should; energy expenditure enters as a *target adjustment input*, keeping the target engine the single place that computes targets |
-| Meal planning / grocery lists | Read-only projections over catalog + templates |
-| Family / shared tracking | The `owner_id` indirection allows a household scope later; do **not** build multi-tenancy now |
-| Dietician / professional access | Requires a consented sharing model and a different privacy posture (§30.9); treat as a separate product decision |
-| Adaptive personalised targets | Target engine is already versioned and pluggable (§20.4) |
+| **Meal planning, grocery lists** | Read-only projections over catalog, recipes, and templates |
+| **Exercise tracking** | Energy expenditure already enters as a *target derivation input*, keeping the target engine the single place targets are computed |
+| **Family / household tracking** | The `owner_id` indirection permits a household scope later. **Do not build multi-tenancy now** — the consent model, not the schema, is the hard part |
+| **Dietician / professional access** | Requires scoped, revocable, audited consent and a different legal basis (§30.9). A separate product decision, not a feature |
+| **Web client** | Calculation rules are specified and golden-vector-tested (§20.3), so a second implementation is verifiable rather than guesswork |
+| **On-device AI inference** | Materially better for privacy and cost than a hosted parser; the `MealParser` port makes it a swap |
 
 ### 10.3 Deliberately rejected
 
 | Idea | Why rejected |
 |---|---|
-| Social feed / friend comparison | Directly conflicts with the eating-disorder-safety posture (§27.14) |
-| Gamified streaks with loss framing | Same. Streaks that punish a missed day drive dishonest logging |
+| Social feed / friend comparison | Directly conflicts with the eating-disorder-safety posture (§21.8, §27.14) |
+| Gamified streaks with loss framing | Same. Streaks that punish a missed day drive dishonest logging, which corrupts the data |
 | Automatic "healthy/unhealthy" food labels | Not scientifically defensible per-food; contradicts §2 |
-| Ads or data monetisation | Incompatible with §30 and with the product's trust proposition |
-| A server-authoritative logging model | Would break offline-first, which is the product's most differentiating property |
-
----
+| Ads or any data monetisation | Incompatible with §30 and with the product's entire trust proposition |
+| A server-authoritative logging model | Would break offline-first, the product's most differentiating property (ADR-004) |
+| Auto-logging without user confirmation | Any automation that writes an entry unreviewed puts unvalidated data into the record every report depends on |
 
 *Continue to [Part II — Technology Selection](./02-technology.md).*

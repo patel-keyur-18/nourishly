@@ -12,7 +12,9 @@ Nutrition and hydration logs, combined with age, sex, height, weight, and stated
 
 That inference surface — not the calorie count — is why this data deserves careful handling. The design treats it as sensitive by default rather than reasoning about whether each field individually qualifies.
 
-**Regulatory posture** [ASSUMPTION A-8, and see [OPEN Q-8]]:
+**The full-application decision raises the stakes here.** Under the staged plan the first release held no server-side personal data at all, and the compliance surface was largely theoretical. Shipping the backend at launch means Nourishly is a **data fiduciary holding other people's health-adjacent data from day one**, with statutory obligations that attach immediately. Legal review moves from a pre-launch nicety to a prerequisite for building the backend (§37, Q-3).
+
+**Regulatory posture** [ASSUMPTION A-8, and see [OPEN Q-3]]:
 - **India — DPDP Act 2023** is the primary regime for the initial user base: consent, purpose limitation, data-principal rights (access, correction, erasure), breach notification, and obligations around children's data.
 - **GDPR-equivalent rights** are implemented regardless of jurisdiction, because doing so is simpler than geo-conditional behaviour and is a reasonable baseline everywhere.
 - **Apple App Store / Google Play** health-data policies apply: no selling health data, no use for advertising, mandatory in-app account deletion, accurate privacy-nutrition labels and Data Safety declarations.
@@ -24,12 +26,12 @@ That inference surface — not the calorie count — is why this data deserves c
 
 | # | Principle | Implementation |
 |---|---|---|
-| PR-1 | **Local by default** | MVP has no server. Data never leaves the device unless the user creates an account. This is the strongest privacy property the product has, and it comes free from the offline-first architecture |
+| PR-1 | **Local by default** | Guest mode is the default path and never contacts a server. Data leaves the device only when the user creates an account, and only then. A server existing at launch does not change this: **the account is the consent boundary**, and it is opt-in |
 | PR-2 | **Data minimisation** | Only fields that affect targets or logging are collected. No contacts, no location, no device fingerprinting, no advertising identifiers |
 | PR-3 | **Purpose limitation** | Health data is used to compute the user's own reports. Nothing else. No secondary use, no model training on user logs |
 | PR-4 | **No third-party health-data sharing** | Enforced by NFR-S-05 and verified by a network-egress review before each release |
 | PR-5 | **User ownership** | Complete export at any time; deletion is real deletion |
-| PR-6 | **Informed, granular, revocable consent** | Separate consent for sync, analytics, and (Phase 3) AI processing. Declining any one leaves the app fully functional |
+| PR-6 | **Informed, granular, revocable consent** | Separate consent for sync, analytics, health-platform read, health-platform write, and (v1.1) AI processing. Declining any one leaves the app fully functional |
 | PR-7 | **Transparency** | Plain-language privacy policy; an in-app summary of what is stored and where |
 
 ### 30.3 Storage security
@@ -40,7 +42,7 @@ That inference surface — not the calorie count — is why this data deserves c
 | Tokens & secrets | iOS Keychain / Android Keystore-backed storage. **Never** in the database or shared preferences (NFR-S-02) |
 | Exports | Written to user-chosen storage; the user is told the file is unencrypted and portable |
 | Backups | On iOS, the database is excluded from iCloud backup unless the user opts in — health data should not silently propagate to a cloud the user did not choose |
-| Server (Phase 2) | Encryption at rest; TLS in transit; RLS on every user table (NFR-S-04) |
+| Server | Encryption at rest; TLS in transit; RLS on every user table (NFR-S-04); region chosen deliberately for data residency (Q-22) |
 | Logs | No PII, no food names, no nutrient values. Redaction verified by test (NFR-S-08) |
 
 **On SQLCipher being optional rather than default:** it costs measurable read performance on the hottest queries, and on a device with OS-level encryption and a lock screen it adds protection mainly against an attacker with physical access and an unlocked device. Making it a setting lets users who want it have it without imposing the cost on everyone. This is a judgement call worth revisiting if the user base skews toward higher-risk contexts.
@@ -51,21 +53,24 @@ That inference surface — not the calorie count — is why this data deserves c
 |---|---|---|---|
 | Core app use | Implicit on install; explained in onboarding | — | — |
 | Health-data storage (local) | Explained in onboarding, not gated | — | — |
-| Account creation & cloud sync | At sign-in (Phase 2) | Off | App fully functional; local only |
+| Account creation & cloud sync | At sign-in | Off | App fully functional; local only, forever if the user prefers |
 | Product analytics | Onboarding or first launch, per jurisdiction | Off where consent is required | App fully functional |
 | Crash reporting | Same | On (no PII) | App fully functional |
 | Notifications | When configuring the first reminder | Off | Reminders unavailable; nothing else affected |
-| Camera (barcode, Phase 2) | On first scan | — | Manual entry always available |
-| Photo upload (Phase 3) | Per use | Off | Manual logging available |
-| AI meal parsing (Phase 3) | Explicit, with a clear statement of what is sent and to whom | Off | Manual logging available |
+| Camera (barcode) | On first scan | — | Manual entry and custom-food creation always available |
+| Health platform read / write | Per direction and per data type, at the point of enabling | Off | Nothing else is affected; the app never requires it |
+| Photo upload (v1.1) | Per use | Off | Manual logging available |
+| AI meal parsing (v1.1) | Explicit, with a clear statement of what is sent and to whom | Off | Manual logging available |
 
-**Every consent is revocable in Settings, and revoking never removes functionality that does not depend on it.** The Phase 3 AI consent deserves particular care: sending a meal description or photo to a third-party service is a materially different privacy act from local logging, and must be presented as such rather than buried in a toggle.
+**Every consent is revocable in Settings, and revoking never removes functionality that does not depend on it.**
+
+Two consents deserve particular care. **Health-platform integration** ships in v1.0 and is governed by Apple's and Google's own rules, which are stricter than general privacy law: health data obtained from those platforms may not be used for advertising or shared with third parties, and read and write permission must be requested separately and per data type. **AI parsing** (v1.1) sends user content to a processor — a materially different privacy act from local logging, and it must be presented as such rather than buried in a toggle.
 
 ### 30.5 Data flows and where data actually goes
 
 ```mermaid
 flowchart LR
-    subgraph Device["On device — MVP: everything lives here"]
+    subgraph Device["On device — always the source of truth"]
         LOG[Food & water logs]
         PROF[Profile & targets]
         DERIV[Summaries & scores]
@@ -76,7 +81,7 @@ flowchart LR
     subgraph Third["Third parties"]
         CRASH["Crash reporting<br/>NO health data"]
         ANLY["Product analytics<br/>NO health data"]
-        AI["AI parsing — Phase 3<br/>ONLY with explicit consent"]
+        AI["AI parsing — v1.1<br/>ONLY with explicit consent"]
     end
     LOG & PROF --> DERIV
     LOG & PROF -.->|"opt-in sync"| SYNC
@@ -92,7 +97,7 @@ The dashed red boundary is the one that must be audited before every release: **
 
 ### 30.6 Data export (FR-U-13, NFR-S-07)
 
-- User-initiated from Settings, available in MVP without an account.
+- User-initiated from Settings, and available **without an account** — data portability is not a reward for signing up.
 - **Complete**: profile versions, goals, target sets, all log entries with their nutrient snapshots, water logs, custom foods, templates, favourites, preferences, and derived summaries.
 - Two formats: **JSON** (complete and re-importable) and **CSV** (spreadsheet-friendly, one file per entity).
 - Includes a manifest with schema version, ruleset version, catalog version, and export timestamp — without these, an export is not reliably re-interpretable later.
@@ -104,7 +109,7 @@ The dashed red boundary is the one that must be audited before every release: **
 |---|---|
 | Delete a single entry | Soft delete, tombstoned, undoable in-session, purged after 180 days (§17.7) |
 | Delete all local data | Available without an account. Two-step; export offered first |
-| Delete account (Phase 2) | In-app (an App Store requirement). Two-step confirmation. Server data erased within 30 days; backups age out on their own retention cycle, which must be stated honestly in the privacy policy rather than glossed as "immediately" |
+| Delete account | In-app (an App Store requirement, and now in scope from the first release since accounts exist at launch). Two-step confirmation. Server data erased within 30 days; backups age out on their own retention cycle, which must be stated honestly in the privacy policy rather than glossed as "immediately" |
 | Post-deletion | Local data cleared; the app returns to a fresh guest state rather than an error state |
 
 **No dark patterns:** deletion is not hidden behind a support email, does not require contacting anyone, and is not made deliberately tedious.
@@ -128,11 +133,11 @@ This is the most important non-technical constraint in the product, and it is en
 
 | Feature | Implication |
 |---|---|
-| **AI meal parsing/photo (Phase 3)** | Sends user content to a processor. Requires: explicit per-feature consent, a named processor in the privacy policy, a contractual no-training-on-user-data commitment, minimal payloads (no profile, no history), and a clearly stated retention period. On-device inference is materially better for privacy and should be preferred if it becomes viable |
-| **Health platform integration (Phase 3)** | HealthKit and Health Connect have their own strict rules — no using health data for advertising, no sharing with third parties, granular per-type permissions. Read and write consent must be separate |
+| **AI meal parsing / photo (v1.1)** | Sends user content to a processor. Requires: explicit per-feature consent, a named processor in the privacy policy, a contractual no-training-on-user-data commitment, minimal payloads (no profile, no history), and a clearly stated retention period. On-device inference is materially better for privacy and should be preferred if it becomes viable |
+| **Health platform integration (v1.0)** | Now a launch concern, not a future one. HealthKit and Health Connect impose their own rules — no advertising use, no third-party sharing, granular per-type permission — and Health Connect additionally requires a declaration to Google before distribution. Read and write consent must be separate |
 | **Family/shared tracking (Future)** | A different consent model entirely, plus a hard question about minors. Do not build without a dedicated privacy design |
 | **Dietician access (Future)** | Sharing health data with a professional is a significant privacy act requiring revocable, scoped, audited consent and probably a different legal basis |
-| **Children under 18** | DPDP has specific obligations around children's data and verifiable parental consent. [ASSUMPTION A-9] MVP is 18+ only, stated in the terms and enforced by a date-of-birth check at profile setup |
+| **Children under 18** | DPDP imposes specific obligations around children's data and verifiable parental consent. [ASSUMPTION A-9] v1.0 is 18+ only, stated in the terms and enforced by a date-of-birth check at profile setup |
 
 ---
 
@@ -146,10 +151,10 @@ Being honest about this prevents over-engineering. Four axes:
 |---|---|---|
 | **Per-user history** | Time | Client-side query and storage cost |
 | **Catalog size** | Curation effort | On-device storage and search latency |
-| **User count** | Adoption | Backend cost and throughput (Phase 2 only) |
-| **Sync volume** | Users × entries/day | Backend write throughput (Phase 2 only) |
+| **User count** | Adoption | Backend cost and throughput |
+| **Sync volume** | Users × entries/day | Backend write throughput |
 
-The MVP has **no server**, so axes 3 and 4 are not live concerns until Phase 2. The two that matter from day one are client-side.
+All four are live from the first release now that the backend ships at launch. But the honest ranking is unchanged: **the client-side axes bite first and hardest**, because they affect every user immediately, whereas the backend axes only matter after meaningful adoption — and the load model in §31.4 shows how gentle they are even then.
 
 ### 31.2 Client scalability
 
@@ -168,14 +173,14 @@ The MVP has **no server**, so axes 3 and 4 are not live concerns until Phase 2. 
 
 | Scale | Approach |
 |---|---|
-| MVP: ~10–20k items bundled | Fits comfortably; FTS5 well under the latency budget |
+| v1.0: ~12–15k items bundled | Fits comfortably; FTS5 well under the latency budget |
 | Growth to ~50k on-device | Still fine; the practical limits are app size and index build time |
-| Beyond ~100k (branded products at scale) | **Tiered replica**: keep a core working set on device (curated + generic + India-relevant branded) and resolve the long tail on demand, caching results locally. Barcode lookups are the natural long-tail case and are already an on-demand path (§24.3) |
+| Beyond ~100k (branded products at scale) | **Tiered replica**, which v1.0 already implements: a core working set on device, long tail resolved on demand and cached locally. Barcode lookups are the natural long-tail case and use exactly this path (§24.3) |
 | Server catalog at 500k+ | Postgres with trigram/FTS indexes; deltas served as static CDN files, which is the cheapest possible scaling story for the highest-volume endpoint |
 
 Critically, the long tail is *only* reachable online — which is acceptable, because the on-device working set is chosen to cover the overwhelming majority of real logging, and the custom-food escape hatch covers the rest offline (UX-6).
 
-### 31.4 Backend scalability (Phase 2)
+### 31.4 Backend scalability
 
 Load characteristics are unusually gentle, and it is worth stating why: **this is not a read-heavy social app.** Each user syncs their own small dataset a handful of times a day, and reads are served locally.
 
@@ -197,17 +202,19 @@ A single well-indexed Postgres instance handles this without difficulty. Scaling
 
 **Deliberately not adopted now:** sharding, microservices, event sourcing, a message queue, CQRS. None is justified by the projected load, and each would add operational burden to a solo-developer product. The boundaries exist so they *can* be adopted; adopting them pre-emptively would be the classic mistake.
 
-### 31.5 Cost model (Phase 2)
+### 31.5 Cost model
 
 | Component | At 10k MAU | At 100k MAU |
 |---|---|---|
 | Postgres (managed) | Low tier | Mid tier |
 | Auth | Included | Included |
 | Bandwidth (sync payloads are small; catalog deltas CDN-cached) | Low | Moderate |
-| Object storage (exports; photos in Phase 3) | Negligible | Low–moderate |
+| Object storage (exports; photos in v1.1) | Negligible | Low–moderate |
 | **Target** | **≤ ₹5 / MAU** (NFR-SC-04) | Should improve per-user with scale |
 
-**Cost risk to watch:** Phase 3 AI features are per-request and would dominate this model entirely. They need their own economic analysis — including on-device inference and aggressive result caching — before commitment (§33, R-9).
+**Two cost realities created by the launch-with-backend decision.** First, infrastructure cost begins on day one with no revenue against it, and the product is currently planned as free with no ads and no data monetisation (A-16). At low scale this is a rounding error; by 10k MAU it is a real monthly bill that someone must be willing to pay. That is a business decision, not an architectural one, and it is raised as Q-21.
+
+Second, v1.1 AI features are per-request and would dominate this model entirely. They need their own economic analysis — including on-device inference and aggressive caching — before commitment (R-9).
 
 ### 31.6 Operational scalability for a solo developer
 
@@ -215,11 +222,11 @@ The most binding scalability constraint on this project is not technical.
 
 | Pressure | Mitigation |
 |---|---|
-| Support load | In-app FAQ; a structured feedback path; honest data-quality badges that pre-empt "your calories are wrong" reports |
+| Support load | In-app FAQ; a structured feedback path; honest data-quality badges that pre-empt "your calories are wrong" reports. Accounts and sync add their own support category — sign-in failures, "where did my data go", device migration — which did not exist under the staged plan |
 | Catalog curation as coverage requests arrive | A prioritised queue driven by *failed searches* and custom-food creation frequency — the data tells you exactly which foods to add next. This is the single highest-leverage operational feedback loop in the product |
 | Release cadence | Automated CI, staged rollouts, small releases |
-| On-call | Backend outages are P2 by design (AP-1) — the app keeps working. This is a genuine and underrated benefit of the offline-first architecture |
-| Feature-request pressure | The MVP scope and phase classification in §9–10 exist to be pointed at |
+| On-call | Backend outages are P2 by design (AP-1) — the app keeps working. With production infrastructure live from launch, this is the property that makes solo operation viable at all |
+| Feature-request pressure | The v1.0 scope and release classification in §9–10 exist to be pointed at |
 
 ---
 

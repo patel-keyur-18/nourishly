@@ -21,7 +21,7 @@ The strategy below is organised around these three, in that order of priority.
 | Source | Licence / cost | Coverage | Micronutrients | Indian foods | Offline-cacheable | Verdict |
 |---|---|---|---|---|---|---|
 | **USDA FoodData Central** (Foundation, SR Legacy, FNDDS, Branded) | US Government **public domain**; free API + full bulk download | ~1.9M entries incl. branded; excellent generic ingredients | **Best available** — Foundation/SR Legacy carry deep, lab-measured micronutrient profiles | Poor for dishes; good for ingredients (lentils, rice, wheat flour, spices) | ✅ Yes — bulk download, no restriction | **Core ingredient and micronutrient backbone** |
-| **Open Food Facts** | **ODbL** (open database licence, share-alike); free | ~3M+ packaged products, global, barcode-indexed | Sparse and inconsistent — mostly the mandated label panel | Growing Indian packaged-goods coverage | ✅ Yes, with attribution and licence compliance | **Packaged goods + barcode source (Phase 2)** |
+| **Open Food Facts** | **ODbL** (open database licence, share-alike); free | ~3M+ packaged products, global, barcode-indexed | Sparse and inconsistent — mostly the mandated label panel | Growing Indian packaged-goods coverage | ✅ Yes, with attribution and licence compliance | **Packaged goods + barcode source** |
 | **IFCT 2017** (Indian Food Composition Tables, ICMR-NIN) | **Licence must be verified** — see [OPEN Q-1] | ~528 foods, Indian ingredients, analytically measured | Good, and India-specific (regional soil/variety differences matter for iron, zinc) | **Authoritative for Indian ingredients** | Depends on licence | **Highest-value Indian source — pending legal review** |
 | **ICMR-NIN "Nutritive Value of Indian Foods" / recipe tables** | Same question | Cooked Indian dishes | Moderate | **Best for dishes** | Depends | Same |
 | Nutritionix | Commercial, per-call | Large, strong NL parsing | Moderate | Weak | ❌ **Typically prohibits persistent storage** | Rejected for the core catalog |
@@ -35,13 +35,13 @@ The strategy below is organised around these three, in that order of priority.
 
 This single constraint, more than cost, eliminates commercial APIs as the foundation. An app that must call an API to resolve a food cannot work on a train. The conclusion is unavoidable: **Nourishly must own its catalog**, built from sources whose licences permit redistribution inside an app bundle.
 
-Commercial providers remain viable as *optional enrichment* behind the `FoodDataProvider` port (§14.6) — for example, a Phase 3 barcode fallback for products absent from Open Food Facts — but never as a dependency of the logging path.
+Commercial providers remain viable as *optional enrichment* behind the `FoodDataProvider` port (§14.6) — for example, a later fallback for packaged products absent from Open Food Facts — but never as a dependency of the logging path.
 
 ### 19.4 Recommended strategy: an owned, curated, tiered catalog *(ADR-008)*
 
 **The Nourishly Food Catalog** is a first-party asset assembled offline by a developer-operated pipeline, versioned, and shipped to devices.
 
-**Composition at MVP (~10–20k items):**
+**Composition at v1.0 (~12–15k bundled, plus an on-demand long tail):**
 
 | Tier | Count | Source | Purpose |
 |---|---|---|---|
@@ -132,8 +132,8 @@ flowchart LR
     end
     subgraph Outputs
         C1[Bundled seed SQLite<br/>→ app assets]
-        C2[Delta files<br/>→ CDN, Phase 2]
-        C3[Server catalog tables<br/>Phase 2]
+        C2[Delta files<br/>→ CDN]
+        C3[Server catalog tables]
     end
     A1 & A2 & A3 & A4 --> B1 --> B2 --> B3 --> B4 --> B5 --> B6 --> B7 --> B8 --> C1 & C2 & C3
     B6 -.->|rejects| R[Quarantine for review]
@@ -158,13 +158,13 @@ Duplicates arise between sources and from user-created foods.
 
 ### 19.9 Catalog updates and their effect on history
 
-Catalog updates ship as versioned deltas (Phase 2): added foods, revised foods, deprecated foods.
+Catalog updates ship as versioned deltas from the first release: added foods, revised foods, deprecated foods, applied in the background on unmetered connections (FR-S-13).
 
 **The rule that protects trust:** a catalog revision **never** changes a past log entry, because nutrient values were snapshotted at log time (§20.5). If dal's iron value is corrected, yesterday's report is unchanged. The user may opt into "recalculate history with updated food data" from Settings — an explicit, reversible, clearly-explained action. Silent retroactive change is the behaviour that makes longitudinal data untrustworthy, and it is forbidden here.
 
-### 19.10 Recipes and multi-ingredient meals (Phase 3, modelled now)
+### 19.10 Recipes and multi-ingredient meals
 
-`FoodItem` carries a `kind` discriminator from day one: `ingredient | dish | branded | recipe | user_custom`. A recipe is a `FoodItem` whose nutrients are computed from components:
+`FoodItem` carries a `kind` discriminator: `ingredient | dish | branded | recipe | user_custom`. A recipe is a `FoodItem` whose nutrients are computed from its components:
 
 ```
 Recipe = Σ(ingredient_i × grams_i) → total nutrients
@@ -174,7 +174,7 @@ Recipe = Σ(ingredient_i × grams_i) → total nutrients
 
 Cooking yield (water loss/gain) materially changes per-100 g values and is the detail most implementations get wrong. Nutrient retention factors (vitamin C loss on boiling, for example) are a Future refinement, explicitly not attempted at first.
 
-Nothing about the recipe model needs to exist in the MVP beyond the `kind` column and the decision not to assume a food's nutrients are always source-provided.
+Recipes ship in v1.0 (§9.1). Two consequences worth stating: a recipe is a `FoodItem`, so it is loggable, favouritable, and template-able with no special handling anywhere in the app; and because entries snapshot nutrients at log time (§20.5), editing a recipe never rewrites meals already logged from it. Nutrient retention factors (vitamin C loss on boiling, for example) are a should-have refinement (§9.2), not a launch requirement — yield is the effect that matters most and it is handled.
 
 ### 19.11 Data quality communicated to the user
 
@@ -250,7 +250,7 @@ flowchart LR
     E & M & MIC & W --> TS[("TargetSet<br/>effective_from · version<br/>source: derived | manual")]
 ```
 
-**Derivation (MVP defaults, all overridable per FR-U-05):**
+**Derivation (defaults, all overridable per FR-U-05):**
 
 | Target | Basis | Notes |
 |---|---|---|
@@ -272,7 +272,7 @@ flowchart LR
 
 Without this, every goal change silently falsifies all historical reports — a bug that is invisible in testing and corrosive in production.
 
-**Pregnancy/lactation lifestages** materially change micronutrient targets. [ASSUMPTION A-6] Out of scope for MVP: they carry clinical implications the app is not positioned to own (§30.8). If added, they require explicit medical disclaimers and probably a professional-guidance referral.
+**Pregnancy/lactation lifestages** materially change micronutrient targets. [ASSUMPTION A-6] Out of scope for v1.0: they carry clinical implications the app is not positioned to own (§30.8). If added, they require explicit medical disclaimers and probably a professional-guidance referral.
 
 ### 20.5 Snapshotting — the rule that makes history immutable
 

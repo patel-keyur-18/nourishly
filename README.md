@@ -2,7 +2,9 @@
 
 A cross-platform nutrition and hydration tracking app that helps users monitor daily food and water intake, track nutrients, and gain meaningful daily, weekly, and monthly health insights.
 
-> **Status: design phase.** No implementation exists yet. The architecture and product design are under review; implementation begins only once the design below is finalised.
+> **Status: design phase, revision 0.2.** No implementation exists yet. The architecture and product design are under review; implementation begins only once the design below is finalised.
+>
+> Decided so far: **Flutter** for the client, and **ship the complete application** (backend, accounts, sync, barcode, recipes, reminders, health integration) in the first release rather than a staged MVP. Nine open questions remain — see [§35](./docs/architecture/11-risks-roadmap.md#35-open-questions).
 
 ## Documentation
 

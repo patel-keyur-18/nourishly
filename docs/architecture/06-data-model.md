@@ -118,6 +118,8 @@ The brief proposed a candidate entity list. Assessment:
 | **BodyWeightEntry** | Weight series (FR-U-14), and a target-derivation input |
 | **DailyInsight** | Persisted so the daily report is stable rather than regenerating differently on each view |
 | **OutboxRecord / SyncState / Device** | §17 |
+| **ReminderRule** | Reminder type, schedule, conditions, quiet hours — syncable, so reminder preferences follow the user across devices (§29.3) |
+| **RecipeComponent** | A recipe `FoodItem`'s ingredient list with quantities and a yield factor (§19.10). The recipe's own nutrient values are derived from it once and stored like any other food's, so logging a recipe needs no special path |
 | **CatalogVersion** | Delta updates and reproducibility |
 
 **Deliberately *not* an entity: `RecentFood`.** Recents are a query over `FoodLogEntry` ordered by recency and frequency. Materialising them creates a second thing to keep consistent for no benefit — the query is trivially indexed.
@@ -208,7 +210,7 @@ Attributes marked **[sync]** appear on every syncable user-owned entity: `id (UU
 - Feeds the FTS index. This is how "panir", "paneer", and "पनीर" find the same food.
 
 **FoodExternalRef** — `id`, `food_id`, `source` (usda_fdc | off | ifct | gtin), `external_id`
-- The barcode seam: GTIN lookup in Phase 2 is a query against this table, requiring no new entity.
+- Barcode resolution is a query against this table, requiring no separate entity: a GTIN is just another external reference.
 
 **CatalogVersion** — `version`, `published_at`, `food_count`, `checksum`, `notes`
 
@@ -290,7 +292,7 @@ Every one of these is reproducible from entries + targets + ruleset. `is_stale` 
 | `food_item (kind, quality_tier)` | Search ranking |
 | `daily_summary (owner_id, log_date)` | Report period scans |
 | `outbox (next_attempt_at, created_at)` | Sync batch selection |
-| `food_external_ref (source, external_id)` | Barcode lookup (Phase 2) |
+| `food_external_ref (source, external_id)` | Barcode lookup |
 
 ### 22.8 Data retention
 
@@ -485,7 +487,7 @@ erDiagram
 
 ## 24. API Domain Design
 
-*Phase 2. Domains and contracts, not implementations. No endpoint here should be built during the MVP.*
+*Domains and contracts, not implementations. The API ships in v1.0 (ADR-006 revised), but nothing here should be built before the local data model and the offline logging path are working — the API is a projection of the model, not the other way round.*
 
 ### 24.1 Design principles
 
@@ -534,14 +536,14 @@ erDiagram
 | Capability | Notes |
 |---|---|
 | Current catalog version | Cheap, cacheable |
-| Delta from a given version | Added / revised / deprecated foods with servings and nutrient values. Served as static, CDN-cached files where possible — the highest-traffic and cheapest-to-serve endpoint |
-| Fetch a food by id or external ref (barcode) | For items absent from the on-device replica |
+| Delta from a given version | Added / revised / deprecated foods with servings and nutrient values. Served as static, CDN-cached files — the highest-traffic and cheapest-to-serve endpoint, and the mechanism that lets the curated catalog grow without app releases (§15.1) |
+| Fetch a food by id or external ref (barcode) | The long-tail path for items absent from the on-device replica; results are cached locally so the food resolves offline thereafter |
 | Report a data error | Rate-limited; feeds the curation queue |
 
 **Account lifecycle**
 | Capability | Notes |
 |---|---|
-| Request data export | Async job; produces a signed, expiring download of the complete dataset |
+| Request data export | Async job; produces a signed, expiring download of the complete dataset. A *local* export path also exists and works with no account (§30.6) |
 | Poll job status | |
 | Confirm deletion | Two-step; irreversible; §30.7 |
 

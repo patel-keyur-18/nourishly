@@ -12,8 +12,10 @@
 
 > **Offline is the normal operating mode. Connectivity is an optional enhancement that adds durability and multi-device access, and nothing else.**
 
+**This holds even though the backend is live at launch.** A working API is a standing temptation to put a network call on a path that does not need one; the rules below are what prevent that drift.
+
 Concretely (NFR-O-01…05):
-- Every MVP feature works with the radio off, indefinitely, with no banner, no spinner, and no degraded state.
+- Every core feature — logging, viewing, computing, reporting, target management — works with the radio off, indefinitely, with no banner, no spinner, and no degraded state.
 - A brand-new install works fully offline, including food search, before it has ever reached the network.
 - There is no code path where a logging action can produce a network error.
 
@@ -75,12 +77,13 @@ Two-year projection: **well under 150 MB** (NFR-E-04), dominated by the catalog 
 
 ### 16.4 The bundled seed catalog
 
-The MVP's most important offline decision: **the food catalog ships inside the app bundle.**
+The most important offline decision in the design: **the food catalog ships inside the app bundle**, even though a catalog API is live at launch.
 
 - A compressed, pre-built SQLite file (or a compact binary import format) is included as an asset.
 - On first launch, a background isolate imports/attaches it and builds the FTS index, behind a one-time progress state in onboarding — which is dead time anyway while the user reads the value screens.
 - Rejected alternative: download the catalog on first run. It would make first launch dependent on connectivity, break the "install on the plane" case, and add a failure mode to the most fragile moment in the user's relationship with the app.
-- Trade-off accepted: a larger download and a catalog that ages between releases. Phase 2's delta updates fix the ageing (§19.8); the size is within NFR-P-09.
+- Trade-off accepted: a larger download. The catalog ageing between releases is solved by over-the-air deltas (§19.8), which ship in v1.0. The size is within NFR-P-09.
+- The obvious alternative once a backend exists — bundle a small seed and pull the rest on first run — is **rejected**, because it makes first launch depend on connectivity and breaks the install-on-a-plane case at the most fragile moment in the user's relationship with the app.
 
 ### 16.5 Offline behaviour by feature
 
@@ -94,15 +97,19 @@ The MVP's most important offline decision: **the food catalog ships inside the a
 | Weekly / monthly reports | Full. |
 | Profile & target changes | Full. |
 | Export | Full — writes to device storage. |
-| Barcode lookup *(Phase 2)* | Local catalog hit works offline; unknown barcode queues a lookup and tells the user honestly that it will resolve later, offering manual entry now |
-| Sign-in / account creation *(Phase 2)* | Requires network — the **only** flow that does. Clearly presented as such. |
-| Sync *(Phase 2)* | Queued; status visible in settings; never blocks anything |
-| AI meal parsing *(Phase 3)* | Requires network; falls back to manual logging, which is always available |
+| Barcode lookup | Scanning works offline; a barcode present in the local catalog resolves instantly. An unknown barcode queues a lookup, says so honestly, and offers manual entry or custom-food creation immediately — the user is never left unable to log |
+| Recipes | Full — composition is computed locally from catalog ingredients |
+| Reminders | Full — notifications are scheduled locally on the device (§29.3) |
+| Health platform read/write | Local OS APIs; works offline |
+| Sign-in / account creation | Requires network. Presented as such, and never on a path that blocks logging |
+| Sync | Queued; status visible in settings; never blocks anything |
+| Catalog delta download | Background, opportunistic, unmetered by default; the bundled catalog is always sufficient on its own |
+| AI meal parsing *(v1.1)* | Will require network; falls back to manual logging, which is always available |
 
 ### 16.6 Connectivity and the UI
 
 - Connectivity is observed but **not used as a gate**. There is no "offline mode" toggle and no full-screen offline state.
-- The only connectivity-derived UI is a sync-status affordance in Settings (Phase 2): last synced time, pending change count, and any actionable error.
+- The only connectivity-derived UI is a sync-status affordance in Settings: last synced time, pending change count, and any actionable error (FR-S-05).
 - Anti-pattern explicitly avoided: a persistent "You are offline" banner. It trains users to believe the app is broken when it is working exactly as designed.
 
 ### 16.7 Data safety on device
@@ -112,14 +119,14 @@ The MVP's most important offline decision: **the food catalog ships inside the a
 | Process kill mid-write | All multi-row writes in a single transaction; UI acknowledges only after commit (NFR-R-02) |
 | Corrupted database file | Periodic integrity check; automatic local snapshot before each schema migration; restore path from the snapshot (NFR-R-08) |
 | Failed migration | Migration runs against a copy; the live DB is swapped only on success; failure retains the old DB and reports rather than wiping (NFR-R-03) |
-| App uninstall | Local data is lost — this is inherent and must be stated honestly. Export in MVP; sync in Phase 2. Onboarding should mention it once, without alarm |
-| Device loss/theft | OS disk encryption; optional app lock (biometric) in Phase 2; optional SQLCipher (§30.3) |
+| App uninstall while in guest mode | Local data is lost. Signed-in users lose nothing. This is the strongest argument for creating an account and should be made once, contextually, without alarm — never as a nag |
+| Device loss/theft | OS disk encryption; optional biometric app lock; optional SQLCipher (§30.3) |
 
 ---
 
 ## 17. Synchronization Strategy
 
-*All of §17 is Phase 2 implementation. All of §17.2's schema requirements are MVP, because retrofitting them is expensive.*
+*Synchronisation ships in the first release. §17.2's schema requirements must be in the very first migration regardless — retrofitting them is prohibitively expensive.*
 
 ### 17.1 What makes this sync problem easy — and where it is genuinely hard
 
@@ -140,9 +147,9 @@ It is worth being precise, because a lot of sync complexity is avoidable here.
 
 The design targets these five, and deliberately does not adopt heavyweight machinery (full CRDTs, operational transform) for the easy cases.
 
-### 17.2 Foundations that must exist in the MVP schema
+### 17.2 Foundations that must exist in the first schema migration
 
-Even though sync ships later, these are non-negotiable from the first migration:
+Non-negotiable from schema v1, before any sync code is written:
 
 | Requirement | Reason |
 |---|---|
@@ -279,7 +286,7 @@ The strategy is **domain-aware per entity**, not one global rule. A single LWW p
 
 ### 17.10 First sync after sign-in on a device that already has data
 
-This is the guest→account migration case, treated as a first-class flow rather than a special case of normal sync — see §18.5.
+This is the guest→account migration case, treated as a first-class flow rather than a special case of normal sync — see §18.5. Because guest mode is the default entry path (ADR-007) and sync is live at launch, **this flow runs for essentially every user who ever creates an account.** It is not an edge case; it is the modal path into an account, and it should be tested and instrumented accordingly (R-5).
 
 ---
 
@@ -296,10 +303,10 @@ This is the guest→account migration case, treated as a first-class flow rather
 
 | Method | Phase | Notes |
 |---|---|---|
-| **Guest (anonymous local identity)** | MVP | The default. A locally generated `owner_id`; no credentials, no server contact |
-| **Sign in with Apple** | 2 | **Mandatory on iOS** if any third-party sign-in is offered (App Store guideline 4.8). Must support the private-relay email and the "hide my email" case — never key user identity on the email address |
-| **Google Sign-In** | 2 | Primary method for the Android/India audience |
-| **Email one-time code (OTP / magic link)** | 2 | Password-free by design: no password storage, no reset flow, no credential-stuffing exposure. Preferred over email+password |
+| **Guest (anonymous local identity)** | v1.0 | The default. A locally generated `owner_id`; no credentials, no server contact |
+| **Sign in with Apple** | v1.0 | **Mandatory on iOS** if any third-party sign-in is offered (App Store guideline 4.8). Must support the private-relay email and the "hide my email" case — never key user identity on the email address |
+| **Google Sign-In** | v1.0 | Primary method for the Android/India audience |
+| **Email one-time code (OTP / magic link)** | v1.0 | Password-free by design: no password storage, no reset flow, no credential-stuffing exposure. Preferred over email+password |
 | Email + password | — | **Not planned.** Adds password storage, reset flows, and breach liability for no user benefit here |
 | Phone / SMS OTP | Future | Common and trusted in India, but adds per-message cost and fraud surface. Revisit if email OTP underperforms with Indian users — an explicit open question (§35) |
 
@@ -336,11 +343,11 @@ erDiagram
 
 **Critical detail:** identity is keyed on the provider's stable subject identifier, never on the email address. Apple's private relay can change the visible address, and users change emails. Multiple identities may link to one user, which is what allows "I signed in with Google last time and Apple this time" to resolve to the same account rather than silently creating a duplicate.
 
-### 18.4 The guest identity, and why it exists from day one
+### 18.4 The guest identity
 
-In the MVP there is no server, but there **is** an `owner_id`: a UUID generated at first launch and written to every user-owned row.
+A guest user has a real `owner_id`: a UUID generated at first launch and written to every user-owned row, exactly as a signed-in user's would be. There is no separate "local mode" representation.
 
-Without it, Phase 2 would require walking every table to attach ownership during migration. With it, migration is a single well-defined operation. The cost today is one column; the cost of omitting it is a risky data migration on every existing user's device later. This is the clearest example of AP-8 in the design.
+This is what makes §18.5 a rewrite of one column rather than a walk over every table, and it is why guest mode costs almost nothing to support despite being a full first-class identity. A guest is simply a user whose `owner_id` has not yet been reconciled with a server account.
 
 ### 18.5 Guest → account migration *(the highest-consequence flow in the product)*
 
@@ -371,7 +378,7 @@ flowchart TD
 - **Never destructive.** The "replace local" branch writes a complete local export *before* anything is cleared. There is no path in this design that deletes user data without a recoverable copy.
 - **Verified, not assumed.** Success is claimed only after per-entity counts reconcile. A mismatch surfaces as a retryable state, not a green tick.
 - **Merge is the default** because UUID-keyed, append-mostly data merges cleanly: two breakfasts on the same day both appear, and the user can delete one. The opposite failure (silently losing 40 days) is far worse.
-- **The one real merge hazard** — duplicate days from tracking on two devices before linking them — is a visible, self-correctable annoyance, not data loss. Post-merge, the app should offer a "review possible duplicates" screen (Post-MVP) rather than guessing.
+- **The one real merge hazard** — duplicate days from tracking on two devices before linking them — is a visible, self-correctable annoyance, not data loss. Post-merge, the app should offer a "review possible duplicates" screen (v1.0 nice-to-have, §9.3) rather than guessing.
 
 ### 18.6 Sign-out, device change, and account deletion
 
@@ -393,7 +400,7 @@ flowchart TD
 | Short-lived access tokens with refresh rotation; refresh reuse detection revokes the family |
 | Row-level security enforced in Postgres so that a compromised client token cannot read another user's rows (NFR-S-04) |
 | Email OTP rate-limited per address and per IP, with short expiry and single use |
-| Optional biometric app lock (Phase 2) for a locally sensitive dataset |
+| Optional biometric app lock for a locally sensitive dataset |
 
 ---
 

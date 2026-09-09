@@ -87,7 +87,7 @@ Aggregations are computed over daily summaries, **not** re-derived from entries 
 | Most-missed nutrients | Ranked by days below target, **among nutrients that cleared coverage gating** |
 | Consistency | Days logged / 7 and meals logged / expected — always adjacent to every average |
 
-**Monthly** (FR-MO-*): monthly averages · daily trend with a 7-day moving average · goal-consistency percentages · chronically deficient and chronically exceeded nutrients · previous-month comparison · (Post-MVP) a score heat-map calendar.
+**Monthly** (FR-MO-*): monthly averages · daily trend with a 7-day moving average · goal-consistency percentages · chronically deficient and chronically exceeded nutrients · previous-month comparison · a score heat-map calendar (§9.2).
 
 ### 25.6 Statistical honesty rules
 
@@ -116,13 +116,13 @@ Silently changing 90 days of scores in an update is a trust-destroying event. Th
 
 ### 25.8 Where reports are computed
 
-**On the device, always.** Consequences:
+**On the device, always — including now that a backend exists.** Consequences:
 - Reports work offline (NFR-O-01).
 - No server cost scales with report views (§31).
 - No possibility of client/server disagreement (AP-5).
 - The trade-off: a *new* device must pull entries and recompute summaries before showing history. This runs in a background isolate with progress shown, and is a one-time cost measured in seconds for a year of data.
 
-Server-side aggregation would only become attractive for cross-user analytics (a product Nourishly does not have) or for reports over histories too large for a device (which, at ~500 KB/year of summaries, will not occur).
+Server-side aggregation would only become attractive for cross-user analytics (a product Nourishly does not have) or for reports over histories too large for a device (which, at ~500 KB/year of summaries, will not occur). Having a live API makes this a decision to re-affirm rather than a constraint to accept: a `/reports/weekly` endpoint would be easy to add and would immediately create the second scoring implementation that AP-5 forbids.
 
 ### 25.9 Product analytics — a separate concern, deliberately constrained
 
