@@ -562,12 +562,15 @@ S.append(dict(id="daily-report", name="Daily report", n=9,
           {sect("How it was worked out", card(subscore_rows() + '<p class="fine">Micronutrients were left out because only 58% of today&#8217;s food reports them. Their 20% weight was shared across the rest.</p>'))}
           {sect("Gaps and excesses", card('<div class="ins ins-low">Fibre 18 g of 29 g</div><div class="ins ins-high">Sodium 2,310 mg of 2,000 mg limit</div>'))}
         </div>''')),
-    dict(key="C", label="Full table", note="Every tracked nutrient against target in one scan. Densest; least narrative.",
-      html=screen(appbar("Thursday, 9 Sep", left="back") + f'''
+    dict(key="C", label="Full table", note="Every tracked nutrient against target in one scan, with the verdict above it and the insights below. Densest option that still reads in two seconds.",
+      html=screen(appbar("Thursday, 9 Sep", left="back", right='<span class="ab-act">Share</span>') + f'''
         <div class="pad">
-          <div class="dh dh-sm"><div><div class="dh-d">1,640 kcal</div><div class="dh-w">of 2,050 · 4 meals logged</div></div>{chip("Good 78","score")}</div>
+          {card('<div class="verdict">A solid day. Protein and fat landed where you wanted; fibre was the gap again.</div><div class="vscore"><span class="band">Good</span><b>78</b><span class="of">/100</span></div>')}
+          <div class="sec-h"><span>Every nutrient</span><span class="sec-a">1,640 of 2,050 kcal</span></div>
           {card(NUTR_TABLE)}
-          <p class="fine">Calcium shows “no data” rather than zero — none of today&#8217;s foods report it.</p>
+          <p class="fine">Calcium shows &ldquo;no data&rdquo; rather than zero &mdash; none of today&#8217;s foods report it.</p>
+          <div class="sec-h"><span>What to do about it</span></div>
+          {card('<div class="ins ins-low">Fibre came in at 18 g against your 29 g target. A katori of dal or a guava would close most of it.</div><div class="ins ins-high">Sodium was above the recommended limit &mdash; the pickle and papad together account for most of it.</div><div class="ins ins-ok">Protein met for the third day running.</div>')}
           <div class="sec-h"><span>Meals</span></div>
           {card(meal_list(compact=True))}
         </div>''')),
@@ -628,13 +631,19 @@ S.append(dict(id="goals", name="Goals & targets", n=12,
           <div class="sec-h"><span>Focus on the dashboard</span></div>
           {card('<div class="chipset"><span class="sch on">Fibre</span><span class="sch on">Iron</span><span class="sch on">Sodium</span><span class="sch">+ Add</span></div>')}
           <div class="notebox">Changes apply from today. Past reports keep the targets they were measured against.</div>
-        </div''')),
-    dict(key="B", label="Card per target", note="Each target gets a slider and its reasoning. Slower to scan, easier to adjust confidently.",
+        </div>''')),
+    dict(key="B", label="Card per target", note="A card with a slider and its reasoning for the six headline targets; the other 18 nutrients as a compact list that expands to a card when edited.",
       html=screen(appbar("Goals & targets", left="back") + f'''
         <div class="pad">
+          <div class="sec-h"><span>The six you look at</span></div>
           {card('<div class="tgt-h"><b>Energy</b><span class="qt qt-ver">Derived</span></div><div class="tgt-v">2,050<i>kcal</i></div><div class="slider"><span class="sl-t"><span class="sl-f"></span></span><span class="sl-k"></span></div><p class="fine">Mifflin-St Jeor from your height, weight and age, times your activity level.</p>')}
           {card('<div class="tgt-h"><b>Protein</b><span class="qt qt-ver">Derived</span></div><div class="tgt-v">95<i>g</i></div><div class="slider"><span class="sl-t"><span class="sl-f sl-70"></span></span><span class="sl-k sl-k70"></span></div><p class="fine">1.2 g per kg of body weight for general health.</p>')}
+          {card('<div class="tgt-h"><b>Fibre</b><span class="qt qt-ver">Derived</span></div><div class="tgt-v">29<i>g</i></div><div class="slider"><span class="sl-t"><span class="sl-f sl-60"></span></span><span class="sl-k sl-k60"></span></div><p class="fine">14 g per 1,000 kcal. Missed on 19 of your last 24 logged days.</p>')}
           {card('<div class="tgt-h"><b>Water</b><span class="qt qt-user">You set this</span></div><div class="tgt-v">2.6<i>L</i></div><div class="slider"><span class="sl-t"><span class="sl-f sl-60"></span></span><span class="sl-k sl-k60"></span></div><p class="fine">You raised this from the derived 2.5 L. <span class="lnk">Reset to derived</span></p>')}
+          <p class="fine">Carbs and fat follow the same pattern below.</p>
+          <div class="sec-h"><span>Micronutrients</span><span class="sec-a">18 tracked</span></div>
+          {card(listrow("Iron","ICMR-NIN, male 19&ndash;59","19 mg " + ICON["chev"], cls="lr-tap")+listrow("Calcium","ICMR-NIN","1,000 mg " + ICON["chev"], cls="lr-tap")+listrow('Sodium <span class="qt qt-user">Yours</span>',"Upper limit, WHO","2,000 mg " + ICON["chev"], cls="lr-tap")+listrow("Vitamin C","ICMR-NIN","80 mg " + ICON["chev"], cls="lr-tap")+listrow("Show all 18","","", cls="lr-tap lr-accent"))}
+          <p class="fine">Tap any of these to open it as a card and adjust it.</p>
           <div class="notebox">Changes apply from today. Past reports keep the targets they were measured against.</div>
         </div>''')),
   ]))
@@ -990,12 +999,12 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
 .ss-why{font-size:10.5px;color:var(--ink-3);margin:-2px 0 4px;line-height:1.4}
 .ss-v{font-size:13.5px;font-weight:700;text-align:right}
 .ss-na{color:var(--ink-3)}
-.nt{display:grid;grid-template-columns:62px 1fr 62px 50px;align-items:center;gap:7px;padding:6px 0;border-bottom:1px solid var(--line);font-size:12px}
+.nt{display:grid;grid-template-columns:60px 1fr 70px 46px;align-items:center;gap:7px;padding:6px 0;border-bottom:1px solid var(--line);font-size:12px}
 .card .nt:last-child{border-bottom:none}
 .nt>span:first-child{color:var(--ink-2);font-weight:600}
 .nt-b{height:6px;background:var(--track);border-radius:999px;position:relative;overflow:hidden}
 .nt-f{position:absolute;inset:0 auto 0 0;border-radius:999px}
-.nt b{text-align:right;font-weight:700}
+.nt b{text-align:right;font-weight:700;white-space:nowrap}
 .nt-s{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;text-align:right;white-space:nowrap}
 .st-ok{color:var(--ok)}.st-low{color:var(--low)}.st-high{color:var(--high)}.st-na{color:var(--ink-3)}
 

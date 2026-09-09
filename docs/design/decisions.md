@@ -30,23 +30,23 @@ The choices are coherent, which is worth saying because 13 independent decisions
 
 **Structure that shows provenance.** Grouped search results and cards-with-contents for templates both spend vertical space to make the *source* of something visible. That matches the architecture's position that data quality has to be legible, not assumed (§19.11).
 
-## Two refinements worth settling before implementation
+## Two refinements — approved and applied
 
-Neither blocks anything, and both are noted rather than decided.
+Both were proposed after the screen choices were made, approved on 2026-09-09, and are now reflected in the prototype.
 
-### Daily report — C is a layout, not a replacement for the insights
+### Daily report — C is a layout, not a replacement for the insights ✅
 
-Option C shows every tracked nutrient against target in one scan, which is exactly what it should do. But as drawn it drops two things the architecture requires: the one-sentence verdict (FR-D-07, §27.8) and the 2–4 plain-language insights.
+Option C shows every tracked nutrient against target in one scan, which is exactly what it should do. But as first drawn it dropped two things the architecture requires: the one-sentence verdict (FR-D-07, §27.8) and the 2–4 plain-language insights.
 
 Those are not decoration. The verdict is what makes the report readable by someone who does not want to parse a table, and the insight engine is the only place the app turns a number into a suggested action.
 
-> **Proposed:** keep C's table as the body of the screen, and retain the verdict line above it and the insights below it. That is C's density with A's ability to be understood in two seconds — the table replaces A's *narrative body*, not the verdict or the insight engine.
+**Applied.** The screen now reads: verdict and score → the full nutrient table → *What to do about it* (the insights) → meals. C's density with A's ability to be understood in two seconds. The table replaced A's *narrative body*, not the verdict or the insight engine.
 
-### Goals — B needs a length strategy
+### Goals — B needs a length strategy ✅
 
 A card per target reads well for the six headline targets. Applied to all 24 tracked nutrients it becomes a very long screen.
 
-> **Proposed:** cards for energy, protein, carbs, fat, fibre and water; the remaining micronutrients as a compact list below, expandable to a card when edited. This keeps B's clarity where the user actually adjusts things without a screen that scrolls forever.
+**Applied.** Cards for the six headline targets — energy, protein, carbs, fat, fibre, water — under a *The six you look at* heading, then the remaining 18 micronutrients as a compact list that opens as a card when tapped. B's clarity where targets are actually adjusted, without a screen that scrolls forever.
 
 ## What happens next
 
