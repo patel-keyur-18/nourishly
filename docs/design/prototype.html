@@ -189,7 +189,21 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
 .ob-list li{display:flex;align-items:center;gap:9px}
 .ob-list svg{width:15px;height:15px;color:var(--ok);flex:none}
 
+.wiz{min-height:100%;display:flex;flex-direction:column}
+.wstep{display:none;flex-direction:column;flex:1;min-height:100%}
+.wstep.on{display:flex}
+.wstep .pad{flex:1}
+.wizctl{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:12px;padding:9px 11px;border:1px solid var(--pg-line);background:var(--pg-surface);border-radius:9px}
+.wc-l{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--pg-ink-3)}
+.wc{width:26px;height:26px;border-radius:999px;border:1px solid var(--pg-line);background:transparent;color:var(--pg-ink-2);font:inherit;font-size:12px;font-weight:700;cursor:pointer;padding:0}
+.wc:hover{border-color:var(--pg-ink-3);color:var(--pg-ink)}
+.wc.on{background:var(--pg-accent);border-color:transparent;color:var(--pg-accent-ink)}
+.wc-names{position:relative;flex:1;min-width:110px;height:16px}
+.wc-n{position:absolute;inset:0;font-size:12px;font-weight:600;color:var(--pg-ink-2);opacity:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wc-n.on{opacity:1}
 .q-h{font-size:19px;font-weight:700;letter-spacing:-.015em;margin-top:4px}
+.q-h2{font-size:16px;font-weight:700;letter-spacing:-.01em;margin-top:20px}
+.q-hint{font-size:12px;color:var(--ink-3);margin-top:6px}
 .q-s{font-size:13px;color:var(--ink-3);margin-top:4px}
 .opts{display:flex;flex-direction:column;gap:8px;margin-top:14px}
 .opt{display:flex;justify-content:space-between;align-items:center;gap:8px;border:1px solid var(--line);border-radius:var(--r-md);padding:11px 13px;background:var(--surface);min-height:48px}
@@ -443,6 +457,7 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
         <div class="ob-dots"><i class="on"></i><i></i><i></i></div>
         <div class="ob-foot"><button type="button" class="btn btn-primary btn-full">Continue</button><button class="btn btn-ghost btn-full" type="button">Skip for now</button>
           <p class="ob-fine">Works offline. No account needed.</p></div></div></div></div></div>
+        
         <label class="pick"><input type="radio" name="pick-onboarding" value="A" data-screen="onboarding" data-label="Value cards first"> Choose A</label>
       </div><div class="opt-col" data-col="onboarding-B">
         <div class="opt-hd"><span class="opt-k">B</span><div><div class="opt-l">Single promise screen</div><div class="opt-n">One screen, one sentence, straight into setup. Fewer taps, less explanation.</div></div></div>
@@ -451,24 +466,67 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
         <div class="ob-h2">Nourishly</div>
         <p class="ob-p">A private food and water diary for your household. Everything stays on this phone.</p>
         <ul class="ob-list"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg> Works with no signal</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg> Knows Gujarati, Tamil and Kannadiga food</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg> No account, no ads</li></ul>
-        <div class="ob-foot"><button type="button" class="btn btn-primary btn-full">Set up my profile</button><button class="btn btn-ghost btn-full" type="button">Just let me log something</button></div></div></div></div></div>
+        <div class="ob-foot"><button type="button" class="btn btn-primary btn-full">Set up my profile</button><button class="btn btn-ghost btn-full" type="button">Skip for now</button></div></div></div></div></div>
+        
         <label class="pick"><input type="radio" name="pick-onboarding" value="B" data-screen="onboarding" data-label="Single promise screen"> Choose B</label>
       </div></div>
     </section><section class="grp" id="profile-setup">
       <div class="grp-h"><div class="grp-n">Screen 2 of 13</div><h2 class="grp-t">Profile setup</h2><p class="grp-p">Collect only what changes the targets, and explain what each answer does.</p></div>
       <div class="opts-row"><div class="opt-col" data-col="profile-setup-A">
-        <div class="opt-hd"><span class="opt-k">A</span><div><div class="opt-l">One question per step</div><div class="opt-n">Progressive. Feels light, harder to skim, more taps.</div></div></div>
-        <div class="phone"><div class="scr "><div class="sb"><span>9:41</span><span class="sbr"><svg viewBox="0 0 18 12" width="16" height="11" aria-hidden="true"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="10" y="1" width="3" height="11" rx="1" fill="currentColor"/></svg><svg viewBox="0 0 24 12" width="22" height="11" aria-hidden="true"><rect x="0.5" y="0.5" width="19" height="11" rx="3" fill="none" stroke="currentColor"/><rect x="2" y="2" width="13" height="8" rx="1.5" fill="currentColor"/><rect x="21" y="4" width="2" height="4" rx="1" fill="currentColor"/></svg></span></div><div class="scr-body"><div class="ab"><button class="ab-icon" type="button" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><div class="ab-t"><div class="ab-title">About you</div></div><span class="ab-step">2 of 5</span></div>
+        <div class="opt-hd"><span class="opt-k">A</span><div><div class="opt-l">One question per step</div><div class="opt-n">Progressive. Feels light, harder to skim, more taps. Step through all five below the phone.</div></div></div>
+        <div class="phone"><div class="scr "><div class="sb"><span>9:41</span><span class="sbr"><svg viewBox="0 0 18 12" width="16" height="11" aria-hidden="true"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="10" y="1" width="3" height="11" rx="1" fill="currentColor"/></svg><svg viewBox="0 0 24 12" width="22" height="11" aria-hidden="true"><rect x="0.5" y="0.5" width="19" height="11" rx="3" fill="none" stroke="currentColor"/><rect x="2" y="2" width="13" height="8" rx="1.5" fill="currentColor"/><rect x="21" y="4" width="2" height="4" rx="1" fill="currentColor"/></svg></span></div><div class="scr-body"><div class="wiz" data-wiz="profile-setup-A"><div class="wstep on" data-wstep="0"><div class="ab"><button class="ab-icon" type="button" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><div class="ab-t"><div class="ab-title">About you</div></div><span class="ab-step">1 of 5</span></div>
+        <div class="pad">
+          <div class="q-h">When were you born?</div>
+          <p class="q-s">Recommended intakes for several nutrients change with age.</p>
+          <div class="fgrid" style="margin-top:14px">
+            <label class="fld"><span>Date of birth</span><input value="14 March 1992" readonly></label>
+          </div>
+          <p class="q-hint">34 years old</p>
+          <div class="q-h2">Which reference values should we use?</div>
+          <p class="q-s">Recommended intakes for iron, calcium and a few others differ. You can skip this.</p>
+          <div class="opts">
+            <label class="opt"><span><b>Female</b></span></label>
+            <label class="opt sel"><span><b>Male</b></span><span class="opt-c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></label>
+            <label class="opt"><span><b>Prefer not to say</b><i>Uses a neutral reference</i></span></label>
+          </div>
+        </div><div class="pad-b"><button type="button" class="btn btn-primary btn-full">Continue</button></div></div><div class="wstep" data-wstep="1"><div class="ab"><button class="ab-icon" type="button" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><div class="ab-t"><div class="ab-title">About you</div></div><span class="ab-step">2 of 5</span></div>
+        <div class="pad">
+          <div class="q-h">Your height and weight</div>
+          <p class="q-s">These set your energy and protein targets more than anything else.</p>
+          <div class="frow" style="margin-top:14px">
+            <label class="fld"><span>Height</span><input value="174 cm" readonly></label>
+            <label class="fld"><span>Weight</span><input value="71 kg" readonly></label>
+          </div>
+          <div class="chipset sm" style="margin-top:10px"><span class="sch on">Metric</span><span class="sch">ft / lb</span></div>
+          <div class="notebox">You can update your weight any time. Past reports keep the targets they were measured against.</div>
+        </div><div class="pad-b"><button type="button" class="btn btn-primary btn-full">Continue</button></div></div><div class="wstep" data-wstep="2"><div class="ab"><button class="ab-icon" type="button" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><div class="ab-t"><div class="ab-title">About you</div></div><span class="ab-step">3 of 5</span></div>
         <div class="pad">
           <div class="q-h">How active are you on a normal day?</div>
           <p class="q-s">This changes your energy target more than anything else.</p>
           <div class="opts">
             <label class="opt"><span><b>Mostly sitting</b><i>Desk job, little exercise</i></span></label>
-            <label class="opt sel"><span><b>Lightly active</b><i>Some walking, exercise 1–3 days</i></span><span class="opt-c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></label>
-            <label class="opt"><span><b>Active</b><i>Exercise 3–5 days a week</i></span></label>
-            <label class="opt"><span><b>Very active</b><i>Hard exercise 6–7 days</i></span></label>
+            <label class="opt sel"><span><b>Lightly active</b><i>Some walking, exercise 1&ndash;3 days</i></span><span class="opt-c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></label>
+            <label class="opt"><span><b>Active</b><i>Exercise 3&ndash;5 days a week</i></span></label>
+            <label class="opt"><span><b>Very active</b><i>Hard exercise 6&ndash;7 days</i></span></label>
           </div>
-        </div><div class="pad-b"><button type="button" class="btn btn-primary btn-full">Continue</button></div></div></div></div>
+        </div><div class="pad-b"><button type="button" class="btn btn-primary btn-full">Continue</button></div></div><div class="wstep" data-wstep="3"><div class="ab"><button class="ab-icon" type="button" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><div class="ab-t"><div class="ab-title">About you</div></div><span class="ab-step">4 of 5</span></div>
+        <div class="pad">
+          <div class="q-h">What are you tracking for?</div>
+          <p class="q-s">You can change this later. It only affects targets from that day forward.</p>
+          <div class="opts">
+            <label class="opt sel"><span><b>General health</b><i>Eat in balance, no weight change</i></span><span class="opt-c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></label>
+            <label class="opt"><span><b>Weight loss</b><i>A modest, safe deficit</i></span></label>
+            <label class="opt"><span><b>Muscle gain</b><i>Higher protein, small surplus</i></span></label>
+            <label class="opt"><span><b>Better hydration</b><i>Water is the main target</i></span></label>
+          </div>
+        </div><div class="pad-b"><button type="button" class="btn btn-primary btn-full">Continue</button></div></div><div class="wstep" data-wstep="4"><div class="ab"><button class="ab-icon" type="button" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><div class="ab-t"><div class="ab-title">Your targets</div></div><span class="ab-step">5 of 5</span></div>
+        <div class="pad">
+          <div class="q-h">Here is where we landed</div>
+          <p class="q-s">Worked out from your height, weight, age, activity and goal. Change any of them whenever you like.</p>
+          <div class="card "><div class="lr "><div class="lr-m"><div class="lr-main">Energy</div><div class="lr-sub">Mifflin-St Jeor &times; activity level</div></div><span class="lr-r">2,050 kcal</span></div><div class="lr "><div class="lr-m"><div class="lr-main">Protein</div><div class="lr-sub">1.2 g per kg of body weight</div></div><span class="lr-r">95 g</span></div><div class="lr "><div class="lr-m"><div class="lr-main">Carbs</div><div class="lr-sub">Remainder of energy</div></div><span class="lr-r">240 g</span></div><div class="lr "><div class="lr-m"><div class="lr-main">Fat</div><div class="lr-sub">28% of energy</div></div><span class="lr-r">62 g</span></div><div class="lr "><div class="lr-m"><div class="lr-main">Fibre</div><div class="lr-sub">14 g per 1,000 kcal</div></div><span class="lr-r">29 g</span></div><div class="lr "><div class="lr-m"><div class="lr-main">Water</div><div class="lr-sub">35 ml per kg</div></div><span class="lr-r">2.6 L</span></div></div>
+          <div class="notebox">Micronutrient targets use the ICMR-NIN 2020 values for your age and sex.</div>
+        </div><div class="pad-b"><button type="button" class="btn btn-primary btn-full">Start logging</button></div></div></div></div></div></div>
+        <div class="wizctl" data-wizctl="profile-setup-A"><span class="wc-l">Step</span><button type="button" class="wc on" data-wgo="0">1</button><button type="button" class="wc" data-wgo="1">2</button><button type="button" class="wc" data-wgo="2">3</button><button type="button" class="wc" data-wgo="3">4</button><button type="button" class="wc" data-wgo="4">5</button><span class="wc-names"><span class="wc-n on" data-wname="0">Date of birth &amp; sex</span><span class="wc-n" data-wname="1">Height &amp; weight</span><span class="wc-n" data-wname="2">Activity</span><span class="wc-n" data-wname="3">Goal</span><span class="wc-n" data-wname="4">Your targets</span></span></div>
         <label class="pick"><input type="radio" name="pick-profile-setup" value="A" data-screen="profile-setup" data-label="One question per step"> Choose A</label>
       </div><div class="opt-col" data-col="profile-setup-B">
         <div class="opt-hd"><span class="opt-k">B</span><div><div class="opt-l">Single scrollable form</div><div class="opt-n">Everything visible at once. Faster for someone who knows their numbers.</div></div></div>
@@ -485,6 +543,7 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
           <div class="callout"><b>Your targets</b><div class="callout-g"><span>Energy</span><b>2,050 kcal</b><span>Protein</span><b>95 g</b><span>Water</span><b>2.6 L</b></div>
           <p>Worked out from your height, weight, activity and goal. You can change any of them later.</p></div>
         </div><div class="pad-b"><button type="button" class="btn btn-primary btn-full">Looks right</button></div></div></div></div>
+        
         <label class="pick"><input type="radio" name="pick-profile-setup" value="B" data-screen="profile-setup" data-label="Single scrollable form"> Choose B</label>
       </div></div>
     </section><section class="grp" id="dashboard">
@@ -523,6 +582,7 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
         <div class="chips"><span class="chip chip-ok"><span class="dot dot-ok"></span>Protein on track</span><span class="chip chip-low"><span class="dot dot-low"></span>Fibre 11 g short</span><span class="chip chip-unknown"><span class="dot dot-unknown"></span>Micros 58% covered</span></div>
         <div class="card "><div class="meal"><span class="meal-n">Breakfast</span><span class="meal-k">410</span></div><div class="meal-i">2 Thepla · Chaas 1 glass</div><div class="meal"><span class="meal-n">Lunch</span><span class="meal-k">760</span></div><div class="meal-i">3 Rotli · Gujarati dal · Bhinda nu shaak · Rice</div><div class="meal"><span class="meal-n">Snack</span><span class="meal-k">190</span></div><div class="meal-i">Khakhra · Filter coffee</div><div class="meal empty"><span class="meal-n">Dinner</span><span class="meal-add">+ Add</span></div></div>
       </div></div><div class="bnav"><div class="nav-i active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span>Today</span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19V9M9.5 19V5M15 19v-7M20.5 19v-4"/></svg><span>Insights</span></div><div class="nav-fab" role="presentation"><span class="fab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></svg></span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3.5s6 6.6 6 10.4a6 6 0 0 1-12 0C6 10.1 12 3.5 12 3.5z"/></svg><span>Water</span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 20a7.4 7.4 0 0 1 14.4 0"/></svg><span>Profile</span></div></div></div></div>
+        
         <label class="pick"><input type="radio" name="pick-dashboard" value="A" data-screen="dashboard" data-label="Ring-led"> Choose A</label>
       </div><div class="opt-col" data-col="dashboard-B">
         <div class="opt-hd"><span class="opt-k">B</span><div><div class="opt-l">Meals-led</div><div class="opt-n">The day reads as a timeline; stats compress into a header strip. Best if logging matters more than monitoring.</div></div></div>
@@ -549,6 +609,7 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
       <span class="btrack"><span class="bfill" style="width:49.7%;background:var(--s-fibre)"></span><span class="btick" style="left:80.0%"></span></span>
       <span class="bval">62%</span></div></div></div>
       </div></div><div class="bnav"><div class="nav-i active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span>Today</span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19V9M9.5 19V5M15 19v-7M20.5 19v-4"/></svg><span>Insights</span></div><div class="nav-fab" role="presentation"><span class="fab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></svg></span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3.5s6 6.6 6 10.4a6 6 0 0 1-12 0C6 10.1 12 3.5 12 3.5z"/></svg><span>Water</span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 20a7.4 7.4 0 0 1 14.4 0"/></svg><span>Profile</span></div></div></div></div>
+        
         <label class="pick"><input type="radio" name="pick-dashboard" value="B" data-screen="dashboard" data-label="Meals-led"> Choose B</label>
       </div><div class="opt-col" data-col="dashboard-C">
         <div class="opt-hd"><span class="opt-k">C</span><div><div class="opt-l">Numbers grid</div><div class="opt-n">No hero graphic. Densest option — everything above the fold, nothing decorative.</div></div></div>
@@ -575,6 +636,7 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
       <span class="bval"><b>18</b><span class="mu">/29g</span></span></div></div>
         <div class="card "><div class="meal"><span class="meal-n">Breakfast</span><span class="meal-k">410</span></div><div class="meal"><span class="meal-n">Lunch</span><span class="meal-k">760</span></div><div class="meal"><span class="meal-n">Snack</span><span class="meal-k">190</span></div><div class="meal empty"><span class="meal-n">Dinner</span><span class="meal-add">+ Add</span></div></div>
       </div></div><div class="bnav"><div class="nav-i active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span>Today</span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19V9M9.5 19V5M15 19v-7M20.5 19v-4"/></svg><span>Insights</span></div><div class="nav-fab" role="presentation"><span class="fab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></svg></span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3.5s6 6.6 6 10.4a6 6 0 0 1-12 0C6 10.1 12 3.5 12 3.5z"/></svg><span>Water</span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 20a7.4 7.4 0 0 1 14.4 0"/></svg><span>Profile</span></div></div></div></div>
+        
         <label class="pick"><input type="radio" name="pick-dashboard" value="C" data-screen="dashboard" data-label="Numbers grid"> Choose C</label>
       </div></div>
     </section><section class="grp" id="log-entry">
@@ -601,6 +663,7 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
           <div class="lr "><div class="lr-m"><div class="lr-main">Rice, cooked</div><div class="lr-sub">1 katori · 150 g · 195 kcal</div></div><span class="lr-r"><span class="add">+</span></span></div>
           <div class="lr "><div class="lr-m"><div class="lr-main">Chaas</div><div class="lr-sub">1 glass · 200 ml · 40 kcal</div></div><span class="lr-r"><span class="add">+</span></span></div>
         </div></div></div></div></div>
+        
         <label class="pick"><input type="radio" name="pick-log-entry" value="A" data-screen="log-entry" data-label="Sheet with tabs"> Choose A</label>
       </div><div class="opt-col" data-col="log-entry-B">
         <div class="opt-hd"><span class="opt-k">B</span><div><div class="opt-l">Full screen, search first</div><div class="opt-n">Search field focused on open. Faster when you know the name, slower for repeats.</div></div></div>
@@ -615,6 +678,7 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
           <div class="lr lr-accent"><div class="lr-m"><div class="lr-main">Everyday Gujarati thali</div><div class="lr-sub">6 items · 1,240 kcal</div></div><span class="lr-r">Apply</span></div>
           <div class="lr lr-accent"><div class="lr-m"><div class="lr-main">Thepla travel meal</div><div class="lr-sub">3 items · 520 kcal</div></div><span class="lr-r">Apply</span></div>
         </div></div></div></div>
+        
         <label class="pick"><input type="radio" name="pick-log-entry" value="B" data-screen="log-entry" data-label="Full screen, search first"> Choose B</label>
       </div></div>
     </section><section class="grp" id="food-search">
@@ -635,6 +699,7 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
           <div class="lr "><span class="lr-l"><span class="qt qt-der">Recipe</span></span><div class="lr-m"><div class="lr-main">Dal vada</div><div class="lr-sub">2 pieces · 60 g · 218 kcal</div></div></div>
           <div class="mk">Create “dal” as a custom food</div>
         </div></div></div></div>
+        
         <label class="pick"><input type="radio" name="pick-food-search" value="A" data-screen="food-search" data-label="Grouped by source"> Choose A</label>
       </div><div class="opt-col" data-col="food-search-B">
         <div class="opt-hd"><span class="opt-k">B</span><div><div class="opt-l">Flat ranked list</div><div class="opt-n">One ranked list with a small source badge per row. More results visible; ranking must be trusted.</div></div></div>
@@ -651,6 +716,7 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
           <div class="lr "><div class="lr-m"><div class="lr-main">Moong dal, raw <span class="qt qt-ver">Lab</span></div><div class="lr-sub">100 g · 347 kcal</div></div></div>
           <div class="mk">Create “dal” as a custom food</div>
         </div></div></div></div>
+        
         <label class="pick"><input type="radio" name="pick-food-search" value="B" data-screen="food-search" data-label="Flat ranked list"> Choose B</label>
       </div></div>
     </section><section class="grp" id="food-detail">
@@ -681,6 +747,7 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
           <div class="nrow"><span>Vitamin B12</span><b class="unk">—</b></div>
           <p class="fine">Vitamin B12 isn't recorded for this food. It won't be counted as zero.</p>
         </div><div class="pad-b"><button type="button" class="btn btn-primary btn-full">Add to Lunch</button></div></div></div></div>
+        
         <label class="pick"><input type="radio" name="pick-food-detail" value="A" data-screen="food-detail" data-label="Serving chips + stepper"> Choose A</label>
       </div><div class="opt-col" data-col="food-detail-B">
         <div class="opt-hd"><span class="opt-k">B</span><div><div class="opt-l">Amount first</div><div class="opt-n">Big editable number leads. Better for people who weigh food; an extra tap for katori users.</div></div></div>
@@ -705,6 +772,7 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
           <div class="sec-h"><span>Meal</span></div>
           <div class="chipset"><span class="sch">Breakfast</span><span class="sch on">Lunch</span><span class="sch">Dinner</span><span class="sch">Snack</span></div>
         </div><div class="pad-b"><button type="button" class="btn btn-primary btn-full">Add to Lunch</button></div></div></div></div>
+        
         <label class="pick"><input type="radio" name="pick-food-detail" value="B" data-screen="food-detail" data-label="Amount first"> Choose B</label>
       </div></div>
     </section><section class="grp" id="templates">
@@ -717,6 +785,7 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
           <div class="card "><div class="tpl-h"><b>Thepla travel meal</b><span class="tpl-k">520 kcal</span></div><div class="tpl-i">3 Thepla · Pickle · Curd</div><div class="tpl-f"><span class="tpl-u">Used 11 times</span><button class="btn btn-soft btn-sm" type="button">Apply</button></div></div>
           <div class="card "><div class="tpl-h"><b>Idli breakfast</b><span class="tpl-k">430 kcal</span></div><div class="tpl-i">2 Idli · Sambar · Coconut chutney · Filter coffee</div><div class="tpl-f"><span class="tpl-u">Used 8 times</span><button class="btn btn-soft btn-sm" type="button">Apply</button></div></div>
         </div></div></div></div>
+        
         <label class="pick"><input type="radio" name="pick-templates" value="A" data-screen="templates" data-label="Cards with contents"> Choose A</label>
       </div><div class="opt-col" data-col="templates-B">
         <div class="opt-hd"><span class="opt-k">B</span><div><div class="opt-l">Compact rows</div><div class="opt-n">More templates visible. Contents hidden until tapped — relies on good names.</div></div></div>
@@ -730,6 +799,7 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
           <div class="lr lr-accent"><div class="lr-m"><div class="lr-main">Light dinner</div><div class="lr-sub">2 items · 380 kcal · used 4×</div></div><span class="lr-r">Apply</span></div>
           <div class="mk">Save today's lunch as a template</div>
         </div></div></div></div>
+        
         <label class="pick"><input type="radio" name="pick-templates" value="B" data-screen="templates" data-label="Compact rows"> Choose B</label>
       </div></div>
     </section><section class="grp" id="water">
@@ -742,6 +812,7 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
         <div class="sec"><div class="sec-h"><span>Today</span></div><div class="card "><div class="lr "><span class="lr-l"><span class="wdot"></span></span><div class="lr-m"><div class="lr-main">500 ml</div><div class="lr-sub">8:10 · glass</div></div></div><div class="lr "><span class="lr-l"><span class="wdot"></span></span><div class="lr-m"><div class="lr-main">250 ml</div><div class="lr-sub">10:45 · glass</div></div></div><div class="lr "><span class="lr-l"><span class="wdot"></span></span><div class="lr-m"><div class="lr-main">400 ml</div><div class="lr-sub">13:20 · bottle</div></div></div><div class="lr "><span class="lr-l"><span class="wdot wdot-alt"></span></span><div class="lr-m"><div class="lr-main">450 ml</div><div class="lr-sub">16:05 · buttermilk</div></div></div></div></div>
         <p class="fine">Chaas and tea count toward hydration. Coffee counts at a lower rate.</p>
       </div></div><div class="bnav"><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span>Today</span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19V9M9.5 19V5M15 19v-7M20.5 19v-4"/></svg><span>Insights</span></div><div class="nav-fab" role="presentation"><span class="fab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></svg></span></div><div class="nav-i active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3.5s6 6.6 6 10.4a6 6 0 0 1-12 0C6 10.1 12 3.5 12 3.5z"/></svg><span>Water</span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 20a7.4 7.4 0 0 1 14.4 0"/></svg><span>Profile</span></div></div></div></div>
+        
         <label class="pick"><input type="radio" name="pick-water" value="A" data-screen="water" data-label="Fill visual"> Choose A</label>
       </div><div class="opt-col" data-col="water-B">
         <div class="opt-hd"><span class="opt-k">B</span><div><div class="opt-l">Glass grid</div><div class="opt-n">Tap a glass to fill it. Fastest input, and countable at a glance; less precise for odd amounts.</div></div></div>
@@ -750,6 +821,7 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
         <div class="card "><div class="glasses"><span class="gl on"></span><span class="gl on"></span><span class="gl on"></span><span class="gl on"></span><span class="gl on"></span><span class="gl on"></span><span class="gl"></span><span class="gl"></span><span class="gl"></span><span class="gl"></span></div><div class="quick"><button class="qb" type="button">+1 glass</button><button class="qb qb-alt" type="button">Custom amount</button></div></div>
         <div class="sec"><div class="sec-h"><span>This week</span></div><div class="card "><div class="wkbars"><div class="wk"><span class="wk-b" style="height:88%"></span><i>M</i></div><div class="wk"><span class="wk-b" style="height:72%"></span><i>T</i></div><div class="wk"><span class="wk-b" style="height:95%"></span><i>W</i></div><div class="wk"><span class="wk-b" style="height:62%"></span><i>T</i></div><div class="wk"><span class="wk-b" style="height:0%"></span><i>F</i></div><div class="wk"><span class="wk-b" style="height:0%"></span><i>S</i></div><div class="wk"><span class="wk-b" style="height:0%"></span><i>S</i></div></div><div class="wk-l"><span>Avg 2.0 L over 4 logged days</span></div></div></div>
       </div></div><div class="bnav"><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span>Today</span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19V9M9.5 19V5M15 19v-7M20.5 19v-4"/></svg><span>Insights</span></div><div class="nav-fab" role="presentation"><span class="fab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></svg></span></div><div class="nav-i active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3.5s6 6.6 6 10.4a6 6 0 0 1-12 0C6 10.1 12 3.5 12 3.5z"/></svg><span>Water</span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 20a7.4 7.4 0 0 1 14.4 0"/></svg><span>Profile</span></div></div></div></div>
+        
         <label class="pick"><input type="radio" name="pick-water" value="B" data-screen="water" data-label="Glass grid"> Choose B</label>
       </div></div>
     </section><section class="grp" id="daily-report">
@@ -763,6 +835,7 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
           <div class="sec"><div class="sec-h"><span>What fell short</span></div><div class="card "><div class="ins ins-low">Fibre came in at 18 g against your 29 g target. A katori of dal or a guava would close most of it.</div><div class="ins ins-high">Sodium was above the recommended limit — the pickle and papad together account for most of it.</div></div></div>
           <div class="sec"><div class="sec-h"><span>Meals</span></div><div class="card "><div class="meal"><span class="meal-n">Breakfast</span><span class="meal-k">410</span></div><div class="meal-i">2 Thepla · Chaas 1 glass</div><div class="meal"><span class="meal-n">Lunch</span><span class="meal-k">760</span></div><div class="meal-i">3 Rotli · Gujarati dal · Bhinda nu shaak · Rice</div><div class="meal"><span class="meal-n">Snack</span><span class="meal-k">190</span></div><div class="meal-i">Khakhra · Filter coffee</div><div class="meal empty"><span class="meal-n">Dinner</span><span class="meal-add">+ Add</span></div></div></div>
         </div></div></div></div>
+        
         <label class="pick"><input type="radio" name="pick-daily-report" value="A" data-screen="daily-report" data-label="Verdict first"> Choose A</label>
       </div><div class="opt-col" data-col="daily-report-B">
         <div class="opt-hd"><span class="opt-k">B</span><div><div class="opt-l">Score breakdown first</div><div class="opt-n">Shows exactly how the 78 was built, including the component that was withheld. Most transparent.</div></div></div>
@@ -772,6 +845,7 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
           <div class="sec"><div class="sec-h"><span>How it was worked out</span></div><div class="card "><div class="ss"><span class="ss-n">Energy adherence <i>25%</i></span><span class="ss-t"><span class="ss-f" style="width:92%"></span></span><span class="ss-v">92</span></div><div class="ss"><span class="ss-n">Macro balance <i>30%</i></span><span class="ss-t"><span class="ss-f" style="width:74%"></span></span><span class="ss-v">74</span></div><div class="ss"><span class="ss-n">Micronutrients <i>20%</i></span><span class="ss-t ss-t-off"></span><span class="ss-v ss-na">&mdash;</span></div><div class="ss-why">Not scored &mdash; only 58% of today&#8217;s food reports these</div><div class="ss"><span class="ss-n">Limit nutrients <i>15%</i></span><span class="ss-t"><span class="ss-f" style="width:88%"></span></span><span class="ss-v">88</span></div><div class="ss"><span class="ss-n">Hydration <i>10%</i></span><span class="ss-t"><span class="ss-f" style="width:62%"></span></span><span class="ss-v">62</span></div><p class="fine">Micronutrients were left out because only 58% of today&#8217;s food reports them. Their 20% weight was shared across the rest.</p></div></div>
           <div class="sec"><div class="sec-h"><span>Gaps and excesses</span></div><div class="card "><div class="ins ins-low">Fibre 18 g of 29 g</div><div class="ins ins-high">Sodium 2,310 mg of 2,000 mg limit</div></div></div>
         </div></div></div></div>
+        
         <label class="pick"><input type="radio" name="pick-daily-report" value="B" data-screen="daily-report" data-label="Score breakdown first"> Choose B</label>
       </div><div class="opt-col" data-col="daily-report-C">
         <div class="opt-hd"><span class="opt-k">C</span><div><div class="opt-l">Full table</div><div class="opt-n">Every tracked nutrient against target in one scan. Densest; least narrative.</div></div></div>
@@ -783,6 +857,7 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
           <div class="sec-h"><span>Meals</span></div>
           <div class="card "><div class="meal"><span class="meal-n">Breakfast</span><span class="meal-k">410</span></div><div class="meal"><span class="meal-n">Lunch</span><span class="meal-k">760</span></div><div class="meal"><span class="meal-n">Snack</span><span class="meal-k">190</span></div><div class="meal empty"><span class="meal-n">Dinner</span><span class="meal-add">+ Add</span></div></div>
         </div></div></div></div>
+        
         <label class="pick"><input type="radio" name="pick-daily-report" value="C" data-screen="daily-report" data-label="Full table"> Choose C</label>
       </div></div>
     </section><section class="grp" id="weekly-report">
@@ -795,6 +870,7 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
           <div class="card "><div class="ch-h"><span>Daily score</span><i>6 days scored</i></div><svg viewBox="0 0 280 64" class="spark" role="img" aria-label="Daily score trend, 68 to 84"><path d="M0.0,58.0 L56.0,40.0 L112.0,49.0 L168.0,28.0 L224.0,10.0 L280.0,25.0 L280,64 L0,64 Z" fill="var(--accent-soft)" stroke="none"/><path d="M0.0,58.0 L56.0,40.0 L112.0,49.0 L168.0,28.0 L224.0,10.0 L280.0,25.0" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="280.0" cy="25.0" r="3.5" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/></svg></div>
           <div class="sec"><div class="sec-h"><span>Averages</span></div><div class="card "><div class="avg"><span>Energy</span><b>1,910</b><i>over 6 logged days</i></div><div class="avg"><span>Protein</span><b>88 g</b><i>target met on 5 of 6</i></div><div class="avg"><span>Fibre</span><b>19 g</b><i>target met on 1 of 6</i></div><div class="avg"><span>Water</span><b>2.1 L</b><i>target met on 3 of 6</i></div></div></div>
         </div></div><div class="bnav"><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span>Today</span></div><div class="nav-i active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19V9M9.5 19V5M15 19v-7M20.5 19v-4"/></svg><span>Insights</span></div><div class="nav-fab" role="presentation"><span class="fab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></svg></span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3.5s6 6.6 6 10.4a6 6 0 0 1-12 0C6 10.1 12 3.5 12 3.5z"/></svg><span>Water</span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 20a7.4 7.4 0 0 1 14.4 0"/></svg><span>Profile</span></div></div></div></div>
+        
         <label class="pick"><input type="radio" name="pick-weekly-report" value="A" data-screen="weekly-report" data-label="Charts first"> Choose A</label>
       </div><div class="opt-col" data-col="weekly-report-B">
         <div class="opt-hd"><span class="opt-k">B</span><div><div class="opt-l">Findings first</div><div class="opt-n">Plain-language findings lead, charts support. Best if nobody in the house wants to read a chart.</div></div></div>
@@ -805,6 +881,7 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
           <div class="sec"><div class="sec-h"><span>The numbers</span></div><div class="card "><div class="avg"><span>Energy</span><b>1,910</b><i>over 6 logged days</i></div><div class="avg"><span>Protein</span><b>88 g</b><i>5 of 6 days met</i></div><div class="avg"><span>Fibre</span><b>19 g</b><i>1 of 6 days met</i></div></div></div>
           <div class="card "><div class="ch-h"><span>Energy per day</span></div><div class="chart"><div class="cb"><span class="cb-b" style="height:84%"></span><i>M</i></div><div class="cb"><span class="cb-b" style="height:91%"></span><i>T</i></div><div class="cb"><span class="cb-b" style="height:78%"></span><i>W</i></div><div class="cb"><span class="cb-b" style="height:80%"></span><i>T</i></div><div class="cb"><span class="cb-b cb-off" style="height:4%"></span><i>F</i></div><div class="cb"><span class="cb-b" style="height:96%"></span><i>S</i></div><div class="cb"><span class="cb-b" style="height:88%"></span><i>S</i></div><span class="ch-tgt"></span></div></div>
         </div></div><div class="bnav"><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span>Today</span></div><div class="nav-i active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19V9M9.5 19V5M15 19v-7M20.5 19v-4"/></svg><span>Insights</span></div><div class="nav-fab" role="presentation"><span class="fab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></svg></span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3.5s6 6.6 6 10.4a6 6 0 0 1-12 0C6 10.1 12 3.5 12 3.5z"/></svg><span>Water</span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 20a7.4 7.4 0 0 1 14.4 0"/></svg><span>Profile</span></div></div></div></div>
+        
         <label class="pick"><input type="radio" name="pick-weekly-report" value="B" data-screen="weekly-report" data-label="Findings first"> Choose B</label>
       </div></div>
     </section><section class="grp" id="monthly-report">
@@ -818,6 +895,7 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
           <div class="sec"><div class="sec-h"><span>Consistently short</span></div><div class="card "><span class="chip chip-low"><span class="dot dot-low"></span>Fibre · 19 of 24 days</span><span class="chip chip-low"><span class="dot dot-low"></span>Iron · 14 of 24 days</span></div></div>
           <div class="sec"><div class="sec-h"><span>Consistently over</span></div><div class="card "><span class="chip chip-high"><span class="dot dot-high"></span>Sodium · 16 of 24 days</span></div></div>
         </div></div><div class="bnav"><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span>Today</span></div><div class="nav-i active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19V9M9.5 19V5M15 19v-7M20.5 19v-4"/></svg><span>Insights</span></div><div class="nav-fab" role="presentation"><span class="fab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></svg></span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3.5s6 6.6 6 10.4a6 6 0 0 1-12 0C6 10.1 12 3.5 12 3.5z"/></svg><span>Water</span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 20a7.4 7.4 0 0 1 14.4 0"/></svg><span>Profile</span></div></div></div></div>
+        
         <label class="pick"><input type="radio" name="pick-monthly-report" value="A" data-screen="monthly-report" data-label="Trend line"> Choose A</label>
       </div><div class="opt-col" data-col="monthly-report-B">
         <div class="opt-hd"><span class="opt-k">B</span><div><div class="opt-l">Calendar heat-map</div><div class="opt-n">Every day as a cell. Best for seeing gaps in logging and weekend patterns.</div></div></div>
@@ -827,6 +905,7 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
           <div class="sec"><div class="sec-h"><span>Month at a glance</span></div><div class="card "><div class="avg"><span>Days logged</span><b>24</b><i>of 30</i></div><div class="avg"><span>Avg score</span><b>74</b><i>August 68</i></div><div class="avg"><span>Best stretch</span><b>6 days</b><i>15–20 Sep</i></div></div></div>
           <p class="fine">Weekends score lower than weekdays by 9 points on average.</p>
         </div></div><div class="bnav"><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span>Today</span></div><div class="nav-i active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19V9M9.5 19V5M15 19v-7M20.5 19v-4"/></svg><span>Insights</span></div><div class="nav-fab" role="presentation"><span class="fab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></svg></span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3.5s6 6.6 6 10.4a6 6 0 0 1-12 0C6 10.1 12 3.5 12 3.5z"/></svg><span>Water</span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 20a7.4 7.4 0 0 1 14.4 0"/></svg><span>Profile</span></div></div></div></div>
+        
         <label class="pick"><input type="radio" name="pick-monthly-report" value="B" data-screen="monthly-report" data-label="Calendar heat-map"> Choose B</label>
       </div></div>
     </section><section class="grp" id="goals">
@@ -842,6 +921,7 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
           <div class="card "><div class="chipset"><span class="sch on">Fibre</span><span class="sch on">Iron</span><span class="sch on">Sodium</span><span class="sch">+ Add</span></div></div>
           <div class="notebox">Changes apply from today. Past reports keep the targets they were measured against.</div>
         </div</div></div></div>
+        
         <label class="pick"><input type="radio" name="pick-goals" value="A" data-screen="goals" data-label="Grouped list"> Choose A</label>
       </div><div class="opt-col" data-col="goals-B">
         <div class="opt-hd"><span class="opt-k">B</span><div><div class="opt-l">Card per target</div><div class="opt-n">Each target gets a slider and its reasoning. Slower to scan, easier to adjust confidently.</div></div></div>
@@ -852,6 +932,7 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
           <div class="card "><div class="tgt-h"><b>Water</b><span class="qt qt-user">You set this</span></div><div class="tgt-v">2.6<i>L</i></div><div class="slider"><span class="sl-t"><span class="sl-f sl-60"></span></span><span class="sl-k sl-k60"></span></div><p class="fine">You raised this from the derived 2.5 L. <span class="lnk">Reset to derived</span></p></div>
           <div class="notebox">Changes apply from today. Past reports keep the targets they were measured against.</div>
         </div></div></div></div>
+        
         <label class="pick"><input type="radio" name="pick-goals" value="B" data-screen="goals" data-label="Card per target"> Choose B</label>
       </div></div>
     </section><section class="grp" id="settings">
@@ -868,6 +949,7 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
           <div class="card "><div class="lr lr-tap"><div class="lr-m"><div class="lr-main">Export everything</div><div class="lr-sub">JSON and CSV</div></div><span class="lr-r"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></span></div><div class="lr lr-tap"><div class="lr-m"><div class="lr-main">Backup</div><div class="lr-sub">Last backed up 2 days ago</div></div><span class="lr-r"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></span></div><div class="lr lr-tap"><div class="lr-m"><div class="lr-main"><span class="dgr">Delete a profile</span></div></div></div></div>
           <p class="fine ctr">Nourishly v1.0 · catalog 2026.09 · all data stays on this phone</p>
         </div></div><div class="bnav"><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span>Today</span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19V9M9.5 19V5M15 19v-7M20.5 19v-4"/></svg><span>Insights</span></div><div class="nav-fab" role="presentation"><span class="fab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></svg></span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3.5s6 6.6 6 10.4a6 6 0 0 1-12 0C6 10.1 12 3.5 12 3.5z"/></svg><span>Water</span></div><div class="nav-i active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 20a7.4 7.4 0 0 1 14.4 0"/></svg><span>Profile</span></div></div></div></div>
+        
         <label class="pick"><input type="radio" name="pick-settings" value="A" data-screen="settings" data-label="Grouped list"> Choose A</label>
       </div><div class="opt-col" data-col="settings-B">
         <div class="opt-hd"><span class="opt-k">B</span><div><div class="opt-l">Cards with reasons</div><div class="opt-n">Each group explains itself. Better for the backup section, which is the one people ignore until it matters.</div></div></div>
@@ -879,6 +961,7 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
           <div class="card "><div class="sec-t">Preferences</div><div class="lr "><div class="lr-m"><div class="lr-main">Units</div></div><span class="lr-r">Metric</span></div><div class="lr "><div class="lr-m"><div class="lr-main">Week starts</div></div><span class="lr-r">Monday</span></div><div class="lr "><div class="lr-m"><div class="lr-main">Show daily score</div></div><span class="lr-r">On</span></div></div>
           <p class="fine ctr">v1.0 · catalog 2026.09 · nothing leaves this phone</p>
         </div></div><div class="bnav"><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span>Today</span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19V9M9.5 19V5M15 19v-7M20.5 19v-4"/></svg><span>Insights</span></div><div class="nav-fab" role="presentation"><span class="fab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></svg></span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3.5s6 6.6 6 10.4a6 6 0 0 1-12 0C6 10.1 12 3.5 12 3.5z"/></svg><span>Water</span></div><div class="nav-i active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 20a7.4 7.4 0 0 1 14.4 0"/></svg><span>Profile</span></div></div></div></div>
+        
         <label class="pick"><input type="radio" name="pick-settings" value="B" data-screen="settings" data-label="Cards with reasons"> Choose B</label>
       </div></div>
     </section>
@@ -940,6 +1023,29 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
   document.addEventListener('change',function(e){
     var r=e.target; if(!r.matches||!r.matches('input[type=radio][data-screen]'))return;
     picks[r.dataset.screen]={key:r.value,label:r.dataset.label}; save(); render();
+  });
+
+  document.querySelectorAll('[data-wiz]').forEach(function(wiz){
+    var id=wiz.getAttribute('data-wiz');
+    var steps=wiz.querySelectorAll('[data-wstep]');
+    var ctl=document.querySelector('[data-wizctl="'+id+'"]');
+    var cur=0;
+    function go(n){
+      cur=Math.max(0,Math.min(steps.length-1,n));
+      steps.forEach(function(s,i){s.classList.toggle('on',i===cur);});
+      if(ctl){
+        ctl.querySelectorAll('[data-wgo]').forEach(function(b,i){b.classList.toggle('on',i===cur);});
+        ctl.querySelectorAll('[data-wname]').forEach(function(b,i){b.classList.toggle('on',i===cur);});
+      }
+      wiz.closest('.scr-body').scrollTop=0;
+    }
+    wiz.addEventListener('click',function(e){
+      if(e.target.closest('.btn-primary')){go(cur+1);}
+      else if(e.target.closest('.ab-icon')){go(cur-1);}
+    });
+    if(ctl){ctl.addEventListener('click',function(e){
+      var b=e.target.closest('[data-wgo]'); if(b) go(parseInt(b.getAttribute('data-wgo'),10));
+    });}
   });
 
   var panel=document.getElementById('panel');

@@ -23,10 +23,12 @@ Both series palettes pass all six checks of the data-visualisation validator —
 
 Choices are recorded in the browser and can be copied out as a plain list from the **My choices** panel.
 
+Where a screen is a multi-step flow, every step is viewable: the in-screen **Continue** and back controls move between them, as does the step strip under the phone.
+
 | # | Screen | Options |
 |---|---|---|
 | 1 | Onboarding | Value cards · Single promise |
-| 2 | Profile setup | One question per step · Single form |
+| 2 | Profile setup | One question per step *(all 5 steps steppable)* · Single form |
 | 3 | Daily dashboard | Ring-led · Meals-led · Numbers grid |
 | 4 | Add food | Sheet with tabs · Full screen search |
 | 5 | Food search | Grouped by source · Flat ranked |

@@ -134,6 +134,25 @@ def listrow(main, sub="", right="", left="", cls=""):
 def btn(label, kind="primary", full=True):
     return f'<button type="button" class="btn btn-{kind}{" btn-full" if full else ""}">{label}</button>'
 
+def wizard(wid, steps):
+    """Multi-step screen. Steps are shown one at a time; the in-screen Continue
+    and back controls move between them, as does the strip under the phone."""
+    body = "".join(
+        f'<div class="wstep{" on" if i == 0 else ""}" data-wstep="{i}">{st}</div>'
+        for i, st in enumerate(steps))
+    return f'<div class="wiz" data-wiz="{wid}">{body}</div>'
+
+
+def wizard_ctl(wid, labels):
+    dots = "".join(
+        f'<button type="button" class="wc{" on" if i == 0 else ""}" data-wgo="{i}">{i+1}</button>'
+        for i in range(len(labels)))
+    names = "".join(f'<span class="wc-n{" on" if i == 0 else ""}" data-wname="{i}">{n}</span>'
+                    for i, n in enumerate(labels))
+    return (f'<div class="wizctl" data-wizctl="{wid}"><span class="wc-l">Step</span>{dots}'
+            f'<span class="wc-names">{names}</span></div>')
+
+
 def screen(inner, nav=None, cls=""):
     n = bottomnav(nav) if nav else ""
     return f'<div class="scr {cls}">{sb()}<div class="scr-body">{inner}</div>{n}</div>'
@@ -200,25 +219,79 @@ S.append(dict(id="onboarding", name="Onboarding", n=1,
         <div class="ob-h2">Nourishly</div>
         <p class="ob-p">A private food and water diary for your household. Everything stays on this phone.</p>
         <ul class="ob-list"><li>{ICON["check"]} Works with no signal</li><li>{ICON["check"]} Knows Gujarati, Tamil and Kannadiga food</li><li>{ICON["check"]} No account, no ads</li></ul>
-        <div class="ob-foot">{btn("Set up my profile")}<button class="btn btn-ghost btn-full" type="button">Just let me log something</button></div></div>''')),
+        <div class="ob-foot">{btn("Set up my profile")}<button class="btn btn-ghost btn-full" type="button">Skip for now</button></div></div>''')),
   ]))
 
 # ---- 2. Profile setup
 S.append(dict(id="profile-setup", name="Profile setup", n=2,
   purpose="Collect only what changes the targets, and explain what each answer does.",
   options=[
-    dict(key="A", label="One question per step", note="Progressive. Feels light, harder to skim, more taps.",
-      html=screen(appbar("About you", left="back", right='<span class="ab-step">2 of 5</span>') + f'''
+    dict(key="A", label="One question per step", note="Progressive. Feels light, harder to skim, more taps. Step through all five below the phone.",
+      wizard="profile-setup-A",
+      steps=["Date of birth &amp; sex", "Height &amp; weight", "Activity", "Goal", "Your targets"],
+      html=screen(wizard("profile-setup-A", [
+        # 1 — date of birth & sex
+        appbar("About you", left="back", right='<span class="ab-step">1 of 5</span>') + f'''
+        <div class="pad">
+          <div class="q-h">When were you born?</div>
+          <p class="q-s">Recommended intakes for several nutrients change with age.</p>
+          <div class="fgrid" style="margin-top:14px">
+            <label class="fld"><span>Date of birth</span><input value="14 March 1992" readonly></label>
+          </div>
+          <p class="q-hint">34 years old</p>
+          <div class="q-h2">Which reference values should we use?</div>
+          <p class="q-s">Recommended intakes for iron, calcium and a few others differ. You can skip this.</p>
+          <div class="opts">
+            <label class="opt"><span><b>Female</b></span></label>
+            <label class="opt sel"><span><b>Male</b></span><span class="opt-c">{ICON["check"]}</span></label>
+            <label class="opt"><span><b>Prefer not to say</b><i>Uses a neutral reference</i></span></label>
+          </div>
+        </div><div class="pad-b">{btn("Continue")}</div>''',
+        # 2 — height & weight
+        appbar("About you", left="back", right='<span class="ab-step">2 of 5</span>') + f'''
+        <div class="pad">
+          <div class="q-h">Your height and weight</div>
+          <p class="q-s">These set your energy and protein targets more than anything else.</p>
+          <div class="frow" style="margin-top:14px">
+            <label class="fld"><span>Height</span><input value="174 cm" readonly></label>
+            <label class="fld"><span>Weight</span><input value="71 kg" readonly></label>
+          </div>
+          <div class="chipset sm" style="margin-top:10px"><span class="sch on">Metric</span><span class="sch">ft / lb</span></div>
+          <div class="notebox">You can update your weight any time. Past reports keep the targets they were measured against.</div>
+        </div><div class="pad-b">{btn("Continue")}</div>''',
+        # 3 — activity
+        appbar("About you", left="back", right='<span class="ab-step">3 of 5</span>') + f'''
         <div class="pad">
           <div class="q-h">How active are you on a normal day?</div>
           <p class="q-s">This changes your energy target more than anything else.</p>
           <div class="opts">
             <label class="opt"><span><b>Mostly sitting</b><i>Desk job, little exercise</i></span></label>
-            <label class="opt sel"><span><b>Lightly active</b><i>Some walking, exercise 1–3 days</i></span><span class="opt-c">{ICON["check"]}</span></label>
-            <label class="opt"><span><b>Active</b><i>Exercise 3–5 days a week</i></span></label>
-            <label class="opt"><span><b>Very active</b><i>Hard exercise 6–7 days</i></span></label>
+            <label class="opt sel"><span><b>Lightly active</b><i>Some walking, exercise 1&ndash;3 days</i></span><span class="opt-c">{ICON["check"]}</span></label>
+            <label class="opt"><span><b>Active</b><i>Exercise 3&ndash;5 days a week</i></span></label>
+            <label class="opt"><span><b>Very active</b><i>Hard exercise 6&ndash;7 days</i></span></label>
           </div>
-        </div><div class="pad-b">{btn("Continue")}</div>''')),
+        </div><div class="pad-b">{btn("Continue")}</div>''',
+        # 4 — goal
+        appbar("About you", left="back", right='<span class="ab-step">4 of 5</span>') + f'''
+        <div class="pad">
+          <div class="q-h">What are you tracking for?</div>
+          <p class="q-s">You can change this later. It only affects targets from that day forward.</p>
+          <div class="opts">
+            <label class="opt sel"><span><b>General health</b><i>Eat in balance, no weight change</i></span><span class="opt-c">{ICON["check"]}</span></label>
+            <label class="opt"><span><b>Weight loss</b><i>A modest, safe deficit</i></span></label>
+            <label class="opt"><span><b>Muscle gain</b><i>Higher protein, small surplus</i></span></label>
+            <label class="opt"><span><b>Better hydration</b><i>Water is the main target</i></span></label>
+          </div>
+        </div><div class="pad-b">{btn("Continue")}</div>''',
+        # 5 — result
+        appbar("Your targets", left="back", right='<span class="ab-step">5 of 5</span>') + f'''
+        <div class="pad">
+          <div class="q-h">Here is where we landed</div>
+          <p class="q-s">Worked out from your height, weight, age, activity and goal. Change any of them whenever you like.</p>
+          {card(listrow("Energy","Mifflin-St Jeor &times; activity level","2,050 kcal")+listrow("Protein","1.2 g per kg of body weight","95 g")+listrow("Carbs","Remainder of energy","240 g")+listrow("Fat","28% of energy","62 g")+listrow("Fibre","14 g per 1,000 kcal","29 g")+listrow("Water","35 ml per kg","2.6 L"))}
+          <div class="notebox">Micronutrient targets use the ICMR-NIN 2020 values for your age and sex.</div>
+        </div><div class="pad-b">{btn("Start logging")}</div>''',
+      ]))),
     dict(key="B", label="Single scrollable form", note="Everything visible at once. Faster for someone who knows their numbers.",
       html=screen(appbar("About you", left="back") + f'''
         <div class="pad">
@@ -773,7 +846,21 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
 .ob-list li{display:flex;align-items:center;gap:9px}
 .ob-list svg{width:15px;height:15px;color:var(--ok);flex:none}
 
+.wiz{min-height:100%;display:flex;flex-direction:column}
+.wstep{display:none;flex-direction:column;flex:1;min-height:100%}
+.wstep.on{display:flex}
+.wstep .pad{flex:1}
+.wizctl{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:12px;padding:9px 11px;border:1px solid var(--pg-line);background:var(--pg-surface);border-radius:9px}
+.wc-l{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--pg-ink-3)}
+.wc{width:26px;height:26px;border-radius:999px;border:1px solid var(--pg-line);background:transparent;color:var(--pg-ink-2);font:inherit;font-size:12px;font-weight:700;cursor:pointer;padding:0}
+.wc:hover{border-color:var(--pg-ink-3);color:var(--pg-ink)}
+.wc.on{background:var(--pg-accent);border-color:transparent;color:var(--pg-accent-ink)}
+.wc-names{position:relative;flex:1;min-width:110px;height:16px}
+.wc-n{position:absolute;inset:0;font-size:12px;font-weight:600;color:var(--pg-ink-2);opacity:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wc-n.on{opacity:1}
 .q-h{font-size:19px;font-weight:700;letter-spacing:-.015em;margin-top:4px}
+.q-h2{font-size:16px;font-weight:700;letter-spacing:-.01em;margin-top:20px}
+.q-hint{font-size:12px;color:var(--ink-3);margin-top:6px}
 .q-s{font-size:13px;color:var(--ink-3);margin-top:4px}
 .opts{display:flex;flex-direction:column;gap:8px;margin-top:14px}
 .opt{display:flex;justify-content:space-between;align-items:center;gap:8px;border:1px solid var(--line);border-radius:var(--r-md);padding:11px 13px;background:var(--surface);min-height:48px}
@@ -1010,6 +1097,7 @@ def build():
             cols.append(f'''<div class="opt-col" data-col="{s['id']}-{o['key']}">
         <div class="opt-hd"><span class="opt-k">{o['key']}</span><div><div class="opt-l">{o['label']}</div><div class="opt-n">{o['note']}</div></div></div>
         <div class="phone">{o['html']}</div>
+        {wizard_ctl(o["wizard"], o["steps"]) if o.get("wizard") else ""}
         <label class="pick"><input type="radio" name="pick-{s['id']}" value="{o['key']}" data-screen="{s['id']}" data-label="{o['label']}"> Choose {o['key']}</label>
       </div>''')
         groups.append(f'''<section class="grp" id="{s['id']}">
@@ -1058,6 +1146,29 @@ def build():
   document.addEventListener('change',function(e){
     var r=e.target; if(!r.matches||!r.matches('input[type=radio][data-screen]'))return;
     picks[r.dataset.screen]={key:r.value,label:r.dataset.label}; save(); render();
+  });
+
+  document.querySelectorAll('[data-wiz]').forEach(function(wiz){
+    var id=wiz.getAttribute('data-wiz');
+    var steps=wiz.querySelectorAll('[data-wstep]');
+    var ctl=document.querySelector('[data-wizctl="'+id+'"]');
+    var cur=0;
+    function go(n){
+      cur=Math.max(0,Math.min(steps.length-1,n));
+      steps.forEach(function(s,i){s.classList.toggle('on',i===cur);});
+      if(ctl){
+        ctl.querySelectorAll('[data-wgo]').forEach(function(b,i){b.classList.toggle('on',i===cur);});
+        ctl.querySelectorAll('[data-wname]').forEach(function(b,i){b.classList.toggle('on',i===cur);});
+      }
+      wiz.closest('.scr-body').scrollTop=0;
+    }
+    wiz.addEventListener('click',function(e){
+      if(e.target.closest('.btn-primary')){go(cur+1);}
+      else if(e.target.closest('.ab-icon')){go(cur-1);}
+    });
+    if(ctl){ctl.addEventListener('click',function(e){
+      var b=e.target.closest('[data-wgo]'); if(b) go(parseInt(b.getAttribute('data-wgo'),10));
+    });}
   });
 
   var panel=document.getElementById('panel');
