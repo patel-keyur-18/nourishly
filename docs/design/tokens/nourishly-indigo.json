@@ -1,0 +1,135 @@
+{
+  "$schema": "https://design-tokens.org/draft",
+  "name": "Nourishly Indigo",
+  "version": "1.0.0",
+  "status": "approved",
+  "decidedOn": "2026-09-09",
+  "note": "Single source of truth for the Nourishly design system. The interactive prototype generates its CSS from this file, so prototype and spec cannot drift. Any future Flutter ThemeData is generated from here too.",
+
+  "font": {
+    "display": "IBM Plex Sans",
+    "body": "IBM Plex Sans",
+    "mono": "IBM Plex Mono",
+    "fallback": "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+    "note": "One family throughout, per the Indigo direction. Weight and size carry hierarchy instead of a second face."
+  },
+
+  "typeScale": {
+    "display":   { "size": 30, "lineHeight": 1.12, "weight": 700, "tracking": "-0.02em" },
+    "title":     { "size": 21, "lineHeight": 1.22, "weight": 700, "tracking": "-0.015em" },
+    "heading":   { "size": 17, "lineHeight": 1.3,  "weight": 600, "tracking": "-0.01em" },
+    "bodyLarge": { "size": 15, "lineHeight": 1.5,  "weight": 400, "tracking": "0" },
+    "body":      { "size": 14, "lineHeight": 1.5,  "weight": 400, "tracking": "0" },
+    "label":     { "size": 13, "lineHeight": 1.35, "weight": 600, "tracking": "0" },
+    "caption":   { "size": 12, "lineHeight": 1.4,  "weight": 400, "tracking": "0.005em" },
+    "overline":  { "size": 11, "lineHeight": 1.3,  "weight": 600, "tracking": "0.09em", "transform": "uppercase" },
+    "numeral":   { "size": 28, "lineHeight": 1.0,  "weight": 700, "tracking": "-0.02em", "variantNumeric": "tabular-nums" }
+  },
+
+  "space":  { "0": 0, "1": 4, "2": 8, "3": 12, "4": 16, "5": 20, "6": 24, "7": 32, "8": 40, "9": 48 },
+  "radius": { "sm": 8, "md": 12, "lg": 16, "xl": 22, "pill": 999 },
+  "stroke": { "hairline": 1, "bar": 9, "ring": 11, "tick": 2 },
+
+  "motion": {
+    "instant": 0,
+    "fast": 120,
+    "base": 200,
+    "slow": 320,
+    "easing": "cubic-bezier(0.2, 0, 0, 1)",
+    "note": "All durations collapse to 0 under prefers-reduced-motion."
+  },
+
+  "target": { "minTouch": 48, "minTouchCompact": 44 },
+
+  "chart": {
+    "trackToTargetRatio": 1.25,
+    "note": "Every progress track runs to 125% of target so overshoot is visible; the target tick sits at 80% of the track. Never fill a bar to its own edge at target."
+  },
+
+  "color": {
+    "light": {
+      "bg": "#f2f3f8",
+      "surface": "#ffffff",
+      "surface2": "#e9ebf4",
+      "surface3": "#ffffff",
+      "line": "#d6d9e8",
+      "lineStrong": "#b9bed6",
+      "ink": "#161829",
+      "ink2": "#4b4f66",
+      "ink3": "#7b8098",
+      "inkDisabled": "#a3a7bb",
+      "accent": "#3b4d9e",
+      "accentHover": "#334389",
+      "accentInk": "#ffffff",
+      "accentSoft": "#dfe3f4",
+      "accentSoftInk": "#2c3a7a",
+      "track": "#e3e6f1",
+      "focus": "#3b4d9e",
+      "scrim": "rgba(16, 18, 34, 0.44)",
+      "danger": "#a52a1f",
+      "dangerSoft": "#f7e2df",
+      "status": { "ok": "#2e7d4f", "low": "#a06d0c", "high": "#7a5ea8", "unknown": "#7b8098" },
+      "series": { "protein": "#c1572d", "carbs": "#1f6fa5", "fat": "#c7961a", "fibre": "#0f8a5e" },
+      "elevation": {
+        "0": "none",
+        "1": "0 1px 2px rgba(22,24,41,.06)",
+        "2": "0 2px 4px rgba(22,24,41,.06), 0 8px 20px -12px rgba(22,24,41,.18)",
+        "3": "0 8px 34px -14px rgba(22,24,41,.34)"
+      }
+    },
+    "dark": {
+      "bg": "#0f1119",
+      "surface": "#161927",
+      "surface2": "#1e2233",
+      "surface3": "#222639",
+      "line": "#2b3045",
+      "lineStrong": "#3b4160",
+      "ink": "#e9ebf6",
+      "ink2": "#a8adc4",
+      "ink3": "#787e96",
+      "inkDisabled": "#5b6079",
+      "accent": "#8b99ea",
+      "accentHover": "#9da9ef",
+      "accentInk": "#0e1018",
+      "accentSoft": "#232847",
+      "accentSoftInk": "#c3cbf7",
+      "track": "#242940",
+      "focus": "#8b99ea",
+      "scrim": "rgba(4, 5, 10, 0.62)",
+      "danger": "#f0a49c",
+      "dangerSoft": "#3a1f1c",
+      "status": { "ok": "#4aa873", "low": "#d0a03a", "high": "#a893d8", "unknown": "#787e96" },
+      "series": { "protein": "#d16536", "carbs": "#3f92cf", "fat": "#bb8a0c", "fibre": "#2a9b6e" },
+      "elevation": {
+        "0": "none",
+        "1": "0 1px 2px rgba(0,0,0,.5)",
+        "2": "0 2px 4px rgba(0,0,0,.45), 0 8px 20px -12px rgba(0,0,0,.7)",
+        "3": "0 8px 34px -14px rgba(0,0,0,.8)"
+      }
+    }
+  },
+
+  "validation": {
+    "method": "dataviz validate_palette.js, six checks",
+    "series": {
+      "light": { "palette": ["#c1572d", "#1f6fa5", "#c7961a", "#0f8a5e"], "result": "ALL CHECKS PASS" },
+      "dark":  { "palette": ["#d16536", "#3f92cf", "#bb8a0c", "#2a9b6e"], "result": "ALL CHECKS PASS" }
+    },
+    "checks": ["lightness band", "chroma floor", "CVD separation", "normal-vision floor", "contrast vs surface"],
+    "notes": [
+      "Series order is fixed: protein, carbs, fat, fibre. Hues are assigned by slot and never cycled or reassigned by rank.",
+      "The accent (#3b4d9e / #8b99ea) is deliberately distinct from every series hue. An earlier draft had the accent equal to the carbs hue, which made brand and measurement indistinguishable on screen.",
+      "Status colours are reserved and never reused as a series colour. They always ship with a label and a dot, never colour alone."
+    ]
+  },
+
+  "rules": {
+    "overTargetIsNotRed": "Exceeding a target uses status.high (violet). Red is reserved for destructive actions only. A food tracker must not scold — architecture §21.8.",
+    "neverColourAlone": "Every status carries a text label and a shape or icon — NFR-A-04.",
+    "unknownIsNotZero": "A nutrient with no data renders as an em dash with an explanation on tap, never as 0 — AP-4.",
+    "remainingNotConsumed": "Energy leads with what is left, not what is eaten — UX-3.",
+    "tabularNumerals": "Any digits that align in a column use tabular figures.",
+    "contrast": "Text and meaningful UI meet WCAG 2.2 AA in both modes.",
+    "touchTargets": "Primary controls are at least 48dp; compact list affordances no less than 44dp."
+  }
+}

@@ -2,9 +2,52 @@
 
 *[Architecture index](../architecture/README.md) · [Catalog specification](../catalog/README.md)*
 
-## Theme options — awaiting decision
+## 1. Theme — decided: **Indigo**
 
-**[`theme-options.html`](./theme-options.html)** — five candidate visual directions for Nourishly, each rendered as the same dashboard so the comparison is theme-only. One toggle switches every preview between its light and dark variant.
+**[`tokens/nourishly-indigo.json`](./tokens/nourishly-indigo.json)** is the single source of truth for the design system: colour for both modes, type scale, spacing, radii, elevation, motion, touch targets, and the rules the UI must honour.
+
+Everything downstream reads that file. The prototype generates its CSS from it, and any future Flutter `ThemeData` is generated from it too — so the spec, the prototype and the app cannot drift apart by hand-editing.
+
+| | Light | Dark |
+|---|---|---|
+| Accent | `#3b4d9e` | `#8b99ea` |
+| Surface | `#ffffff` | `#161927` |
+| Ink | `#161829` | `#e9ebf6` |
+| Protein / Carbs / Fat / Fibre | `#c1572d` `#1f6fa5` `#c7961a` `#0f8a5e` | `#d16536` `#3f92cf` `#bb8a0c` `#2a9b6e` |
+
+Both series palettes pass all six checks of the data-visualisation validator — lightness band, chroma floor, colour-blindness separation, normal-vision floor, and contrast against their own surface.
+
+## 2. Screen prototype — awaiting per-screen decisions
+
+**[`prototype.html`](./prototype.html)** — all 13 screens, each with two or three alternative treatments of the same content, in one page. Light/dark toggle applies to every screen at once.
+
+Choices are recorded in the browser and can be copied out as a plain list from the **My choices** panel.
+
+| # | Screen | Options |
+|---|---|---|
+| 1 | Onboarding | Value cards · Single promise |
+| 2 | Profile setup | One question per step · Single form |
+| 3 | Daily dashboard | Ring-led · Meals-led · Numbers grid |
+| 4 | Add food | Sheet with tabs · Full screen search |
+| 5 | Food search | Grouped by source · Flat ranked |
+| 6 | Portion & food detail | Serving chips · Amount first |
+| 7 | Meal templates | Cards · Compact rows |
+| 8 | Water | Fill visual · Glass grid |
+| 9 | Daily report | Verdict first · Score breakdown · Full table |
+| 10 | Weekly report | Charts first · Findings first |
+| 11 | Monthly report | Trend line · Calendar heat-map |
+| 12 | Goals & targets | Grouped list · Card per target |
+| 13 | Settings & data | Grouped list · Cards with reasons |
+
+Regenerate after any token change:
+
+```
+python3 docs/design/_build_prototype.py
+```
+
+## 3. Theme comparison (superseded)
+
+**[`theme-options.html`](./theme-options.html)** — the five candidates that were compared before Indigo was chosen. Kept as the record of what was weighed.
 
 | Option | Direction | Character |
 |---|---|---|
@@ -35,12 +78,14 @@ These hold whichever theme is chosen, and they come from the architecture rather
 | Energy shows remaining, not consumed | "410 kcal left" is the large number; eaten and target sit beside it | UX-3 |
 | Numbers align | Tabular figures throughout | §27.11 |
 
-### Next
-
-Pick one. It becomes the token set in `nourishly_ui` (§12.3) and the basis for the screen prototypes.
-
-Nothing here is locked — the tokens are data, so a chosen theme can be re-tuned without touching feature code. That is the point of keeping the design system in one package.
-
 ---
 
-`_generate.py` emits the per-theme CSS and preview markup for `theme-options.html`, so the light and dark token sets cannot drift apart by hand-editing.
+## Files
+
+| File | Purpose |
+|---|---|
+| `tokens/nourishly-indigo.json` | **The approved design system.** Source of truth for everything below |
+| `prototype.html` | Generated. All 13 screens with options |
+| `_build_prototype.py` | Generates `prototype.html` from the token file |
+| `theme-options.html` | Generated. The five-way comparison, superseded |
+| `_generate.py` | Generates `theme-options.html` |
