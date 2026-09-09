@@ -199,6 +199,13 @@ WEEKBARS = ('<div class="wkbars">' + "".join(
 STATUS_CHIPS = chip("Protein on track", "ok") + chip("Fibre 11 g short", "low") + chip("Micros 58% covered", "unknown")
 
 # ================================================================ SCREENS
+# Approved 2026-09-09 — see decisions.md. Discarded options are retained.
+CHOSEN = {
+    "onboarding": "B", "profile-setup": "A", "dashboard": "A", "log-entry": "B",
+    "food-search": "A", "food-detail": "A", "templates": "A", "water": "A",
+    "daily-report": "C", "weekly-report": "A", "monthly-report": "A",
+    "goals": "B", "settings": "A",
+}
 S = []
 
 # ---- 1. Onboarding
@@ -701,7 +708,7 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
 .tgl,.selbtn{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--pg-line);background:var(--pg-surface);color:var(--pg-ink);border-radius:999px;padding:7px 14px;font:inherit;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
 .tgl:hover,.selbtn:hover{border-color:var(--pg-ink-3)}
 .tgl svg{width:15px;height:15px}
-.selbtn b{background:var(--pg-accent);color:var(--pg-accent-ink);border-radius:999px;padding:1px 7px;font-size:11px}
+.selbtn b{background:var(--pg-accent);color:var(--pg-accent-ink);border-radius:999px;padding:1px 8px;font-size:11px;font-weight:700}
 
 .intro{padding:44px 0 4px;max-width:66ch}
 .kick{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--pg-accent);margin-bottom:12px}
@@ -731,12 +738,12 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
 .opt-k{font-size:12px;font-weight:700;background:var(--pg-surface-2);color:var(--pg-ink-2);border-radius:6px;padding:2px 7px;flex:none;margin-top:2px}
 .opt-l{font-weight:700;font-size:15px;letter-spacing:-.01em}
 .opt-n{font-size:13px;color:var(--pg-ink-2);margin-top:2px;line-height:1.45}
-.pick{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:13.5px;font-weight:600;cursor:pointer;user-select:none;
-  border:1px solid var(--pg-line);background:var(--pg-surface);border-radius:9px;padding:9px 12px}
-.pick:hover{border-color:var(--pg-ink-3)}
-.pick input{accent-color:var(--pg-accent);width:16px;height:16px;margin:0}
-.opt-col.chosen .pick{border-color:var(--pg-accent);background:var(--pg-accent-soft)}
+.stamp{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;border-radius:999px;padding:2px 8px;vertical-align:2px;margin-left:4px;background:var(--pg-surface-2);color:var(--pg-ink-3);border:1px solid var(--pg-line)}
+.stamp-on{background:var(--pg-accent);color:var(--pg-accent-ink);border-color:transparent}
 .opt-col.chosen .phone{outline:2px solid var(--pg-accent);outline-offset:4px}
+.opt-col.passed .phone{opacity:.72}
+.opt-col.passed:hover .phone{opacity:1}
+.opt-col[hidden]{display:none}
 
 /* ---- phone ---- */
 .phone{width:340px;border-radius:26px;padding:8px;background:var(--pg-surface);border:1px solid var(--pg-line);box-shadow:var(--pg-shadow)}
@@ -1061,14 +1068,15 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
 .panel-h b{font-size:16px}
 .panel-x{border:none;background:transparent;color:var(--pg-ink-2);font-size:22px;cursor:pointer;line-height:1;padding:4px 8px}
 .panel-b{flex:1;overflow-y:auto;padding:8px 20px 20px}
-.pr{display:flex;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid var(--pg-line);font-size:14px}
-.pr span{color:var(--pg-ink-2)}
-.pr b{font-weight:700;text-align:right}
-.pr b.none{color:var(--pg-ink-3);font-weight:500}
+.pr{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:11px 0;border-bottom:1px solid var(--pg-line);font-size:14px}
+.pr b{font-weight:700;display:block}
+.pr i{font-style:normal;font-size:12px;color:var(--pg-ink-3);display:block;margin-top:2px;line-height:1.4}
+.prk{flex:none;width:26px;height:26px;border-radius:999px;background:var(--pg-accent);color:var(--pg-accent-ink);display:grid;place-items:center;font-size:12px;font-weight:700}
 .panel-f{padding:16px 20px;border-top:1px solid var(--pg-line);display:flex;flex-direction:column;gap:9px}
 .cpy{font:inherit;font-size:14px;font-weight:600;cursor:pointer;border-radius:9px;padding:11px;border:1px solid transparent;background:var(--pg-accent);color:var(--pg-accent-ink)}
 .clr{font:inherit;font-size:13px;font-weight:600;cursor:pointer;border-radius:9px;padding:9px;border:1px solid var(--pg-line);background:transparent;color:var(--pg-ink-2)}
-.panel-note{font-size:12px;color:var(--pg-ink-3);text-align:center}
+.panel-note{font-size:12px;color:var(--pg-ink-3);line-height:1.5}
+.panel-note code{font-family:var(--mono);font-size:11.5px;background:var(--pg-surface-2);padding:1px 4px;border-radius:4px}
 
 .close{padding:40px 0 70px;border-top:1px solid var(--pg-line)}
 .close h2{font-size:24px;font-weight:700;letter-spacing:-.02em;margin-bottom:14px}
@@ -1088,25 +1096,32 @@ def build():
                    .replace("__LIGHT__", css_vars("light"))
                    .replace("__DARK__", css_vars("dark")))
     rail = "".join(
-        f'<a class="rl" href="#{s["id"]}" data-rail="{s["id"]}">{s["n"]}. {s["name"]} <i data-railmark="{s["id"]}">·</i></a>'
+        f'<a class="rl" href="#{s["id"]}">{s["n"]}. {s["name"]} <i>{CHOSEN.get(s["id"],"—")}</i></a>'
         for s in S)
     groups = []
     for s in S:
         cols = []
         for o in s["options"]:
-            cols.append(f'''<div class="opt-col" data-col="{s['id']}-{o['key']}">
-        <div class="opt-hd"><span class="opt-k">{o['key']}</span><div><div class="opt-l">{o['label']}</div><div class="opt-n">{o['note']}</div></div></div>
+            is_chosen = CHOSEN.get(s["id"]) == o["key"]
+            state = "chosen" if is_chosen else "passed"
+            stamp = ('<span class="stamp stamp-on">Chosen</span>' if is_chosen
+                     else '<span class="stamp">Not chosen</span>')
+            cols.append(f'''<div class="opt-col {state}" data-state="{state}">
+        <div class="opt-hd"><span class="opt-k">{o['key']}</span><div><div class="opt-l">{o['label']} {stamp}</div><div class="opt-n">{o['note']}</div></div></div>
         <div class="phone">{o['html']}</div>
         {wizard_ctl(o["wizard"], o["steps"]) if o.get("wizard") else ""}
-        <label class="pick"><input type="radio" name="pick-{s['id']}" value="{o['key']}" data-screen="{s['id']}" data-label="{o['label']}"> Choose {o['key']}</label>
       </div>''')
         groups.append(f'''<section class="grp" id="{s['id']}">
-      <div class="grp-h"><div class="grp-n">Screen {s['n']} of {len(S)}</div><h2 class="grp-t">{s['name']}</h2><p class="grp-p">{s['purpose']}</p></div>
+      <div class="grp-h"><div class="grp-n">Screen {s['n']} of {len(S)} &middot; chosen: option {CHOSEN.get(s['id'],'—')}</div><h2 class="grp-t">{s['name']}</h2><p class="grp-p">{s['purpose']}</p></div>
       <div class="opts-row">{"".join(cols)}</div>
     </section>''')
 
+    def _alts(s):
+        return " · ".join(o["key"] + " " + o["label"] for o in s["options"] if o["key"] != CHOSEN.get(s["id"]))
     panel_rows = "".join(
-        f'<div class="pr"><span>{s["n"]}. {s["name"]}</span><b class="none" data-sum="{s["id"]}">not chosen</b></div>' for s in S)
+        f'<div class="pr"><div><b>{s["n"]}. {s["name"]}</b>'
+        f'<i>not chosen: {_alts(s)}</i></div>'
+        f'<span class="prk">{CHOSEN.get(s["id"],"—")}</span></div>' for s in S)
 
     js = """
 (function(){
@@ -1119,34 +1134,18 @@ def build():
   paint(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
   btn.addEventListener('click',function(){paint(root.getAttribute('data-theme')==='dark'?'light':'dark');});
 
-  var picks={};
-  try{picks=JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch(e){picks={};}
-  var TOTAL=document.querySelectorAll('.grp').length;
-
-  function save(){try{localStorage.setItem(KEY,JSON.stringify(picks));}catch(e){}}
-  function render(){
-    document.querySelectorAll('input[type=radio][data-screen]').forEach(function(r){
-      var chosen = picks[r.dataset.screen] && picks[r.dataset.screen].key===r.value;
-      r.checked=!!chosen;
-      var col=r.closest('.opt-col'); if(col) col.classList.toggle('chosen',!!chosen);
+  var showAll=false;
+  var fBtn=document.getElementById('filterBtn'), fCount=document.getElementById('filterCount');
+  function applyFilter(){
+    document.querySelectorAll('.opt-col').forEach(function(c){
+      c.hidden = (!showAll && c.dataset.state==='passed');
     });
-    document.querySelectorAll('[data-sum]').forEach(function(el){
-      var p=picks[el.dataset.sum];
-      el.textContent = p ? (p.key+' — '+p.label) : 'not chosen';
-      el.classList.toggle('none',!p);
-    });
-    document.querySelectorAll('[data-rail]').forEach(function(el){
-      el.classList.toggle('done',!!picks[el.dataset.rail]);
-    });
-    document.querySelectorAll('[data-railmark]').forEach(function(el){
-      var p=picks[el.dataset.railmark]; el.textContent = p ? p.key : '·';
-    });
-    document.getElementById('selCount').textContent = Object.keys(picks).length+'/'+TOTAL;
+    fCount.textContent = showAll ? 'all 28 options' : '13 chosen';
+    fBtn.setAttribute('aria-pressed', String(!showAll));
+    fBtn.title = showAll ? 'Show only the chosen option per screen' : 'Show every option, including those not chosen';
   }
-  document.addEventListener('change',function(e){
-    var r=e.target; if(!r.matches||!r.matches('input[type=radio][data-screen]'))return;
-    picks[r.dataset.screen]={key:r.value,label:r.dataset.label}; save(); render();
-  });
+  fBtn.addEventListener('click',function(){showAll=!showAll;applyFilter();});
+  applyFilter();
 
   document.querySelectorAll('[data-wiz]').forEach(function(wiz){
     var id=wiz.getAttribute('data-wiz');
@@ -1177,23 +1176,11 @@ def build():
   document.getElementById('panelBg').addEventListener('click',function(){panel.classList.remove('open');});
   document.addEventListener('keydown',function(e){if(e.key==='Escape')panel.classList.remove('open');});
 
-  document.getElementById('clearBtn').addEventListener('click',function(){picks={};save();render();});
-  document.getElementById('copyBtn').addEventListener('click',function(){
-    var lines=['Nourishly prototype — my screen choices',''];
-    document.querySelectorAll('.grp').forEach(function(g){
-      var id=g.id, n=g.querySelector('.grp-t').textContent, p=picks[id];
-      lines.push('- '+n+': '+(p?('Option '+p.key+' ('+p.label+')'):'no preference'));
-    });
-    var txt=lines.join('\\n');
-    var done=function(){var b=document.getElementById('copyBtn');b.textContent='Copied — paste it back to Claude';setTimeout(function(){b.textContent='Copy my choices';},2400);};
-    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,function(){window.prompt('Copy this:',txt);});}
-    else{window.prompt('Copy this:',txt);}
-  });
-  render();
+
 })();
 """
 
-    return f'''<title>Nourishly Screen Prototype</title>
+    return f'''<title>Nourishly Approved Screens</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
@@ -1202,17 +1189,18 @@ def build():
 <div class="bar"><div class="wrap barin">
   <div class="brand">Nourishly <i>· screen prototype · Indigo</i></div>
   <span class="spacer"></span>
-  <button type="button" class="selbtn" id="selBtn">My choices <b id="selCount">0/{len(S)}</b></button>
+  <button type="button" class="selbtn" id="filterBtn" aria-pressed="true">Showing <b id="filterCount">13 chosen</b></button>
+  <button type="button" class="selbtn" id="selBtn">Decisions</button>
   <button type="button" class="tgl" id="modeBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" id="modeIcon"></svg><span id="modeLabel">Light</span></button>
 </div></div>
 
 <main class="wrap">
   <div class="intro">
-    <div class="kick">Approved theme · Indigo</div>
-    <h1>Every screen, two or three ways</h1>
-    <p class="lede">All {len(S)} screens of the app, each with alternative treatments of the same content. Pick one per screen — your choices are remembered in this browser and can be copied out as a list at the end.</p>
-    <p class="lede">Every pixel here is driven by <code>tokens/nourishly-indigo.json</code>, the approved theme. The prototype cannot drift from it, because it reads the same file.</p>
-    <div class="hownote"><b>Nothing is functional.</b> These are static screens showing layout, hierarchy and density — one plausible Thursday in a Gujarati household. Tapping does nothing on purpose; the point is to choose a shape, not to test a flow.</div>
+    <div class="kick">Approved · Indigo theme · {len(S)} screens decided</div>
+    <h1>The approved screens</h1>
+    <p class="lede">One treatment chosen per screen. The page opens showing only those — switch to <b>All 28 options</b> in the header to see the alternatives, which are kept rather than deleted.</p>
+    <p class="lede">Every pixel is driven by <code>tokens/nourishly-indigo.json</code>, the approved theme. The prototype cannot drift from it, because it reads the same file.</p>
+    <div class="hownote"><b>Nothing is functional.</b> These are static screens showing layout, hierarchy and density — one plausible Thursday in a Gujarati household. Profile setup is the exception: its five steps are steppable, so the flow can be judged.</div>
   </div>
 </main>
 
@@ -1222,21 +1210,20 @@ def build():
   {"".join(groups)}
 
   <section class="close">
-    <h2>When you have picked</h2>
-    <p>Open <b>My choices</b> in the header and hit copy — it produces a plain list you can paste straight back to me. Screens you leave unchosen come back as “no preference”, and I will pick the one that best fits the ones you did choose.</p>
-    <p>After that the chosen screens become the basis for implementation: the token file becomes the <code>nourishly_ui</code> package, and each screen becomes a feature module under the structure in §12.3 of the architecture.</p>
+    <h2>Where this goes next</h2>
+    <p>These 13 screens are the implementation targets: the token file becomes the <code>nourishly_ui</code> package, and each screen becomes a feature module under the structure in §12.3 of the architecture.</p>
+    <p><code>decisions.md</code> records the full set alongside two refinements worth settling first — the daily report keeping its verdict line and insights around the table, and a length strategy for the goals screen once all 24 nutrients are on it.</p>
+    <p><b>No implementation has begun.</b></p>
   </section>
 </main>
 
 <div class="panel" id="panel" role="dialog" aria-modal="true" aria-label="Your screen choices">
   <div class="panel-bg" id="panelBg"></div>
   <div class="panel-in">
-    <div class="panel-h"><b>My choices</b><button class="panel-x" id="panelX" type="button" aria-label="Close">×</button></div>
+    <div class="panel-h"><b>Decisions</b><button class="panel-x" id="panelX" type="button" aria-label="Close">×</button></div>
     <div class="panel-b">{panel_rows}</div>
     <div class="panel-f">
-      <button class="cpy" id="copyBtn" type="button">Copy my choices</button>
-      <button class="clr" id="clearBtn" type="button">Clear all</button>
-      <p class="panel-note">Saved in this browser only.</p>
+      <p class="panel-note">Approved 9 September 2026. Discarded options are kept in the prototype, not deleted — see <code>decisions.md</code>.</p>
     </div>
   </div>
 </div>

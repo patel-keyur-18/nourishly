@@ -4,7 +4,7 @@
 
 ## 1. Theme — decided: **Indigo**
 
-**[`tokens/nourishly-indigo.json`](./tokens/nourishly-indigo.json)** is the single source of truth for the design system: colour for both modes, type scale, spacing, radii, elevation, motion, touch targets, and the rules the UI must honour.
+**[`tokens/nourishly-indigo.json`](./tokens/nourishly-indigo.json)** is the single source of truth for the design system: colour for both modes, type scale, spacing, radii, stroke widths, elevation, motion, touch targets, and the rules the UI must honour.
 
 Everything downstream reads that file. The prototype generates its CSS from it, and any future Flutter `ThemeData` is generated from it too — so the spec, the prototype and the app cannot drift apart by hand-editing.
 
@@ -17,67 +17,62 @@ Everything downstream reads that file. The prototype generates its CSS from it, 
 
 Both series palettes pass all six checks of the data-visualisation validator — lightness band, chroma floor, colour-blindness separation, normal-vision floor, and contrast against their own surface.
 
-## 2. Screen prototype — awaiting per-screen decisions
+<details>
+<summary>The four themes that were not chosen</summary>
 
-**[`prototype.html`](./prototype.html)** — all 13 screens, each with two or three alternative treatments of the same content, in one page. Light/dark toggle applies to every screen at once.
+Indigo was picked from five candidates compared side by side on the same dashboard. The comparison page has been removed now that the decision is made; the reasoning is kept here.
 
-Choices are recorded in the browser and can be copied out as a plain list from the **My choices** panel.
-
-Where a screen is a multi-step flow, every step is viewable: the in-screen **Continue** and back controls move between them, as does the step strip under the phone.
-
-| # | Screen | Options |
+| Candidate | Direction | Why not |
 |---|---|---|
-| 1 | Onboarding | Value cards · Single promise |
-| 2 | Profile setup | One question per step *(all 5 steps steppable)* · Single form |
-| 3 | Daily dashboard | Ring-led · Meals-led · Numbers grid |
-| 4 | Add food | Sheet with tabs · Full screen search |
-| 5 | Food search | Grouped by source · Flat ranked |
-| 6 | Portion & food detail | Serving chips · Amount first |
-| 7 | Meal templates | Cards · Compact rows |
-| 8 | Water | Fill visual · Glass grid |
-| 9 | Daily report | Verdict first · Score breakdown · Full table |
-| 10 | Weekly report | Charts first · Findings first |
-| 11 | Monthly report | Trend line · Calendar heat-map |
-| 12 | Goals & targets | Grouped list · Card per target |
-| 13 | Settings & data | Grouped list · Cards with reasons |
+| **Haldi** | Turmeric on warm paper — the only palette drawn from the kitchen rather than software convention | The most characterful option, but warm grounds date faster and gold-on-white needs constant care to stay legible |
+| **Neem** | Green-forward, crisp; the conventional health-app read | Safe and instantly legible, but unmemorable, and its accent sat close to the "on target" status hue |
+| **Kora** | Near-colourless chrome; colour means data and nothing else | Strongest chart reading of the five, but little personality — it relies entirely on typography and spacing being right |
+| **Nilgiri** | Teal, dark-first, light mode derived from it | Best dark mode by design, but the light half was the weaker one, and teal reads "tech product" more than "household app" |
 
-Regenerate after any token change:
+Indigo won on being legible under dense numbers while still having a point of view, and on keeping four macro hues clearly separated against cool neutrals.
+
+</details>
+
+## 2. Screens — decided
+
+**[`decisions.md`](./decisions.md)** records the chosen treatment for each of the 13 screens, what the set adds up to, and two refinements worth settling before implementation.
+
+**[`prototype.html`](./prototype.html)** opens showing only the approved screens. Toggle **Show all 28 options** in the header to see the alternatives — they are retained rather than deleted, because the reasoning behind a rejection is worth keeping and a rejected layout is often right for a later variant.
+
+| # | Screen | Chosen |
+|---|---|---|
+| 1 | Onboarding | B — Single promise screen |
+| 2 | Profile setup | A — One question per step *(all 5 steps steppable)* |
+| 3 | Daily dashboard | A — Ring-led |
+| 4 | Add food | B — Full screen, search first |
+| 5 | Food search | A — Grouped by source |
+| 6 | Portion & food detail | A — Serving chips + stepper |
+| 7 | Meal templates | A — Cards with contents |
+| 8 | Water | A — Fill visual |
+| 9 | Daily report | C — Full table |
+| 10 | Weekly report | A — Charts first |
+| 11 | Monthly report | A — Trend line |
+| 12 | Goals & targets | B — Card per target |
+| 13 | Settings & data | A — Grouped list |
+
+Regenerate after any token or decision change:
 
 ```
 python3 docs/design/_build_prototype.py
 ```
 
-## 3. Theme comparison (superseded)
+## Design rules the screens demonstrate
 
-**[`theme-options.html`](./theme-options.html)** — the five candidates that were compared before Indigo was chosen. Kept as the record of what was weighed.
-
-| Option | Direction | Character |
-|---|---|---|
-| **Haldi** | Turmeric on warm paper | The only palette drawn from the kitchen rather than from software convention |
-| **Neem** | Green-forward, crisp | The conventional health-app read, executed with restraint |
-| **Indigo** | Deep indigo, cool neutrals | Reads as an instrument you consult, not an app that nags |
-| **Kora** | Near-colourless chrome | Colour means data and nothing else |
-| **Nilgiri** | Teal, dark-first | Dark mode designed first, light derived from it |
-
-### What was decided before the colours were picked
-
-Each theme is a complete token set: surfaces, ink at three weights, an accent, and **four macro hues** for protein, carbs, fat and fibre.
-
-Those four hues are the part that had to be right rather than pretty. All ten palettes (five themes × two modes) were checked programmatically for colour-blindness separation, chroma floor, lightness band, and contrast against their own surface. **Every one passes in both modes**, so the choice is purely about character — no option costs legibility.
-
-Two collisions were caught and fixed this way: Indigo's accent originally matched its carbohydrate hue, and Nilgiri's teal accent matched its fibre hue. An accent that doubles as a data colour makes "brand" and "measurement" indistinguishable on screen.
-
-### Design rules the previews demonstrate
-
-These hold whichever theme is chosen, and they come from the architecture rather than from taste:
+These come from the architecture rather than from taste:
 
 | Rule | Where you see it | Source |
 |---|---|---|
-| Bars are read against a target, not filled to an edge | The tick mark on every macro bar sits at 100% of target; the track runs to 125% so overshoot has somewhere to go | §27.11 |
-| Over-target is never alarming | `above` uses a violet, not red. A food tracker must not scold | §21.8 |
-| Never colour alone | Every status chip carries a dot **and** a label | NFR-A-04 |
-| The score is withheld when the data is too thin | The "Micros: 58% covered — not scored" chip is coverage gating showing its work | §21.5 |
-| Energy shows remaining, not consumed | "410 kcal left" is the large number; eaten and target sit beside it | UX-3 |
+| Bars are read against a target, not filled to an edge | The tick on every bar sits at 100% of target; the track runs to 125% so overshoot has somewhere to go | §27.11 |
+| Over-target is never alarming | `above` uses a violet. Red is reserved for destructive actions | §21.8 |
+| Never colour alone | Every status carries a dot **and** a label | NFR-A-04 |
+| Unknown is not zero | "Calcium — no data" on the daily report | AP-4 |
+| The score withholds itself when data is too thin | "Micronutrients: not scored, only 58% covered" | §21.5 |
+| Energy shows remaining, not consumed | "410 kcal left" is the large number | UX-3 |
 | Numbers align | Tabular figures throughout | §27.11 |
 
 ---
@@ -86,8 +81,7 @@ These hold whichever theme is chosen, and they come from the architecture rather
 
 | File | Purpose |
 |---|---|
-| `tokens/nourishly-indigo.json` | **The approved design system.** Source of truth for everything below |
-| `prototype.html` | Generated. All 13 screens with options |
+| `tokens/nourishly-indigo.json` | **The approved design system.** Source of truth for everything else |
+| `decisions.md` | The 13 screen decisions and their consequences |
+| `prototype.html` | Generated. Approved screens, with alternatives behind a toggle |
 | `_build_prototype.py` | Generates `prototype.html` from the token file |
-| `theme-options.html` | Generated. The five-way comparison, superseded |
-| `_generate.py` | Generates `theme-options.html` |

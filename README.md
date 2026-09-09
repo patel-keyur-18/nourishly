@@ -14,7 +14,7 @@ A cross-platform nutrition and hydration tracking app that helps users monitor d
 
 **→ [Full Architecture & Design Document](./docs/architecture/README.md)** — index for all parts.
 
-**→ [Theme Options](./docs/design/README.md)** — five candidate visual directions, light and dark. *Awaiting decision.*
+**→ [Design](./docs/design/README.md)** — the Indigo design system, and the 13 approved screens. *Prototype awaiting approval.*
 
 **→ [Food Catalog Specification](./docs/catalog/README.md)** — ~365 Gujarati, Tamil, Kannadiga and pan-Indian foods with household serving weights and ingredient recipes.
 

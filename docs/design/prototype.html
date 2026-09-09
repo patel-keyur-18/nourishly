@@ -1,4 +1,4 @@
-<title>Nourishly Screen Prototype</title>
+<title>Nourishly Approved Screens</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
@@ -44,7 +44,7 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
 .tgl,.selbtn{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--pg-line);background:var(--pg-surface);color:var(--pg-ink);border-radius:999px;padding:7px 14px;font:inherit;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
 .tgl:hover,.selbtn:hover{border-color:var(--pg-ink-3)}
 .tgl svg{width:15px;height:15px}
-.selbtn b{background:var(--pg-accent);color:var(--pg-accent-ink);border-radius:999px;padding:1px 7px;font-size:11px}
+.selbtn b{background:var(--pg-accent);color:var(--pg-accent-ink);border-radius:999px;padding:1px 8px;font-size:11px;font-weight:700}
 
 .intro{padding:44px 0 4px;max-width:66ch}
 .kick{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--pg-accent);margin-bottom:12px}
@@ -74,12 +74,12 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
 .opt-k{font-size:12px;font-weight:700;background:var(--pg-surface-2);color:var(--pg-ink-2);border-radius:6px;padding:2px 7px;flex:none;margin-top:2px}
 .opt-l{font-weight:700;font-size:15px;letter-spacing:-.01em}
 .opt-n{font-size:13px;color:var(--pg-ink-2);margin-top:2px;line-height:1.45}
-.pick{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:13.5px;font-weight:600;cursor:pointer;user-select:none;
-  border:1px solid var(--pg-line);background:var(--pg-surface);border-radius:9px;padding:9px 12px}
-.pick:hover{border-color:var(--pg-ink-3)}
-.pick input{accent-color:var(--pg-accent);width:16px;height:16px;margin:0}
-.opt-col.chosen .pick{border-color:var(--pg-accent);background:var(--pg-accent-soft)}
+.stamp{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;border-radius:999px;padding:2px 8px;vertical-align:2px;margin-left:4px;background:var(--pg-surface-2);color:var(--pg-ink-3);border:1px solid var(--pg-line)}
+.stamp-on{background:var(--pg-accent);color:var(--pg-accent-ink);border-color:transparent}
 .opt-col.chosen .phone{outline:2px solid var(--pg-accent);outline-offset:4px}
+.opt-col.passed .phone{opacity:.72}
+.opt-col.passed:hover .phone{opacity:1}
+.opt-col[hidden]{display:none}
 
 /* ---- phone ---- */
 .phone{width:340px;border-radius:26px;padding:8px;background:var(--pg-surface);border:1px solid var(--pg-line);box-shadow:var(--pg-shadow)}
@@ -404,14 +404,15 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
 .panel-h b{font-size:16px}
 .panel-x{border:none;background:transparent;color:var(--pg-ink-2);font-size:22px;cursor:pointer;line-height:1;padding:4px 8px}
 .panel-b{flex:1;overflow-y:auto;padding:8px 20px 20px}
-.pr{display:flex;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid var(--pg-line);font-size:14px}
-.pr span{color:var(--pg-ink-2)}
-.pr b{font-weight:700;text-align:right}
-.pr b.none{color:var(--pg-ink-3);font-weight:500}
+.pr{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:11px 0;border-bottom:1px solid var(--pg-line);font-size:14px}
+.pr b{font-weight:700;display:block}
+.pr i{font-style:normal;font-size:12px;color:var(--pg-ink-3);display:block;margin-top:2px;line-height:1.4}
+.prk{flex:none;width:26px;height:26px;border-radius:999px;background:var(--pg-accent);color:var(--pg-accent-ink);display:grid;place-items:center;font-size:12px;font-weight:700}
 .panel-f{padding:16px 20px;border-top:1px solid var(--pg-line);display:flex;flex-direction:column;gap:9px}
 .cpy{font:inherit;font-size:14px;font-weight:600;cursor:pointer;border-radius:9px;padding:11px;border:1px solid transparent;background:var(--pg-accent);color:var(--pg-accent-ink)}
 .clr{font:inherit;font-size:13px;font-weight:600;cursor:pointer;border-radius:9px;padding:9px;border:1px solid var(--pg-line);background:transparent;color:var(--pg-ink-2)}
-.panel-note{font-size:12px;color:var(--pg-ink-3);text-align:center}
+.panel-note{font-size:12px;color:var(--pg-ink-3);line-height:1.5}
+.panel-note code{font-family:var(--mono);font-size:11.5px;background:var(--pg-surface-2);padding:1px 4px;border-radius:4px}
 
 .close{padding:40px 0 70px;border-top:1px solid var(--pg-line)}
 .close h2{font-size:24px;font-weight:700;letter-spacing:-.02em;margin-bottom:14px}
@@ -429,27 +430,28 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
 <div class="bar"><div class="wrap barin">
   <div class="brand">Nourishly <i>· screen prototype · Indigo</i></div>
   <span class="spacer"></span>
-  <button type="button" class="selbtn" id="selBtn">My choices <b id="selCount">0/13</b></button>
+  <button type="button" class="selbtn" id="filterBtn" aria-pressed="true">Showing <b id="filterCount">13 chosen</b></button>
+  <button type="button" class="selbtn" id="selBtn">Decisions</button>
   <button type="button" class="tgl" id="modeBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" id="modeIcon"></svg><span id="modeLabel">Light</span></button>
 </div></div>
 
 <main class="wrap">
   <div class="intro">
-    <div class="kick">Approved theme · Indigo</div>
-    <h1>Every screen, two or three ways</h1>
-    <p class="lede">All 13 screens of the app, each with alternative treatments of the same content. Pick one per screen — your choices are remembered in this browser and can be copied out as a list at the end.</p>
-    <p class="lede">Every pixel here is driven by <code>tokens/nourishly-indigo.json</code>, the approved theme. The prototype cannot drift from it, because it reads the same file.</p>
-    <div class="hownote"><b>Nothing is functional.</b> These are static screens showing layout, hierarchy and density — one plausible Thursday in a Gujarati household. Tapping does nothing on purpose; the point is to choose a shape, not to test a flow.</div>
+    <div class="kick">Approved · Indigo theme · 13 screens decided</div>
+    <h1>The approved screens</h1>
+    <p class="lede">One treatment chosen per screen. The page opens showing only those — switch to <b>All 28 options</b> in the header to see the alternatives, which are kept rather than deleted.</p>
+    <p class="lede">Every pixel is driven by <code>tokens/nourishly-indigo.json</code>, the approved theme. The prototype cannot drift from it, because it reads the same file.</p>
+    <div class="hownote"><b>Nothing is functional.</b> These are static screens showing layout, hierarchy and density — one plausible Thursday in a Gujarati household. Profile setup is the exception: its five steps are steppable, so the flow can be judged.</div>
   </div>
 </main>
 
-<div class="rail"><div class="wrap railin"><a class="rl" href="#onboarding" data-rail="onboarding">1. Onboarding <i data-railmark="onboarding">·</i></a><a class="rl" href="#profile-setup" data-rail="profile-setup">2. Profile setup <i data-railmark="profile-setup">·</i></a><a class="rl" href="#dashboard" data-rail="dashboard">3. Daily dashboard <i data-railmark="dashboard">·</i></a><a class="rl" href="#log-entry" data-rail="log-entry">4. Add food <i data-railmark="log-entry">·</i></a><a class="rl" href="#food-search" data-rail="food-search">5. Food search <i data-railmark="food-search">·</i></a><a class="rl" href="#food-detail" data-rail="food-detail">6. Portion & food detail <i data-railmark="food-detail">·</i></a><a class="rl" href="#templates" data-rail="templates">7. Meal templates <i data-railmark="templates">·</i></a><a class="rl" href="#water" data-rail="water">8. Water <i data-railmark="water">·</i></a><a class="rl" href="#daily-report" data-rail="daily-report">9. Daily report <i data-railmark="daily-report">·</i></a><a class="rl" href="#weekly-report" data-rail="weekly-report">10. Weekly report <i data-railmark="weekly-report">·</i></a><a class="rl" href="#monthly-report" data-rail="monthly-report">11. Monthly report <i data-railmark="monthly-report">·</i></a><a class="rl" href="#goals" data-rail="goals">12. Goals & targets <i data-railmark="goals">·</i></a><a class="rl" href="#settings" data-rail="settings">13. Settings & data <i data-railmark="settings">·</i></a></div></div>
+<div class="rail"><div class="wrap railin"><a class="rl" href="#onboarding">1. Onboarding <i>B</i></a><a class="rl" href="#profile-setup">2. Profile setup <i>A</i></a><a class="rl" href="#dashboard">3. Daily dashboard <i>A</i></a><a class="rl" href="#log-entry">4. Add food <i>B</i></a><a class="rl" href="#food-search">5. Food search <i>A</i></a><a class="rl" href="#food-detail">6. Portion & food detail <i>A</i></a><a class="rl" href="#templates">7. Meal templates <i>A</i></a><a class="rl" href="#water">8. Water <i>A</i></a><a class="rl" href="#daily-report">9. Daily report <i>C</i></a><a class="rl" href="#weekly-report">10. Weekly report <i>A</i></a><a class="rl" href="#monthly-report">11. Monthly report <i>A</i></a><a class="rl" href="#goals">12. Goals & targets <i>B</i></a><a class="rl" href="#settings">13. Settings & data <i>A</i></a></div></div>
 
 <main class="wrap">
   <section class="grp" id="onboarding">
-      <div class="grp-h"><div class="grp-n">Screen 1 of 13</div><h2 class="grp-t">Onboarding</h2><p class="grp-p">Get from install to a first logged food in under 90 seconds, with no account and no permission prompts.</p></div>
-      <div class="opts-row"><div class="opt-col" data-col="onboarding-A">
-        <div class="opt-hd"><span class="opt-k">A</span><div><div class="opt-l">Value cards first</div><div class="opt-n">Three short cards explain what the app does before asking for anything. Skip is always visible.</div></div></div>
+      <div class="grp-h"><div class="grp-n">Screen 1 of 13 &middot; chosen: option B</div><h2 class="grp-t">Onboarding</h2><p class="grp-p">Get from install to a first logged food in under 90 seconds, with no account and no permission prompts.</p></div>
+      <div class="opts-row"><div class="opt-col passed" data-state="passed">
+        <div class="opt-hd"><span class="opt-k">A</span><div><div class="opt-l">Value cards first <span class="stamp">Not chosen</span></div><div class="opt-n">Three short cards explain what the app does before asking for anything. Skip is always visible.</div></div></div>
         <div class="phone"><div class="scr "><div class="sb"><span>9:41</span><span class="sbr"><svg viewBox="0 0 18 12" width="16" height="11" aria-hidden="true"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="10" y="1" width="3" height="11" rx="1" fill="currentColor"/></svg><svg viewBox="0 0 24 12" width="22" height="11" aria-hidden="true"><rect x="0.5" y="0.5" width="19" height="11" rx="3" fill="none" stroke="currentColor"/><rect x="2" y="2" width="13" height="8" rx="1.5" fill="currentColor"/><rect x="21" y="4" width="2" height="4" rx="1" fill="currentColor"/></svg></span></div><div class="scr-body"><div class="ob">
         <div class="ob-mark">N</div>
         <div class="ob-h">Know what you ate.<br>Not just how much.</div>
@@ -458,9 +460,8 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
         <div class="ob-foot"><button type="button" class="btn btn-primary btn-full">Continue</button><button class="btn btn-ghost btn-full" type="button">Skip for now</button>
           <p class="ob-fine">Works offline. No account needed.</p></div></div></div></div></div>
         
-        <label class="pick"><input type="radio" name="pick-onboarding" value="A" data-screen="onboarding" data-label="Value cards first"> Choose A</label>
-      </div><div class="opt-col" data-col="onboarding-B">
-        <div class="opt-hd"><span class="opt-k">B</span><div><div class="opt-l">Single promise screen</div><div class="opt-n">One screen, one sentence, straight into setup. Fewer taps, less explanation.</div></div></div>
+      </div><div class="opt-col chosen" data-state="chosen">
+        <div class="opt-hd"><span class="opt-k">B</span><div><div class="opt-l">Single promise screen <span class="stamp stamp-on">Chosen</span></div><div class="opt-n">One screen, one sentence, straight into setup. Fewer taps, less explanation.</div></div></div>
         <div class="phone"><div class="scr "><div class="sb"><span>9:41</span><span class="sbr"><svg viewBox="0 0 18 12" width="16" height="11" aria-hidden="true"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="10" y="1" width="3" height="11" rx="1" fill="currentColor"/></svg><svg viewBox="0 0 24 12" width="22" height="11" aria-hidden="true"><rect x="0.5" y="0.5" width="19" height="11" rx="3" fill="none" stroke="currentColor"/><rect x="2" y="2" width="13" height="8" rx="1.5" fill="currentColor"/><rect x="21" y="4" width="2" height="4" rx="1" fill="currentColor"/></svg></span></div><div class="scr-body"><div class="ob ob-b">
         <div class="ob-mark">N</div>
         <div class="ob-h2">Nourishly</div>
@@ -468,12 +469,11 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
         <ul class="ob-list"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg> Works with no signal</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg> Knows Gujarati, Tamil and Kannadiga food</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg> No account, no ads</li></ul>
         <div class="ob-foot"><button type="button" class="btn btn-primary btn-full">Set up my profile</button><button class="btn btn-ghost btn-full" type="button">Skip for now</button></div></div></div></div></div>
         
-        <label class="pick"><input type="radio" name="pick-onboarding" value="B" data-screen="onboarding" data-label="Single promise screen"> Choose B</label>
       </div></div>
     </section><section class="grp" id="profile-setup">
-      <div class="grp-h"><div class="grp-n">Screen 2 of 13</div><h2 class="grp-t">Profile setup</h2><p class="grp-p">Collect only what changes the targets, and explain what each answer does.</p></div>
-      <div class="opts-row"><div class="opt-col" data-col="profile-setup-A">
-        <div class="opt-hd"><span class="opt-k">A</span><div><div class="opt-l">One question per step</div><div class="opt-n">Progressive. Feels light, harder to skim, more taps. Step through all five below the phone.</div></div></div>
+      <div class="grp-h"><div class="grp-n">Screen 2 of 13 &middot; chosen: option A</div><h2 class="grp-t">Profile setup</h2><p class="grp-p">Collect only what changes the targets, and explain what each answer does.</p></div>
+      <div class="opts-row"><div class="opt-col chosen" data-state="chosen">
+        <div class="opt-hd"><span class="opt-k">A</span><div><div class="opt-l">One question per step <span class="stamp stamp-on">Chosen</span></div><div class="opt-n">Progressive. Feels light, harder to skim, more taps. Step through all five below the phone.</div></div></div>
         <div class="phone"><div class="scr "><div class="sb"><span>9:41</span><span class="sbr"><svg viewBox="0 0 18 12" width="16" height="11" aria-hidden="true"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="10" y="1" width="3" height="11" rx="1" fill="currentColor"/></svg><svg viewBox="0 0 24 12" width="22" height="11" aria-hidden="true"><rect x="0.5" y="0.5" width="19" height="11" rx="3" fill="none" stroke="currentColor"/><rect x="2" y="2" width="13" height="8" rx="1.5" fill="currentColor"/><rect x="21" y="4" width="2" height="4" rx="1" fill="currentColor"/></svg></span></div><div class="scr-body"><div class="wiz" data-wiz="profile-setup-A"><div class="wstep on" data-wstep="0"><div class="ab"><button class="ab-icon" type="button" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><div class="ab-t"><div class="ab-title">About you</div></div><span class="ab-step">1 of 5</span></div>
         <div class="pad">
           <div class="q-h">When were you born?</div>
@@ -527,9 +527,8 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
           <div class="notebox">Micronutrient targets use the ICMR-NIN 2020 values for your age and sex.</div>
         </div><div class="pad-b"><button type="button" class="btn btn-primary btn-full">Start logging</button></div></div></div></div></div></div>
         <div class="wizctl" data-wizctl="profile-setup-A"><span class="wc-l">Step</span><button type="button" class="wc on" data-wgo="0">1</button><button type="button" class="wc" data-wgo="1">2</button><button type="button" class="wc" data-wgo="2">3</button><button type="button" class="wc" data-wgo="3">4</button><button type="button" class="wc" data-wgo="4">5</button><span class="wc-names"><span class="wc-n on" data-wname="0">Date of birth &amp; sex</span><span class="wc-n" data-wname="1">Height &amp; weight</span><span class="wc-n" data-wname="2">Activity</span><span class="wc-n" data-wname="3">Goal</span><span class="wc-n" data-wname="4">Your targets</span></span></div>
-        <label class="pick"><input type="radio" name="pick-profile-setup" value="A" data-screen="profile-setup" data-label="One question per step"> Choose A</label>
-      </div><div class="opt-col" data-col="profile-setup-B">
-        <div class="opt-hd"><span class="opt-k">B</span><div><div class="opt-l">Single scrollable form</div><div class="opt-n">Everything visible at once. Faster for someone who knows their numbers.</div></div></div>
+      </div><div class="opt-col passed" data-state="passed">
+        <div class="opt-hd"><span class="opt-k">B</span><div><div class="opt-l">Single scrollable form <span class="stamp">Not chosen</span></div><div class="opt-n">Everything visible at once. Faster for someone who knows their numbers.</div></div></div>
         <div class="phone"><div class="scr "><div class="sb"><span>9:41</span><span class="sbr"><svg viewBox="0 0 18 12" width="16" height="11" aria-hidden="true"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="10" y="1" width="3" height="11" rx="1" fill="currentColor"/></svg><svg viewBox="0 0 24 12" width="22" height="11" aria-hidden="true"><rect x="0.5" y="0.5" width="19" height="11" rx="3" fill="none" stroke="currentColor"/><rect x="2" y="2" width="13" height="8" rx="1.5" fill="currentColor"/><rect x="21" y="4" width="2" height="4" rx="1" fill="currentColor"/></svg></span></div><div class="scr-body"><div class="ab"><button class="ab-icon" type="button" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><div class="ab-t"><div class="ab-title">About you</div></div><span class="ab-sp"></span></div>
         <div class="pad">
           <div class="fgrid">
@@ -544,12 +543,11 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
           <p>Worked out from your height, weight, activity and goal. You can change any of them later.</p></div>
         </div><div class="pad-b"><button type="button" class="btn btn-primary btn-full">Looks right</button></div></div></div></div>
         
-        <label class="pick"><input type="radio" name="pick-profile-setup" value="B" data-screen="profile-setup" data-label="Single scrollable form"> Choose B</label>
       </div></div>
     </section><section class="grp" id="dashboard">
-      <div class="grp-h"><div class="grp-n">Screen 3 of 13</div><h2 class="grp-t">Daily dashboard</h2><p class="grp-p">Answer 'how am I doing today, and what should I do next' at a glance. The most-opened screen in the app.</p></div>
-      <div class="opts-row"><div class="opt-col" data-col="dashboard-A">
-        <div class="opt-hd"><span class="opt-k">A</span><div><div class="opt-l">Ring-led</div><div class="opt-n">Energy ring is the hero. Strongest at-a-glance read; pushes meals below the fold.</div></div></div>
+      <div class="grp-h"><div class="grp-n">Screen 3 of 13 &middot; chosen: option A</div><h2 class="grp-t">Daily dashboard</h2><p class="grp-p">Answer 'how am I doing today, and what should I do next' at a glance. The most-opened screen in the app.</p></div>
+      <div class="opts-row"><div class="opt-col chosen" data-state="chosen">
+        <div class="opt-hd"><span class="opt-k">A</span><div><div class="opt-l">Ring-led <span class="stamp stamp-on">Chosen</span></div><div class="opt-n">Energy ring is the hero. Strongest at-a-glance read; pushes meals below the fold.</div></div></div>
         <div class="phone"><div class="scr "><div class="sb"><span>9:41</span><span class="sbr"><svg viewBox="0 0 18 12" width="16" height="11" aria-hidden="true"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="10" y="1" width="3" height="11" rx="1" fill="currentColor"/></svg><svg viewBox="0 0 24 12" width="22" height="11" aria-hidden="true"><rect x="0.5" y="0.5" width="19" height="11" rx="3" fill="none" stroke="currentColor"/><rect x="2" y="2" width="13" height="8" rx="1.5" fill="currentColor"/><rect x="21" y="4" width="2" height="4" rx="1" fill="currentColor"/></svg></span></div><div class="scr-body"><div class="pad-t">
         <div class="dh"><div><div class="dh-d">Thursday, 9 Sep</div><div class="dh-w">Keyur</div></div><span class="chip chip-score"><span class="dot dot-score"></span>Good 78</span></div>
         <div class="card "><div class="ringrow"><div class="ringwrap" style="--rs:118px">
@@ -583,9 +581,8 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
         <div class="card "><div class="meal"><span class="meal-n">Breakfast</span><span class="meal-k">410</span></div><div class="meal-i">2 Thepla · Chaas 1 glass</div><div class="meal"><span class="meal-n">Lunch</span><span class="meal-k">760</span></div><div class="meal-i">3 Rotli · Gujarati dal · Bhinda nu shaak · Rice</div><div class="meal"><span class="meal-n">Snack</span><span class="meal-k">190</span></div><div class="meal-i">Khakhra · Filter coffee</div><div class="meal empty"><span class="meal-n">Dinner</span><span class="meal-add">+ Add</span></div></div>
       </div></div><div class="bnav"><div class="nav-i active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span>Today</span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19V9M9.5 19V5M15 19v-7M20.5 19v-4"/></svg><span>Insights</span></div><div class="nav-fab" role="presentation"><span class="fab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></svg></span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3.5s6 6.6 6 10.4a6 6 0 0 1-12 0C6 10.1 12 3.5 12 3.5z"/></svg><span>Water</span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 20a7.4 7.4 0 0 1 14.4 0"/></svg><span>Profile</span></div></div></div></div>
         
-        <label class="pick"><input type="radio" name="pick-dashboard" value="A" data-screen="dashboard" data-label="Ring-led"> Choose A</label>
-      </div><div class="opt-col" data-col="dashboard-B">
-        <div class="opt-hd"><span class="opt-k">B</span><div><div class="opt-l">Meals-led</div><div class="opt-n">The day reads as a timeline; stats compress into a header strip. Best if logging matters more than monitoring.</div></div></div>
+      </div><div class="opt-col passed" data-state="passed">
+        <div class="opt-hd"><span class="opt-k">B</span><div><div class="opt-l">Meals-led <span class="stamp">Not chosen</span></div><div class="opt-n">The day reads as a timeline; stats compress into a header strip. Best if logging matters more than monitoring.</div></div></div>
         <div class="phone"><div class="scr "><div class="sb"><span>9:41</span><span class="sbr"><svg viewBox="0 0 18 12" width="16" height="11" aria-hidden="true"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="10" y="1" width="3" height="11" rx="1" fill="currentColor"/></svg><svg viewBox="0 0 24 12" width="22" height="11" aria-hidden="true"><rect x="0.5" y="0.5" width="19" height="11" rx="3" fill="none" stroke="currentColor"/><rect x="2" y="2" width="13" height="8" rx="1.5" fill="currentColor"/><rect x="21" y="4" width="2" height="4" rx="1" fill="currentColor"/></svg></span></div><div class="scr-body"><div class="pad-t">
         <div class="dh"><div><div class="dh-d">Thursday, 9 Sep</div><div class="dh-w">Keyur</div></div><span class="chip chip-score"><span class="dot dot-score"></span>Good 78</span></div>
         <div class="strip">
@@ -610,9 +607,8 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
       <span class="bval">62%</span></div></div></div>
       </div></div><div class="bnav"><div class="nav-i active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span>Today</span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19V9M9.5 19V5M15 19v-7M20.5 19v-4"/></svg><span>Insights</span></div><div class="nav-fab" role="presentation"><span class="fab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></svg></span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3.5s6 6.6 6 10.4a6 6 0 0 1-12 0C6 10.1 12 3.5 12 3.5z"/></svg><span>Water</span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 20a7.4 7.4 0 0 1 14.4 0"/></svg><span>Profile</span></div></div></div></div>
         
-        <label class="pick"><input type="radio" name="pick-dashboard" value="B" data-screen="dashboard" data-label="Meals-led"> Choose B</label>
-      </div><div class="opt-col" data-col="dashboard-C">
-        <div class="opt-hd"><span class="opt-k">C</span><div><div class="opt-l">Numbers grid</div><div class="opt-n">No hero graphic. Densest option — everything above the fold, nothing decorative.</div></div></div>
+      </div><div class="opt-col passed" data-state="passed">
+        <div class="opt-hd"><span class="opt-k">C</span><div><div class="opt-l">Numbers grid <span class="stamp">Not chosen</span></div><div class="opt-n">No hero graphic. Densest option — everything above the fold, nothing decorative.</div></div></div>
         <div class="phone"><div class="scr "><div class="sb"><span>9:41</span><span class="sbr"><svg viewBox="0 0 18 12" width="16" height="11" aria-hidden="true"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="10" y="1" width="3" height="11" rx="1" fill="currentColor"/></svg><svg viewBox="0 0 24 12" width="22" height="11" aria-hidden="true"><rect x="0.5" y="0.5" width="19" height="11" rx="3" fill="none" stroke="currentColor"/><rect x="2" y="2" width="13" height="8" rx="1.5" fill="currentColor"/><rect x="21" y="4" width="2" height="4" rx="1" fill="currentColor"/></svg></span></div><div class="scr-body"><div class="pad-t">
         <div class="dh"><div><div class="dh-d">Thursday, 9 Sep</div><div class="dh-w">Keyur · General health</div></div><span class="chip chip-score"><span class="dot dot-score"></span>78</span></div>
         <div class="grid2">
@@ -637,12 +633,11 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
         <div class="card "><div class="meal"><span class="meal-n">Breakfast</span><span class="meal-k">410</span></div><div class="meal"><span class="meal-n">Lunch</span><span class="meal-k">760</span></div><div class="meal"><span class="meal-n">Snack</span><span class="meal-k">190</span></div><div class="meal empty"><span class="meal-n">Dinner</span><span class="meal-add">+ Add</span></div></div>
       </div></div><div class="bnav"><div class="nav-i active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span>Today</span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19V9M9.5 19V5M15 19v-7M20.5 19v-4"/></svg><span>Insights</span></div><div class="nav-fab" role="presentation"><span class="fab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></svg></span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3.5s6 6.6 6 10.4a6 6 0 0 1-12 0C6 10.1 12 3.5 12 3.5z"/></svg><span>Water</span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 20a7.4 7.4 0 0 1 14.4 0"/></svg><span>Profile</span></div></div></div></div>
         
-        <label class="pick"><input type="radio" name="pick-dashboard" value="C" data-screen="dashboard" data-label="Numbers grid"> Choose C</label>
       </div></div>
     </section><section class="grp" id="log-entry">
-      <div class="grp-h"><div class="grp-n">Screen 4 of 13</div><h2 class="grp-t">Add food</h2><p class="grp-p">The 3-tap path (UX-1). Repeat logging must not require typing.</p></div>
-      <div class="opts-row"><div class="opt-col" data-col="log-entry-A">
-        <div class="opt-hd"><span class="opt-k">A</span><div><div class="opt-l">Sheet with tabs</div><div class="opt-n">Opens over the dashboard; recents first, no keyboard. Dismisses back where you were.</div></div></div>
+      <div class="grp-h"><div class="grp-n">Screen 4 of 13 &middot; chosen: option B</div><h2 class="grp-t">Add food</h2><p class="grp-p">The 3-tap path (UX-1). Repeat logging must not require typing.</p></div>
+      <div class="opts-row"><div class="opt-col passed" data-state="passed">
+        <div class="opt-hd"><span class="opt-k">A</span><div><div class="opt-l">Sheet with tabs <span class="stamp">Not chosen</span></div><div class="opt-n">Opens over the dashboard; recents first, no keyboard. Dismisses back where you were.</div></div></div>
         <div class="phone"><div class="scr "><div class="sb"><span>9:41</span><span class="sbr"><svg viewBox="0 0 18 12" width="16" height="11" aria-hidden="true"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="10" y="1" width="3" height="11" rx="1" fill="currentColor"/></svg><svg viewBox="0 0 24 12" width="22" height="11" aria-hidden="true"><rect x="0.5" y="0.5" width="19" height="11" rx="3" fill="none" stroke="currentColor"/><rect x="2" y="2" width="13" height="8" rx="1.5" fill="currentColor"/><rect x="21" y="4" width="2" height="4" rx="1" fill="currentColor"/></svg></span></div><div class="scr-body"><div class="sheet-bg"><div class="pad-t dim"><div class="card "><div class="ringrow"><div class="ringwrap" style="--rs:96px">
       <svg viewBox="0 0 120 120" role="img" aria-label="1,640 of 2,050 kcal, 410 left">
         <circle cx="60" cy="60" r="46" fill="none" stroke="var(--track)" stroke-width="11"/>
@@ -664,9 +659,8 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
           <div class="lr "><div class="lr-m"><div class="lr-main">Chaas</div><div class="lr-sub">1 glass · 200 ml · 40 kcal</div></div><span class="lr-r"><span class="add">+</span></span></div>
         </div></div></div></div></div>
         
-        <label class="pick"><input type="radio" name="pick-log-entry" value="A" data-screen="log-entry" data-label="Sheet with tabs"> Choose A</label>
-      </div><div class="opt-col" data-col="log-entry-B">
-        <div class="opt-hd"><span class="opt-k">B</span><div><div class="opt-l">Full screen, search first</div><div class="opt-n">Search field focused on open. Faster when you know the name, slower for repeats.</div></div></div>
+      </div><div class="opt-col chosen" data-state="chosen">
+        <div class="opt-hd"><span class="opt-k">B</span><div><div class="opt-l">Full screen, search first <span class="stamp stamp-on">Chosen</span></div><div class="opt-n">Search field focused on open. Faster when you know the name, slower for repeats.</div></div></div>
         <div class="phone"><div class="scr "><div class="sb"><span>9:41</span><span class="sbr"><svg viewBox="0 0 18 12" width="16" height="11" aria-hidden="true"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="10" y="1" width="3" height="11" rx="1" fill="currentColor"/></svg><svg viewBox="0 0 24 12" width="22" height="11" aria-hidden="true"><rect x="0.5" y="0.5" width="19" height="11" rx="3" fill="none" stroke="currentColor"/><rect x="2" y="2" width="13" height="8" rx="1.5" fill="currentColor"/><rect x="21" y="4" width="2" height="4" rx="1" fill="currentColor"/></svg></span></div><div class="scr-body"><div class="ab"><button class="ab-icon" type="button" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><div class="ab-t"><div class="ab-title">Add to Dinner</div></div><button class="ab-icon" type="button" aria-label="Scan barcode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16M7.5 9v6M11 9v6M14 9v6M17 9v6"/></svg></button></div>
         <div class="pad">
           <div class="search"><span class="s-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg></span><span class="s-ph">Search 12,400 foods</span></div>
@@ -679,12 +673,11 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
           <div class="lr lr-accent"><div class="lr-m"><div class="lr-main">Thepla travel meal</div><div class="lr-sub">3 items · 520 kcal</div></div><span class="lr-r">Apply</span></div>
         </div></div></div></div>
         
-        <label class="pick"><input type="radio" name="pick-log-entry" value="B" data-screen="log-entry" data-label="Full screen, search first"> Choose B</label>
       </div></div>
     </section><section class="grp" id="food-search">
-      <div class="grp-h"><div class="grp-n">Screen 5 of 13</div><h2 class="grp-t">Food search</h2><p class="grp-p">Find the right food fast, offline, including foods you invented. Never a dead end.</p></div>
-      <div class="opts-row"><div class="opt-col" data-col="food-search-A">
-        <div class="opt-hd"><span class="opt-k">A</span><div><div class="opt-l">Grouped by source</div><div class="opt-n">Your foods, then recents, then catalog. Makes provenance obvious; more vertical space per result.</div></div></div>
+      <div class="grp-h"><div class="grp-n">Screen 5 of 13 &middot; chosen: option A</div><h2 class="grp-t">Food search</h2><p class="grp-p">Find the right food fast, offline, including foods you invented. Never a dead end.</p></div>
+      <div class="opts-row"><div class="opt-col chosen" data-state="chosen">
+        <div class="opt-hd"><span class="opt-k">A</span><div><div class="opt-l">Grouped by source <span class="stamp stamp-on">Chosen</span></div><div class="opt-n">Your foods, then recents, then catalog. Makes provenance obvious; more vertical space per result.</div></div></div>
         <div class="phone"><div class="scr "><div class="sb"><span>9:41</span><span class="sbr"><svg viewBox="0 0 18 12" width="16" height="11" aria-hidden="true"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="10" y="1" width="3" height="11" rx="1" fill="currentColor"/></svg><svg viewBox="0 0 24 12" width="22" height="11" aria-hidden="true"><rect x="0.5" y="0.5" width="19" height="11" rx="3" fill="none" stroke="currentColor"/><rect x="2" y="2" width="13" height="8" rx="1.5" fill="currentColor"/><rect x="21" y="4" width="2" height="4" rx="1" fill="currentColor"/></svg></span></div><div class="scr-body"><div class="ab"><button class="ab-icon" type="button" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><div class="ab-t"><div class="ab-title">Search</div></div><span class="ab-sp"></span></div>
         <div class="pad">
           <div class="search on"><span class="s-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg></span><span class="s-v">dal</span><span class="s-x">×</span></div>
@@ -700,9 +693,8 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
           <div class="mk">Create “dal” as a custom food</div>
         </div></div></div></div>
         
-        <label class="pick"><input type="radio" name="pick-food-search" value="A" data-screen="food-search" data-label="Grouped by source"> Choose A</label>
-      </div><div class="opt-col" data-col="food-search-B">
-        <div class="opt-hd"><span class="opt-k">B</span><div><div class="opt-l">Flat ranked list</div><div class="opt-n">One ranked list with a small source badge per row. More results visible; ranking must be trusted.</div></div></div>
+      </div><div class="opt-col passed" data-state="passed">
+        <div class="opt-hd"><span class="opt-k">B</span><div><div class="opt-l">Flat ranked list <span class="stamp">Not chosen</span></div><div class="opt-n">One ranked list with a small source badge per row. More results visible; ranking must be trusted.</div></div></div>
         <div class="phone"><div class="scr "><div class="sb"><span>9:41</span><span class="sbr"><svg viewBox="0 0 18 12" width="16" height="11" aria-hidden="true"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="10" y="1" width="3" height="11" rx="1" fill="currentColor"/></svg><svg viewBox="0 0 24 12" width="22" height="11" aria-hidden="true"><rect x="0.5" y="0.5" width="19" height="11" rx="3" fill="none" stroke="currentColor"/><rect x="2" y="2" width="13" height="8" rx="1.5" fill="currentColor"/><rect x="21" y="4" width="2" height="4" rx="1" fill="currentColor"/></svg></span></div><div class="scr-body"><div class="ab"><button class="ab-icon" type="button" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><div class="ab-t"><div class="ab-title">Search</div></div><span class="ab-sp"></span></div>
         <div class="pad">
           <div class="search on"><span class="s-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg></span><span class="s-v">dal</span><span class="s-x">×</span></div>
@@ -717,12 +709,11 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
           <div class="mk">Create “dal” as a custom food</div>
         </div></div></div></div>
         
-        <label class="pick"><input type="radio" name="pick-food-search" value="B" data-screen="food-search" data-label="Flat ranked list"> Choose B</label>
       </div></div>
     </section><section class="grp" id="food-detail">
-      <div class="grp-h"><div class="grp-n">Screen 6 of 13</div><h2 class="grp-t">Portion & food detail</h2><p class="grp-p">Pick the portion and confirm. Last-used serving is pre-filled — the detail that makes repeat logging fast.</p></div>
-      <div class="opts-row"><div class="opt-col" data-col="food-detail-A">
-        <div class="opt-hd"><span class="opt-k">A</span><div><div class="opt-l">Serving chips + stepper</div><div class="opt-n">Household measures as tappable chips. Fastest for the common case.</div></div></div>
+      <div class="grp-h"><div class="grp-n">Screen 6 of 13 &middot; chosen: option A</div><h2 class="grp-t">Portion & food detail</h2><p class="grp-p">Pick the portion and confirm. Last-used serving is pre-filled — the detail that makes repeat logging fast.</p></div>
+      <div class="opts-row"><div class="opt-col chosen" data-state="chosen">
+        <div class="opt-hd"><span class="opt-k">A</span><div><div class="opt-l">Serving chips + stepper <span class="stamp stamp-on">Chosen</span></div><div class="opt-n">Household measures as tappable chips. Fastest for the common case.</div></div></div>
         <div class="phone"><div class="scr "><div class="sb"><span>9:41</span><span class="sbr"><svg viewBox="0 0 18 12" width="16" height="11" aria-hidden="true"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="10" y="1" width="3" height="11" rx="1" fill="currentColor"/></svg><svg viewBox="0 0 24 12" width="22" height="11" aria-hidden="true"><rect x="0.5" y="0.5" width="19" height="11" rx="3" fill="none" stroke="currentColor"/><rect x="2" y="2" width="13" height="8" rx="1.5" fill="currentColor"/><rect x="21" y="4" width="2" height="4" rx="1" fill="currentColor"/></svg></span></div><div class="scr-body"><div class="ab"><button class="ab-icon" type="button" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><div class="ab-t"><div class="ab-title">Gujarati dal</div><div class="ab-sub">Lab-measured · toor dal</div></div><button class="ab-icon" type="button" aria-label="Favourite"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M12 4l2.4 5 5.4.7-3.9 3.8 1 5.4-4.9-2.7-4.9 2.7 1-5.4L4.2 9.7 9.6 9z"/></svg></button></div>
         <div class="pad">
           <div class="sec-h"><span>Serving</span></div>
@@ -748,9 +739,8 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
           <p class="fine">Vitamin B12 isn't recorded for this food. It won't be counted as zero.</p>
         </div><div class="pad-b"><button type="button" class="btn btn-primary btn-full">Add to Lunch</button></div></div></div></div>
         
-        <label class="pick"><input type="radio" name="pick-food-detail" value="A" data-screen="food-detail" data-label="Serving chips + stepper"> Choose A</label>
-      </div><div class="opt-col" data-col="food-detail-B">
-        <div class="opt-hd"><span class="opt-k">B</span><div><div class="opt-l">Amount first</div><div class="opt-n">Big editable number leads. Better for people who weigh food; an extra tap for katori users.</div></div></div>
+      </div><div class="opt-col passed" data-state="passed">
+        <div class="opt-hd"><span class="opt-k">B</span><div><div class="opt-l">Amount first <span class="stamp">Not chosen</span></div><div class="opt-n">Big editable number leads. Better for people who weigh food; an extra tap for katori users.</div></div></div>
         <div class="phone"><div class="scr "><div class="sb"><span>9:41</span><span class="sbr"><svg viewBox="0 0 18 12" width="16" height="11" aria-hidden="true"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="10" y="1" width="3" height="11" rx="1" fill="currentColor"/></svg><svg viewBox="0 0 24 12" width="22" height="11" aria-hidden="true"><rect x="0.5" y="0.5" width="19" height="11" rx="3" fill="none" stroke="currentColor"/><rect x="2" y="2" width="13" height="8" rx="1.5" fill="currentColor"/><rect x="21" y="4" width="2" height="4" rx="1" fill="currentColor"/></svg></span></div><div class="scr-body"><div class="ab"><button class="ab-icon" type="button" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><div class="ab-t"><div class="ab-title">Gujarati dal</div><div class="ab-sub">Lab-measured</div></div><span class="ab-sp"></span></div>
         <div class="pad">
           <div class="amt"><div class="amt-v">150</div><div class="amt-u">grams</div></div>
@@ -773,12 +763,11 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
           <div class="chipset"><span class="sch">Breakfast</span><span class="sch on">Lunch</span><span class="sch">Dinner</span><span class="sch">Snack</span></div>
         </div><div class="pad-b"><button type="button" class="btn btn-primary btn-full">Add to Lunch</button></div></div></div></div>
         
-        <label class="pick"><input type="radio" name="pick-food-detail" value="B" data-screen="food-detail" data-label="Amount first"> Choose B</label>
       </div></div>
     </section><section class="grp" id="templates">
-      <div class="grp-h"><div class="grp-n">Screen 7 of 13</div><h2 class="grp-t">Meal templates</h2><p class="grp-p">Log a recurring multi-item meal in one action. Created from a meal you already logged.</p></div>
-      <div class="opts-row"><div class="opt-col" data-col="templates-A">
-        <div class="opt-hd"><span class="opt-k">A</span><div><div class="opt-l">Cards with contents</div><div class="opt-n">Shows what's inside without opening. Easier to pick the right one; fewer fit on screen.</div></div></div>
+      <div class="grp-h"><div class="grp-n">Screen 7 of 13 &middot; chosen: option A</div><h2 class="grp-t">Meal templates</h2><p class="grp-p">Log a recurring multi-item meal in one action. Created from a meal you already logged.</p></div>
+      <div class="opts-row"><div class="opt-col chosen" data-state="chosen">
+        <div class="opt-hd"><span class="opt-k">A</span><div><div class="opt-l">Cards with contents <span class="stamp stamp-on">Chosen</span></div><div class="opt-n">Shows what's inside without opening. Easier to pick the right one; fewer fit on screen.</div></div></div>
         <div class="phone"><div class="scr "><div class="sb"><span>9:41</span><span class="sbr"><svg viewBox="0 0 18 12" width="16" height="11" aria-hidden="true"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="10" y="1" width="3" height="11" rx="1" fill="currentColor"/></svg><svg viewBox="0 0 24 12" width="22" height="11" aria-hidden="true"><rect x="0.5" y="0.5" width="19" height="11" rx="3" fill="none" stroke="currentColor"/><rect x="2" y="2" width="13" height="8" rx="1.5" fill="currentColor"/><rect x="21" y="4" width="2" height="4" rx="1" fill="currentColor"/></svg></span></div><div class="scr-body"><div class="ab"><button class="ab-icon" type="button" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><div class="ab-t"><div class="ab-title">Templates</div></div><span class="ab-act">New</span></div>
         <div class="pad">
           <div class="card "><div class="tpl-h"><b>Everyday Gujarati thali</b><span class="tpl-k">1,240 kcal</span></div><div class="tpl-i">3 Rotli · Gujarati dal · Bhinda nu shaak · Rice · Kachumber · Chaas</div><div class="tpl-f"><span class="tpl-u">Used 34 times</span><button class="btn btn-soft btn-sm" type="button">Apply</button></div></div>
@@ -786,9 +775,8 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
           <div class="card "><div class="tpl-h"><b>Idli breakfast</b><span class="tpl-k">430 kcal</span></div><div class="tpl-i">2 Idli · Sambar · Coconut chutney · Filter coffee</div><div class="tpl-f"><span class="tpl-u">Used 8 times</span><button class="btn btn-soft btn-sm" type="button">Apply</button></div></div>
         </div></div></div></div>
         
-        <label class="pick"><input type="radio" name="pick-templates" value="A" data-screen="templates" data-label="Cards with contents"> Choose A</label>
-      </div><div class="opt-col" data-col="templates-B">
-        <div class="opt-hd"><span class="opt-k">B</span><div><div class="opt-l">Compact rows</div><div class="opt-n">More templates visible. Contents hidden until tapped — relies on good names.</div></div></div>
+      </div><div class="opt-col passed" data-state="passed">
+        <div class="opt-hd"><span class="opt-k">B</span><div><div class="opt-l">Compact rows <span class="stamp">Not chosen</span></div><div class="opt-n">More templates visible. Contents hidden until tapped — relies on good names.</div></div></div>
         <div class="phone"><div class="scr "><div class="sb"><span>9:41</span><span class="sbr"><svg viewBox="0 0 18 12" width="16" height="11" aria-hidden="true"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="10" y="1" width="3" height="11" rx="1" fill="currentColor"/></svg><svg viewBox="0 0 24 12" width="22" height="11" aria-hidden="true"><rect x="0.5" y="0.5" width="19" height="11" rx="3" fill="none" stroke="currentColor"/><rect x="2" y="2" width="13" height="8" rx="1.5" fill="currentColor"/><rect x="21" y="4" width="2" height="4" rx="1" fill="currentColor"/></svg></span></div><div class="scr-body"><div class="ab"><button class="ab-icon" type="button" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><div class="ab-t"><div class="ab-title">Templates</div></div><span class="ab-act">New</span></div>
         <div class="pad">
           <div class="sec-h"><span>Most used</span></div>
@@ -800,12 +788,11 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
           <div class="mk">Save today's lunch as a template</div>
         </div></div></div></div>
         
-        <label class="pick"><input type="radio" name="pick-templates" value="B" data-screen="templates" data-label="Compact rows"> Choose B</label>
       </div></div>
     </section><section class="grp" id="water">
-      <div class="grp-h"><div class="grp-n">Screen 8 of 13</div><h2 class="grp-t">Water</h2><p class="grp-p">One tap to log. Must be useful on its own, with no nutrition setup.</p></div>
-      <div class="opts-row"><div class="opt-col" data-col="water-A">
-        <div class="opt-hd"><span class="opt-k">A</span><div><div class="opt-l">Fill visual</div><div class="opt-n">A single vessel fills as you drink. Clearest sense of proportion.</div></div></div>
+      <div class="grp-h"><div class="grp-n">Screen 8 of 13 &middot; chosen: option A</div><h2 class="grp-t">Water</h2><p class="grp-p">One tap to log. Must be useful on its own, with no nutrition setup.</p></div>
+      <div class="opts-row"><div class="opt-col chosen" data-state="chosen">
+        <div class="opt-hd"><span class="opt-k">A</span><div><div class="opt-l">Fill visual <span class="stamp stamp-on">Chosen</span></div><div class="opt-n">A single vessel fills as you drink. Clearest sense of proportion.</div></div></div>
         <div class="phone"><div class="scr "><div class="sb"><span>9:41</span><span class="sbr"><svg viewBox="0 0 18 12" width="16" height="11" aria-hidden="true"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="10" y="1" width="3" height="11" rx="1" fill="currentColor"/></svg><svg viewBox="0 0 24 12" width="22" height="11" aria-hidden="true"><rect x="0.5" y="0.5" width="19" height="11" rx="3" fill="none" stroke="currentColor"/><rect x="2" y="2" width="13" height="8" rx="1.5" fill="currentColor"/><rect x="21" y="4" width="2" height="4" rx="1" fill="currentColor"/></svg></span></div><div class="scr-body"><div class="pad-t">
         <div class="dh"><div><div class="dh-d">Water</div><div class="dh-w">Thursday, 9 Sep</div></div><span class="chip chip-score"><span class="dot dot-score"></span>62%</span></div>
         <div class="card "><div class="wfill"><div class="wfill-b"><div class="wfill-l" style="height:61.5%"></div><div class="wfill-t"><b>1.6</b><span>of 2.6 L</span></div></div></div><div class="quick"><button class="qb" type="button">+250 ml</button><button class="qb" type="button">+500 ml</button><button class="qb qb-alt" type="button">Custom</button></div></div>
@@ -813,21 +800,19 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
         <p class="fine">Chaas and tea count toward hydration. Coffee counts at a lower rate.</p>
       </div></div><div class="bnav"><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span>Today</span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19V9M9.5 19V5M15 19v-7M20.5 19v-4"/></svg><span>Insights</span></div><div class="nav-fab" role="presentation"><span class="fab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></svg></span></div><div class="nav-i active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3.5s6 6.6 6 10.4a6 6 0 0 1-12 0C6 10.1 12 3.5 12 3.5z"/></svg><span>Water</span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 20a7.4 7.4 0 0 1 14.4 0"/></svg><span>Profile</span></div></div></div></div>
         
-        <label class="pick"><input type="radio" name="pick-water" value="A" data-screen="water" data-label="Fill visual"> Choose A</label>
-      </div><div class="opt-col" data-col="water-B">
-        <div class="opt-hd"><span class="opt-k">B</span><div><div class="opt-l">Glass grid</div><div class="opt-n">Tap a glass to fill it. Fastest input, and countable at a glance; less precise for odd amounts.</div></div></div>
+      </div><div class="opt-col passed" data-state="passed">
+        <div class="opt-hd"><span class="opt-k">B</span><div><div class="opt-l">Glass grid <span class="stamp">Not chosen</span></div><div class="opt-n">Tap a glass to fill it. Fastest input, and countable at a glance; less precise for odd amounts.</div></div></div>
         <div class="phone"><div class="scr "><div class="sb"><span>9:41</span><span class="sbr"><svg viewBox="0 0 18 12" width="16" height="11" aria-hidden="true"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="10" y="1" width="3" height="11" rx="1" fill="currentColor"/></svg><svg viewBox="0 0 24 12" width="22" height="11" aria-hidden="true"><rect x="0.5" y="0.5" width="19" height="11" rx="3" fill="none" stroke="currentColor"/><rect x="2" y="2" width="13" height="8" rx="1.5" fill="currentColor"/><rect x="21" y="4" width="2" height="4" rx="1" fill="currentColor"/></svg></span></div><div class="scr-body"><div class="pad-t">
         <div class="dh"><div><div class="dh-d">Water</div><div class="dh-w">1.6 of 2.6 L · 6 of 10 glasses</div></div><span class="chip chip-score"><span class="dot dot-score"></span>62%</span></div>
         <div class="card "><div class="glasses"><span class="gl on"></span><span class="gl on"></span><span class="gl on"></span><span class="gl on"></span><span class="gl on"></span><span class="gl on"></span><span class="gl"></span><span class="gl"></span><span class="gl"></span><span class="gl"></span></div><div class="quick"><button class="qb" type="button">+1 glass</button><button class="qb qb-alt" type="button">Custom amount</button></div></div>
         <div class="sec"><div class="sec-h"><span>This week</span></div><div class="card "><div class="wkbars"><div class="wk"><span class="wk-b" style="height:88%"></span><i>M</i></div><div class="wk"><span class="wk-b" style="height:72%"></span><i>T</i></div><div class="wk"><span class="wk-b" style="height:95%"></span><i>W</i></div><div class="wk"><span class="wk-b" style="height:62%"></span><i>T</i></div><div class="wk"><span class="wk-b" style="height:0%"></span><i>F</i></div><div class="wk"><span class="wk-b" style="height:0%"></span><i>S</i></div><div class="wk"><span class="wk-b" style="height:0%"></span><i>S</i></div></div><div class="wk-l"><span>Avg 2.0 L over 4 logged days</span></div></div></div>
       </div></div><div class="bnav"><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span>Today</span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19V9M9.5 19V5M15 19v-7M20.5 19v-4"/></svg><span>Insights</span></div><div class="nav-fab" role="presentation"><span class="fab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></svg></span></div><div class="nav-i active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3.5s6 6.6 6 10.4a6 6 0 0 1-12 0C6 10.1 12 3.5 12 3.5z"/></svg><span>Water</span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 20a7.4 7.4 0 0 1 14.4 0"/></svg><span>Profile</span></div></div></div></div>
         
-        <label class="pick"><input type="radio" name="pick-water" value="B" data-screen="water" data-label="Glass grid"> Choose B</label>
       </div></div>
     </section><section class="grp" id="daily-report">
-      <div class="grp-h"><div class="grp-n">Screen 9 of 13</div><h2 class="grp-t">Daily report</h2><p class="grp-p">Turn the day into understanding. The verdict comes first because most people read only that.</p></div>
-      <div class="opts-row"><div class="opt-col" data-col="daily-report-A">
-        <div class="opt-hd"><span class="opt-k">A</span><div><div class="opt-l">Verdict first</div><div class="opt-n">A sentence, then the score, then what to do. Most readable; the numbers sit lower.</div></div></div>
+      <div class="grp-h"><div class="grp-n">Screen 9 of 13 &middot; chosen: option C</div><h2 class="grp-t">Daily report</h2><p class="grp-p">Turn the day into understanding. The verdict comes first because most people read only that.</p></div>
+      <div class="opts-row"><div class="opt-col passed" data-state="passed">
+        <div class="opt-hd"><span class="opt-k">A</span><div><div class="opt-l">Verdict first <span class="stamp">Not chosen</span></div><div class="opt-n">A sentence, then the score, then what to do. Most readable; the numbers sit lower.</div></div></div>
         <div class="phone"><div class="scr "><div class="sb"><span>9:41</span><span class="sbr"><svg viewBox="0 0 18 12" width="16" height="11" aria-hidden="true"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="10" y="1" width="3" height="11" rx="1" fill="currentColor"/></svg><svg viewBox="0 0 24 12" width="22" height="11" aria-hidden="true"><rect x="0.5" y="0.5" width="19" height="11" rx="3" fill="none" stroke="currentColor"/><rect x="2" y="2" width="13" height="8" rx="1.5" fill="currentColor"/><rect x="21" y="4" width="2" height="4" rx="1" fill="currentColor"/></svg></span></div><div class="scr-body"><div class="ab"><button class="ab-icon" type="button" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><div class="ab-t"><div class="ab-title">Thursday, 9 Sep</div></div><span class="ab-act">Share</span></div>
         <div class="pad">
           <div class="card "><div class="verdict">A solid day. Protein and fat landed where you wanted; fibre was the gap again.</div><div class="vscore"><span class="band">Good</span><b>78</b><span class="of">/100</span></div></div>
@@ -836,9 +821,8 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
           <div class="sec"><div class="sec-h"><span>Meals</span></div><div class="card "><div class="meal"><span class="meal-n">Breakfast</span><span class="meal-k">410</span></div><div class="meal-i">2 Thepla · Chaas 1 glass</div><div class="meal"><span class="meal-n">Lunch</span><span class="meal-k">760</span></div><div class="meal-i">3 Rotli · Gujarati dal · Bhinda nu shaak · Rice</div><div class="meal"><span class="meal-n">Snack</span><span class="meal-k">190</span></div><div class="meal-i">Khakhra · Filter coffee</div><div class="meal empty"><span class="meal-n">Dinner</span><span class="meal-add">+ Add</span></div></div></div>
         </div></div></div></div>
         
-        <label class="pick"><input type="radio" name="pick-daily-report" value="A" data-screen="daily-report" data-label="Verdict first"> Choose A</label>
-      </div><div class="opt-col" data-col="daily-report-B">
-        <div class="opt-hd"><span class="opt-k">B</span><div><div class="opt-l">Score breakdown first</div><div class="opt-n">Shows exactly how the 78 was built, including the component that was withheld. Most transparent.</div></div></div>
+      </div><div class="opt-col passed" data-state="passed">
+        <div class="opt-hd"><span class="opt-k">B</span><div><div class="opt-l">Score breakdown first <span class="stamp">Not chosen</span></div><div class="opt-n">Shows exactly how the 78 was built, including the component that was withheld. Most transparent.</div></div></div>
         <div class="phone"><div class="scr "><div class="sb"><span>9:41</span><span class="sbr"><svg viewBox="0 0 18 12" width="16" height="11" aria-hidden="true"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="10" y="1" width="3" height="11" rx="1" fill="currentColor"/></svg><svg viewBox="0 0 24 12" width="22" height="11" aria-hidden="true"><rect x="0.5" y="0.5" width="19" height="11" rx="3" fill="none" stroke="currentColor"/><rect x="2" y="2" width="13" height="8" rx="1.5" fill="currentColor"/><rect x="21" y="4" width="2" height="4" rx="1" fill="currentColor"/></svg></span></div><div class="scr-body"><div class="ab"><button class="ab-icon" type="button" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><div class="ab-t"><div class="ab-title">Thursday, 9 Sep</div></div><span class="ab-sp"></span></div>
         <div class="pad">
           <div class="card "><div class="vscore vscore-lg"><span class="band">Good</span><b>78</b><span class="of">/100</span></div><p class="fine ctr">How closely today matched <b>your</b> targets — not a health verdict.</p></div>
@@ -846,9 +830,8 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
           <div class="sec"><div class="sec-h"><span>Gaps and excesses</span></div><div class="card "><div class="ins ins-low">Fibre 18 g of 29 g</div><div class="ins ins-high">Sodium 2,310 mg of 2,000 mg limit</div></div></div>
         </div></div></div></div>
         
-        <label class="pick"><input type="radio" name="pick-daily-report" value="B" data-screen="daily-report" data-label="Score breakdown first"> Choose B</label>
-      </div><div class="opt-col" data-col="daily-report-C">
-        <div class="opt-hd"><span class="opt-k">C</span><div><div class="opt-l">Full table</div><div class="opt-n">Every tracked nutrient against target in one scan. Densest; least narrative.</div></div></div>
+      </div><div class="opt-col chosen" data-state="chosen">
+        <div class="opt-hd"><span class="opt-k">C</span><div><div class="opt-l">Full table <span class="stamp stamp-on">Chosen</span></div><div class="opt-n">Every tracked nutrient against target in one scan. Densest; least narrative.</div></div></div>
         <div class="phone"><div class="scr "><div class="sb"><span>9:41</span><span class="sbr"><svg viewBox="0 0 18 12" width="16" height="11" aria-hidden="true"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="10" y="1" width="3" height="11" rx="1" fill="currentColor"/></svg><svg viewBox="0 0 24 12" width="22" height="11" aria-hidden="true"><rect x="0.5" y="0.5" width="19" height="11" rx="3" fill="none" stroke="currentColor"/><rect x="2" y="2" width="13" height="8" rx="1.5" fill="currentColor"/><rect x="21" y="4" width="2" height="4" rx="1" fill="currentColor"/></svg></span></div><div class="scr-body"><div class="ab"><button class="ab-icon" type="button" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><div class="ab-t"><div class="ab-title">Thursday, 9 Sep</div></div><span class="ab-sp"></span></div>
         <div class="pad">
           <div class="dh dh-sm"><div><div class="dh-d">1,640 kcal</div><div class="dh-w">of 2,050 · 4 meals logged</div></div><span class="chip chip-score"><span class="dot dot-score"></span>Good 78</span></div>
@@ -858,12 +841,11 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
           <div class="card "><div class="meal"><span class="meal-n">Breakfast</span><span class="meal-k">410</span></div><div class="meal"><span class="meal-n">Lunch</span><span class="meal-k">760</span></div><div class="meal"><span class="meal-n">Snack</span><span class="meal-k">190</span></div><div class="meal empty"><span class="meal-n">Dinner</span><span class="meal-add">+ Add</span></div></div>
         </div></div></div></div>
         
-        <label class="pick"><input type="radio" name="pick-daily-report" value="C" data-screen="daily-report" data-label="Full table"> Choose C</label>
       </div></div>
     </section><section class="grp" id="weekly-report">
-      <div class="grp-h"><div class="grp-n">Screen 10 of 13</div><h2 class="grp-t">Weekly report</h2><p class="grp-p">Show patterns a single day cannot. Every average states how many days it is based on.</p></div>
-      <div class="opts-row"><div class="opt-col" data-col="weekly-report-A">
-        <div class="opt-hd"><span class="opt-k">A</span><div><div class="opt-l">Charts first</div><div class="opt-n">Bars and trend lead; findings underneath. Best for spotting the shape of the week.</div></div></div>
+      <div class="grp-h"><div class="grp-n">Screen 10 of 13 &middot; chosen: option A</div><h2 class="grp-t">Weekly report</h2><p class="grp-p">Show patterns a single day cannot. Every average states how many days it is based on.</p></div>
+      <div class="opts-row"><div class="opt-col chosen" data-state="chosen">
+        <div class="opt-hd"><span class="opt-k">A</span><div><div class="opt-l">Charts first <span class="stamp stamp-on">Chosen</span></div><div class="opt-n">Bars and trend lead; findings underneath. Best for spotting the shape of the week.</div></div></div>
         <div class="phone"><div class="scr "><div class="sb"><span>9:41</span><span class="sbr"><svg viewBox="0 0 18 12" width="16" height="11" aria-hidden="true"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="10" y="1" width="3" height="11" rx="1" fill="currentColor"/></svg><svg viewBox="0 0 24 12" width="22" height="11" aria-hidden="true"><rect x="0.5" y="0.5" width="19" height="11" rx="3" fill="none" stroke="currentColor"/><rect x="2" y="2" width="13" height="8" rx="1.5" fill="currentColor"/><rect x="21" y="4" width="2" height="4" rx="1" fill="currentColor"/></svg></span></div><div class="scr-body"><div class="ab"><button class="ab-icon" type="button" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><div class="ab-t"><div class="ab-title">Week of 3–9 Sep</div></div><span class="ab-act">Prev</span></div>
         <div class="pad">
           <div class="card "><div class="ch-h"><span>Energy per day</span><i>Target 2,050</i></div><div class="chart"><div class="cb"><span class="cb-b" style="height:84%"></span><i>M</i></div><div class="cb"><span class="cb-b" style="height:91%"></span><i>T</i></div><div class="cb"><span class="cb-b" style="height:78%"></span><i>W</i></div><div class="cb"><span class="cb-b" style="height:80%"></span><i>T</i></div><div class="cb"><span class="cb-b cb-off" style="height:4%"></span><i>F</i></div><div class="cb"><span class="cb-b" style="height:96%"></span><i>S</i></div><div class="cb"><span class="cb-b" style="height:88%"></span><i>S</i></div><span class="ch-tgt"></span></div><p class="ch-f">Friday not logged</p></div>
@@ -871,9 +853,8 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
           <div class="sec"><div class="sec-h"><span>Averages</span></div><div class="card "><div class="avg"><span>Energy</span><b>1,910</b><i>over 6 logged days</i></div><div class="avg"><span>Protein</span><b>88 g</b><i>target met on 5 of 6</i></div><div class="avg"><span>Fibre</span><b>19 g</b><i>target met on 1 of 6</i></div><div class="avg"><span>Water</span><b>2.1 L</b><i>target met on 3 of 6</i></div></div></div>
         </div></div><div class="bnav"><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span>Today</span></div><div class="nav-i active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19V9M9.5 19V5M15 19v-7M20.5 19v-4"/></svg><span>Insights</span></div><div class="nav-fab" role="presentation"><span class="fab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></svg></span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3.5s6 6.6 6 10.4a6 6 0 0 1-12 0C6 10.1 12 3.5 12 3.5z"/></svg><span>Water</span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 20a7.4 7.4 0 0 1 14.4 0"/></svg><span>Profile</span></div></div></div></div>
         
-        <label class="pick"><input type="radio" name="pick-weekly-report" value="A" data-screen="weekly-report" data-label="Charts first"> Choose A</label>
-      </div><div class="opt-col" data-col="weekly-report-B">
-        <div class="opt-hd"><span class="opt-k">B</span><div><div class="opt-l">Findings first</div><div class="opt-n">Plain-language findings lead, charts support. Best if nobody in the house wants to read a chart.</div></div></div>
+      </div><div class="opt-col passed" data-state="passed">
+        <div class="opt-hd"><span class="opt-k">B</span><div><div class="opt-l">Findings first <span class="stamp">Not chosen</span></div><div class="opt-n">Plain-language findings lead, charts support. Best if nobody in the house wants to read a chart.</div></div></div>
         <div class="phone"><div class="scr "><div class="sb"><span>9:41</span><span class="sbr"><svg viewBox="0 0 18 12" width="16" height="11" aria-hidden="true"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="10" y="1" width="3" height="11" rx="1" fill="currentColor"/></svg><svg viewBox="0 0 24 12" width="22" height="11" aria-hidden="true"><rect x="0.5" y="0.5" width="19" height="11" rx="3" fill="none" stroke="currentColor"/><rect x="2" y="2" width="13" height="8" rx="1.5" fill="currentColor"/><rect x="21" y="4" width="2" height="4" rx="1" fill="currentColor"/></svg></span></div><div class="scr-body"><div class="ab"><button class="ab-icon" type="button" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><div class="ab-t"><div class="ab-title">Week of 3–9 Sep</div></div><span class="ab-sp"></span></div>
         <div class="pad">
           <div class="card "><div class="verdict">Your steadiest week so far — six days logged, and protein met on five of them.</div></div>
@@ -882,12 +863,11 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
           <div class="card "><div class="ch-h"><span>Energy per day</span></div><div class="chart"><div class="cb"><span class="cb-b" style="height:84%"></span><i>M</i></div><div class="cb"><span class="cb-b" style="height:91%"></span><i>T</i></div><div class="cb"><span class="cb-b" style="height:78%"></span><i>W</i></div><div class="cb"><span class="cb-b" style="height:80%"></span><i>T</i></div><div class="cb"><span class="cb-b cb-off" style="height:4%"></span><i>F</i></div><div class="cb"><span class="cb-b" style="height:96%"></span><i>S</i></div><div class="cb"><span class="cb-b" style="height:88%"></span><i>S</i></div><span class="ch-tgt"></span></div></div>
         </div></div><div class="bnav"><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span>Today</span></div><div class="nav-i active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19V9M9.5 19V5M15 19v-7M20.5 19v-4"/></svg><span>Insights</span></div><div class="nav-fab" role="presentation"><span class="fab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></svg></span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3.5s6 6.6 6 10.4a6 6 0 0 1-12 0C6 10.1 12 3.5 12 3.5z"/></svg><span>Water</span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 20a7.4 7.4 0 0 1 14.4 0"/></svg><span>Profile</span></div></div></div></div>
         
-        <label class="pick"><input type="radio" name="pick-weekly-report" value="B" data-screen="weekly-report" data-label="Findings first"> Choose B</label>
       </div></div>
     </section><section class="grp" id="monthly-report">
-      <div class="grp-h"><div class="grp-n">Screen 11 of 13</div><h2 class="grp-t">Monthly report</h2><p class="grp-p">Long-horizon perspective. Daily nutrition is noisy, so the smoothed line is the signal.</p></div>
-      <div class="opts-row"><div class="opt-col" data-col="monthly-report-A">
-        <div class="opt-hd"><span class="opt-k">A</span><div><div class="opt-l">Trend line</div><div class="opt-n">Score over the month with a 7-day average. Reads change clearly.</div></div></div>
+      <div class="grp-h"><div class="grp-n">Screen 11 of 13 &middot; chosen: option A</div><h2 class="grp-t">Monthly report</h2><p class="grp-p">Long-horizon perspective. Daily nutrition is noisy, so the smoothed line is the signal.</p></div>
+      <div class="opts-row"><div class="opt-col chosen" data-state="chosen">
+        <div class="opt-hd"><span class="opt-k">A</span><div><div class="opt-l">Trend line <span class="stamp stamp-on">Chosen</span></div><div class="opt-n">Score over the month with a 7-day average. Reads change clearly.</div></div></div>
         <div class="phone"><div class="scr "><div class="sb"><span>9:41</span><span class="sbr"><svg viewBox="0 0 18 12" width="16" height="11" aria-hidden="true"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="10" y="1" width="3" height="11" rx="1" fill="currentColor"/></svg><svg viewBox="0 0 24 12" width="22" height="11" aria-hidden="true"><rect x="0.5" y="0.5" width="19" height="11" rx="3" fill="none" stroke="currentColor"/><rect x="2" y="2" width="13" height="8" rx="1.5" fill="currentColor"/><rect x="21" y="4" width="2" height="4" rx="1" fill="currentColor"/></svg></span></div><div class="scr-body"><div class="ab"><button class="ab-icon" type="button" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><div class="ab-t"><div class="ab-title">September</div></div><span class="ab-act">Aug</span></div>
         <div class="pad">
           <div class="card "><div class="ch-h"><span>Daily score</span><i>7-day average</i></div><svg viewBox="0 0 280 64" class="spark" role="img" aria-label="Daily score trend, 68 to 84"><path d="M0.0,58.0 L25.5,44.9 L50.9,53.6 L76.4,38.4 L101.8,42.7 L127.3,31.8 L152.7,36.2 L178.2,23.1 L203.6,29.6 L229.1,16.5 L254.5,20.9 L280.0,10.0 L280,64 L0,64 Z" fill="var(--accent-soft)" stroke="none"/><path d="M0.0,58.0 L25.5,44.9 L50.9,53.6 L76.4,38.4 L101.8,42.7 L127.3,31.8 L152.7,36.2 L178.2,23.1 L203.6,29.6 L229.1,16.5 L254.5,20.9 L280.0,10.0" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="280.0" cy="10.0" r="3.5" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/></svg><div class="cmp"><span>vs August</span><b class="up">+6</b></div></div>
@@ -896,9 +876,8 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
           <div class="sec"><div class="sec-h"><span>Consistently over</span></div><div class="card "><span class="chip chip-high"><span class="dot dot-high"></span>Sodium · 16 of 24 days</span></div></div>
         </div></div><div class="bnav"><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span>Today</span></div><div class="nav-i active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19V9M9.5 19V5M15 19v-7M20.5 19v-4"/></svg><span>Insights</span></div><div class="nav-fab" role="presentation"><span class="fab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></svg></span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3.5s6 6.6 6 10.4a6 6 0 0 1-12 0C6 10.1 12 3.5 12 3.5z"/></svg><span>Water</span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 20a7.4 7.4 0 0 1 14.4 0"/></svg><span>Profile</span></div></div></div></div>
         
-        <label class="pick"><input type="radio" name="pick-monthly-report" value="A" data-screen="monthly-report" data-label="Trend line"> Choose A</label>
-      </div><div class="opt-col" data-col="monthly-report-B">
-        <div class="opt-hd"><span class="opt-k">B</span><div><div class="opt-l">Calendar heat-map</div><div class="opt-n">Every day as a cell. Best for seeing gaps in logging and weekend patterns.</div></div></div>
+      </div><div class="opt-col passed" data-state="passed">
+        <div class="opt-hd"><span class="opt-k">B</span><div><div class="opt-l">Calendar heat-map <span class="stamp">Not chosen</span></div><div class="opt-n">Every day as a cell. Best for seeing gaps in logging and weekend patterns.</div></div></div>
         <div class="phone"><div class="scr "><div class="sb"><span>9:41</span><span class="sbr"><svg viewBox="0 0 18 12" width="16" height="11" aria-hidden="true"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="10" y="1" width="3" height="11" rx="1" fill="currentColor"/></svg><svg viewBox="0 0 24 12" width="22" height="11" aria-hidden="true"><rect x="0.5" y="0.5" width="19" height="11" rx="3" fill="none" stroke="currentColor"/><rect x="2" y="2" width="13" height="8" rx="1.5" fill="currentColor"/><rect x="21" y="4" width="2" height="4" rx="1" fill="currentColor"/></svg></span></div><div class="scr-body"><div class="ab"><button class="ab-icon" type="button" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><div class="ab-t"><div class="ab-title">September</div></div><span class="ab-sp"></span></div>
         <div class="pad">
           <div class="card "><div class="ch-h"><span>Daily score</span></div><div class="hm-days"><i>M</i><i>T</i><i>W</i><i>T</i><i>F</i><i>S</i><i>S</i></div><div class="hmgrid"><span class="hm hm-2"></span><span class="hm hm-2"></span><span class="hm hm-3"></span><span class="hm hm-3"></span><span class="hm hm-1"></span><span class="hm hm-0"></span><span class="hm hm-4"></span><span class="hm hm-2"></span><span class="hm hm-2"></span><span class="hm hm-3"></span><span class="hm hm-3"></span><span class="hm hm-4"></span><span class="hm hm-1"></span><span class="hm hm-0"></span><span class="hm hm-2"></span><span class="hm hm-2"></span><span class="hm hm-3"></span><span class="hm hm-3"></span><span class="hm hm-4"></span><span class="hm hm-1"></span><span class="hm hm-0"></span><span class="hm hm-2"></span><span class="hm hm-2"></span><span class="hm hm-3"></span><span class="hm hm-3"></span><span class="hm hm-4"></span><span class="hm hm-1"></span><span class="hm hm-0"></span><span class="hm hm-2"></span><span class="hm hm-2"></span><span class="hm hm-3"></span><span class="hm hm-3"></span><span class="hm hm-4"></span><span class="hm hm-1"></span><span class="hm hm-0"></span><span class="hm hm-2"></span><span class="hm hm-2"></span><span class="hm hm-3"></span><span class="hm hm-3"></span><span class="hm hm-1"></span></div><div class="hm-key"><span>Lower</span><span class="hm hm-1"></span><span class="hm hm-2"></span><span class="hm hm-3"></span><span class="hm hm-4"></span><span>Higher</span><span class="hm hm-0"></span><span>Not logged</span></div></div>
@@ -906,12 +885,11 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
           <p class="fine">Weekends score lower than weekdays by 9 points on average.</p>
         </div></div><div class="bnav"><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span>Today</span></div><div class="nav-i active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19V9M9.5 19V5M15 19v-7M20.5 19v-4"/></svg><span>Insights</span></div><div class="nav-fab" role="presentation"><span class="fab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></svg></span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3.5s6 6.6 6 10.4a6 6 0 0 1-12 0C6 10.1 12 3.5 12 3.5z"/></svg><span>Water</span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 20a7.4 7.4 0 0 1 14.4 0"/></svg><span>Profile</span></div></div></div></div>
         
-        <label class="pick"><input type="radio" name="pick-monthly-report" value="B" data-screen="monthly-report" data-label="Calendar heat-map"> Choose B</label>
       </div></div>
     </section><section class="grp" id="goals">
-      <div class="grp-h"><div class="grp-n">Screen 12 of 13</div><h2 class="grp-t">Goals & targets</h2><p class="grp-p">Change targets without needing to understand the derivation. Changes apply from today forward — history keeps the targets it was measured against.</p></div>
-      <div class="opts-row"><div class="opt-col" data-col="goals-A">
-        <div class="opt-hd"><span class="opt-k">A</span><div><div class="opt-l">Grouped list</div><div class="opt-n">Compact. Derived vs overridden shown as a badge on each row.</div></div></div>
+      <div class="grp-h"><div class="grp-n">Screen 12 of 13 &middot; chosen: option B</div><h2 class="grp-t">Goals & targets</h2><p class="grp-p">Change targets without needing to understand the derivation. Changes apply from today forward — history keeps the targets it was measured against.</p></div>
+      <div class="opts-row"><div class="opt-col passed" data-state="passed">
+        <div class="opt-hd"><span class="opt-k">A</span><div><div class="opt-l">Grouped list <span class="stamp">Not chosen</span></div><div class="opt-n">Compact. Derived vs overridden shown as a badge on each row.</div></div></div>
         <div class="phone"><div class="scr "><div class="sb"><span>9:41</span><span class="sbr"><svg viewBox="0 0 18 12" width="16" height="11" aria-hidden="true"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="10" y="1" width="3" height="11" rx="1" fill="currentColor"/></svg><svg viewBox="0 0 24 12" width="22" height="11" aria-hidden="true"><rect x="0.5" y="0.5" width="19" height="11" rx="3" fill="none" stroke="currentColor"/><rect x="2" y="2" width="13" height="8" rx="1.5" fill="currentColor"/><rect x="21" y="4" width="2" height="4" rx="1" fill="currentColor"/></svg></span></div><div class="scr-body"><div class="ab"><button class="ab-icon" type="button" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><div class="ab-t"><div class="ab-title">Goals & targets</div></div><span class="ab-sp"></span></div>
         <div class="pad">
           <div class="card "><div class="lr lr-tap"><div class="lr-m"><div class="lr-main">Goal</div><div class="lr-sub">What the targets are built for</div></div><span class="lr-r">General health <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></span></div></div>
@@ -922,9 +900,8 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
           <div class="notebox">Changes apply from today. Past reports keep the targets they were measured against.</div>
         </div</div></div></div>
         
-        <label class="pick"><input type="radio" name="pick-goals" value="A" data-screen="goals" data-label="Grouped list"> Choose A</label>
-      </div><div class="opt-col" data-col="goals-B">
-        <div class="opt-hd"><span class="opt-k">B</span><div><div class="opt-l">Card per target</div><div class="opt-n">Each target gets a slider and its reasoning. Slower to scan, easier to adjust confidently.</div></div></div>
+      </div><div class="opt-col chosen" data-state="chosen">
+        <div class="opt-hd"><span class="opt-k">B</span><div><div class="opt-l">Card per target <span class="stamp stamp-on">Chosen</span></div><div class="opt-n">Each target gets a slider and its reasoning. Slower to scan, easier to adjust confidently.</div></div></div>
         <div class="phone"><div class="scr "><div class="sb"><span>9:41</span><span class="sbr"><svg viewBox="0 0 18 12" width="16" height="11" aria-hidden="true"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="10" y="1" width="3" height="11" rx="1" fill="currentColor"/></svg><svg viewBox="0 0 24 12" width="22" height="11" aria-hidden="true"><rect x="0.5" y="0.5" width="19" height="11" rx="3" fill="none" stroke="currentColor"/><rect x="2" y="2" width="13" height="8" rx="1.5" fill="currentColor"/><rect x="21" y="4" width="2" height="4" rx="1" fill="currentColor"/></svg></span></div><div class="scr-body"><div class="ab"><button class="ab-icon" type="button" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><div class="ab-t"><div class="ab-title">Goals & targets</div></div><span class="ab-sp"></span></div>
         <div class="pad">
           <div class="card "><div class="tgt-h"><b>Energy</b><span class="qt qt-ver">Derived</span></div><div class="tgt-v">2,050<i>kcal</i></div><div class="slider"><span class="sl-t"><span class="sl-f"></span></span><span class="sl-k"></span></div><p class="fine">Mifflin-St Jeor from your height, weight and age, times your activity level.</p></div>
@@ -933,12 +910,11 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
           <div class="notebox">Changes apply from today. Past reports keep the targets they were measured against.</div>
         </div></div></div></div>
         
-        <label class="pick"><input type="radio" name="pick-goals" value="B" data-screen="goals" data-label="Card per target"> Choose B</label>
       </div></div>
     </section><section class="grp" id="settings">
-      <div class="grp-h"><div class="grp-n">Screen 13 of 13</div><h2 class="grp-t">Settings & data</h2><p class="grp-p">Profiles, units, reminders, and the two things that matter most with no server: export and backup.</p></div>
-      <div class="opts-row"><div class="opt-col" data-col="settings-A">
-        <div class="opt-hd"><span class="opt-k">A</span><div><div class="opt-l">Grouped list</div><div class="opt-n">Familiar platform pattern. Dense, scannable, nothing to read.</div></div></div>
+      <div class="grp-h"><div class="grp-n">Screen 13 of 13 &middot; chosen: option A</div><h2 class="grp-t">Settings & data</h2><p class="grp-p">Profiles, units, reminders, and the two things that matter most with no server: export and backup.</p></div>
+      <div class="opts-row"><div class="opt-col chosen" data-state="chosen">
+        <div class="opt-hd"><span class="opt-k">A</span><div><div class="opt-l">Grouped list <span class="stamp stamp-on">Chosen</span></div><div class="opt-n">Familiar platform pattern. Dense, scannable, nothing to read.</div></div></div>
         <div class="phone"><div class="scr "><div class="sb"><span>9:41</span><span class="sbr"><svg viewBox="0 0 18 12" width="16" height="11" aria-hidden="true"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="10" y="1" width="3" height="11" rx="1" fill="currentColor"/></svg><svg viewBox="0 0 24 12" width="22" height="11" aria-hidden="true"><rect x="0.5" y="0.5" width="19" height="11" rx="3" fill="none" stroke="currentColor"/><rect x="2" y="2" width="13" height="8" rx="1.5" fill="currentColor"/><rect x="21" y="4" width="2" height="4" rx="1" fill="currentColor"/></svg></span></div><div class="scr-body"><div class="ab"><span class="ab-sp"></span><div class="ab-t"><div class="ab-title">Settings</div></div><span class="ab-sp"></span></div>
         <div class="pad">
           <div class="sec-h"><span>Profiles on this phone</span></div>
@@ -950,9 +926,8 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
           <p class="fine ctr">Nourishly v1.0 · catalog 2026.09 · all data stays on this phone</p>
         </div></div><div class="bnav"><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span>Today</span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19V9M9.5 19V5M15 19v-7M20.5 19v-4"/></svg><span>Insights</span></div><div class="nav-fab" role="presentation"><span class="fab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></svg></span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3.5s6 6.6 6 10.4a6 6 0 0 1-12 0C6 10.1 12 3.5 12 3.5z"/></svg><span>Water</span></div><div class="nav-i active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 20a7.4 7.4 0 0 1 14.4 0"/></svg><span>Profile</span></div></div></div></div>
         
-        <label class="pick"><input type="radio" name="pick-settings" value="A" data-screen="settings" data-label="Grouped list"> Choose A</label>
-      </div><div class="opt-col" data-col="settings-B">
-        <div class="opt-hd"><span class="opt-k">B</span><div><div class="opt-l">Cards with reasons</div><div class="opt-n">Each group explains itself. Better for the backup section, which is the one people ignore until it matters.</div></div></div>
+      </div><div class="opt-col passed" data-state="passed">
+        <div class="opt-hd"><span class="opt-k">B</span><div><div class="opt-l">Cards with reasons <span class="stamp">Not chosen</span></div><div class="opt-n">Each group explains itself. Better for the backup section, which is the one people ignore until it matters.</div></div></div>
         <div class="phone"><div class="scr "><div class="sb"><span>9:41</span><span class="sbr"><svg viewBox="0 0 18 12" width="16" height="11" aria-hidden="true"><rect x="0" y="7" width="3" height="5" rx="1" fill="currentColor"/><rect x="5" y="4" width="3" height="8" rx="1" fill="currentColor"/><rect x="10" y="1" width="3" height="11" rx="1" fill="currentColor"/></svg><svg viewBox="0 0 24 12" width="22" height="11" aria-hidden="true"><rect x="0.5" y="0.5" width="19" height="11" rx="3" fill="none" stroke="currentColor"/><rect x="2" y="2" width="13" height="8" rx="1.5" fill="currentColor"/><rect x="21" y="4" width="2" height="4" rx="1" fill="currentColor"/></svg></span></div><div class="scr-body"><div class="ab"><span class="ab-sp"></span><div class="ab-t"><div class="ab-title">Settings</div></div><span class="ab-sp"></span></div>
         <div class="pad">
           <div class="card "><div class="prof"><span class="av av-1 av-lg">K</span><div><b>Keyur</b><i>General health · 174 cm · 71 kg</i></div><span class="sw-b">Switch</span></div></div>
@@ -962,26 +937,24 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
           <p class="fine ctr">v1.0 · catalog 2026.09 · nothing leaves this phone</p>
         </div></div><div class="bnav"><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span>Today</span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19V9M9.5 19V5M15 19v-7M20.5 19v-4"/></svg><span>Insights</span></div><div class="nav-fab" role="presentation"><span class="fab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5.5v13M5.5 12h13"/></svg></span></div><div class="nav-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3.5s6 6.6 6 10.4a6 6 0 0 1-12 0C6 10.1 12 3.5 12 3.5z"/></svg><span>Water</span></div><div class="nav-i active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 20a7.4 7.4 0 0 1 14.4 0"/></svg><span>Profile</span></div></div></div></div>
         
-        <label class="pick"><input type="radio" name="pick-settings" value="B" data-screen="settings" data-label="Cards with reasons"> Choose B</label>
       </div></div>
     </section>
 
   <section class="close">
-    <h2>When you have picked</h2>
-    <p>Open <b>My choices</b> in the header and hit copy — it produces a plain list you can paste straight back to me. Screens you leave unchosen come back as “no preference”, and I will pick the one that best fits the ones you did choose.</p>
-    <p>After that the chosen screens become the basis for implementation: the token file becomes the <code>nourishly_ui</code> package, and each screen becomes a feature module under the structure in §12.3 of the architecture.</p>
+    <h2>Where this goes next</h2>
+    <p>These 13 screens are the implementation targets: the token file becomes the <code>nourishly_ui</code> package, and each screen becomes a feature module under the structure in §12.3 of the architecture.</p>
+    <p><code>decisions.md</code> records the full set alongside two refinements worth settling first — the daily report keeping its verdict line and insights around the table, and a length strategy for the goals screen once all 24 nutrients are on it.</p>
+    <p><b>No implementation has begun.</b></p>
   </section>
 </main>
 
 <div class="panel" id="panel" role="dialog" aria-modal="true" aria-label="Your screen choices">
   <div class="panel-bg" id="panelBg"></div>
   <div class="panel-in">
-    <div class="panel-h"><b>My choices</b><button class="panel-x" id="panelX" type="button" aria-label="Close">×</button></div>
-    <div class="panel-b"><div class="pr"><span>1. Onboarding</span><b class="none" data-sum="onboarding">not chosen</b></div><div class="pr"><span>2. Profile setup</span><b class="none" data-sum="profile-setup">not chosen</b></div><div class="pr"><span>3. Daily dashboard</span><b class="none" data-sum="dashboard">not chosen</b></div><div class="pr"><span>4. Add food</span><b class="none" data-sum="log-entry">not chosen</b></div><div class="pr"><span>5. Food search</span><b class="none" data-sum="food-search">not chosen</b></div><div class="pr"><span>6. Portion & food detail</span><b class="none" data-sum="food-detail">not chosen</b></div><div class="pr"><span>7. Meal templates</span><b class="none" data-sum="templates">not chosen</b></div><div class="pr"><span>8. Water</span><b class="none" data-sum="water">not chosen</b></div><div class="pr"><span>9. Daily report</span><b class="none" data-sum="daily-report">not chosen</b></div><div class="pr"><span>10. Weekly report</span><b class="none" data-sum="weekly-report">not chosen</b></div><div class="pr"><span>11. Monthly report</span><b class="none" data-sum="monthly-report">not chosen</b></div><div class="pr"><span>12. Goals & targets</span><b class="none" data-sum="goals">not chosen</b></div><div class="pr"><span>13. Settings & data</span><b class="none" data-sum="settings">not chosen</b></div></div>
+    <div class="panel-h"><b>Decisions</b><button class="panel-x" id="panelX" type="button" aria-label="Close">×</button></div>
+    <div class="panel-b"><div class="pr"><div><b>1. Onboarding</b><i>not chosen: A Value cards first</i></div><span class="prk">B</span></div><div class="pr"><div><b>2. Profile setup</b><i>not chosen: B Single scrollable form</i></div><span class="prk">A</span></div><div class="pr"><div><b>3. Daily dashboard</b><i>not chosen: B Meals-led · C Numbers grid</i></div><span class="prk">A</span></div><div class="pr"><div><b>4. Add food</b><i>not chosen: A Sheet with tabs</i></div><span class="prk">B</span></div><div class="pr"><div><b>5. Food search</b><i>not chosen: B Flat ranked list</i></div><span class="prk">A</span></div><div class="pr"><div><b>6. Portion & food detail</b><i>not chosen: B Amount first</i></div><span class="prk">A</span></div><div class="pr"><div><b>7. Meal templates</b><i>not chosen: B Compact rows</i></div><span class="prk">A</span></div><div class="pr"><div><b>8. Water</b><i>not chosen: B Glass grid</i></div><span class="prk">A</span></div><div class="pr"><div><b>9. Daily report</b><i>not chosen: A Verdict first · B Score breakdown first</i></div><span class="prk">C</span></div><div class="pr"><div><b>10. Weekly report</b><i>not chosen: B Findings first</i></div><span class="prk">A</span></div><div class="pr"><div><b>11. Monthly report</b><i>not chosen: B Calendar heat-map</i></div><span class="prk">A</span></div><div class="pr"><div><b>12. Goals & targets</b><i>not chosen: A Grouped list</i></div><span class="prk">B</span></div><div class="pr"><div><b>13. Settings & data</b><i>not chosen: B Cards with reasons</i></div><span class="prk">A</span></div></div>
     <div class="panel-f">
-      <button class="cpy" id="copyBtn" type="button">Copy my choices</button>
-      <button class="clr" id="clearBtn" type="button">Clear all</button>
-      <p class="panel-note">Saved in this browser only.</p>
+      <p class="panel-note">Approved 9 September 2026. Discarded options are kept in the prototype, not deleted — see <code>decisions.md</code>.</p>
     </div>
   </div>
 </div>
@@ -996,34 +969,18 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
   paint(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
   btn.addEventListener('click',function(){paint(root.getAttribute('data-theme')==='dark'?'light':'dark');});
 
-  var picks={};
-  try{picks=JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch(e){picks={};}
-  var TOTAL=document.querySelectorAll('.grp').length;
-
-  function save(){try{localStorage.setItem(KEY,JSON.stringify(picks));}catch(e){}}
-  function render(){
-    document.querySelectorAll('input[type=radio][data-screen]').forEach(function(r){
-      var chosen = picks[r.dataset.screen] && picks[r.dataset.screen].key===r.value;
-      r.checked=!!chosen;
-      var col=r.closest('.opt-col'); if(col) col.classList.toggle('chosen',!!chosen);
+  var showAll=false;
+  var fBtn=document.getElementById('filterBtn'), fCount=document.getElementById('filterCount');
+  function applyFilter(){
+    document.querySelectorAll('.opt-col').forEach(function(c){
+      c.hidden = (!showAll && c.dataset.state==='passed');
     });
-    document.querySelectorAll('[data-sum]').forEach(function(el){
-      var p=picks[el.dataset.sum];
-      el.textContent = p ? (p.key+' — '+p.label) : 'not chosen';
-      el.classList.toggle('none',!p);
-    });
-    document.querySelectorAll('[data-rail]').forEach(function(el){
-      el.classList.toggle('done',!!picks[el.dataset.rail]);
-    });
-    document.querySelectorAll('[data-railmark]').forEach(function(el){
-      var p=picks[el.dataset.railmark]; el.textContent = p ? p.key : '·';
-    });
-    document.getElementById('selCount').textContent = Object.keys(picks).length+'/'+TOTAL;
+    fCount.textContent = showAll ? 'all 28 options' : '13 chosen';
+    fBtn.setAttribute('aria-pressed', String(!showAll));
+    fBtn.title = showAll ? 'Show only the chosen option per screen' : 'Show every option, including those not chosen';
   }
-  document.addEventListener('change',function(e){
-    var r=e.target; if(!r.matches||!r.matches('input[type=radio][data-screen]'))return;
-    picks[r.dataset.screen]={key:r.value,label:r.dataset.label}; save(); render();
-  });
+  fBtn.addEventListener('click',function(){showAll=!showAll;applyFilter();});
+  applyFilter();
 
   document.querySelectorAll('[data-wiz]').forEach(function(wiz){
     var id=wiz.getAttribute('data-wiz');
@@ -1054,18 +1011,6 @@ h1,h2,h3{margin:0;text-wrap:balance}p{margin:0}
   document.getElementById('panelBg').addEventListener('click',function(){panel.classList.remove('open');});
   document.addEventListener('keydown',function(e){if(e.key==='Escape')panel.classList.remove('open');});
 
-  document.getElementById('clearBtn').addEventListener('click',function(){picks={};save();render();});
-  document.getElementById('copyBtn').addEventListener('click',function(){
-    var lines=['Nourishly prototype — my screen choices',''];
-    document.querySelectorAll('.grp').forEach(function(g){
-      var id=g.id, n=g.querySelector('.grp-t').textContent, p=picks[id];
-      lines.push('- '+n+': '+(p?('Option '+p.key+' ('+p.label+')'):'no preference'));
-    });
-    var txt=lines.join('\n');
-    var done=function(){var b=document.getElementById('copyBtn');b.textContent='Copied — paste it back to Claude';setTimeout(function(){b.textContent='Copy my choices';},2400);};
-    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,function(){window.prompt('Copy this:',txt);});}
-    else{window.prompt('Copy this:',txt);}
-  });
-  render();
+
 })();
 </script>
