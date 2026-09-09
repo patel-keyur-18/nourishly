@@ -12,7 +12,7 @@
 
 > **Offline is the normal operating mode. Connectivity is an optional enhancement that adds durability and multi-device access, and nothing else.**
 
-**This holds even though the backend is live at launch.** A working API is a standing temptation to put a network call on a path that does not need one; the rules below are what prevent that drift.
+**In rev 0.3 this stopped being a discipline and became a fact:** there is no server to call. This section is the part of the design that survived every scope change untouched, and §13.2 explains why that matters.
 
 Concretely (NFR-O-01…05):
 - Every core feature — logging, viewing, computing, reporting, target management — works with the radio off, indefinitely, with no banner, no spinner, and no degraded state.
@@ -77,7 +77,7 @@ Two-year projection: **well under 150 MB** (NFR-E-04), dominated by the catalog 
 
 ### 16.4 The bundled seed catalog
 
-The most important offline decision in the design: **the food catalog ships inside the app bundle**, even though a catalog API is live at launch.
+The most important offline decision in the design: **the food catalog ships inside the app bundle** — now the only way it could arrive, since there is no catalog server.
 
 - A compressed, pre-built SQLite file (or a compact binary import format) is included as an asset.
 - On first launch, a background isolate imports/attaches it and builds the FTS index, behind a one-time progress state in onboarding — which is dead time anyway while the user reads the value screens.
@@ -125,6 +125,11 @@ The most important offline decision in the design: **the food catalog ships insi
 ---
 
 ## 17. Synchronization Strategy
+
+> ## ⛔ DEFERRED — not built in the personal-use scope
+>
+> There is nothing to synchronise: each family member's data lives on their own phone and is never shared. Backup is handled by platform auto-backup plus file export (§0.5). **Note the one part that survives:** UUIDv7 keys, `created_at`/`updated_at` and `deleted_at` tombstones are still used, because export/import merge needs them (§0.4). The outbox, cursors, `server_revision` and device registry are not built. Retained as reference in case the scope ever changes. See [Part 0 — Personal-Use Scope](./00-scope.md).
+
 
 *Synchronisation ships in the first release. §17.2's schema requirements must be in the very first migration regardless — retrofitting them is prohibitively expensive.*
 
@@ -286,11 +291,16 @@ The strategy is **domain-aware per entity**, not one global rule. A single LWW p
 
 ### 17.10 First sync after sign-in on a device that already has data
 
-This is the guest→account migration case, treated as a first-class flow rather than a special case of normal sync — see §18.5. Because guest mode is the default entry path (ADR-007) and sync is live at launch, **this flow runs for essentially every user who ever creates an account.** It is not an edge case; it is the modal path into an account, and it should be tested and instrumented accordingly (R-5).
+This was the guest→account migration case (§18.5). **Not built in rev 0.3** — there are no accounts. The one idea worth carrying forward into the export/import path (§0.5) is its verification rule: *reconcile per-entity counts before reporting success.* An import that silently drops rows is the same failure in a smaller costume.
 
 ---
 
 ## 18. Authentication Strategy
+
+> ## ⛔ DEFERRED — not built in the personal-use scope
+>
+> There are no accounts and no server to authenticate against. Local switchable profiles replace this entirely — see §0.4, which reuses the `owner_id` column this section designed. Retained as reference in case the scope ever changes. See [Part 0 — Personal-Use Scope](./00-scope.md).
+
 
 ### 18.1 Principles
 

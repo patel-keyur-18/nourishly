@@ -6,7 +6,9 @@
 
 ## 32. Architecture Decision Records
 
-**Status after the review of 2026-09-09:** ADR-001 and ADR-006 are **Accepted** (ADR-006 revised — the backend now ships at launch). ADR-002 through ADR-005 and ADR-007 through ADR-009 are **Accepted** on the reviewer's instruction to proceed with the recommendations. **ADR-010 remains Proposed pending nutrition-professional review** (Q-6) — it is the one decision that should not be locked without outside expertise.
+**Status after the personal-use review (rev 0.3).** ADR-001 through ADR-004 and ADR-008 through ADR-009 are **Accepted** and unchanged. **ADR-005 and ADR-007 are superseded** by the no-backend decision — retained for reference. **ADR-006 is revised to "no backend, permanently."** **ADR-010 remains Proposed** pending nutrition review (§0.6).
+
+*Superseded status note from the first review:* ADR-001 and ADR-006 are **Accepted** (ADR-006 revised — the backend now ships at launch). ADR-002 through ADR-005 and ADR-007 through ADR-009 are **Accepted** on the reviewer's instruction to proceed with the recommendations. **ADR-010 remains Proposed pending nutrition-professional review** (Q-6) — it is the one decision that should not be locked without outside expertise.
 
 Each ADR records context, the options weighed, the decision, its rationale, the trade-offs accepted, and what it implies for the future.
 
@@ -16,9 +18,9 @@ Each ADR records context, the options weighed, the decision, its rationale, the 
 | [ADR-002](#adr-002--mobile-architecture-feature-first-modular-clean-architecture) | Feature-first modular Clean Architecture | High |
 | [ADR-003](#adr-003--local-database-sqlite-via-drift) | SQLite via Drift | High |
 | [ADR-004](#adr-004--offline-first-strategy-local-source-of-truth) | Local source of truth, offline-first | Very high |
-| [ADR-005](#adr-005--synchronisation-strategy-outbox--delta-pull-with-domain-aware-merge) | Outbox + delta pull, domain-aware merge | High |
-| [ADR-006](#adr-006--backend-strategy-full-backend-at-launch-revised) | **Revised:** full backend at launch | **Decided** by the reviewer |
-| [ADR-007](#adr-007--authentication-strategy-guest-first-no-signup-wall) | Guest-first, no signup wall | Very high |
+| [ADR-005](#adr-005--synchronisation-strategy-outbox--delta-pull-with-domain-aware-merge) | Outbox + delta pull, domain-aware merge | ⛔ **Deferred** — nothing to sync (§0.4) |
+| [ADR-006](#adr-006--backend-strategy-no-backend-revised-twice) | **Revised twice:** no backend, permanently | **Decided** (rev 0.3) |
+| [ADR-007](#adr-007--authentication-strategy-guest-first-no-signup-wall) | Guest-first, no signup wall | ⛔ **Superseded** — local profiles, no accounts (§0.4) |
 | [ADR-008](#adr-008--food-nutrition-data-owned-curated-catalog-from-open-sources) | Owned curated catalog from open sources | High, one legal dependency |
 | [ADR-009](#adr-009--reporting-materialised-daily-summaries-on-demand-periods) | Materialised dailies, on-demand periods | High |
 | [ADR-010](#adr-010--nutrition-scoring-capped-weighted-sub-scores-with-coverage-gating) | Capped weighted sub-scores with coverage gating | Medium — **still needs expert review (Q-6)** |
@@ -136,6 +138,8 @@ The one forfeited capability that needs an active substitute is OTA hot-fixing: 
 
 ### ADR-005 — Synchronisation strategy: outbox + delta pull with domain-aware merge
 
+> **⛔ Superseded in rev 0.3 — no synchronisation is built.** There is nothing to sync between: each family member's data lives on one device and is never shared (§0.4). What survives from this ADR is narrow but real: **UUIDv7 primary keys, `updated_at`, and `deleted_at` tombstones are retained**, because import-merge on restore needs exactly those properties. The outbox, cursors, `server_revision`, conflict policies and device registry are not built. The analysis below stands if the scope ever widens.
+
 **Context.** The product must synchronise a local source of truth across devices from its first release, tolerating long offline periods, partial failures, lost acknowledgements, and untrustworthy device clocks, without ever losing or duplicating a user's data.
 
 **Options considered.**
@@ -170,38 +174,37 @@ The one forfeited capability that needs an active substitute is OTA hot-fixing: 
 
 ---
 
-### ADR-006 — Backend strategy: full backend at launch *(revised)*
+### ADR-006 — Backend strategy: no backend *(revised twice)*
 
-> **Status: Accepted (revised 2026-09-09).** Supersedes the original proposal, which recommended shipping with no backend and adding one in a second phase. The reviewer chose to ship the complete application. The superseded reasoning is retained below because it names the risks this decision accepts.
+> **Status: Accepted (revised 2026-09-09, rev 0.3).** This decision has been taken three times as the scope changed. Rev 0.1 proposed a sync-ready model with the backend deferred to a second phase. Rev 0.2 moved the backend into the first release on the reviewer's instruction to ship the complete application. **Rev 0.3 removes it permanently**, because the product is a private household app for 2–3 family members with no distribution. Both superseded versions are summarised below, because the reasoning is what makes the final answer defensible rather than merely convenient.
 
-**Context.** A backend enables cross-device sync, cloud backup, account recovery, and over-the-air food-catalog updates. It is also the largest single engineering and operational cost in the plan, and it brings production operations and a live regulatory surface with it.
+**Context.** Nourishly is used by the author and 2–3 family members, on their own phones, with no public distribution, no revenue, and an explicit constraint of no paid services or infrastructure of any kind (§0.1). Each person tracks their own food; **no data is shared between them.**
 
 **Options considered.**
-- **A. No backend ever.** Cheapest. Rejected: device loss means data loss; users who change phones churn permanently; catalog corrections would require an app-store release.
-- **B. Sync-ready model now, managed backend in a second phase.** *Originally recommended.* Ships ~14–18 weeks; defers the largest subsystem until the core product is validated by real users; no servers to operate during the highest-uncertainty period.
-- **C. Full backend in the first release.** ✅ **Chosen by the reviewer.**
+- **A. Managed backend with accounts and sync** *(rev 0.2's decision)*. Provides cross-device sync, cloud backup, account recovery, over-the-air catalog updates. Rejected now: it costs ~7 weeks and ongoing money and operations to solve problems this deployment does not have. There is no multi-user data to share, and a household of four does not need account recovery.
+- **B. Free-tier hosted backend.** Rejected: free tiers pause inactive projects, change terms, and require an account and monitoring. It reintroduces an operational dependency to buy very little.
+- **C. Self-hosted backend on a home machine.** Rejected: a device that must stay powered and reachable is worse than no server, and dramatically worse than a file.
+- **D. No backend. Local storage only, with backup by platform auto-backup and file export.** ✅ **Chosen.**
 
-**Decision.** **Option C.** Supabase (Postgres + Auth + RLS + Storage + Edge Functions) is live at first release. Accounts, multi-device synchronisation, cloud backup, guest→account migration, over-the-air catalog deltas, and barcode resolution against a hosted catalog all ship in v1.0.
+**Decision.** **No backend, permanently.** SQLite on the device is the only store. Backup is (1) Android Auto Backup to each person's own Google Drive, configured to include user data and exclude the rebuildable catalog replica, and (2) explicit JSON/CSV export and import that merges by UUID (§0.5). Local switchable profiles replace accounts (§0.4). Catalog updates arrive by rebuilding and reinstalling the app, which the author controls anyway.
 
-**Rationale for the decision as taken.**
-1. **Users only migrate devices once before they judge you.** A guest-only first release loses every user who changes phones before the sync release lands, and those users do not come back. Shipping backup at launch removes the product's most avoidable churn cause (P-6).
-2. **Over-the-air catalog delivery materially de-risks the largest scope risk in the plan.** Under Option B the launch catalog had to be right, because fixing it meant an app-store release. With deltas live at launch, the curated Indian tier can start smaller and grow continuously against real search-failure telemetry (§31.6). R-1 shrinks as a direct consequence — a genuine synergy rather than a consolation.
-3. **Nothing is thrown away or rebuilt.** The schema, ID scheme, tombstones, and outbox were already designed for sync, so this is a sequencing change, not a redesign. The engineering is additive.
-4. **A complete product is a defensible product.** Reviewing against competitors that all have accounts and sync, launching without them invites a first impression that is hard to correct.
+**Rationale.**
+1. **The requirements a backend would satisfy do not exist here.** No sharing between users, no account recovery, no cross-user features, no distribution channel needing a server. Building one would be answering questions nobody asked.
+2. **Backup — the one genuine need — is solved better without a server.** Android Auto Backup is automatic, free, and stores data in the user's own Drive rather than in a database the author would be responsible for. A file export is portable, inspectable, and outlives any service.
+3. **It eliminates the entire class of risks that dominated rev 0.2**: sync correctness (R-6), guest→account migration data loss (R-5), production operations (R-21), live compliance obligations (R-22), and infrastructure cost (R-23). Five risks removed by deleting code rather than by mitigating it.
+4. **The architecture already assumed this.** Because ADR-004 made the device the source of truth, removing the server removes work without removing capability. Nothing in the calculation, scoring, reporting, or UX design changes at all. **This is the strongest retrospective evidence that ADR-004 was correct** — a design that had leaned on the server would now need rewriting.
 
-**Trade-offs accepted — these are real and should be revisited if the schedule slips.**
-- **~7 additional weeks** of engineering (auth, sync engine, migration, RLS, backend test infrastructure), contributing to a 32–38 week runway against 14–18.
-- **Roughly four extra months before any real user touches the product** (R-20). The two largest uncertainties in this design — catalog coverage (A-18) and logging speed (R-4) — can only be settled by real users. *Mitigation, which is now a schedule requirement rather than a suggestion: dogfooding from week 9 and a closed beta from week 20 (§36).*
-- **Production operations from day one** — backup verification, monitoring, patching, incident response (§13.5).
-- **A live compliance surface from day one** — DPDP data-fiduciary obligations, including statutory breach notification, attach at launch rather than at a later phase (§30.1). Legal review becomes a prerequisite for *building* the backend, not for launching it.
-- **Infrastructure cost from day one with no revenue** (§31.5, Q-21).
-- **Two subsystems whose bugs are unrecoverable now ship without a prior local-only shakedown period**: guest→account migration (R-5) and sync (R-6). Both are elevated to Critical risks as a direct result of this decision.
+**Trade-offs accepted.**
+- **No automatic cross-device sync.** A person using both a phone and a tablet must export and import. Judged acceptable: rare in this deployment, and the merge-by-UUID import makes it correct when it happens.
+- **Backup on iOS is weaker than on Android**, since there is no equivalent of Auto Backup under the app's control. File export is the fallback, and it is the reason the export prompt exists (§0.5).
+- **Catalog corrections require a rebuild and reinstall.** Trivial for an author-built app; it was only a burden when a store release stood in the way.
+- **Losing the Android signing keystore means uninstall-and-reinstall, which destroys local data.** This is now the single most likely data-loss path in the whole design (R-26). Mitigated by keystore backup and by the export habit.
 
-**The architectural risk this introduces, stated plainly.** A working API sitting there is a standing temptation to put a network call on a path that does not need one. It is always easier to call a server than to write the offline path. AP-1 and ADR-004 are unchanged, and §16.1 now says so explicitly — but the discipline is now a matter of ongoing vigilance rather than of physical impossibility. **Every pull request that adds a network call to a read or write path should be treated as an architecture change.**
-
-**Future implications.** With the backend live, later additions (server push, hosted AI parsing, professional sharing) become infrastructure decisions rather than build-a-backend projects. The corresponding hazard is scope gravity: capabilities become easy to add because the platform is there, not because a requirement demanded them. §29.3's decision to keep notifications local despite having a backend available is the reference example of resisting that pull.
+**Future implications.** If the scope ever widens to public distribution, this ADR reverts to rev 0.2's analysis, and the work is largely additive — UUID keys, timestamps, and tombstones are retained precisely so that path stays open (§0.4). What is *not* retained is the outbox, cursor, and device-registry machinery: keeping unused sync infrastructure in a four-user app would be exactly the over-engineering this document argues against throughout.
 
 ### ADR-007 — Authentication strategy: guest-first, no signup wall
+
+> **⛔ Superseded in rev 0.3 — there are no accounts.** With no backend there is nothing to authenticate against. Local switchable profiles replace this entirely (§0.4). The one durable contribution of this ADR is the `owner_id` column it argued for: designed for guest→account migration, it now provides per-profile data separation for free, which is a neater outcome than the one it was designed for.
 
 **Context.** Requiring registration before first use is among the largest avoidable drop-offs in consumer apps. But accounts are needed for backup and multi-device use.
 

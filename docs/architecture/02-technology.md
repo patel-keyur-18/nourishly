@@ -148,9 +148,9 @@ The two capabilities forfeited by this decision — over-the-air JS updates and 
 
 ### 12.1 Recommendation
 
-> **Build Nourishly with Flutter, using a feature-first modular Clean Architecture, SQLite (Drift) as the on-device source of truth, and Supabase as the managed backend — live at first release.** *(ADR-001, ADR-002, ADR-003, ADR-006 revised)*
+> **Build Nourishly with Flutter, using a feature-first modular Clean Architecture and SQLite (Drift) as the on-device source of truth. No backend.** *(ADR-001, ADR-002, ADR-003, ADR-006 revised twice)*
 
-*Both halves are now decisions rather than proposals: Flutter was confirmed in review, and the backend was moved into the first release.*
+*Both are decisions rather than proposals: Flutter was confirmed in the first review; the backend was removed entirely in the second, when the scope narrowed to a private household app ([Part 0](./00-scope.md)).*
 
 ### 12.2 Recommended stack
 
@@ -165,17 +165,17 @@ The two capabilities forfeited by this decision — over-the-air JS updates and 
 | Navigation | **`go_router`** | Declarative, deep-linkable (needed for notification deep links, which ship in v1.0), typed routes | Navigator 2.0 by hand (too costly), auto_route (codegen-heavy) |
 | Charts | **Custom `CustomPainter` widgets** for the ring and macro bars; a lightweight chart package (e.g. `fl_chart`) for line/bar trends, wrapped behind an internal `NourishlyChart` API | Bespoke primitives are the product's signature UI and must be accessible; the wrapper means the third-party dependency can be replaced without touching feature code | Adopting a chart library wholesale (loses control of accessibility and theming) |
 | Serialisation | `freezed` + `json_serializable` | Immutable models, exhaustive unions, generated equality — essential for a value-object-heavy domain | Hand-written (error-prone at this model size) |
-| Backend | **Supabase** — Postgres, GoTrue auth, Row Level Security, Storage, Edge Functions. **Live at first release** | Relational model matches the domain; RLS gives DB-enforced isolation (NFR-S-04); can be self-hosted, so it is an exit-able dependency. With the backend now in scope from day one, the managed-service choice matters more, not less: it is what keeps operations inside a solo developer's capacity (§31.6) | Firebase (NoSQL model is a poor fit for nutrient aggregation; vendor lock-in is harder to exit), custom backend (unjustifiable ops cost), AWS Amplify (heavier) |
-| Auth | Supabase Auth + Sign in with Apple + Google Sign-In + email OTP | §18 | — |
-| Barcode scanning | `mobile_scanner`, behind the `BarcodeScanner` port | Mature, actively maintained, wraps MLKit/AVFoundation; the port makes replacement a one-file change | ML Kit direct via platform channels (more work, no benefit) |
+| Backend | **None** (ADR-006 rev 0.3) | Nothing to synchronise between: each family member's data lives on one phone (§0.1). Backup is platform auto-backup plus file export (§0.5) | Supabase / Firebase — both fully analysed in ADR-006 should the scope ever widen |
+| Accounts | **None** — local switchable profiles (§0.4) | No server to authenticate against. `owner_id`, designed for guest→account migration, now gives per-profile separation for free | — |
+| Barcode scanning | **Deferred** (§10.1). `mobile_scanner` behind a `BarcodeScanner` port when wanted | A household cooking Indian food logs little packaged product. Revisit from real use | — |
 | Local notifications | `flutter_local_notifications` + `timezone`, behind the `ReminderScheduler` port | Covers scheduling, quiet hours, and reboot rescheduling on both platforms | Server push (unnecessary — nothing in v1.0 requires server-initiated notification) |
-| Health platforms | A thin per-platform adapter behind `HealthDataPort` (HealthKit / Health Connect) | Nutrient type mapping and consent differ enough per platform that a shared plugin abstraction leaks; an explicit adapter is clearer and safer for a consent-sensitive surface | A general-purpose health plugin (convenient, but obscures per-platform consent semantics) |
-| Localisation | Flutter `intl` + ARB files, English + Hindi at launch | Standard; strings externalised from the first commit | — |
-| Analytics | Privacy-preserving, event-only, **no nutrition or health payloads** (NFR-S-05); self-hosted or minimal vendor | Deliberately constrained | — |
-| Crash reporting | Sentry with PII scrubbing and a redaction test (NFR-S-08) | — | Firebase Crashlytics (pulls in more Google SDK surface) |
-| CI/CD | GitHub Actions + Fastlane (or Codemagic if Actions runner cost becomes an issue) | — | — |
+| Health platforms | **Deferred** (§10.1). Health Connect is feasible on Android; HealthKit likely is not on a free Apple account (§0.2) | — | — |
+| Localisation | Flutter `intl` + ARB files, English. Hindi if a family member wants it | Strings externalised from the first commit so adding a language stays cheap | — |
+| Analytics | **None** | Four known users. Ask them (§3.1) | — |
+| Crash reporting | **Local crash log file** the user can share with you | No third-party SDK, no data leaving the device | Sentry / Crashlytics — unnecessary here |
+| Build | GitHub Actions for tests and analysis; local release builds signed with a self-generated keystore (**back it up** — R-26) | No store pipeline needed | Fastlane / Codemagic — unnecessary without store distribution |
 
-*[ASSUMPTION A-3] Supabase's low tier is adequate through early adoption. Because the backend is now live from launch rather than deferred, the cost begins on day one with no revenue against it — see §31.5 and open question Q-21.*
+*Revised in rev 0.3: the backend row above is the largest change in this table, and it is a deletion. Everything else — Flutter, Riverpod, Drift, FTS5, go_router, freezed — is unchanged by the scope collapse, because none of it depended on a server.*
 
 ### 12.3 Package/module layout
 

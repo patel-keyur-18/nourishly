@@ -25,55 +25,38 @@ These are the rules every subsequent decision is checked against.
 
 ```mermaid
 graph TB
-    subgraph Device["📱 User Device (iOS / Android)"]
+    subgraph Device["📱 Family member's phone — the entire running system"]
         APP["Nourishly App<br/>Flutter"]
         DB[("Local SQLite<br/>source of truth")]
-        SEED[["Bundled catalog seed<br/>ships with the app"]]
+        SEED[["Bundled catalog<br/>ships with the build"]]
+        PROF["Local profiles<br/>one per family member"]
         APP <--> DB
         SEED -.->|first run import| DB
+        PROF --> DB
     end
 
-    subgraph Backend["☁️ Backend (Supabase)"]
-        AUTH["Auth<br/>identity + tokens"]
-        SYNCAPI["Sync API<br/>push / pull deltas"]
-        CATAPI["Catalog API<br/>versioned deltas"]
-        PG[("PostgreSQL<br/>+ Row Level Security")]
-        FN["Edge Functions<br/>migration, export, deletion"]
-        AUTH --> PG
-        SYNCAPI --> PG
-        CATAPI --> PG
-        FN --> PG
+    subgraph Backup["💾 Backup — no infrastructure"]
+        AUTO["Android Auto Backup<br/>to the user's own Drive"]
+        FILE["Export / import file<br/>JSON + CSV"]
     end
 
-    subgraph Pipeline["🏭 Catalog Pipeline (offline, developer-operated)"]
-        SRC["Open data sources<br/>USDA FDC · Open Food Facts<br/>IFCT-derived Indian set"]
-        ETL["Normalise · map nutrients<br/>dedupe · curate · QA"]
-        PUB["Publish catalog version"]
-        SRC --> ETL --> PUB --> PG
+    subgraph Pipeline["🏭 Catalog Pipeline (developer machine, build-time only)"]
+        SRC["USDA FoodData Central<br/>+ hand-curated household foods"]
+        ETL["Normalise · map nutrients<br/>dedupe · QA gates"]
+        SRC --> ETL --> SEED
     end
 
-    subgraph Ext["🔌 External services"]
-        IDP["Apple ID · Google"]
-        HEALTH["Apple Health<br/>Health Connect"]
-        PUSH["APNs / FCM · v1.1"]
-        AI["Meal parsing · v1.1"]
-    end
+    DB -.->|"automatic"| AUTO
+    DB <-->|"user-initiated"| FILE
 
-    APP -->|"HTTPS"| AUTH
-    APP <-->|"HTTPS"| SYNCAPI
-    APP <-->|"HTTPS"| CATAPI
-    APP --> IDP
-    APP <--> HEALTH
-    PUSH -.->|"v1.1"| APP
-    APP -.->|"v1.1"| AI
-
-    style Device fill:#e8f5e9,stroke:#2e7d32
-    style Backend fill:#e3f2fd,stroke:#1565c0
+    style Device fill:#e8f5e9,stroke:#2e7d32,stroke-width:3px
+    style Backup fill:#e3f2fd,stroke:#1565c0
     style Pipeline fill:#fff8e1,stroke:#f9a825
-    style Ext fill:#f3e5f5,stroke:#6a1b9a
 ```
 
-**Reading the diagram:** everything except the dashed v1.1 edges is live at first release. The critical property to note is that the green box is **self-sufficient**: cut every arrow leaving the device and the app still logs, computes, scores, and reports. The backend adds durability, multi-device access, and catalog freshness — never capability. The yellow pipeline runs on the developer's machine and publishes artefacts to the backend; it is *not* a runtime service.
+**Reading the diagram (rev 0.3):** there is no server anywhere in it. The green box is the whole running system — it logs, computes, scores, and reports with no network at all. The yellow pipeline runs on your machine at build time and produces the catalog asset; it is not a service and nothing calls it at runtime. Backup is two mechanisms that require no infrastructure of yours: the platform's own backup, and a file you control (§0.5).
+
+**Compare this against the same diagram in revision 0.2**, which had a backend, an auth provider, a sync API, a catalog API, and push infrastructure. Everything in the green box is unchanged. That is the practical payoff of ADR-004: the scope collapsed by an order of magnitude and the part that does the actual work did not move.
 
 ### 13.3 Logical layering
 
@@ -320,6 +303,11 @@ Every external capability sits behind a port defined in the domain layer. Becaus
 
 ## 15. Backend Architecture
 
+> ## ⛔ DEFERRED — not built in the personal-use scope
+>
+> Revision 0.3 removed the backend permanently — the app runs entirely on-device for a household of 2–3 people (§0.1). Retained as reference in case the scope ever changes. See [Part 0 — Personal-Use Scope](./00-scope.md).
+
+
 ### 15.1 Backend strategy decision
 
 **Revised in review (2026-09-09).** The original recommendation was a hybrid: ship a sync-ready data model with no backend, and switch the backend on in a second phase. The reviewer chose to ship the complete application instead. The three options, restated with the decision as taken:
@@ -328,9 +316,10 @@ Every external capability sits behind a port defined in the domain layer. Becaus
 |---|---|
 | **No backend, ever** | Cheapest. Rejected: device loss means data loss; users who switch phones churn permanently; catalog corrections would require an app-store release |
 | **Sync-ready model now, backend in a second phase** | Lowest risk to schedule and operations; defers the largest subsystem until the core product is validated. **Not chosen** |
-| **Full backend at first release** ✅ | **Chosen.** Accounts, sync, backup, multi-device, and over-the-air catalog delivery are all live at launch |
+| **Full backend at first release** | Chosen in rev 0.2, then **removed in rev 0.3** when the scope narrowed to a private household app |
+| **No backend at all** ✅ | **Chosen (rev 0.3).** Local SQLite only; backup by platform auto-backup and file export (§0.5) |
 
-**What this decision buys.** Beyond the obvious (no data loss on device change, multi-device use), one benefit is structural and under-appreciated: **over-the-air catalog delivery from day one materially de-risks the food catalog**, which is the largest scope risk in the whole plan (R-1). Under the staged plan, the launch catalog had to be right, because correcting it meant an app-store release. With delta delivery live at launch, the curated Indian tier can start smaller and grow continuously against real search-failure telemetry (§31.6). That is a genuine architectural synergy, not a consolation.
+**Why it was removed.** The requirements a backend satisfies — sharing data between users, account recovery, distribution-channel updates — none exist in a household where each person tracks their own food on their own phone. Backup, the one real need, is better served by the platform's own backup and a file the user controls than by a database the author would have to operate. Full reasoning in ADR-006.
 
 **What it costs.** Roughly seven weeks of additional engineering (auth, sync engine, migration, RLS, backend testing), production operations from day one (§13.5), a live compliance surface from day one (§30.1), infrastructure cost with no revenue against it (§31.5), and — the real risk — **roughly four extra months before any real user touches the product** (§9.5, R-20).
 

@@ -12,9 +12,15 @@ Nutrition and hydration logs, combined with age, sex, height, weight, and stated
 
 That inference surface — not the calorie count — is why this data deserves careful handling. The design treats it as sensitive by default rather than reasoning about whether each field individually qualifies.
 
-**The full-application decision raises the stakes here.** Under the staged plan the first release held no server-side personal data at all, and the compliance surface was largely theoretical. Shipping the backend at launch means Nourishly is a **data fiduciary holding other people's health-adjacent data from day one**, with statutory obligations that attach immediately. Legal review moves from a pre-launch nicety to a prerequisite for building the backend (§37, Q-3).
+> ## ⚠️ Mostly not applicable in the personal-use scope
+>
+> **Revision 0.3 removed the entire compliance surface.** Nourishly is used by one household, stores nothing on any server, and transmits nothing to any third party. Personal and domestic use falls outside DPDP's scope; there is no data fiduciary, no privacy policy to publish, no consent flows for third parties, and no store privacy declarations.
+>
+> **What still applies, and matters:** §30.3 (device storage security), §30.6 (export), §30.7 (deletion), and above all **§30.8 (the medical boundary)** — which matters *more* here, not less, because the people using it are specific individuals you know rather than an anonymous population (R-28).
+>
+> The regulatory analysis below is retained for reference only.
 
-**Regulatory posture** [ASSUMPTION A-8, and see [OPEN Q-3]]:
+**Regulatory posture** *(reference only — see the banner above)*:
 - **India — DPDP Act 2023** is the primary regime for the initial user base: consent, purpose limitation, data-principal rights (access, correction, erasure), breach notification, and obligations around children's data.
 - **GDPR-equivalent rights** are implemented regardless of jurisdiction, because doing so is simpler than geo-conditional behaviour and is a reasonable baseline everywhere.
 - **Apple App Store / Google Play** health-data policies apply: no selling health data, no use for advertising, mandatory in-app account deletion, accurate privacy-nutrition labels and Data Safety declarations.
@@ -26,7 +32,7 @@ That inference surface — not the calorie count — is why this data deserves c
 
 | # | Principle | Implementation |
 |---|---|---|
-| PR-1 | **Local by default** | Guest mode is the default path and never contacts a server. Data leaves the device only when the user creates an account, and only then. A server existing at launch does not change this: **the account is the consent boundary**, and it is opt-in |
+| PR-1 | **Local, permanently** | There is no server and no account. Data never leaves the device except into a backup the user controls — the platform's own backup to their own Drive, or a file they export themselves (§0.5). This is now an architectural fact rather than a policy |
 | PR-2 | **Data minimisation** | Only fields that affect targets or logging are collected. No contacts, no location, no device fingerprinting, no advertising identifiers |
 | PR-3 | **Purpose limitation** | Health data is used to compute the user's own reports. Nothing else. No secondary use, no model training on user logs |
 | PR-4 | **No third-party health-data sharing** | Enforced by NFR-S-05 and verified by a network-egress review before each release |
@@ -64,7 +70,7 @@ That inference surface — not the calorie count — is why this data deserves c
 
 **Every consent is revocable in Settings, and revoking never removes functionality that does not depend on it.**
 
-Two consents deserve particular care. **Health-platform integration** ships in v1.0 and is governed by Apple's and Google's own rules, which are stricter than general privacy law: health data obtained from those platforms may not be used for advertising or shared with third parties, and read and write permission must be requested separately and per data type. **AI parsing** (v1.1) sends user content to a processor — a materially different privacy act from local logging, and it must be presented as such rather than buried in a toggle.
+In the personal-use scope most of this table is moot — there are no third parties to consent to. The two rows that would matter if the deferred features are ever built: **health-platform integration** must request read and write permission separately and per data type, and **AI parsing** would send user content to an outside processor, which is a materially different privacy act from local logging and must be presented as such rather than buried in a toggle.
 
 ### 30.5 Data flows and where data actually goes
 
@@ -142,6 +148,11 @@ This is the most important non-technical constraint in the product, and it is en
 ---
 
 ## 31. Scalability Considerations
+
+> ## ⛔ DEFERRED — not built in the personal-use scope
+>
+> Four users. §31.2 (client-side scalability with years of history) still applies and is worth reading; everything about backend load, cost, and user growth does not. Retained as reference in case the scope ever changes. See [Part 0 — Personal-Use Scope](./00-scope.md).
+
 
 ### 31.1 What actually needs to scale
 

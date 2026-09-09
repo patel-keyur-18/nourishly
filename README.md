@@ -2,20 +2,23 @@
 
 A cross-platform nutrition and hydration tracking app that helps users monitor daily food and water intake, track nutrients, and gain meaningful daily, weekly, and monthly health insights.
 
-> **Status: design phase, revision 0.2.** No implementation exists yet. The architecture and product design are under review; implementation begins only once the design below is finalised.
+> **Status: design phase, revision 0.3.** No implementation exists yet. Implementation begins only once the design is finalised.
 >
-> Decided so far: **Flutter** for the client, and **ship the complete application** (backend, accounts, sync, barcode, recipes, reminders, health integration) in the first release rather than a staged MVP. Nine open questions remain — see [§35](./docs/architecture/11-risks-roadmap.md#35-open-questions).
+> **Scope: a private tracker for one household — 2–3 family members, self-built and sideloaded. No servers, no accounts, no public distribution.**
+>
+> Decided: **Flutter** for the client, **SQLite on-device as the only store**, and **no backend of any kind**. Three questions remain open — see [Part 0 §0.7](./docs/architecture/00-scope.md#07-what-i-still-need-from-you).
 
 ## Documentation
 
-**→ [Software Architecture & Product Design Document](./docs/architecture/README.md)**
+**→ [Part 0 — Personal-Use Scope](./docs/architecture/00-scope.md)** — start here. The authoritative scope statement.
 
-A complete pre-implementation design covering product scope, cross-platform technology selection, system and mobile architecture, offline-first and synchronization design, food-data strategy, the nutrition calculation and scoring model, the data model, reporting, UX and navigation, privacy, architecture decision records, risks, and a phased roadmap.
+**→ [Full Architecture & Design Document](./docs/architecture/README.md)** — index for all parts.
 
-Start with the index, or jump to the parts:
+A complete pre-implementation design covering product scope, cross-platform technology selection, system and mobile architecture, offline-first design, food-data strategy, the nutrition calculation and scoring model, the data model, reporting, UX and navigation, privacy, architecture decision records, risks, and a phased roadmap. Sections on backend, authentication, synchronisation, API design, and scalability are retained as reference but are **not built** in the current scope.
 
 | Part | Sections | |
 |---|---|---|
+| **0** | — | [**Personal-Use Scope**](./docs/architecture/00-scope.md) |
 | I | 1–10 | [Product](./docs/architecture/01-product.md) |
 | II | 11–12 | [Technology Selection](./docs/architecture/02-technology.md) |
 | III | 13–15 | [System Architecture](./docs/architecture/03-system-architecture.md) |

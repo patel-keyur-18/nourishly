@@ -18,7 +18,7 @@ The product problem is not "can we sum calories." Calorie summing is trivial. Th
 
 ### Recommended technical direction
 
-*Confirmed in review, 2026-09-09: Flutter (ADR-001) and full-application launch (ADR-006, revised).*
+*Confirmed across two reviews: Flutter (ADR-001), and — after the personal-use decision — **no backend at all** (ADR-006, revised twice). See [Part 0](./00-scope.md).*
 
 | Concern | Recommendation | ADR |
 |---|---|---|
@@ -26,20 +26,18 @@ The product problem is not "can we sum calories." Calorie summing is trivial. Th
 | Client architecture | Feature-first modular Clean Architecture; pure-Dart `nutrition_core` domain package; Riverpod for DI/state | ADR-002 |
 | Local storage | SQLite via Drift, on-device source of truth | ADR-003 |
 | Offline model | Offline-first; local write-through; UI never blocks on network | ADR-004 |
-| Sync | Outbox + delta pull with server sequence cursor; append-only log semantics make most conflicts structurally impossible | ADR-005 |
-| Backend | **Managed BaaS (Supabase: Postgres + Auth + RLS + Edge Functions), live at first release** | ADR-006 |
-| Auth | Guest-first, no signup wall. Apple / Google / email OTP when the user opts in. Lossless guest→account migration | ADR-007 |
-| Food data | Owned, curated catalog assembled from public-domain and open sources + hand-curated Indian food set; bundled seed + over-the-air deltas; provider adapter for barcode and future sources | ADR-008 |
+| Sync | **None.** UUID keys and tombstones retained only so export/import merges correctly | ADR-005 ⛔ |
+| Backend | **None.** Local SQLite only; backup by platform auto-backup + file export | ADR-006 |
+| Accounts | **None.** Local switchable profiles, one per family member (§0.4) | ADR-007 ⛔ |
+| Food data | Owned, curated catalog from public-domain sources + **300–500 hand-curated household foods**; bundled with the build, rebuilt on demand | ADR-008 |
 | Reporting | Materialised daily summaries; weekly/monthly aggregated on demand over those summaries | ADR-009 |
 | Scoring | Transparent composite of capped, individually-visible sub-scores with explicit data-coverage gating | ADR-010 |
 
-### v1.0 in one line
+### In one line
 
-Guest-mode, offline-first food and water logging against a curated Indian and international catalog, with barcode scanning, recipes, personalised targets, daily/weekly/monthly reports, reminders, health-platform integration, and full cross-device sync and backup — in English and Hindi, at first release.
+An offline, self-built food and water tracker for one household — 2–3 local profiles, a catalog of the foods this family actually eats, recipes, personalised targets, and honest daily, weekly and monthly reports. No servers, no accounts, no distribution.
 
-Estimated to a shippable v1.0: **32–38 weeks of solo full-time work** (§36), of which roughly three weeks is food-catalog curation rather than software, and roughly seven weeks is the backend, auth, and synchronisation subsystem.
-
-**The schedule risk this creates, and its mitigation, are stated in §9.5 and must not be skipped.**
+Estimated effort: **10–14 weeks full-time, or 5–7 months at 10–12 hours a week** ([§0.8](./00-scope.md#08-revised-effort-estimate)).
 
 ## 2. Product Vision
 
@@ -70,16 +68,16 @@ Nourishly is a **wellness and self-knowledge tool**, explicitly not a medical de
 
 ### 3.1 Product goals
 
-| # | Goal | Success measure | Target |
-|---|---|---|---|
-| PG-1 | Make daily logging effortless | Median time to log a repeat food, from app cold start | < 10 s |
-| PG-2 | Make daily logging habitual | D7 / D30 logging retention | ≥ 40% / ≥ 20% |
-| PG-3 | Turn data into understanding | % of daily-summary views where the user expands at least one insight | ≥ 30% |
-| PG-4 | Serve Indian eating patterns properly | % of logged food entries resolved from the catalog (not created as custom) for India-based users | ≥ 85% |
-| PG-5 | Work anywhere | % of logging sessions completed with no network round-trip required | 100% |
-| PG-6 | Never lose a user's data | Data-loss incidents per 1,000 device migrations | 0 |
+| # | Goal | How you will know |
+|---|---|---|
+| PG-1 | Logging is effortless | A repeat food takes 3 taps and under 10 seconds. Measure it yourself with a stopwatch — you do not need analytics for four users |
+| PG-2 | The habit sticks | Everyone who installed it is still logging a month later. If someone stops, **ask them why** — one conversation beats any dashboard |
+| PG-3 | The numbers mean something | Family members can say what they should eat more of, without being shown a chart |
+| PG-4 | The catalog knows this household's food | Nobody has to create a custom food more than about once a week after the first month |
+| PG-5 | It works anywhere | Every function works in airplane mode. Testable, and non-negotiable |
+| PG-6 | Data is never lost | Export → wipe → restore round-trips completely, verified before it goes on anyone's phone |
 
-*[ASSUMPTION A-1] These targets are set as engineering guardrails for a pre-launch product with no baseline. They should be re-baselined after 500 real users.*
+*Revised in rev 0.3. Retention percentages and funnel metrics are meaningless for four known people; direct observation is both cheaper and better. [ASSUMPTION A-1 retired.]*
 
 ### 3.2 Technical objectives
 
@@ -123,7 +121,7 @@ Nourishly is a **wellness and self-knowledge tool**, explicitly not a medical de
 
 ## 5. User Personas
 
-*[ASSUMPTION A-2] Personas are constructed from the stated product brief (personal use, India-first, general wellness). They are hypotheses for validation, not research findings. Validate with 8–12 user interviews before locking v1.0 scope (§37).*
+*Revised framing for rev 0.3: these are no longer hypotheses to validate — **you know the actual users personally.** They remain useful as design lenses, because the four needs they represent are real and will each show up in your household: speed for the daily logger, precision for the goal-driven one, simplicity for someone who wants two numbers and no jargon, and water-only for someone with no interest in calories. Read them as a checklist of needs to serve, not as people to research. [ASSUMPTION A-2 retired.]*
 
 ### Persona 1 — Ananya, 29, Bengaluru — "The Consistency Seeker" *(primary)*
 Software engineer, mostly vegetarian, eats a mix of home-cooked Indian food and office cafeteria meals. Goal: general health and "eating enough protein." Tracks in bursts, abandons when logging gets tedious.
@@ -469,119 +467,80 @@ Priority key: **1** = v1.0 must-have · **S** = v1.0 should-have · **1.1** = fi
 | NFR-E-04 | Local storage after two years of daily logging < 150 MB excluding photos |
 | NFR-E-05 | No wake locks; no foreground services on Android for core functionality |
 
-### 8.8 Scalability *(see §31 for the analysis)*
+### 8.8 Scalability
+
+Only one of these survives the personal-use scope, and it is the one that matters:
 
 | ID | Requirement |
 |---|---|
-| NFR-SC-01 | Client performance must not degrade with history size — all report queries bounded by period length, not total history |
-| NFR-SC-02 | Backend design supports 100k users without re-architecture |
-| NFR-SC-03 | Food catalog supports 500k items server-side and a 30–50k on-device working set |
-| NFR-SC-04 | Backend cost per monthly active user ≤ ₹5 at 10k MAU |
+| NFR-SC-01 | **Client performance must not degrade with history size** — every report query is bounded by period length, not by total history. A user with five years of data has the same experience as one with five days |
+| ~~NFR-SC-02~~ | ~~Backend supports 100k users~~ — retired, no backend |
+| ~~NFR-SC-03~~ | ~~500k server-side catalog~~ — retired; the on-device catalog is the whole catalog |
+| ~~NFR-SC-04~~ | ~~Cost per MAU~~ — retired, no infrastructure |
+
+NFR-SC-01 is not a growth concern here but a longevity one: this app is meant to be used for years by the same few people, so the query shapes in §25.4 are what keep it fast in year five.
 
 ---
 
-## 9. v1.0 Launch Scope
+## 9. Scope
 
-**Decision (review, 2026-09-09): Nourishly ships as a complete application, not a staged MVP.** ADR-006 is reversed — the backend, accounts, multi-device sync, barcode scanning, reminders, recipes, health-platform integration, and Hindi localisation are all in the first public release. See [ADR-006 (revised)](./10-adrs.md#adr-006--backend-strategy-full-backend-at-launch-revised).
+> **Superseded by [Part 0 — Personal-Use Scope](./00-scope.md).** Revision 0.3 narrowed the product to a private household app for 2–3 family members with no distribution, no backend, and no accounts. §0.3 carries the authoritative scope table.
 
-**v1.0 goal:** a person in India can install Nourishly, log everything they eat and drink — home-cooked Indian food, packaged goods by barcode, and their own recipes — entirely offline, get honest daily, weekly, and monthly feedback, and have all of it backed up and available on any device they sign in to.
-
-### 9.1 Must Have — v1.0
+### 9.1 Summary of what is built
 
 | Area | Included |
 |---|---|
-| **Onboarding** | Skippable value intro; profile setup (age, sex, height, weight, activity, goal); optional dietary preference; derived targets with a plain-language explanation; guest mode as the default path |
-| **Food catalog** | Bundled on-device catalog (~12–15k items): ~1,500–2,500 curated Indian foods and dishes with household measures, plus generic and international items. Offline full-text search. **Over-the-air catalog delta updates**; long-tail items resolved on demand and cached |
-| **Food logging** | Search, recents, favourites, custom foods, meal templates; four default meal slots plus custom categories; serving + quantity; back-dating; copy meal/day; edit/delete |
-| **Barcode scanning** | Camera scan resolving against the catalog and Open Food Facts; graceful offline and unknown-product paths |
-| **Recipes** | Multi-ingredient recipes with cooking yield factor; nutrients computed per portion; recipes usable anywhere a food is usable |
-| **Water** | Quick-add chips, custom amount, unit preference, derived daily target, undo, history; beverage hydration contribution |
-| **Nutrition** | 5 macros + saturated fat + sugar + 17 micronutrients where data exists; unknown ≠ zero; per-nutrient coverage; per-meal subtotals; nutrient contribution attribution |
-| **Targets** | Derived energy/macro/water/micro targets; manual overrides; effective-dated and versioned |
-| **Daily dashboard** | Energy ring, macro bars, water progress, focus nutrients, meal list, remaining budget |
-| **Daily report** | Verdict sentence, Daily Nourishment Score with visible sub-scores, gaps, excesses, 2–4 insights, meal breakdown |
-| **Weekly report** | Averages with denominators, days-met counts, score trend, best/weak day, most-missed nutrients, consistency, previous-week comparison |
-| **Monthly report** | Monthly averages, trend chart with moving average, goal consistency, chronic gaps and excesses, previous-month comparison |
-| **Accounts** | Guest mode (default, full functionality) + Sign in with Apple + Google Sign-In + email OTP; **lossless guest→account migration** |
-| **Sync & backup** | Multi-device synchronisation, cloud backup, device migration, sign-out and account deletion |
-| **Reminders** | Local notifications: water, meal logging, end-of-day summary; quiet hours; conditional firing |
-| **Health platforms** | Apple Health and Health Connect read/write with per-direction, per-type consent |
-| **Body metrics** | Weight series feeding target derivation |
-| **Data ownership** | Full JSON + CSV export; in-app account and data deletion; local backup snapshot |
-| **Platform** | iOS + Android; **English and Hindi**; dark mode; dynamic type; screen-reader support |
+| Logging | Food search, recents, favourites, custom foods, meal templates, four meal slots plus custom categories, serving + quantity, back-dating, copy meal/day, edit/delete |
+| Recipes | Multi-ingredient household recipes with cooking yield |
+| Water | Quick-add chips, custom amounts, unit preference, derived target, undo, history, beverage hydration |
+| Nutrition | 5 macros + saturated fat + sugar + 17 micronutrients where data exists; unknown ≠ zero; coverage; per-meal subtotals |
+| Targets | Derived per profile; manual overrides; effective-dated; **manual-targets-only mode** for anyone whose defaults would be wrong (§0.7) |
+| Reports | Daily dashboard, daily report with score and insights, weekly report, monthly report |
+| Profiles | 2–4 local switchable profiles, fully separate data (§0.4) |
+| Backup | Manual JSON/CSV export and import; Android Auto Backup configuration (§0.5) |
+| Catalog | Bundled: ~5–8k USDA generic items + 300–500 hand-curated household foods |
+| Reminders | Local notifications — water, meal, end-of-day summary |
+| Platform | Android primary; iOS subject to §0.2 |
 
-### 9.2 Should Have — in v1.0 if it does not delay it
+### 9.2 Not built
 
-- Daily summary share card.
-- Weekday vs weekend split in the weekly report.
-- Score heat-map calendar in the monthly report.
-- Food data error reporting from within food detail.
-- Duplicate detection when creating a custom food that matches a catalog item.
-- Nutrient retention factors for cooked recipes.
+Backend, API, accounts, sign-in, synchronisation, compliance programme, store distribution, analytics and crash-reporting SDKs, scalability work. Barcode scanning, health-platform integration, Hindi, and AI logging are **deferred pending real use**, not rejected. Full reasoning in §0.3.
 
-### 9.3 Nice to Have
+### 9.3 The scope bet
 
-- Additional Indian language beyond Hindi.
-- Meal-slot auto-selection learned from the user's own historical pattern (rather than clock alone).
-- Post-migration duplicate review screen.
+The bet is unchanged in kind but much easier to win at this size: **a fast, offline logger that knows the food this household actually eats, with honest daily and weekly feedback, is worth more than a feature-complete tracker with a mediocre food database.**
 
-### 9.4 Explicitly Out of Scope for v1.0
-
-| Excluded | Why | Where it lands |
-|---|---|---|
-| **AI food photo recognition** | Accuracy is unproven, and a silently-wrong auto-log corrupts the data every report is built on. Per-request cost is unmodelled, and it cannot work offline — which contradicts the product's core architectural property | v1.1, gated on an accuracy and economics analysis |
-| **Natural-language meal logging** | Same reasoning. The `MealParser` port and the confirmation UI it would feed both exist in v1.0, so adding it later is an adapter, not a redesign | v1.1 |
-| **Home-screen widgets / watch app / complications** | Genuine value for one-tap water, but each requires platform-native implementation (WidgetKit, Glance) outside the Flutter surface. Real work, low architectural risk, safely deferred | v1.1 |
-| **Exercise and activity tracking** | Health-platform integration already surfaces the useful part (energy expenditure as a target input). Owning exercise logging is a different product | Future |
-| **Meal planning, grocery lists** | Adjacent product, no shared architecture beyond the catalog | Future |
-| **Family / shared tracking, social features** | Requires a different consent and tenancy model; conflicts with the safety posture in §27.14 | Future |
-| **Dietician / professional access** | Requires a scoped, revocable, audited sharing model and a different privacy basis | Future |
-| **Web client** | No evidence of need | Future |
-
-*This is a considered decision made under the reviewer's instruction to prioritise quality. The line is drawn at features that either cannot work offline or would put unvalidated automation in front of the data everything else depends on. Every one of them has its architectural seam built in v1.0 (§10.1), so promoting any of them is an additive change. If you want AI logging in the first release, say so — it is the one exclusion likely to be contested.*
-
-### 9.5 The consequence to accept
-
-Shipping the complete application means **roughly 32–38 weeks of solo full-time work before the first public release** (§36), against 14–18 for the staged alternative. The risk this creates is not technical but informational: **eight to nine months elapse before real users touch the product**, and the largest uncertainties in this design — whether the food catalog covers what people actually eat (A-18), and whether logging is genuinely fast enough (R-4) — can only be settled by real users.
-
-The mitigation, built into the roadmap rather than bolted on: **daily dogfooding from week 9** and a **closed beta from week 20**, both well before feature completion. This preserves the "ship the whole thing" decision while cutting feedback latency by roughly four months. Do not skip it — it is the single most valuable schedule item in §36.
+What changed is that the catalog — previously the largest risk in the plan — is now bounded by something knowable: **the foods your family eats.** You can write that list in an evening (§37 step 6), and it is a far better specification than any amount of market research would have produced.
 
 ## 10. Future Scope
 
-Post-launch work, classified so that architecture readiness is decided now and commitment is not. Each item names the seam that exists in v1.0 so the feature does not force a redesign.
+> Scope classification now lives in [§0.3](./00-scope.md#03-revised-scope). This section records what the architecture stays *ready* for, so that nothing built now forecloses a later change of mind.
 
-### 10.1 v1.1 — the first post-launch release (target: 8–12 weeks after launch)
+### 10.1 Deferred, pending real use
 
-| Feature | Seam that already exists in v1.0 |
+Each is genuinely optional. Decide after a few months of actual logging — the household's own usage is better evidence than any prediction here.
+
+| Feature | Seam that already exists | Reconsider when |
+|---|---|---|
+| **Barcode scanning** | `FoodExternalRef` keyed by (source, external_id) — a GTIN is just another external reference, requiring no new entity | Logging shows meaningful packaged-food intake |
+| **Health Connect** (Android) | `HealthDataPort` with per-direction consent | You want weight or activity flowing in automatically |
+| **Hindi** | All strings externalised from the first commit; no concatenated sentences | A family member asks |
+| **Water widget / watch** | Water quick-add is an independent, idempotent, offline write | One-tap water proves the most-used action |
+| **AI-assisted logging** | `MealParser` port feeding the existing *propose → confirm → write* flow, so nothing is ever written unreviewed | You decide it is worth the cost and the offline compromise (Q-24) |
+| **Multi-device sync** | UUIDv7 keys, `updated_at`, tombstones — retained precisely for import-merge (§0.4) | Only if the scope genuinely widens. ADR-006 documents what it would take |
+
+### 10.2 The one seam worth keeping despite having no feature
+
+`MealParser` is defined even though nothing implements it. Its value is not the future feature — it is that defining it forces the v1.0 logging flow into a *propose → confirm → write* shape. That shape can safely accept generated candidates later; a direct-write flow cannot, and retrofitting it is where AI logging features usually go wrong. The port costs one file.
+
+### 10.3 Deliberately rejected, permanently
+
+| Idea | Why |
 |---|---|
-| **Natural-language logging** ("two rotis, paneer curry, a bowl of rice") | A `MealParser` port returning candidate `(food, serving, quantity)` triples into the **existing** confirmation UI. The AI proposes; the user confirms; nothing bypasses the normal logging path or writes an entry unreviewed |
-| **Photo / image meal recognition** | The same port, plus the media store and per-use consent gate designed in §30.4 |
-| **Home-screen water widget, watch complication** | Water quick-add is already an independent, idempotent, offline write with no dependencies |
-| **Additional Indian languages** | All strings externalised from the first commit; no sentence assembled by concatenation |
-| **Adaptive targets** (targets that respond to logged weight trend) | The target engine is already versioned, effective-dated, and pluggable (§20.4) |
-| **Post-migration duplicate review** | UUID-keyed merge already makes duplicates visible and self-correctable rather than lossy |
-| **Server-side catalog search for the long tail** | `FoodDataProvider` port; on-demand resolution already in the logging path |
-
-### 10.2 v2 and beyond
-
-| Feature | Seam / prerequisite |
-|---|---|
-| **Meal planning, grocery lists** | Read-only projections over catalog, recipes, and templates |
-| **Exercise tracking** | Energy expenditure already enters as a *target derivation input*, keeping the target engine the single place targets are computed |
-| **Family / household tracking** | The `owner_id` indirection permits a household scope later. **Do not build multi-tenancy now** — the consent model, not the schema, is the hard part |
-| **Dietician / professional access** | Requires scoped, revocable, audited consent and a different legal basis (§30.9). A separate product decision, not a feature |
-| **Web client** | Calculation rules are specified and golden-vector-tested (§20.3), so a second implementation is verifiable rather than guesswork |
-| **On-device AI inference** | Materially better for privacy and cost than a hosted parser; the `MealParser` port makes it a swap |
-
-### 10.3 Deliberately rejected
-
-| Idea | Why rejected |
-|---|---|
-| Social feed / friend comparison | Directly conflicts with the eating-disorder-safety posture (§21.8, §27.14) |
-| Gamified streaks with loss framing | Same. Streaks that punish a missed day drive dishonest logging, which corrupts the data |
-| Automatic "healthy/unhealthy" food labels | Not scientifically defensible per-food; contradicts §2 |
-| Ads or any data monetisation | Incompatible with §30 and with the product's entire trust proposition |
-| A server-authoritative logging model | Would break offline-first, the product's most differentiating property (ADR-004) |
-| Auto-logging without user confirmation | Any automation that writes an entry unreviewed puts unvalidated data into the record every report depends on |
+| Social features, sharing, comparison between family members | Conflicts with the safety posture in §21.8, and comparing family members' eating is a bad idea in a way that has nothing to do with software |
+| Gamified streaks with loss framing | Drives dishonest logging, which corrupts the data the reports depend on |
+| Automatic "healthy / unhealthy" food labels | Not defensible per-food; contradicts §2 |
+| Ads, data monetisation, third-party analytics | Not a product, and no data should leave the device at all |
+| A server-authoritative logging model | Would break offline-first, which turned out to be the decision that let the scope collapse this far without a redesign |
 
 *Continue to [Part II — Technology Selection](./02-technology.md).*

@@ -487,7 +487,12 @@ erDiagram
 
 ## 24. API Domain Design
 
-*Domains and contracts, not implementations. The API ships in v1.0 (ADR-006 revised), but nothing here should be built before the local data model and the offline logging path are working — the API is a projection of the model, not the other way round.*
+> ## ⛔ DEFERRED — not built in the personal-use scope
+>
+> No API is built. This section is retained because it documents the data-ownership boundaries cleanly, which remain a useful description of the model even without a server. Retained as reference in case the scope ever changes. See [Part 0 — Personal-Use Scope](./00-scope.md).
+
+
+*Domains and contracts, not implementations. Retained because the data-ownership boundaries below describe the model usefully even with no server — in particular, the rule that derived summaries and scores are never authoritative anywhere but on the device.*
 
 ### 24.1 Design principles
 

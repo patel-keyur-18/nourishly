@@ -6,425 +6,274 @@
 
 ## 33. Risks
 
-**Re-scored after the review decision to ship the complete application (§9).** Three risks were elevated and five are new; one was reduced. Scored as **Impact × Likelihood**, each with an owner-actionable mitigation and an early-warning signal.
+> **Re-scored for the personal-use scope (rev 0.3).** Nine risks were removed outright by deleting the backend, accounts, sync, distribution, and compliance surface. Two are new and specific to self-signed sideloading. The remaining set is much smaller and much more tractable — which is the clearest measure of what the scope decision bought.
 
-### What the full-application decision changed
+### Removed by the rev 0.3 scope decision
 
-| Risk | Movement | Why |
-|---|---|---|
-| R-5 guest→account migration | ↑ **elevated to Critical** | Live at launch with no prior local-only period in which to find its bugs |
-| R-6 sync correctness | ↑ **elevated to Critical** | Same |
-| R-8 solo-developer capacity | ↑ **elevated to Critical** | 32–38 weeks, then production operations indefinitely |
-| R-1 catalog curation | ↓ **reduced** | Over-the-air deltas mean the launch catalog no longer has to be complete |
-| R-20…R-24 | **new** | Feedback latency, live compliance, day-one operations, day-one cost, health-platform review |
+| Risk | Why it no longer exists |
+|---|---|
+| R-5 guest→account migration data loss | No accounts |
+| R-6 sync correctness | Nothing to sync |
+| R-13 store review rejection | No store |
+| R-20 eight months before real users | Your household is the user base; dogfooding starts week 5.5 |
+| R-21 production operations | No infrastructure |
+| R-22 live compliance surface | Personal and domestic use; no third parties receive data |
+| R-23 infrastructure cost | None |
+| R-24 health-platform review | Not distributing; declaration not required |
+| R-25 drift toward server dependence | No server to drift toward |
+| R-14 Supabase dependency | Not used |
 
 ### Critical
 
+**R-26 · Losing the Android signing keystore destroys the data** *(new — the highest-probability data-loss path in this design)*
+*Impact: High · Likelihood: Medium*
+A self-signed APK can only be upgraded in place by an APK signed with the same key. Lose the keystore and the only way to install a new build is to uninstall first — **which deletes the app's local data**. On a personal project spanning years, keystores get lost with old laptops.
+→ **Mitigation:** back up the keystore and its passwords the day it is generated, in at least two places, one of them off the machine that builds. Independently, the export habit in §0.5 means a lost keystore costs an uninstall/reinstall rather than the data. Android Auto Backup also covers this, since restore is by package name and not by signature.
+→ **Early warning:** the keystore exists in exactly one place.
+
+**R-27 · iOS free provisioning makes the app unusable for family members** *(new)*
+*Impact: High · Likelihood: High, if any family member uses an iPhone*
+Free Apple provisioning profiles expire after 7 days. The app stops launching until it is rebuilt and redeployed from a Mac. The cost lands on the family member, and they will stop using it.
+→ **Mitigation:** decide the platform question first (§0.7). Android-only is the clean answer if the household allows it. Otherwise SideStore automation, or accept that iOS users don't get the app. **Do not build an iOS distribution plan on a weekly manual ritual.**
+→ **Early warning:** planning iOS support before answering §0.7 question 1.
+
 **R-1 · Food catalog curation is under-estimated**
-*Impact: High · Likelihood: Medium (was High)*
-The curated Indian tier (§19.4) is the product's differentiator and manual data work reliably overruns.
-→ **Mitigation:** unchanged in method, but the decision to ship catalog deltas at launch (ADR-006 revised) substantially reduces the consequence: the launch catalog no longer has to be complete, only good enough to log a typical Indian day. Start with the **200 most-common foods**, ship, and let search-failure telemetry drive the queue (§31.6). Recruit a nutrition student or dietician for curation if budget allows — still the highest-value place to spend money on this project.
-→ **Early warning:** week 2 of curation completes fewer than 400 items.
+*Impact: Medium (was High) · Likelihood: Medium*
+→ **Substantially reduced by scope.** The catalog now needs the 300–500 foods *your household actually eats*, not a market-wide Indian catalog. You also know exactly what those foods are, which removes the guesswork that made the public-product version hard. Custom food creation carries the remainder.
+→ **Early warning:** curating foods nobody in the house eats — a sign of building for an imagined user rather than the real four.
 
-**R-5 · Guest→account migration loses data**
-*Impact: Very High · Likelihood: Medium (was Low–Medium)*
-The highest-consequence flow in the product (§18.5), now live at launch, and — because guest mode is the default entry path — the route by which *essentially every account is created*. It ships without the local-only shakedown period the staged plan would have provided.
-→ **Mitigation:** idempotent chunked upload; resumable; **per-entity count reconciliation before success is claimed**; an automatic local export before any destructive branch; interrupt-at-every-step testing including process kill, network loss, token expiry mid-flight, and storage exhaustion. Instrument it in production from day one — migration success rate is a launch-critical metric, not a nice-to-have dashboard.
-→ **Early warning:** any count mismatch in testing, ever. Treat one as a release blocker.
-
-**R-6 · Sync bugs corrupt or duplicate data**
-*Impact: High · Likelihood: Medium–High (was Medium)*
-The hardest subsystem in the plan, now on the pre-launch critical path.
-→ **Mitigation:** the modelling choices in ADR-005 remove most conflicts structurally — immutable additive water rows above all. Beyond that: property-based tests over concurrent operation sequences; a simulated multi-device harness; a **client-side sync kill switch** delivered through the config channel, so sync can be disabled in production without disabling the app; staged rollout beginning with the developer's own devices, then the closed beta.
-→ **Early warning:** any duplicate or missing record in the multi-device harness.
-
-**R-8 · Solo-developer capacity and burnout**
-*Impact: High · Likelihood: Medium–High (was Medium)*
-32–38 weeks of full-time work before launch, then indefinite maintenance, support, catalog curation, **and production operations**.
-→ **Mitigation:** the §9.4 exclusions are a defence, not a formality — resist scope creep absolutely. Automate CI early. Choose boring technology (done). Accept a smaller catalog over a delayed launch. **Take the closed beta seriously as a morale mechanism as much as a feedback one**: eight months of building with no user contact is the single most demoralising shape this project can take.
-→ **Early warning:** v1.0 scope growing after this document is finalised; the week-9 dogfooding milestone slipping.
-
-**R-2 · Indian food-composition data licensing cannot be cleared**
+**R-3 · Nutrition data accuracy leads to wrong conclusions**
 *Impact: High · Likelihood: Medium*
-IFCT 2017 / ICMR-NIN tables are the authoritative Indian source; their redistribution licence is unverified ([OPEN Q-1]).
-→ **Mitigation:** resolve **before** curation starts. Fallback: build the Indian tier from USDA ingredient data plus published dish compositions, tiered as `derived`, with an honest accuracy caveat. Accuracy suffers modestly; the product still ships.
-→ **Early warning:** no clear answer within two weeks of enquiry — trigger the fallback rather than waiting.
+→ Unchanged in method — coverage gating (§21.5), quality tiers, honest rounding, language boundary. **But the audience changed the stakes in both directions:** you can verify values against the actual food you cooked, which is better than any public product manages; and the users are specific known people rather than an anonymous population, so an error reaches someone you care about (R-28).
 
-**R-3 · Nutrition data accuracy leads users to wrong conclusions**
-*Impact: High · Likelihood: Medium*
-Database error compounds with portion-estimation error (§19.6).
-→ **Mitigation:** coverage gating (§21.5), quality tiers (§19.11), honest rounding (§20.7), and the language boundary (§21.7) are all mitigations for this one risk. Never imply precision the data lacks. Never diagnose.
-→ **Early warning:** support reports of implausible nutrient values; any insight text that reads as a diagnosis.
+**R-28 · Default targets are wrong for a family member with a health condition** *(new, replaces the abstract liability risk)*
+*Impact: High · Likelihood: Unknown until §0.7 question 2 is answered*
+Derived targets use general-population reference values. For someone with diabetes, hypertension, kidney disease, thyroid conditions, or who is pregnant or breastfeeding, those defaults can be actively wrong — a sodium or protein target that is fine for a healthy adult may not be.
+→ **Mitigation:** answer §0.7 question 2. If yes for anyone: give that profile a **manual-targets-only mode** that skips derivation entirely, and strengthen the in-app note about not using the app to manage a condition. Both are small changes made cheaply now and awkwardly later.
 
 ### High
 
-**R-20 · Eight to nine months elapse before real users touch the product** *(new)*
-*Impact: High · Likelihood: High if unmitigated*
-The direct cost of the full-application decision. The two largest uncertainties in this design — catalog coverage (A-18) and logging speed (R-4) — are unresolvable without real users, and building for eight months against unvalidated assumptions is how products arrive fully-formed and wrong.
-→ **Mitigation, and it is a schedule requirement rather than advice:** **daily dogfooding from week 9**, when logging first works end to end, and a **closed beta of 15–30 users from week 20**, well before feature completion. Both are in §36 and neither may be cut. If only one survives, keep the beta.
-→ **Early warning:** week 9 arrives and the app is not usable for the developer's own daily logging.
+**R-8 · Solo-developer capacity**
+*Impact: Medium (was High) · Likelihood: Medium*
+→ **Substantially reduced:** 10–14 weeks full-time rather than 32–38, and no ongoing operations. The realistic shape is now 5–7 months of evenings and weekends (A-21), where the risk is not burnout but **stall** — a personal project with no external deadline that goes quiet at 70%.
+→ **Mitigation:** the phase order in §0.8 is designed so the app is *usable by you* at the end of Phase 2 (~week 5.5), not at the end. A half-finished app you use daily gets finished; a half-finished app nobody has opened does not.
 
-**R-4 · Logging friction causes churn despite the design effort**
+**R-4 · Logging friction causes the family to stop using it**
 *Impact: High · Likelihood: Medium*
-The whole product thesis rests on J-2 being genuinely fast.
-→ **Mitigation:** instrument the log path end to end and measure taps and seconds against the NFR-A-07 budget from the first working build. Usability-test J-1 and J-2 in the closed beta. If the numbers miss, fix them before adding any feature.
-→ **Early warning:** median repeat-log time above 10 s in dogfooding.
+→ The core product risk, and unchanged. It is also now **directly observable**: you will know within a week of installing it on someone's phone.
+→ **Early warning:** a family member logs for three days and stops. Ask them why immediately — that conversation is worth more than any analytics.
 
-**R-21 · Production operations exceed solo capacity** *(new)*
-*Impact: High · Likelihood: Medium*
-Live infrastructure holding other people's health data brings backup verification, monitoring, patching, incident response, and statutory breach notification — from launch day.
-→ **Mitigation:** managed services only, no bespoke infrastructure; a backend that owns no business logic and therefore rarely changes (§15.5); backend outages are P2 by design (AP-1). **Rehearse backup restore on a populated database before launch, and write the breach-response procedure before launch, not after an incident.**
-→ **Early warning:** any unrehearsed restore path at the point of go-live.
-
-**R-22 · Live compliance surface from day one** *(new)*
-*Impact: High · Likelihood: Medium*
-Under the staged plan there was no server-side personal data in the first release. Now Nourishly is a data fiduciary from launch, with DPDP obligations attaching immediately (§30.1).
-→ **Mitigation:** legal review becomes a prerequisite for *building* the backend rather than for launching it (§37). Privacy policy, consent flows, data-residency choice (Q-22), export, deletion, and breach procedure all in place before the first external user.
-→ **Early warning:** backend build starting before Q-3 and Q-22 are answered.
-
-**R-7 · Scoring weights are wrong or read as medical guidance**
-*Impact: High · Likelihood: Medium*
-The weights are judgement, not evidence ([ASSUMPTION A-7]); ADR-010 is the one ADR still marked Proposed.
-→ **Mitigation:** review with a qualified nutrition professional before launch (Q-6). Keep weights as versioned data so revision is cheap. Review every insight and notification template against §21.7 line by line. Keep the score dismissible.
-→ **Early warning:** any generated string that names a condition, implies causation, or recommends a supplement.
-
-**R-24 · Health-platform integration fails review or slips** *(new)*
-*Impact: Medium–High · Likelihood: Medium*
-Apple Health and Health Connect are now launch scope. Health Connect requires a declaration to Google before distribution, and both platforms impose usage rules stricter than general privacy law (§30.9). Approval timelines are outside the developer's control.
-→ **Mitigation:** submit the Health Connect declaration early — it is a lead-time item, not a build item. Keep the integration genuinely optional so a delayed approval does not block the release: if it is not ready, ship without it and add it in a point release.
-→ **Early warning:** declaration not submitted by the start of Phase 5.
+**R-7 · Scoring weights are wrong**
+*Impact: Medium (was High) · Likelihood: Medium*
+→ ADR-010 stays Proposed. The review packet (§0.6) is the deliverable. Weights are versioned data, so revision is a config change plus a recompute.
 
 ### Medium
 
-**R-23 · Infrastructure cost with no revenue** *(new)*
-*Impact: Medium · Likelihood: Medium* — the backend runs from day one; the product is planned as free with no ads and no data monetisation (A-16).
-→ **Mitigation:** negligible at low scale, real by ~10k MAU (§31.5). Someone must be willing to pay it, or a sustainability model must exist before growth. Raised as Q-21 — a business decision, not an architectural one.
+**R-29 · Public repository leaks third-party catalog data** *(new)*
+*Impact: Medium · Likelihood: Medium if unaddressed*
+The app is private; the repository is not. Committing built catalog data or source extracts to a public MIT-licensed repo is public redistribution of a database, which reopens exactly the licensing questions that private use closed.
+→ **Mitigation:** make the repo private, or gitignore all catalog data and commit only the pipeline code (§0.2). Decide before catalog work starts.
 
-**R-9 · v1.1 AI feature economics don't work**
-*Impact: Medium · Likelihood: Medium* — per-request costs could exceed any plausible revenue per user.
-→ **Mitigation:** unit-economics analysis before commitment; evaluate on-device inference; cache aggressively; consider a paid tier. Because v1.0 ships only the seam (§9.4), abandoning it costs nothing.
+**R-10 · App size** — a bundled catalog adds 20–40 MB. → Now trivial: sideloaded install, no store conversion to protect. Effectively retired.
 
-**R-10 · App size deters installs on low-end devices**
-*Impact: Medium · Likelihood: Low–Medium* — a bundled catalog adds 25–45 MB.
-→ **Mitigation:** compress aggressively; Play Asset Delivery / App Thinning; monitor install conversion. Note that the tiered-replica design (§31.3) already provides the fallback: shrink the bundled set and lean harder on on-demand resolution.
+**R-11 · Cold-start personalisation** — → Nearly retired. You will set up the profiles yourself and you know everyone's height, weight, and goals.
 
-**R-11 · Cold-start problem for personalisation** — the app needs a profile for good targets, but users skip setup.
-→ **Mitigation:** reasonable generic defaults; a persistent but non-nagging prompt; show concretely what personalising would change.
+**R-12 · Inconsistent logging makes reports meaningless** — → Unchanged; §25.6's honesty rules are the mitigation.
 
-**R-12 · Users log inconsistently, making reports meaningless**
-→ **Mitigation:** §25.6's honesty rules are exactly this mitigation — always show the denominator, refuse averages below three logged days, exclude incompletely-logged days.
+**R-15 · Flutter plugin abandonment** — → Reduced: fewer plugins now (no auth, no barcode initially, no health integration). Ports still isolate the rest.
 
-**R-13 · Store review rejection**
-*Likelihood: Medium (raised)* — the launch surface now includes accounts, account deletion, health-platform integration, camera permission, and privacy labels covering server-side data. Every one is a rejection vector.
-→ **Mitigation:** review guidelines before submission; in-app account deletion from the first release; audit privacy labels against actual observed network behaviour (§30.5); keep store copy free of health claims. Budget for at least one rejection round in the schedule.
-
-**R-14 · Supabase dependency risk** (pricing change, service change, outage) — *now live from launch*.
-→ **Mitigation:** the OSS core is self-hostable; avoid proprietary features in the hot path; offline-first means an outage degrades to fully-working-not-syncing.
-
-**R-15 · Flutter plugin abandonment** for scanner, notifications, or health integration — *all three now ship in v1.0, so this is live rather than future*.
-→ **Mitigation:** every native capability sits behind a port (§14.6); replacing a plugin touches one adapter file.
-
-**R-25 · Architectural drift toward server dependence** *(new)*
-*Impact: High · Likelihood: Low–Medium* — with a working API available, it is always easier to call the server than to write the offline path. Enough such choices and the product quietly stops being offline-first, which is its most differentiating property.
-→ **Mitigation:** AP-1 and NFR-O-02 are testable, not aspirational — assert that logging use cases have no network dependency in their constructor graph. **Treat any pull request adding a network call to a read or write path as an architecture change** requiring explicit justification.
+**R-9 · AI economics** — → Deferred with the feature (Q-24).
 
 ### Low
 
-**R-16 · Catalog delta updates grow too large** → chunked deltas; snapshot rebase beyond N versions.
-**R-17 · Timezone and day-boundary bugs** — travel, DST, custom rollover → store `log_date` explicitly (§22.5); a dedicated test suite; a test clock port from day one.
-**R-18 · Unit-conversion errors** (fl oz variants, IU vs µg) → typed value objects (§20.6); conversions only at the presentation boundary; pipeline range checks (§19.7).
-**R-19 · Local database corruption** → integrity checks, pre-migration snapshots, restore path (§16.7).
+**R-16 · Catalog delta size** → Not applicable; catalog ships with the build.
+**R-17 · Timezone and day-boundary bugs** → Unchanged; store `log_date` explicitly, test clock from day one.
+**R-18 · Unit-conversion errors** → Unchanged; typed value objects, conversion only at the presentation boundary.
+**R-19 · Local database corruption** → Unchanged, and now **more important**, since there is no server copy. Integrity checks, pre-migration snapshots, and the export habit are the whole recovery story.
+**R-2 · Food-data licensing** → **Closed** for private use (§0.2). Survives only as R-29.
 
 ## 34. Assumptions
 
-Every assumption made in this document, collected for a single review pass. Each states what changes if it proves false. **A-10 and A-16 were resolved in the review of 2026-09-09; A-3, A-11, A-13, A-14 changed as a consequence of the full-application decision.**
+> **Revised for the personal-use scope (rev 0.3).** Eight assumptions were resolved or retired by the scope decision.
 
 | # | Assumption | If wrong |
 |---|---|---|
-| **A-1** | The success metrics in §3.1 are reasonable guardrails for a pre-launch product | Re-baseline after ~500 users; no design change |
-| **A-2** | The personas in §5 are representative | Re-derive after user interviews; could change v1.0 feature priority materially |
-| **A-3** | Supabase's low tier is adequate through early adoption, **and someone is willing to pay it from launch day with no revenue** | Cost model changes, not architecture — but see Q-21, which is now a live question rather than a deferred one |
-| **A-4** | Household-measure gram weights carry ±20–30% variance and users accept estimation | If unacceptable, a portion-photo guide or weighing-first flow is needed — significant UX work |
-| **A-5** | ~35 ml/kg is a reasonable default water target for the Indian context | Adjust the default; the mechanism is unchanged |
-| **A-6** | Pregnancy/lactation lifestages are out of scope for v1.0 | Adding them requires clinical review and stronger disclaimers |
-| **A-7** | The scoring weights in §21.4 are a defensible starting point | Expert review changes weights — a data change plus a lazy recompute, not a redesign. **ADR-010 stays Proposed until this is tested (Q-6)** |
-| **A-8** | DPDP 2023 + GDPR-equivalent rights + store health policies is the right compliance baseline | Legal review may add obligations. Now urgent rather than deferred, since server-side personal data exists from launch (R-22) |
-| **A-9** | v1.0 is 18+ only | Supporting minors adds verifiable parental-consent obligations under DPDP |
-| ~~**A-10**~~ | ~~The developer is comfortable with Dart/Flutter~~ | **RESOLVED — Flutter confirmed in review. ADR-001 is final.** |
-| **A-11** | English **and Hindi** are sufficient at launch for the Indian market | If a third language is needed, strings are already externalised — the cost is translation and QA, not rework |
-| **A-12** | Initial users are primarily in India | Changes catalog priorities and RDA region defaults, not architecture |
-| **A-13** | Users will accept a ~60 MB app download | Triggers R-10's fallback — shrink the bundled catalog and lean on on-demand resolution, which already exists |
-| ~~**A-14**~~ | ~~Barcode scanning is not needed for v1.0 viability~~ | **RESOLVED — barcode ships in v1.0 (§9.1).** |
-| **A-15** | Users want a single score, not only raw numbers | If testing shows the score is distrusted, it is already dismissible; the sub-scores stand alone |
-| **A-16** | **No monetisation in v1.0** — free, no ads, no data monetisation | Confirmed as the launch position. With backend cost from day one, sustainability becomes a real question by ~10k MAU (Q-21) |
-| **A-17** | One user, one device at a time; concurrent multi-device editing is rare | If wrong, §17.6's conflict policies need strengthening — though the additive water model already handles the most likely case |
-| **A-18** | ~15k catalog items on device is enough for ≥85% catalog resolution | Measured directly by search-failure telemetry from the first beta; drives the curation queue |
-| **A-19** *(new)* | AI-assisted logging is not required for a competitive first release | If early users treat manual logging as unacceptably slow despite the 3-tap design, this is the exclusion in §9.4 most likely to be wrong. It is also cheap to reverse — the port and confirmation UI already exist |
-| **A-20** *(new)* | This is a product intended for public distribution, not a personal-use app for one person | **This assumption changes a great deal if wrong** — see Q-25. A genuinely personal app needs no DPDP compliance programme, no store review, no support model, and a far smaller backend |
+| ~~A-1~~ | ~~Retention metrics as guardrails~~ | **Retired.** D7/D30 retention is meaningless for four known users. The real measure is whether the family still logs after a month — observable directly, no analytics required |
+| ~~A-2~~ | ~~Personas are representative~~ | **Retired.** You know the users personally. The personas in §5 remain useful as design lenses (Ananya's speed need, Meera's simplicity need, Kabir's water-only need) but are no longer hypotheses to validate |
+| ~~A-3~~ | ~~Supabase tier adequate~~ | **Retired** — no backend |
+| **A-4** | Household-measure gram weights carry ±20–30% variance and users accept estimation | Still holds. **Better mitigated here than anywhere:** you can weigh your own katori once and set the exact figure for your household |
+| **A-5** | ~35 ml/kg is a reasonable default water target | Adjustable per profile; low consequence |
+| **A-6** | Pregnancy/lactation lifestages are out of scope | **Now a concrete question, not an assumption** — see §0.7 question 2 and R-28 |
+| **A-7** | The §21.4 scoring weights are a defensible starting point | ADR-010 stays Proposed pending the review packet (§0.6) |
+| ~~A-8~~ | ~~DPDP + GDPR + store policies baseline~~ | **Retired.** Personal and domestic use; no third parties receive data. §30.3 (device storage) and §30.8 (medical boundary) still apply |
+| ~~A-9~~ | ~~18+ only~~ | **Now a real question.** If a family member under 18 will use it, growth-stage RDA values differ materially from adult ones. Tell me and I'll extend the reference tables |
+| ~~A-10~~ | ~~Developer Flutter fluency~~ | **Resolved** — Flutter confirmed (rev 0.2) |
+| **A-11** | English is sufficient | Now a family preference, not a market decision. Hindi is cheap to add if anyone would prefer it |
+| **A-12** | Users are in India | Confirmed. ICMR-NIN 2020 RDAs are the right reference set |
+| ~~A-13~~ | ~~~60 MB download acceptable~~ | **Retired** — sideloaded, no install funnel to protect |
+| ~~A-14~~ | ~~Barcode not needed~~ | **Confirmed and strengthened.** A household cooking Indian food logs few packaged goods. Revisit only if real use shows otherwise |
+| **A-15** | Users want a score, not only raw numbers | Testable in week 6 by asking three people directly |
+| ~~A-16~~ | ~~No monetisation~~ | **Retired** — not a product |
+| ~~A-17~~ | ~~One device per user~~ | **Now the design, not an assumption.** One profile per phone; export/import covers the tablet case |
+| **A-18** | ~5–8k generic + 300–500 household foods gives near-complete coverage | Measured directly by how often anyone has to create a custom food. If it happens weekly after month one, curate more |
+| ~~A-19~~ | ~~AI logging not required~~ | **Confirmed** (Q-24) |
+| ~~A-20~~ | ~~Public product~~ | **Resolved — private household app.** The assumption that drove most of rev 0.2's cost, and it was wrong |
+| **A-21** *(new)* | Available time is ~10–12 hours/week, giving 5–7 months | Tell me if it is very different — full-time changes the phase slicing (§0.8) |
+| **A-22** *(new)* | Every household member has an Android device, or accepts §0.2's iOS constraints | **Blocking — §0.7 question 1** |
 
 ---
 
 ## 35. Open Questions
 
-**Every question carries a recommended default so that design and implementation are never blocked waiting for an answer.** Questions marked ✅ were closed in the review of 2026-09-09. Questions marked **★** need the reviewer specifically — they cannot be decided from within the architecture.
+> **Rev 0.3 closed nine of the eleven remaining questions.** Everything below the first table is settled; three questions remain, and only one blocks work.
 
-### Closed in review
+### Closed by the personal-use decision
 
 | # | Question | Resolution |
 |---|---|---|
-| ✅ Q-15 | Flutter or React Native? | **Flutter.** ADR-001 final |
-| ✅ Q-10 | Monthly reports in the first release? | **Yes** — v1.0 (§9.1) |
-| ✅ Q-11 | Hindi at launch? | **Yes** — English and Hindi at launch (FR-S-11) |
-| ✅ Q-12 | Barcode scanning in the first release? | **Yes** — v1.0 (§9.1) |
-| ✅ Q-9 | Does water deserve its own tab? | **Yes**, with quick-add also on the dashboard (§28.3). Revisit after beta usability testing; flat navigation makes reversal cheap |
-| ✅ Q-4 | Water target for Indian climate? | **35 ml/kg** base with an activity adjustment, prominently overridable. Revisit with nutrition review |
-| ✅ Q-5 | Which RDA reference set? | **ICMR-NIN 2020** for region `IN`, **WHO/IOM** otherwise. A data decision, keyed on `RdaReference.region` |
-| ✅ Q-7 | Track alcohol as a macronutrient? | Track alcoholic beverages as foods with their energy; **no dedicated alcohol target or score component**. A limit target here would moralise, which §21.8 rules out |
-| ✅ Q-8 | Support intermittent fasting / meal timing? | **Not in v1.0.** `logged_at` is stored, so timing analysis is addable later with no model change |
-| ✅ Q-13 | Ask dietary preference at onboarding? | **Yes, optional and skippable** (FR-U-16). It improves search ranking and insight relevance enough to justify one onboarding step. Framed as sensitive data (§30.1) |
-| ✅ Q-14 | Monetisation model? | **Free, no ads, no data monetisation at launch** (A-16). Sustainability past ~10k MAU is now Q-21 |
-| ✅ Q-16 | SQLCipher on by default? | **Off, offered as a setting** (§30.3) |
-| ✅ Q-17 | Bundled catalog size? | **~12–15k items / ~30–40 MB**, with on-demand long-tail resolution. Tune against install conversion and search-failure rate |
-| ✅ Q-18 | Sync derived summaries? | **No** (§15.3). Recompute on the receiving device |
-| ✅ Q-19 | Week start day? | **User-configurable, default Monday** (FR-U-08) |
-| ✅ Q-20 | Day rollover for late-night eating? | **Configurable, default 04:00 local**, so a 1 a.m. snack counts to the previous day |
+| ✅ Q-25 | Personal app or public product? | **Personal.** 2–3 family members, no distribution |
+| ✅ Q-1 | IFCT / ICMR-NIN licensing? | **Not required for private use** (§0.2). Nutrient values are facts; the licence concern is distribution |
+| ✅ Q-2 | Open Food Facts ODbL obligations? | **Not triggered by private use.** Include attribution anyway — it costs a line. **Superseded by R-29:** the public *repository* is the actual exposure, not the app |
+| ✅ Q-3 | Legal entity / data fiduciary? | **Not applicable.** Personal and domestic use is outside DPDP's scope. No entity, no privacy policy, no DPO |
+| ✅ Q-21 | Who pays for the backend? | **Nobody — there is no backend** (ADR-006 rev 0.3) |
+| ✅ Q-22 | Data region? | **India** — and now moot, since no data leaves the device |
+| ✅ Q-23 | Developer accounts? | **Free Apple account; Android self-signed.** Resolved, but it created R-27 — see §0.7 question 1 |
+| ✅ Q-24 | AI logging in v1.0? | **No.** Revisit later if wanted; not a priority |
+| ✅ Q-6 | Scoring weight review? | **Approach agreed:** I produce a review packet plus a documented self-review (§0.6); you get a dietician to check it. ADR-010 stays Proposed meanwhile |
 
-### ★ Still needs the reviewer
+*Questions Q-4, Q-5, Q-7 through Q-20 were closed in rev 0.2 and are unchanged.*
 
-**★ Q-25 · Is Nourishly a personal app or a product for public distribution?** *(new — the most consequential open question)*
-The brief describes "a personal mobile application" while also specifying scaling to 100k users. These imply very different products. If it is genuinely for personal or small-circle use, then DPDP compliance obligations, the legal entity question, store review, a support model, and most of §31 largely fall away, and the backend becomes trivially small. If it is a public product, all of §30 applies from launch day.
-→ **Default assumed throughout this document: a public product** (A-20), because that is the more demanding reading and the scaling requirements imply it. **Confirm or correct this before the backend is built** — it is the cheapest correction available now and an expensive one later.
+### ★ Still open
 
-**★ Q-1 · What is the licensing status of IFCT 2017 / ICMR-NIN data for redistribution in a commercial app?**
-→ **Default:** proceed with USDA + Open Food Facts as the base and build the Indian tier from ingredient-level composition plus published dish recipes, tiered as `derived`. Pursue clarification in parallel; upgrade the tier if cleared. **Blocks nothing, but start the enquiry now — it has the longest lead time of any open item (R-2).**
+**★ Q-26 · Which devices does the household use, and is a Mac available?** *(blocking)*
+The only question that blocks work. Android-only removes the Mac requirement, the 7-day iOS provisioning cycle (R-27), and half the platform testing.
+→ **Default if I hear nothing: build Android-only**, keeping the Flutter codebase iOS-capable so nothing is foreclosed. This is the right default even if one person uses an iPhone, because a weekly re-signing ritual is not a workable distribution plan.
 
-**★ Q-2 · Do Open Food Facts' ODbL share-alike terms create obligations for a bundled and server-hosted catalog?**
-→ **Default:** treat OFF-derived records as a separately-attributed subset, keep provenance per record (already in the model), and be prepared to publish the OFF-derived portion. **More acute now than under the staged plan**, because a hosted catalog served over an API is a clearer act of database redistribution than a bundled asset. Confirm with counsel.
+**★ Q-27 · Does anyone in the household have a health condition, or is pregnant or breastfeeding?**
+Not asking for details — only whether the app needs a **manual-targets-only mode** for one profile and a stronger note about condition management (R-28).
+→ **Default: build the manual-targets-only mode anyway.** It is a small addition, it is useful regardless, and it means the answer can arrive late without rework.
 
-**★ Q-3 · Who is the data fiduciary, and what is the legal basis for processing?**
-→ **Default:** implement DPDP + GDPR-equivalent rights universally; no DPO assumed at this scale. But the **entity** matters: an individual developer holding thousands of people's health data has personal exposure that a registered company does not. **This is now a prerequisite for building the backend, not for launching it (R-22).**
+**★ Q-28 · Repository private, or public with catalog data excluded?** (§0.2, R-29)
+→ **Default: gitignore all catalog data and commit only the pipeline code**, which is good practice either way. Making the repo private is the simpler belt-and-braces option and I'd suggest it.
 
-**★ Q-6 · Are the §21.4 scoring weights defensible?**
-→ **Default:** ship the proposed weights, framed as personalised-target adherence rather than a health verdict, and obtain professional review before launch. **ADR-010 stays Proposed until this happens** — it is the only ADR not accepted, deliberately. Weights are versioned data, so revision is cheap.
+**Nice to know:** would any family member prefer Hindi? Would anyone under 18 use it (A-9)?
 
-**★ Q-21 · Who pays for the backend, and what is the cost ceiling?** *(new)*
-Infrastructure now runs from launch day with no revenue against it (A-16, R-23).
-→ **Default:** proceed on the assumption that low-tier managed hosting is acceptable through early adoption, and treat ~10k MAU as the point at which a sustainability decision becomes unavoidable. Confirm the ceiling now so the architecture is not later asked to solve a budget problem.
+## 36. Recommended Roadmap
 
-**★ Q-22 · Which region should host user data?** *(new)*
-DPDP and user expectation both favour an India region for an India-first product; latency does too.
-→ **Default: host in an India region** if the provider offers one at an acceptable tier, otherwise the nearest Asia region, and state the location plainly in the privacy policy. **Decide before provisioning — migrating a populated database between regions later is disruptive.**
+> **Superseded by [§0.8](./00-scope.md#08-revised-effort-estimate)**, which carries the authoritative phase plan for the personal-use scope: **≈13.5 weeks full-time, or 5–7 months at 10–12 hours a week.** This section keeps the sequencing rationale, which did not change.
 
-**★ Q-23 · Apple Developer and Google Play accounts: individual or organisation?** *(new)*
-Needed early. Sign in with Apple, Health Connect declaration, and store privacy declarations all depend on an enrolled account, and organisation enrolment has its own lead time.
-→ **Default:** enrol now, in whichever form Q-3 settles on. **This is a lead-time item that can delay launch by weeks if left late.**
+### The phase plan
 
-**★ Q-24 · Should AI-assisted logging be pulled into v1.0?** *(new)*
-Excluded in §9.4 on my judgement — unproven accuracy, unmodelled cost, and it cannot work offline.
-→ **Default: keep it out of v1.0.** This is the exclusion most likely to be contested, and it is cheap to reverse because the `MealParser` port and the propose-confirm-write flow both exist in v1.0. Say so if you disagree — it is a scope decision, not an architectural one.
-
-## 36. Recommended v1.0 Roadmap
-
-**[ASSUMPTION] One full-time developer. Estimates include testing and are deliberately not compressed.** Revised for the full-application scope: **32–38 weeks to first public release.**
-
-**Two milestones in this plan are not negotiable, because they are the mitigation for R-20:** dogfooding from week 9, and a closed beta from week 20. If the schedule slips, cut scope from §9.2, never these.
-
-### Phase 0 — Decide and de-risk *(week 1, before any code)*
-
-| # | Task | Output |
+| Phase | Work | Weeks |
 |---|---|---|
-| 0.1 | Answer **★ Q-25** (personal app or public product) | Determines whether §30's compliance programme applies at all |
-| 0.2 | Start **★ Q-1 / Q-2** licensing enquiries | Longest lead time of any item — start on day one |
-| 0.3 | Start **★ Q-3** (legal entity / data fiduciary) and **★ Q-23** (developer accounts) | Both are lead-time items that block the backend and the release respectively |
-| 0.4 | Decide **★ Q-21** (cost ceiling) and **★ Q-22** (data region) | Q-22 must precede provisioning |
-| 0.5 | Build a **throwaway** catalog spike: ingest 500 USDA foods, build FTS5, measure search latency on a real mid-range Android device | Validates NFR-P-03 — and the entire offline-catalog premise — before commitment |
-| 0.6 | Finalise this document | Signed-off scope |
-| 0.7 | Draft the nutrient registry and RDA reference tables | The data foundation everything keys off |
+| 0 | Decisions (§0.7), catalog/search spike, nutrient registry and RDA tables | 0.5 |
+| 1 | Foundation: modules, schema, `nutrition_core`, golden vectors, design system, navigation | 2 |
+| 2 | Catalog pipeline, household curation, offline search, food and water logging | 3 |
+| 3 | Profiles, target derivation, daily summaries, scoring, insights, dashboard | 3 |
+| 4 | Daily / weekly / monthly reports, recipes | 2.5 |
+| 5 | Export/import, Auto Backup rules, reminders, accessibility, performance | 1.5 |
+| 6 | Keystore, device setup, install on family phones, fixes from real use | 1 |
 
-### Phase 1 — Foundation *(weeks 2–4)*
+**🔴 The milestone that matters: end of Phase 2 (~week 5.5) — the app becomes usable and goes on your own phone that day.** In the public-product plan this was a feedback mechanism. Here it is the defence against the real failure mode of a personal project: **stalling at 70% because nothing depends on finishing.** An app you use every morning gets finished. One that lives only in a repository does not.
 
-- Project setup, module structure, CI (analyse, format, test, **import lint** enforcing NFR-M-02).
-- **Drift schema v1 — complete, including every sync column, UUIDv7 keys, tombstones, and the outbox.** Non-negotiable; these cannot be retrofitted later.
-- `nutrition_core` v1: typed units, nutrient registry, aggregation, unknown propagation.
-- Golden-vector harness.
-- Design system: tokens, typography, theming, ring and bar primitives.
-- Navigation shell, four tabs, routing.
-
-**Milestone:** builds on both platforms; empty dashboard renders.
-
-### Phase 2 — Catalog and logging *(weeks 5–9)*
-
-- Catalog ETL pipeline; ingest USDA + OFF subsets; QA gates including the zero-vs-null audit.
-- **Curated Indian tier: top 200 foods** (time-boxed — R-1).
-- Bundled seed import + FTS index build in a background isolate.
-- Food search, food detail, portion selection.
-- Log food: create, edit, delete, back-date. Water logging with quick-add and undo.
-- Recents, favourites, custom foods, meal templates.
-
-**Milestone (week 9): 🔴 DOGFOODING BEGINS.** A full day of Indian and international food and water can be logged offline. **Start using it daily and do not stop.** This is the earliest possible real feedback and the primary mitigation for R-20.
-
-### Phase 3 — Targets, summaries, and the dashboard *(weeks 10–13)*
-
-- Onboarding and profile setup, including optional dietary preference.
-- Target derivation engine; effective-dated TargetSets; manual overrides.
-- Daily summary materialisation and invalidation.
-- Scoring engine with capped sub-scores and coverage gating.
-- Insight rule engine + the reviewed initial rule set.
-- Dashboard: rings, macro bars, water, focus nutrients, meals.
-
-**Milestone:** the app answers "how did I do today?"
-
-### Phase 4 — Reports, recipes, barcode *(weeks 14–18)*
-
-- Daily report with full score explanation; weekly report with §25.6's honesty rules enforced in UI; monthly report.
-- Recipes with cooking yield; recipe logging through the ordinary food path.
-- Barcode scanning against the local catalog and Open Food Facts.
-- Data export (JSON + CSV).
-- Local notifications and reminder rules.
-
-**Milestone:** the complete offline product. Everything works except accounts and sync.
-
-### Phase 5 — Backend, accounts, sync *(weeks 19–25)*
-
-*The highest-risk block in the plan (R-5, R-6). Sequenced deliberately after the offline product works, so that sync is added to something known-good rather than developed alongside it.*
-
-- Supabase provisioning in the region chosen at 0.4; schema, RLS policies, migrations in CI.
-- Auth: Sign in with Apple, Google Sign-In, email OTP; token handling and secure storage.
-- Sync engine: outbox push, cursor pull, conflict policies, backoff, dead-letter.
-- **Guest→account migration** with count reconciliation and interrupt-at-every-step testing.
-- Multi-device test harness; property-based concurrent-operation tests.
-- Catalog delta publication and background application.
-- Sync kill switch through the config channel.
-- Backup configuration and **restore rehearsal on a populated database**.
-
-**Milestone (week 20, overlapping): 🔴 CLOSED BETA OPENS** — 15–30 users, initially without accounts, then as the sync cohort. Do not wait for this phase to finish.
-
-### Phase 6 — Integration, compliance, hardening *(weeks 26–31)*
-
-- Apple Health / Health Connect adapters with per-direction, per-type consent. **Health Connect declaration submitted early** (R-24).
-- Hindi localisation and QA.
-- Accessibility audit against NFR-A-* on real devices with screen readers.
-- Performance pass against NFR-P-*.
-- **Network egress audit** (§30.5): proxy the app, verify no health data crosses the third-party boundary.
-- Privacy policy, disclaimers, store privacy declarations, in-app account deletion verified.
-- **Nutrition professional review** of targets, scoring, and every insight string (Q-6, R-7).
-- Legal review sign-off (Q-3).
-- Migration, crash-safety, and device-matrix testing.
-- Breach-response procedure written.
-
-### Phase 7 — Launch *(weeks 32–38)*
-
-- Expand the curated Indian tier toward 1,500+ items using beta search-failure telemetry.
-- Act on beta feedback; re-measure J-1 and J-2 against the §26.3 tap budgets.
-- Store submission. **Budget for at least one rejection round** (R-13).
-- Staged rollout: small percentage first, monitored for crash rate, sync errors, and migration success.
-
-**Milestone: v1.0 public release — approximately week 32–38.**
-
-### Post-launch
-
-| Release | Contents |
-|---|---|
-| **v1.0.x** | Catalog growth driven by search-failure telemetry; fixes; performance |
-| **v1.1** *(8–12 weeks post-launch)* | AI-assisted logging (natural language, then photo) gated on the economics analysis; home-screen water widget and watch complication; additional languages; adaptive targets; re-engagement reminders once there is usage data to tune them |
-| **v2** | Meal planning, exercise integration, household/family scope, professional sharing — each a separate product decision (§10.2) |
+Put it on a family member's phone as soon as the dashboard works (end of Phase 3, ~week 8.5), not at the end.
 
 ### Sequencing rationale
 
-Three deliberate choices in this ordering:
+1. **Logging before reporting, reporting before polish.** Each phase leaves something more useful than the last, and every phase after 2 improves an app that is already in daily use.
+2. **Catalog curation runs continuously**, not as a block. Curate what the household actually ate this week; the queue writes itself once you are logging.
+3. **The backend phase is gone.** In rev 0.2 it was seven weeks and the largest risk concentration in the plan. Deleting it removed more schedule risk than every other simplification combined.
+4. **Recipes are in Phase 4, not deferred.** For a household logging home-cooked Indian food, recipes are close to core — arguably more so than in the public design, where custom foods would have carried more of the load.
 
-1. **The offline product is complete before the backend starts (Phase 4 before Phase 5).** Sync is then added to a known-good system, so a bug is unambiguously a sync bug. Building them concurrently makes every defect a two-suspect investigation, and sync defects are the ones that lose data (R-5, R-6).
-2. **Dogfooding starts at week 9, not at feature completion.** It is the only feedback available for the first twenty weeks and it costs nothing.
-3. **Catalog curation runs continuously rather than as a block**, so it can be cut back without cutting a feature — and because delta delivery means the launch catalog no longer has to be complete (ADR-006 revised).
+### After v1.0
+
+No fixed roadmap, deliberately. Use it for a few months, then decide from real experience:
+
+| Candidate | Reconsider when |
+|---|---|
+| Barcode scanning | Real logging shows meaningful packaged-food intake |
+| Health Connect | You want weight or activity flowing in automatically (Android-only path) |
+| Hindi | A family member asks |
+| Home-screen water widget | One-tap water proves to be the most-used action |
+| AI logging (Q-24) | You decide it is worth the cost and the offline compromise |
+| Sync / backend | Only if the scope genuinely changes. ADR-006 documents what that would take |
 
 ---
 
 ## 37. Recommended Next Steps Before Implementation
 
-### Before any code is written
+### Answer three questions (§0.7)
 
-| # | Action | Why it is blocking |
+| # | Action | Blocking? |
 |---|---|---|
-| 1 | **Review and finalise this document.** Confirm or overturn every **[ASSUMPTION]** in §34 | Assumptions compound; A-20 and A-2 change the plan materially if wrong |
-| 2 | **Answer ★ Q-25** — personal app or public product | Determines whether the entire §30 compliance programme applies |
-| 3 | **Start ★ Q-1 and ★ Q-2** (food-data licensing) | Longest lead time of any open item (R-2) |
-| 4 | **Start ★ Q-3 and ★ Q-23** (legal entity, developer accounts) | Both block later phases and both have external lead times |
-| 5 | **Decide ★ Q-21 and ★ Q-22** (cost ceiling, data region) | Q-22 must precede provisioning; region migration later is disruptive |
-| 6 | **Validate the personas** with 8–12 interviews with people who currently track, or tried and stopped | Tests A-2 and the P-1…P-9 problem list. The *stop* reasons are the most valuable data available, and with a 32-week runway there is ample time to gather them |
-| 7 | **Run the catalog/search spike (0.5)** | Validates NFR-P-03 and the offline-catalog premise before commitment |
+| 1 | **★ Q-26 — which devices, and is a Mac available?** | **Yes** — determines the platform plan |
+| 2 | ★ Q-27 — health conditions or pregnancy in the household? | No — the default (build manual-targets mode anyway) is safe |
+| 3 | ★ Q-28 — repo private, or catalog data excluded? | Before catalog work |
 
-### Before Phase 2 (catalog work)
+### Then, before writing code
 
 | # | Action |
 |---|---|
-| 8 | Finalise the **nutrient registry** and **RDA reference tables**, with a source cited per row |
-| 9 | Define the **catalog QA gate thresholds** concretely (§19.7), including the zero-vs-null audit |
-| 10 | Decide the **top 200 Indian foods** by expected logging frequency, not by comprehensiveness |
-| 11 | Set up the curation workflow and engage a reviewer if budget allows (R-1) |
+| 4 | **Run the catalog/search spike**: ingest ~500 USDA foods, build an FTS5 index, measure search latency on the actual phone the family uses. Validates NFR-P-03 and the offline-catalog premise in a day |
+| 5 | Finalise the **nutrient registry** and **ICMR-NIN RDA tables**, with a source cited per row |
+| 6 | **List the 100 foods your household actually eats most.** The single most useful pre-implementation artefact in this revision — it is the catalog specification, and only you can write it |
+| 7 | Decide the **keystore storage plan** before generating one (R-26) |
 
-### Before Phase 3 (targets and scoring)
-
-| # | Action |
-|---|---|
-| 12 | **Engage a qualified nutrition professional** (★ Q-6) to review target derivation, scoring weights and curves, coverage thresholds, and every insight template. The single most valuable external review in the plan, and the reason ADR-010 is still Proposed |
-| 13 | Write the **golden vectors** before implementing the scoring engine — specification first |
-| 14 | Draft and review the **insight rule set** against §21.7's language boundary, line by line |
-
-### Before Phase 5 (backend)
+### Before the scoring engine (Phase 3)
 
 | # | Action |
 |---|---|
-| 15 | **Legal review complete** (★ Q-3) — this now gates *building* the backend, not launching it (R-22) |
-| 16 | Privacy policy drafted; consent flows designed; data region provisioned (★ Q-22) |
-| 17 | **Breach-response procedure written** before any real user data is stored |
-| 18 | Multi-device sync test harness built **before** the sync engine, so it can be developed against |
+| 8 | Produce the **nutrition review packet** (§0.6) and get it reviewed |
+| 9 | Write the **golden vectors** before implementing scoring — specification first |
+| 10 | Review every **insight string** against §21.7's language boundary |
 
-### Before launch
+### Before installing on family phones (Phase 6)
 
 | # | Action |
 |---|---|
-| 19 | **Backup restore rehearsed** on a populated database (R-21). An untested backup is not a backup |
-| 20 | **Network egress audit** — proxy the app and verify no health data crosses the third-party boundary (§30.5) |
-| 21 | **Accessibility audit** against NFR-A-* on real devices with screen readers |
-| 22 | **Usability testing** of J-1 and J-2 with measured tap counts and times against §26.3 |
-| 23 | Migration and crash-safety testing: kill the app mid-write, mid-migration, mid-import, mid-account-migration |
-| 24 | Confirm in-app account deletion, store privacy declarations, and Health Connect declaration approval |
+| 11 | **Verify Android Auto Backup** actually restores on a wiped device, with the catalog excluded and user data included. An untested backup is not a backup |
+| 12 | **Verify export → fresh install → import** round-trips completely, with counts reconciled |
+| 13 | **Back up the keystore** to two places, one off the build machine (R-26) |
+| 14 | Accessibility pass, and a performance check on the oldest phone in the household — not on your own, which is probably the newest |
 
 ### Artefacts to produce before implementation
 
 | Artefact | Purpose |
 |---|---|
 | Nutrient registry (data) | The foundation every nutrient-bearing structure keys off |
-| RDA reference tables (data) | Target derivation, with citations |
-| Scoring ruleset v1 (data) + golden vectors | Executable specification of §21 |
-| Insight rule set v1 with reviewed copy | Enforces the language boundary |
-| Drift schema v1 (design, not migration files) | Must include every sync column from day one |
-| Curated Indian food list, top 200 | Bounds R-1 |
+| ICMR-NIN RDA tables (data) | Target derivation, with citations |
+| Scoring ruleset v1 + golden vectors | Executable specification of §21 |
+| Nutrition review packet | §0.6 |
+| Insight rule set with reviewed copy | Enforces the language boundary |
+| Drift schema v1 (design, not migration files) | UUID keys, timestamps, tombstones; **no sync machinery** |
+| **Top-100 household food list** | The catalog specification |
 | Screen wireframes for the 13 screens in §27 | Validates the tap budgets before building |
-| Privacy policy draft | Long review lead time; now gates Phase 5 |
 
-### What explicitly should *not* happen yet
+### What should still not happen yet
 
-- No project scaffolding, no dependency installation, no schema migration files.
-- **No backend provisioning** until Q-22 (region) and Q-3 (legal entity) are settled.
-- No UI implementation before the wireframes are reviewed.
-- No catalog ingestion at scale before Q-1 and Q-2 are resolved.
-- **No scope additions to §9.1 without a corresponding removal.** With a 32–38 week runway and R-8 elevated to Critical, scope discipline is now the single most important management practice on this project.
+- No project scaffolding, no dependencies, no migration files.
+- No catalog data committed to a public repository (R-29).
+- No keystore generated until its backup plan exists.
+- No iOS work until Q-26 is answered.
+- **No scope additions.** The scope in Part 0 is small, coherent, and achievable. That is its main virtue.
 
 ---
 
 ## Closing note
 
-The architecture is deliberately conservative in its technology choices and deliberately opinionated in its data design. That combination is intentional: boring, well-understood technology minimises the risk a solo developer carries, while strong opinions about immutable history, unknown-versus-zero, effective-dated targets, and coverage-gated scoring address the failure modes that make most nutrition apps quietly wrong.
+Three reviews have moved this project from a public product with a backend, accounts, and a compliance programme to **a private household app that runs entirely on a phone**. The estimate went from 32–38 weeks to 10–14, and nine risks were deleted rather than mitigated.
 
-**After the review of 2026-09-09**, three decisions define the project:
+Almost nothing in the *design* changed to get there. The offline-first foundation (ADR-004), the local SQLite source of truth (ADR-003), the snapshotting of nutrients onto log entries, the effective-dated targets, the coverage-gated scoring, the data model, and the entire UX all survived the scope collapsing by an order of magnitude. **That is the useful result of this exercise**: the parts that were removed were the parts that served distribution, not the parts that served the user. A design leaning on a server would now need rewriting.
 
-1. **Flutter, finally and without reservation** (ADR-001). Q-15 is closed.
-2. **The complete application at first release** (ADR-006 revised). This buys a defensible product, no device-migration churn, and — the genuine architectural win — over-the-air catalog delivery that lowers the largest scope risk in the plan. It costs roughly four extra months before real users, production operations from day one, and a live compliance surface from day one.
-3. **Refusing to score what cannot be measured** (ADR-010). Less immediately satisfying, considerably more honest, and the difference between a nutrition app that informs and one that misleads. It is the one decision still awaiting outside expertise.
+What matters most from here is small and concrete:
 
-The three most likely reasons this plan fails are now **R-8** (32–38 weeks is a long time to sustain solo), **R-20** (eight months of building without users, if the dogfooding and beta milestones are cut), and **R-1** (catalog curation overruns). All three are scope and schedule problems rather than architecture problems — which is why §9.4, the §36 milestones, and the discipline to protect them matter more than any diagram in this document.
+1. **Answer the device question** (§0.7) — it is the only thing blocking a start.
+2. **Write the top-100 food list.** It is the catalog specification, it takes an evening, and only you can write it.
+3. **Get it onto your own phone at week 5.5 and keep it there.** For a personal project with no deadline, daily use by the author is the only reliable force that gets software finished.
+4. **Back up the keystore, and export monthly.** With no server, these two habits are the entire disaster-recovery plan.
+
+The one thing still genuinely unresolved is the nutrition science (ADR-010, §0.6) — deliberately left open, because it is the one part of this design that needs a qualified human rather than an architect.
 
 ---
 
-*[Back to index](./README.md)*
+*[Back to index](./README.md) · [Part 0 — Personal-Use Scope](./00-scope.md)*
