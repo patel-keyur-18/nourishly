@@ -41,16 +41,19 @@ Commercial providers remain viable as *optional enrichment* behind the `FoodData
 
 **The Nourishly Food Catalog** is a first-party asset assembled offline by a developer-operated pipeline, versioned, and shipped to devices.
 
-**Composition at v1.0 (~12–15k bundled, plus an on-demand long tail):**
+**Composition at v1.0.** Revised for the personal-use scope: the curated tier is now specified item by item in the **[food catalog specification](../catalog/README.md)** — ~365 Gujarati, Tamil, Kannadiga and pan-Indian foods with serving weights and ingredient recipes.
+
 
 | Tier | Count | Source | Purpose |
 |---|---|---|---|
-| **T1 — Curated Indian foods & dishes** | 1,500–2,500 | IFCT-derived ingredients + hand-curated dish compositions, reviewed item by item | The product's differentiator. Every item has correct household measures (katori, roti, glass, piece) |
-| **T2 — Generic ingredients & international staples** | 5,000–8,000 | USDA Foundation + SR Legacy | Micronutrient backbone; the values with the deepest nutrient profiles |
-| **T3 — Common branded/packaged (India-relevant)** | 2,000–5,000 | Open Food Facts, filtered by market and completeness threshold | Packaged goods people actually buy |
+| **T1 — Curated regional dishes** | ~365 | **Hand-specified as recipes over USDA ingredients** — see the [catalog specification](../catalog/README.md) | The foods this household actually eats, with household measures (katori, rotli, idli, tumbler). Nutrients are *derived*, never transcribed |
+| **T2 — Generic ingredients** | 5,000–8,000 | USDA Foundation + SR Legacy — **US Government public domain** | Micronutrient backbone, and the source every T1 recipe computes from |
+| ~~T3 — Branded/packaged~~ | — | ~~Open Food Facts~~ | **Dropped in rev 0.3.** Barcode scanning is deferred (§0.3) and a household cooking regional Indian food logs few packaged products. Dropping it also removes the only ODbL share-alike dependency in the plan, which is what makes the public repository safe (§0.7) |
 | **T4 — User custom foods** | Per user | The user | The escape hatch that guarantees nothing is unloggable |
 
-**Why the curated Indian tier is worth 3–4 weeks of manual work:** it is the difference between a product Ananya (Persona 1) keeps and one she abandons in four days. Generic databases return twelve irrelevant lentil-soup entries for "dal"; a curated tier returns *Dal tadka (toor), 1 katori (150 g)*. No automated pipeline produces that. Automating it is the tempting mistake — accepting the manual cost is the correct call, and it is the largest single scope risk in the plan (§33, R-1).
+**Why the curated tier is worth the manual work:** it is the difference between an app the household keeps using and one abandoned in four days. Generic databases return twelve irrelevant lentil-soup entries for "dal"; the curated tier returns *Gujarati dal, 1 katori (150 g)*. No automated pipeline produces that.
+
+**In the personal-use scope this got much easier**, because the target is knowable: the foods *this family* eats, not a market. The specification is written (~365 items) and the household can prune it in an evening.
 
 **Every catalog item carries:**
 - `provenance` (source dataset + original identifier), for auditability and licence attribution

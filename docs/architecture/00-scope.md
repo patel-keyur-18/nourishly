@@ -69,33 +69,40 @@ I'd suggest **(1)**, with **(2)** as a good habit regardless. This design docume
 
 ### "I have a free Apple Developer account. Keep it unsigned for both platforms. I will never pay any platform."
 
-Two corrections here, one minor and one that may change your plan.
+**Resolved: both platforms are supported. You have a Mac, which makes iOS viable.** One correction and one distribution plan.
 
-**Minor — Android APKs cannot be unsigned.** Android refuses to install an unsigned APK. What you want is a **self-signed** APK using a keystore you generate yourself: free, permanent, no Google involvement, no fees, ever. That works perfectly and is the right approach.
+**Correction — Android APKs cannot be unsigned.** Android refuses to install an unsigned APK. What you want is a **self-signed** APK using a keystore you generate yourself: free, permanent, no Google involvement, no fees, ever.
 
-> **⚠️ Keep a backup of that keystore.** If you lose it, you cannot upgrade an installed app in place — the signature won't match. Android will require uninstalling first, **which deletes the app's data**. Store the keystore somewhere you will still have it in three years. This is a real data-loss path for this setup and it is easy to overlook.
+> **⚠️ Back up that keystore the day you create it, in two places, one off the build machine.** A self-signed APK can only be upgraded in place by an APK signed with the same key. Lose it and the only way to install a new build is to uninstall first — **which deletes the app's local data**. Over a multi-year personal project, keystores get lost with old laptops. This is the highest-probability data-loss path in the whole design (R-26).
 
-**The one that may change your plan — the free Apple account is much more limited than the Android side.**
+### iOS distribution plan
 
-| | Android, self-signed | iOS, free Apple account |
+Free Apple provisioning profiles expire after **7 days**. That is a hard constraint and it cannot be paid around without the $99/year membership you've ruled out. Having a Mac at home makes it manageable:
+
+| Approach | How it works | Verdict |
 |---|---|---|
-| Cost | ₹0 forever | ₹0 |
-| App validity | **Permanent** | **Expires after 7 days** |
-| To renew | Nothing | Reconnect to a Mac, rebuild, redeploy — **every week, per device** |
-| Build machine | Linux, Windows, or Mac | **macOS with Xcode only** |
-| Apps per device | Unlimited | 3 via free provisioning |
-| Entitlement-gated capabilities (HealthKit, push, App Groups) | N/A | Generally **unavailable** on a free personal team |
+| **AltStore + AltServer on the home Mac** | AltServer runs on the Mac; AltStore is installed on each iPhone. When an iPhone is on the same Wi-Fi as the Mac, the app **refreshes automatically in the background** before it expires | **Recommended.** Reduces the weekly ritual to "the Mac is on and everyone is home", which for a family is normal |
+| **Xcode direct install** | Rebuild and redeploy from Xcode every 7 days, per device (wireless pairing avoids cables) | Fallback, and what you'll use for your own device while developing |
+| Pay $99/year | Profiles last a year | Ruled out |
 
-The seven-day expiry is the problem. A daily-use family app that stops opening every Monday unless you plug someone's iPhone into a Mac is not a workable product — the friction lands on the family member, not on you, and they will stop using it.
+**The caveat to plan around:** if an iPhone is away from the home Mac's network for more than 7 days — a trip, a long stay elsewhere — the app stops opening until it returns. Not a bug you can fix; just something the household should know. Android has no equivalent limitation.
 
-**Options, in the order I'd consider them:**
+### What the free Apple account costs us in features
 
-1. **Android only.** If everyone in the household is on Android, this is clearly right. It removes the Mac requirement, the weekly ritual, and iOS testing entirely. Flutter still builds for iOS if that ever changes.
-2. **Android for everyone; you personally tolerate the iOS cycle** if you're on iPhone and have a Mac.
-3. **SideStore / AltStore** — third-party tools that automate the 7-day refresh over Wi-Fi. They work, but they are fiddly to set up, break on iOS updates, and are not something to ask a family member to maintain.
-4. **Pay the $99/year.** You've ruled this out; noted and respected. Flagged only so the trade-off is explicit — it is the one thing that makes iOS painless.
+Free provisioning cannot use entitlement-gated capabilities. Checked against the actual v1.0 scope:
 
-**I need to know which devices your family actually uses before finalising the platform plan.** This is the last genuinely blocking question (§0.7).
+| Capability | Free account | Impact on this project |
+|---|---|---|
+| **Local notifications** | ✅ Available — no push entitlement needed | **Reminders work fully.** This was the one that mattered |
+| Camera | ✅ | Barcode possible if ever wanted |
+| Background app refresh | ✅ | Fine |
+| Device backup of app data | ✅ | See below |
+| HealthKit | ❌ Requires paid membership | None — health integration already deferred (§0.3) |
+| App Groups | ❌ | None — home-screen widgets already deferred |
+| Push notifications | ❌ | None — never used; notifications are local |
+| iCloud (as an entitlement) | ❌ | None — see backup below |
+
+**Nothing in the v1.0 scope is lost.** The deferred features were already deferred for other reasons, which is a fortunate alignment rather than a plan.
 
 ### "Get the nutrition review done, or review it yourself?"
 
@@ -122,8 +129,8 @@ Everything below is unchanged from the Part I design unless noted.
 | **Targets** | Derived per person from profile and goal; manual overrides; effective-dated |
 | **Reports** | Daily dashboard, daily report with score and insights, weekly report, monthly report |
 | **Local profiles** | 2–4 profiles on one install, switchable, fully separate data (§0.4) |
-| **Backup** | Manual export/import (JSON + CSV) and Android Auto Backup configuration (§0.5) |
-| **Catalog** | Bundled, ~5–8k USDA generic items + **300–500 hand-curated household foods**; rebuilt and reinstalled when you want to update it |
+| **Backup** | Platform backup on both OSes (Android Auto Backup, iOS device backup) with the catalog excluded, plus manual JSON/CSV export and import (§0.5) |
+| **Catalog** | Bundled: ~5–8k USDA generic items + **~330 curated Gujarati, Tamil, Kannadiga and pan-Indian foods** — see the [catalog specification](../catalog/README.md). Rebuilt and reinstalled when you want to update it |
 | **Reminders** | Local notifications — water, meal, end-of-day summary |
 | **Platform** | Android primary; iOS subject to §0.2. Dark mode, dynamic type, screen reader |
 
@@ -138,8 +145,8 @@ Everything below is unchanged from the Part I design unless noted.
 | Store listings, review, privacy labels, account-deletion requirement | Not distributed through any store |
 | Analytics and crash reporting SDKs | No third-party data collection at all. Local crash logs only |
 | Scalability work (§31) | Four users |
-| Barcode scanning | **Deferred, not deleted.** Reconsider once real logging shows how much packaged food the household actually eats — likely little, for home cooking |
-| Health Connect / Apple Health | Health Connect on Android is still feasible; HealthKit likely isn't on a free Apple account. Deferred until the platform question is settled |
+| Barcode scanning | **Deferred, not deleted.** Reconsider once real logging shows how much packaged food the household eats — likely little, for home cooking. Deferring it also removes the Open Food Facts dependency entirely, which is what makes the public repo safe (§0.7) |
+| Health Connect / Apple Health | Health Connect is feasible on Android; **HealthKit is not available on a free Apple account** (§0.2). Deferred — and if it is ever wanted, it would be Android-only unless the membership is bought |
 | Hindi localisation | Now a family preference rather than a market requirement — tell me if anyone would prefer it |
 | AI logging | Confirmed out (Q-24) |
 
@@ -177,26 +184,30 @@ Each family member gets a profile on their own device. The design already suppor
 
 ## 0.5 What replaces sync: backup that costs nothing
 
-Two independent mechanisms, because the failure modes differ.
+Three mechanisms, chosen so that each platform's own backup does the routine work and a portable file covers everything else.
 
-**1. Android Auto Backup — automatic, free, no work for the user**
+**1. Platform backup — automatic, free, no user effort, both platforms**
 
-Android backs up app data to each person's own Google Drive with no infrastructure on your side. One design detail makes it work well here:
+| Platform | Mechanism | Entitlement needed |
+|---|---|---|
+| **Android** | Auto Backup to the user's own Google Drive | None |
+| **iOS** | App data in `Documents/` and `Library/Application Support/` is included in the device's iCloud or Finder backup | **None** — this is ordinary device backup, not the iCloud entitlement the free account lacks |
 
-> **Configure the backup rules to include the user-data tables and exclude the food catalog replica.** The catalog is 20–40 MB, is identical for everyone, and is rebuildable from the bundled asset — backing it up would blow the per-app quota for no reason. User data is a few MB a year and fits comfortably.
+One design detail makes both work properly:
 
-This covers the common case — new phone, restore, everything is there — with zero user effort.
+> **Store user data where it is backed up, and mark the food catalog replica as excluded from backup.** On Android, backup rules include the user-data tables and exclude the catalog file. On iOS, set the catalog file's "exclude from backup" resource flag. The catalog is 20–40 MB, identical on every device, and rebuildable from the bundled asset — backing it up would blow Android's per-app quota and bloat every iCloud backup for nothing. User data is a few MB a year and fits comfortably.
+
+This covers the common case — new phone, restore, everything is there — on both platforms with zero user effort.
 
 **2. Manual export / import — explicit, portable, verifiable**
 
 - Full JSON export (re-importable) and CSV export (readable in a spreadsheet).
-- Written to a location the user chooses; they can put it in Drive, email it to themselves, or keep it on a laptop.
-- **Import merges by UUID**, so importing an export into a fresh install restores everything, and importing an older export alongside newer data does not duplicate.
-- This is also the answer to the keystore risk in §0.2: if you ever have to uninstall and reinstall, an export is what saves the data.
+- Written to a location the user chooses: Drive, Files, email to self, or a laptop.
+- **Import merges by UUID**, so importing into a fresh install restores everything, and importing an older export alongside newer data does not duplicate.
+- **Reconcile per-entity counts before reporting success.** An import that silently drops rows is a data-loss bug wearing a success message. This rule is inherited from the account-migration design (§17.10), which is the one useful thing that survived it.
+- This is also the answer to the keystore risk in §0.2, and to an iPhone that has been away from the Mac too long and needs a fresh install.
 
-**Recommend prompting for an export periodically** — monthly, dismissible, never nagging. For a four-user app with no server, an occasional gentle reminder is the entire disaster-recovery strategy.
-
----
+**3. A periodic export prompt** — monthly, dismissible, never nagging. With no server, an occasional gentle reminder is the entire disaster-recovery strategy, and it costs one screen.
 
 ## 0.6 The nutrition review packet
 
@@ -213,26 +224,37 @@ Deliverable, produced before the scoring engine is built (§37 step 12). Self-co
 
 ---
 
-## 0.7 What I still need from you
+## 0.7 Decisions from the second round — all questions closed
 
-Everything else is settled. Three questions remain, and only the first blocks work.
+| # | Question | Answer | Consequence |
+|---|---|---|---|
+| Q-26 | Devices and Mac? | **Mac, iPhone and Android all at home. Support both platforms.** | iOS is in scope. AltStore-on-the-Mac distribution plan (§0.2). Nothing in the v1.0 scope is lost to free provisioning |
+| Q-27 | Health conditions? | **None currently; manual targets wanted as an enhancement** | Manual-targets-only mode moves to should-have (§0.3). Per-nutrient overrides (FR-U-05) remain must-have and cover most of the need |
+| Q-28 | Repo visibility? | **Public, catalog data included** | Resolved cleanly — see below. R-29 closes |
 
-**1. ⚠️ Which devices does the household actually use?** *(blocking the platform plan)*
-- All Android → Android-only build. Simplest by a wide margin, and I'd recommend it.
-- Mixed → we need to decide per §0.2 whether iPhone users get the 7-day cycle, SideStore, or nothing.
-- Do you have a Mac available? Required for any iOS build at all.
+### Why the public repo is no longer a licensing problem
 
-**2. Does anyone in the household have a health condition or is pregnant?**
-Diabetes, hypertension, kidney disease, thyroid, pregnancy or breastfeeding all change nutritional targets in ways general-population reference values get wrong. I am not asking for details — just whether the app needs to (a) support a manual-target-only mode for that person and skip derived targets entirely, and (b) carry a stronger note about not using it for condition management. Both are small changes if I know now.
+The earlier caution (R-29) assumed the catalog would draw on Open Food Facts, whose ODbL share-alike terms attach to redistributing a database. **Two things changed that:**
 
-**3. Repository visibility — private, or public with catalog data excluded?** (§0.2)
-Either is fine. Just pick one before catalog work starts.
+1. **Barcode scanning is deferred (§0.3), so Open Food Facts is not needed at all.** It exists in the design to resolve packaged products; a household cooking Gujarati, Tamil and Kannadiga food logs very few. Dropping it removes the only share-alike dependency in the plan.
+2. **Regional dishes are specified as recipes over ingredients, not as copied composition tables** (§0.2 of the catalog specification). Nutrients are computed from **USDA FoodData Central**, which is US Government **public domain** — no licence, no attribution requirement, no restriction on redistribution, commercial or otherwise.
 
-**Nice to know, not blocking:** would any family member prefer Hindi?
+So the catalog becomes: public-domain ingredient data + our own recipe compilations + our own serving-weight measurements. **All of it is safe to commit to a public MIT-licensed repository.**
 
----
+**The one rule to keep:** derive, don't transcribe. Building a dish from ingredient composition is our own work. Bulk-copying a published composition table verbatim would not be, regardless of where it goes. The catalog pipeline is designed around derivation anyway (§19.7), so this costs nothing — and it is the reason the design is in a better legal position now than when it planned to use more sources.
 
-## 0.8 Revised effort estimate
+## 0.8 Remaining open items
+
+None block work.
+
+| Item | Status |
+|---|---|
+| **Nutrition review** (ADR-010) | Packet to be produced before Phase 3 (§0.6). The only thing still needing outside expertise |
+| Hindi, or another language | Ask the household; strings are externalised so it stays cheap |
+| Anyone under 18 using it | If yes, growth-stage RDA values differ from adult ones — tell me and I'll extend the reference tables |
+| Manual-targets-only mode | Should-have; build it when the targets screen is built, since that is when it is nearly free |
+
+## 0.9 Revised effort estimate
 
 | Phase | Work | Weeks |
 |---|---|---|
@@ -242,10 +264,10 @@ Either is fine. Just pick one before catalog work starts.
 | 3 | Profiles, targets, daily summaries, scoring, insights, dashboard | 3 |
 | 4 | Daily/weekly/monthly reports, recipes | 2.5 |
 | 5 | Export/import, Auto Backup rules, reminders, accessibility, performance | 1.5 |
-| 6 | Device setup, keystore, install on family phones, real-use fixes | 1 |
-| | **Total** | **≈ 13.5 weeks full-time** |
+| 6 | Keystore, AltStore/AltServer setup, install on family phones, real-use fixes | 1.5 |
+| | **Total** | **≈ 14 weeks full-time** |
 
-**Range: 10–14 weeks full-time**, or roughly **5–7 months at 10–12 hours a week**, which is the more likely shape for a personal project. [ASSUMPTION A-21 — tell me if the available time is very different, since it changes how the phases should be sliced.]
+**Range: 11–15 weeks full-time**, or roughly **5–7 months at 10–12 hours a week**, which is the more likely shape for a personal project. [ASSUMPTION A-21 — tell me if the available time is very different, since it changes how the phases should be sliced.]
 
 **Dogfooding still starts at the end of Phase 2 (~week 5.5)** and matters more here than it did in the public plan, not less: your household *is* the entire user base, so there is no such thing as premature feedback. Get it onto your own phone the day logging works, and onto a family member's phone as soon as the dashboard does.
 

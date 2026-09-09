@@ -14,6 +14,8 @@ A cross-platform nutrition and hydration tracking app that helps users monitor d
 
 **→ [Full Architecture & Design Document](./docs/architecture/README.md)** — index for all parts.
 
+**→ [Food Catalog Specification](./docs/catalog/README.md)** — ~365 Gujarati, Tamil, Kannadiga and pan-Indian foods with household serving weights and ingredient recipes.
+
 A complete pre-implementation design covering product scope, cross-platform technology selection, system and mobile architecture, offline-first design, food-data strategy, the nutrition calculation and scoring model, the data model, reporting, UX and navigation, privacy, architecture decision records, risks, and a phased roadmap. Sections on backend, authentication, synchronisation, API design, and scalability are retained as reference but are **not built** in the current scope.
 
 | Part | Sections | |

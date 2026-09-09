@@ -31,11 +31,11 @@ A self-signed APK can only be upgraded in place by an APK signed with the same k
 → **Mitigation:** back up the keystore and its passwords the day it is generated, in at least two places, one of them off the machine that builds. Independently, the export habit in §0.5 means a lost keystore costs an uninstall/reinstall rather than the data. Android Auto Backup also covers this, since restore is by package name and not by signature.
 → **Early warning:** the keystore exists in exactly one place.
 
-**R-27 · iOS free provisioning makes the app unusable for family members** *(new)*
-*Impact: High · Likelihood: High, if any family member uses an iPhone*
+**R-27 · iOS app expires every 7 days** *(mitigated, not eliminated)*
+*Impact: Medium (was High) · Likelihood: Medium*
 Free Apple provisioning profiles expire after 7 days. The app stops launching until it is rebuilt and redeployed from a Mac. The cost lands on the family member, and they will stop using it.
-→ **Mitigation:** decide the platform question first (§0.7). Android-only is the clean answer if the household allows it. Otherwise SideStore automation, or accept that iOS users don't get the app. **Do not build an iOS distribution plan on a weekly manual ritual.**
-→ **Early warning:** planning iOS support before answering §0.7 question 1.
+→ **Mitigation:** AltStore + AltServer on the home Mac refreshes iPhone apps automatically over Wi-Fi (§0.2), which reduces this to "the Mac is on and everyone is home". **The residual risk is travel:** an iPhone away from the home network for more than 7 days stops opening the app until it returns. Not fixable without the paid membership; the household should simply know it.
+→ **Early warning:** a family member reports the app "disappeared" after a trip — expected behaviour, not a bug.
 
 **R-1 · Food catalog curation is under-estimated**
 *Impact: Medium (was High) · Likelihood: Medium*
@@ -69,10 +69,9 @@ Derived targets use general-population reference values. For someone with diabet
 
 ### Medium
 
-**R-29 · Public repository leaks third-party catalog data** *(new)*
-*Impact: Medium · Likelihood: Medium if unaddressed*
-The app is private; the repository is not. Committing built catalog data or source extracts to a public MIT-licensed repo is public redistribution of a database, which reopens exactly the licensing questions that private use closed.
-→ **Mitigation:** make the repo private, or gitignore all catalog data and commit only the pipeline code (§0.2). Decide before catalog work starts.
+**R-29 · Public repository and third-party catalog data** — ✅ **Closed**
+Resolved by two scope changes rather than by process: barcode scanning is deferred, so **Open Food Facts is no longer used at all**, removing the only ODbL share-alike dependency; and regional dishes are specified as *recipes over USDA public-domain ingredients* rather than as copied composition tables (§0.7). All catalog data is now public-domain-derived or our own compilation, and is safe in a public MIT repository.
+→ **The one rule that remains:** derive, don't transcribe. The pipeline is built around derivation anyway (§19.7), so this costs nothing.
 
 **R-10 · App size** — a bundled catalog adds 20–40 MB. → Now trivial: sideloaded install, no store conversion to protect. Effectively retired.
 
@@ -216,7 +215,7 @@ No fixed roadmap, deliberately. Use it for a few months, then decide from real e
 |---|---|
 | 4 | **Run the catalog/search spike**: ingest ~500 USDA foods, build an FTS5 index, measure search latency on the actual phone the family uses. Validates NFR-P-03 and the offline-catalog premise in a day |
 | 5 | Finalise the **nutrient registry** and **ICMR-NIN RDA tables**, with a source cited per row |
-| 6 | **List the 100 foods your household actually eats most.** The single most useful pre-implementation artefact in this revision — it is the catalog specification, and only you can write it |
+| 6 | **Prune the [catalog specification](../catalog/README.md)** to what your household actually eats, and correct any serving weight you know is wrong. ~365 items are specified; Tier 1 (~90) is what the app needs to be usable |
 | 7 | Decide the **keystore storage plan** before generating one (R-26) |
 
 ### Before the scoring engine (Phase 3)
@@ -246,7 +245,7 @@ No fixed roadmap, deliberately. Use it for a few months, then decide from real e
 | Nutrition review packet | §0.6 |
 | Insight rule set with reviewed copy | Enforces the language boundary |
 | Drift schema v1 (design, not migration files) | UUID keys, timestamps, tombstones; **no sync machinery** |
-| **Top-100 household food list** | The catalog specification |
+| [**Catalog specification**](../catalog/README.md) | ~365 regional foods with servings and recipes — **written; needs pruning and calibration** |
 | Screen wireframes for the 13 screens in §27 | Validates the tap budgets before building |
 
 ### What should still not happen yet
@@ -268,7 +267,7 @@ Almost nothing in the *design* changed to get there. The offline-first foundatio
 What matters most from here is small and concrete:
 
 1. **Answer the device question** (§0.7) — it is the only thing blocking a start.
-2. **Write the top-100 food list.** It is the catalog specification, it takes an evening, and only you can write it.
+2. **Prune the [catalog specification](../catalog/README.md)** to the foods your household actually eats, and weigh a few portions to calibrate the gram weights. An evening's work, and it is the highest-leverage data quality step available to you — no public nutrition app can do it, because they don't cook your food.
 3. **Get it onto your own phone at week 5.5 and keep it there.** For a personal project with no deadline, daily use by the author is the only reliable force that gets software finished.
 4. **Back up the keystore, and export monthly.** With no server, these two habits are the entire disaster-recovery plan.
 

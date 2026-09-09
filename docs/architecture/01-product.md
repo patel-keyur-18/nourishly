@@ -498,9 +498,9 @@ NFR-SC-01 is not a growth concern here but a longevity one: this app is meant to
 | Reports | Daily dashboard, daily report with score and insights, weekly report, monthly report |
 | Profiles | 2–4 local switchable profiles, fully separate data (§0.4) |
 | Backup | Manual JSON/CSV export and import; Android Auto Backup configuration (§0.5) |
-| Catalog | Bundled: ~5–8k USDA generic items + 300–500 hand-curated household foods |
+| Catalog | Bundled: ~5–8k USDA generic items + ~365 curated regional foods ([specification](../catalog/README.md)) |
 | Reminders | Local notifications — water, meal, end-of-day summary |
-| Platform | Android primary; iOS subject to §0.2 |
+| Platform | **Android and iOS both supported.** Android self-signed and permanent; iOS via AltStore on the home Mac (§0.2) |
 
 ### 9.2 Not built
 
