@@ -101,6 +101,18 @@ abstract final class NourishlyTheme {
           textStyle: textTheme.labelLarge,
         ),
       ),
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          backgroundColor: colors.accent,
+          foregroundColor: colors.accentInk,
+          disabledBackgroundColor: colors.inkDisabled,
+          minimumSize: const Size.fromHeight(NourishlyTarget.minTouch),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(NourishlyRadius.pill),
+          ),
+          textStyle: textTheme.labelLarge,
+        ),
+      ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: colors.ink,

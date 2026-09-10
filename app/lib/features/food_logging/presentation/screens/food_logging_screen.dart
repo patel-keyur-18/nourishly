@@ -66,9 +66,18 @@ class _FoodLoggingScreenState extends ConsumerState<FoodLoggingScreen> {
               autofocus: true,
               onChanged: _onChanged,
               textInputAction: TextInputAction.search,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 hintText: 'Search foods',
-                prefixIcon: Icon(Icons.search_rounded),
+                prefixIcon: const Icon(Icons.search_rounded),
+                filled: true,
+                fillColor: colors.surface2,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(NourishlyRadius.md),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: NourishlySpace.s3,
+                ),
               ),
             ),
           ),
@@ -92,8 +101,15 @@ class _FoodLoggingScreenState extends ConsumerState<FoodLoggingScreen> {
                     ),
                   );
                 }
-                return ListView.builder(
+                return ListView.separated(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: NourishlySpace.s2,
+                  ),
                   itemCount: results.length + 1,
+                  separatorBuilder: (context, index) =>
+                      index == results.length - 1
+                      ? const SizedBox.shrink()
+                      : Divider(height: 1, color: colors.line),
                   itemBuilder: (context, index) {
                     if (index == results.length) {
                       return _CreateCustomFoodRow(query: query);
@@ -124,17 +140,31 @@ class _CreateCustomFoodRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.nourishlyColors;
-    return ListTile(
-      leading: Icon(Icons.add_circle_outline_rounded, color: colors.accent),
-      title: Text(
-        'Create "$query" as a custom food',
-        style: TextStyle(color: colors.accent),
+    final text = context.nourishlyText;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: NourishlySpace.s3),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(NourishlyRadius.md),
+        onTap: () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Custom food creation is coming soon.'),
+            ),
+          );
+        },
+        child: Container(
+          padding: const EdgeInsets.all(NourishlySpace.s3),
+          decoration: BoxDecoration(
+            border: Border.all(color: colors.lineStrong),
+            borderRadius: BorderRadius.circular(NourishlyRadius.md),
+          ),
+          child: Text(
+            'Create "$query" as a custom food',
+            textAlign: TextAlign.center,
+            style: text.label.copyWith(color: colors.accent),
+          ),
+        ),
       ),
-      onTap: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Custom food creation is coming soon.')),
-        );
-      },
     );
   }
 }

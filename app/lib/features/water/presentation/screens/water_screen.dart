@@ -16,7 +16,7 @@ String _formatTime(DateTime time) {
 class WaterScreen extends ConsumerWidget {
   const WaterScreen({super.key});
 
-  Future<void> _quickAdd(WidgetRef ref, double ml) async {
+  Future<void> _quickAdd(BuildContext context, WidgetRef ref, double ml) async {
     final ownerId = await ref.read(defaultOwnerProvider.future);
     await ref
         .read(waterLogDaoProvider)
@@ -25,6 +25,11 @@ class WaterScreen extends ConsumerWidget {
           volumeMl: ml,
           logDate: ref.read(todayProvider),
         );
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Logged ${ml.toStringAsFixed(0)} ml')),
+      );
+    }
   }
 
   @override
@@ -44,18 +49,36 @@ class WaterScreen extends ConsumerWidget {
           return ListView(
             padding: const EdgeInsets.all(NourishlySpace.s4),
             children: [
-              Center(
-                child: Column(
-                  children: [
-                    Text(
-                      '${(totalMl / 1000).toStringAsFixed(2)} L',
-                      style: text.display,
-                    ),
-                    Text(
-                      'today',
-                      style: text.caption.copyWith(color: colors.ink3),
-                    ),
-                  ],
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: NourishlySpace.s6),
+                decoration: BoxDecoration(
+                  color: colors.surface,
+                  borderRadius: BorderRadius.circular(NourishlyRadius.lg),
+                  border: Border.all(color: colors.line),
+                ),
+                child: Center(
+                  child: Column(
+                    children: [
+                      Container(
+                        width: 96,
+                        height: 96,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: colors.accentSoft,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Text(
+                          (totalMl / 1000).toStringAsFixed(2),
+                          style: text.numeral.copyWith(color: colors.accentSoftInk),
+                        ),
+                      ),
+                      const SizedBox(height: NourishlySpace.s3),
+                      Text(
+                        'litres today',
+                        style: text.caption.copyWith(color: colors.ink3),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(height: NourishlySpace.s5),
@@ -63,35 +86,65 @@ class WaterScreen extends ConsumerWidget {
                 children: [
                   Expanded(
                     child: FilledButton(
-                      onPressed: () => _quickAdd(ref, 250),
+                      onPressed: () => _quickAdd(context, ref, 250),
                       child: const Text('+250 ml'),
                     ),
                   ),
                   const SizedBox(width: NourishlySpace.s2),
                   Expanded(
-                    child: FilledButton(
-                      onPressed: () => _quickAdd(ref, 500),
+                    child: FilledButton.tonal(
+                      onPressed: () => _quickAdd(context, ref, 500),
                       child: const Text('+500 ml'),
+                    ),
+                  ),
+                  const SizedBox(width: NourishlySpace.s2),
+                  Expanded(
+                    child: FilledButton.tonal(
+                      onPressed: () => _quickAdd(context, ref, 1000),
+                      child: const Text('+1 L'),
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: NourishlySpace.s6),
-              Text('Today', style: text.label.copyWith(color: colors.ink3)),
+              Text(
+                'TODAY',
+                style: text.overline.copyWith(color: colors.ink3),
+              ),
               const SizedBox(height: NourishlySpace.s2),
               if (entries.isEmpty)
-                Text(
-                  'Nothing logged yet.',
-                  style: text.body.copyWith(color: colors.ink3),
-                ),
-              for (final entry in entries)
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Text('${entry.volumeMl.toStringAsFixed(0)} ml'),
-                  subtitle: Text(_formatTime(entry.loggedAt)),
-                  trailing: TextButton(
-                    onPressed: () => dao.undo(entry.id),
-                    child: const Text('Undo'),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: NourishlySpace.s4),
+                  child: Text(
+                    'Nothing logged yet — tap a quick-add above.',
+                    style: text.body.copyWith(color: colors.ink3),
+                  ),
+                )
+              else
+                Card(
+                  child: Column(
+                    children: [
+                      for (final entry in entries)
+                        ListTile(
+                          leading: Icon(
+                            Icons.water_drop_rounded,
+                            color: colors.accent,
+                            size: 20,
+                          ),
+                          title: Text(
+                            '${entry.volumeMl.toStringAsFixed(0)} ml',
+                            style: text.body,
+                          ),
+                          subtitle: Text(
+                            _formatTime(entry.loggedAt),
+                            style: text.caption.copyWith(color: colors.ink3),
+                          ),
+                          trailing: TextButton(
+                            onPressed: () => dao.undo(entry.id),
+                            child: const Text('Undo'),
+                          ),
+                        ),
+                    ],
                   ),
                 ),
             ],

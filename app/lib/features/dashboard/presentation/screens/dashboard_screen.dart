@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nourishly_ui/nourishly_ui.dart';
 
 import '../../../../app/providers.dart';
@@ -31,32 +32,75 @@ class DashboardScreen extends ConsumerWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(NourishlySpace.s4),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Water', style: text.body),
-                      Text(
-                        '${(waterMl / 1000).toStringAsFixed(2)} L',
-                        style: text.heading,
+                      Container(
+                        width: 44,
+                        height: 44,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: colors.accentSoft,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.water_drop_rounded,
+                          color: colors.accentSoftInk,
+                          size: 20,
+                        ),
+                      ),
+                      const SizedBox(width: NourishlySpace.s3),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${(waterMl / 1000).toStringAsFixed(2)} L',
+                              style: text.heading,
+                            ),
+                            Text(
+                              'Water today',
+                              style: text.caption.copyWith(color: colors.ink3),
+                            ),
+                          ],
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () => context.go('/water'),
+                        child: const Text('Log water'),
                       ),
                     ],
                   ),
                 ),
               ),
-              const SizedBox(height: NourishlySpace.s4),
-              Text('Meals', style: text.label.copyWith(color: colors.ink3)),
+              const SizedBox(height: NourishlySpace.s6),
+              Text('MEALS', style: text.overline.copyWith(color: colors.ink3)),
               const SizedBox(height: NourishlySpace.s2),
               if (entries.isEmpty)
-                Text(
-                  'Nothing logged yet — add something?',
-                  style: text.body.copyWith(color: colors.ink3),
-                ),
-              for (final logged in entries)
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(NourishlySpace.s5),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: colors.lineStrong, style: BorderStyle.solid),
+                    borderRadius: BorderRadius.circular(NourishlyRadius.md),
+                  ),
+                  child: Text(
+                    'Nothing logged yet — tap + to add something.',
+                    textAlign: TextAlign.center,
+                    style: text.body.copyWith(color: colors.ink3),
+                  ),
+                )
+              else
                 Card(
-                  child: ListTile(
-                    title: Text(logged.foodName),
-                    subtitle: Text(
-                      '${logged.mealSlotName} · ${logged.entry.quantity}× · ${logged.entry.gramsConsumed.toStringAsFixed(0)} g',
-                    ),
+                  child: Column(
+                    children: [
+                      for (final logged in entries)
+                        ListTile(
+                          title: Text(logged.foodName, style: text.body),
+                          subtitle: Text(
+                            '${logged.mealSlotName} · ${logged.entry.quantity}× · ${logged.entry.gramsConsumed.toStringAsFixed(0)} g',
+                            style: text.caption.copyWith(color: colors.ink3),
+                          ),
+                        ),
+                    ],
                   ),
                 ),
             ],
