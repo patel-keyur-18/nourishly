@@ -35,22 +35,29 @@ void main() {
     );
   });
 
-  test('the original row survives as a soft-deleted fact, not an overwrite', () async {
-    final id = await dao.logWater(
-      ownerId: ownerId,
-      volumeMl: 250,
-      logDate: logDate,
-    );
+  test(
+    'the original row survives as a soft-deleted fact, not an overwrite',
+    () async {
+      final id = await dao.logWater(
+        ownerId: ownerId,
+        volumeMl: 250,
+        logDate: logDate,
+      );
 
-    final replacementId = await dao.edit(entryId: id, volumeMl: 400);
+      final replacementId = await dao.edit(entryId: id, volumeMl: 400);
 
-    expect(replacementId, isNot(id));
-    final original = await (db.select(
-      db.waterLogEntries,
-    )..where((e) => e.id.equals(id))).getSingle();
-    expect(original.volumeMl, 250, reason: 'the original amount is untouched');
-    expect(original.deletedAt, isNotNull);
-  });
+      expect(replacementId, isNot(id));
+      final original = await (db.select(
+        db.waterLogEntries,
+      )..where((e) => e.id.equals(id))).getSingle();
+      expect(
+        original.volumeMl,
+        250,
+        reason: 'the original amount is untouched',
+      );
+      expect(original.deletedAt, isNotNull);
+    },
+  );
 
   test('an edited entry keeps its place in the day', () async {
     final first = await dao.logWater(

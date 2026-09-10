@@ -84,11 +84,8 @@ class CustomFoodDao {
       ]);
     });
 
-    await FoodSearchDao(_db).indexFood(
-      foodId: foodId,
-      canonicalName: name,
-      altNames: const [],
-    );
+    await FoodSearchDao(_db)
+        .indexFood(foodId: foodId, canonicalName: name, altNames: const []);
 
     return foodId;
   }

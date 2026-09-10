@@ -88,9 +88,8 @@ class NourishlyBottomNav extends StatelessWidget {
               const SizedBox(height: 3),
               Text(
                 item.label,
-                style: NourishlyTypography.forInk(
-                  color,
-                ).overline.copyWith(letterSpacing: 0, height: 1),
+                style: NourishlyTypography.forInk(color).overline
+                    .copyWith(letterSpacing: 0, height: 1),
               ),
             ],
           ),

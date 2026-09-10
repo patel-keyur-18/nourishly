@@ -73,10 +73,7 @@ class WaterScreen extends ConsumerWidget {
                 ),
                 child: Column(
                   children: [
-                    _WaterFill(
-                      totalMl: totalMl,
-                      goalMl: defaultGoalMl,
-                    ),
+                    _WaterFill(totalMl: totalMl, goalMl: defaultGoalMl),
                     const SizedBox(height: NourishlySpace.s4),
                     Row(
                       children: [

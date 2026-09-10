@@ -93,7 +93,13 @@ class _RingPainter extends CustomPainter {
         ..strokeWidth = NourishlyStroke.ring
         ..strokeCap = StrokeCap.round
         ..color = progress > 1 ? colors.statusHigh : colors.accent;
-      canvas.drawArc(rect, -math.pi / 2, fullSweep * filled * scale, false, fill);
+      canvas.drawArc(
+        rect,
+        -math.pi / 2,
+        fullSweep * filled * scale,
+        false,
+        fill,
+      );
     }
 
     // The tick at 100% of target: what the ring is read against (§27.11).

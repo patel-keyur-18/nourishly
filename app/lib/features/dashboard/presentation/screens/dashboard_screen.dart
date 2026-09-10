@@ -160,7 +160,10 @@ class _EnergyCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _KeyValue(label: 'Logged', value: '${grams.toStringAsFixed(0)} g'),
+                _KeyValue(
+                  label: 'Logged',
+                  value: '${grams.toStringAsFixed(0)} g',
+                ),
                 const SizedBox(height: NourishlySpace.s2),
                 Text(
                   'Energy and macro targets arrive with Phase 3 scoring. '
@@ -190,10 +193,7 @@ class _KeyValue extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(label, style: text.caption.copyWith(color: colors.ink3)),
-        Text(
-          value,
-          style: text.body.copyWith(fontWeight: FontWeight.w700),
-        ),
+        Text(value, style: text.body.copyWith(fontWeight: FontWeight.w700)),
       ],
     );
   }
@@ -345,7 +345,10 @@ class _MealsCard extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(slot.key, style: text.overline.copyWith(color: colors.ink3)),
+                  Text(
+                    slot.key,
+                    style: text.overline.copyWith(color: colors.ink3),
+                  ),
                   Text(
                     '${slot.value.length} ${slot.value.length == 1 ? 'item' : 'items'}',
                     style: text.caption.copyWith(color: colors.ink3),

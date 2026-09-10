@@ -80,9 +80,7 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen> {
           }
           final (food, servings) = snapshot.data!;
           _servingId ??= servings.firstOrNull?.id;
-          final serving = servings
-              .where((s) => s.id == _servingId)
-              .firstOrNull;
+          final serving = servings.where((s) => s.id == _servingId).firstOrNull;
 
           return Column(
             children: [

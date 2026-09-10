@@ -124,7 +124,8 @@ void main() {
     if (food['kind'] != 'recipe') continue;
 
     final foodId = _uuid.v7();
-    final ingredients = (food['ingredients'] as List).cast<Map<String, dynamic>>();
+    final ingredients = (food['ingredients'] as List)
+        .cast<Map<String, dynamic>>();
 
     foodItems.add({
       'id': foodId,

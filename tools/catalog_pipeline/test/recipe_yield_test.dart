@@ -8,10 +8,7 @@ void main() {
         gramsForIngredient(const RecipeIngredient('Toor dal', 30, 'g')),
         30,
       );
-      expect(
-        gramsForIngredient(const RecipeIngredient('Rice', 1, 'kg')),
-        1000,
-      );
+      expect(gramsForIngredient(const RecipeIngredient('Rice', 1, 'kg')), 1000);
     });
 
     test('volumes assume water-like density by default', () {
@@ -79,10 +76,9 @@ void main() {
 
     test('an explicit method overrides the inferred one', () {
       final result = resolveRecipeYield([
-        const ResolvedIngredient(
-          RecipeIngredient('Rice', 45, 'g'),
-          {'energy': 360},
-        ),
+        const ResolvedIngredient(RecipeIngredient('Rice', 45, 'g'), {
+          'energy': 360,
+        }),
       ], method: CookingMethod.pressureCooker);
 
       expect(result.method, CookingMethod.pressureCooker);
@@ -91,14 +87,14 @@ void main() {
 
     test('multiple ingredients sum before the yield factor is applied', () {
       final result = resolveRecipeYield([
-        const ResolvedIngredient(
-          RecipeIngredient('Rice', 45, 'g'),
-          {'energy': 360, 'protein': 8},
-        ),
-        const ResolvedIngredient(
-          RecipeIngredient('Moong dal', 20, 'g'),
-          {'energy': 340, 'protein': 24},
-        ),
+        const ResolvedIngredient(RecipeIngredient('Rice', 45, 'g'), {
+          'energy': 360,
+          'protein': 8,
+        }),
+        const ResolvedIngredient(RecipeIngredient('Moong dal', 20, 'g'), {
+          'energy': 340,
+          'protein': 24,
+        }),
       ]);
 
       expect(result.method, CookingMethod.pressureCooker);

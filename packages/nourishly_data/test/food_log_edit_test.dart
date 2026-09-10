@@ -86,30 +86,33 @@ void main() {
   });
 
   group('updateEntry (FR-M-05)', () {
-    test('changing quantity rescales grams and the nutrient snapshot', () async {
-      final entryId = await logRice();
-      final original = await snapshotOf(entryId);
-      final originalEntry = await (db.select(
-        db.foodLogEntries,
-      )..where((e) => e.id.equals(entryId))).getSingle();
+    test(
+      'changing quantity rescales grams and the nutrient snapshot',
+      () async {
+        final entryId = await logRice();
+        final original = await snapshotOf(entryId);
+        final originalEntry = await (db.select(
+          db.foodLogEntries,
+        )..where((e) => e.id.equals(entryId))).getSingle();
 
-      await dao.updateEntry(entryId: entryId, quantity: 2);
+        await dao.updateEntry(entryId: entryId, quantity: 2);
 
-      final updated = await (db.select(
-        db.foodLogEntries,
-      )..where((e) => e.id.equals(entryId))).getSingle();
-      expect(updated.quantity, 2);
-      expect(updated.gramsConsumed, originalEntry.gramsConsumed * 2);
+        final updated = await (db.select(
+          db.foodLogEntries,
+        )..where((e) => e.id.equals(entryId))).getSingle();
+        expect(updated.quantity, 2);
+        expect(updated.gramsConsumed, originalEntry.gramsConsumed * 2);
 
-      final rescaled = await snapshotOf(entryId);
-      expect(rescaled, hasLength(original.length));
-      for (final before in original) {
-        final after = rescaled.firstWhere(
-          (n) => n.nutrientId == before.nutrientId,
-        );
-        expect(after.amount, closeTo(before.amount * 2, 0.0001));
-      }
-    });
+        final rescaled = await snapshotOf(entryId);
+        expect(rescaled, hasLength(original.length));
+        for (final before in original) {
+          final after = rescaled.firstWhere(
+            (n) => n.nutrientId == before.nutrientId,
+          );
+          expect(after.amount, closeTo(before.amount * 2, 0.0001));
+        }
+      },
+    );
 
     test('halving the quantity halves the snapshot too', () async {
       final entryId = await logRice(quantity: 2);
@@ -129,9 +132,9 @@ void main() {
     test('the meal slot can be moved without touching the portion', () async {
       final entryId = await logRice();
       final before = await snapshotOf(entryId);
-      final otherSlot = (await db.select(
-        db.mealSlots,
-      ).get()).firstWhere((s) => s.id != mealSlotId);
+      final otherSlot = (await db.select(db.mealSlots).get()).firstWhere(
+        (s) => s.id != mealSlotId,
+      );
 
       await dao.updateEntry(entryId: entryId, mealSlotId: otherSlot.id);
 
@@ -148,31 +151,28 @@ void main() {
       }
     });
 
-    test(
-      'an edit rescales the frozen snapshot rather than re-reading the '
-      'catalog, so a later catalog correction cannot leak into history '
-      '(ADR-008)',
-      () async {
-        final entryId = await logRice();
-        final (foodId, _) = await rice();
-        final energyBefore = (await snapshotOf(
-          entryId,
-        )).firstWhere((n) => n.nutrientId == 'energy').amount;
+    test('an edit rescales the frozen snapshot rather than re-reading the '
+        'catalog, so a later catalog correction cannot leak into history '
+        '(ADR-008)', () async {
+      final entryId = await logRice();
+      final (foodId, _) = await rice();
+      final energyBefore = (await snapshotOf(entryId))
+          .firstWhere((n) => n.nutrientId == 'energy')
+          .amount;
 
-        // The catalog is corrected after the fact — doubling the food's
-        // energy density.
-        await (db.update(db.foodNutrientValues)..where(
-              (v) => v.foodId.equals(foodId) & v.nutrientId.equals('energy'),
-            ))
-            .write(const FoodNutrientValuesCompanion(amountPer100g: Value(999)));
+      // The catalog is corrected after the fact — doubling the food's
+      // energy density.
+      await (db.update(db.foodNutrientValues)..where(
+            (v) => v.foodId.equals(foodId) & v.nutrientId.equals('energy'),
+          ))
+          .write(const FoodNutrientValuesCompanion(amountPer100g: Value(999)));
 
-        await dao.updateEntry(entryId: entryId, quantity: 2);
+      await dao.updateEntry(entryId: entryId, quantity: 2);
 
-        final energyAfter = (await snapshotOf(
-          entryId,
-        )).firstWhere((n) => n.nutrientId == 'energy').amount;
-        expect(energyAfter, closeTo(energyBefore * 2, 0.0001));
-      },
-    );
+      final energyAfter = (await snapshotOf(entryId))
+          .firstWhere((n) => n.nutrientId == 'energy')
+          .amount;
+      expect(energyAfter, closeTo(energyBefore * 2, 0.0001));
+    });
   });
 }

@@ -28,47 +28,59 @@ void main() {
     nutrientsPerServing: {'energy': 135, 'protein': 3.6},
   );
 
-  test('a custom food is owned, user-tier, and loggable like any food', () async {
-    final foodId = await createThepla();
+  test(
+    'a custom food is owned, user-tier, and loggable like any food',
+    () async {
+      final foodId = await createThepla();
 
-    final food = await (db.select(
-      db.foodItems,
-    )..where((f) => f.id.equals(foodId))).getSingle();
-    expect(food.ownerId, ownerId);
-    expect(food.kind, 'user_custom');
-    expect(food.qualityTier, 'user');
+      final food = await (db.select(
+        db.foodItems,
+      )..where((f) => f.id.equals(foodId))).getSingle();
+      expect(food.ownerId, ownerId);
+      expect(food.kind, 'user_custom');
+      expect(food.qualityTier, 'user');
 
-    final servings = await (db.select(
-      db.servingSizes,
-    )..where((s) => s.foodId.equals(foodId))).get();
-    expect(servings, hasLength(1));
-    expect(servings.single.grams, 45);
-    expect(servings.single.isDefault, isTrue);
-  });
+      final servings = await (db.select(
+        db.servingSizes,
+      )..where((s) => s.foodId.equals(foodId))).get();
+      expect(servings, hasLength(1));
+      expect(servings.single.grams, 45);
+      expect(servings.single.isDefault, isTrue);
+    },
+  );
 
-  test('per-serving figures are stored per 100 g like every other food', () async {
-    final foodId = await createThepla();
+  test(
+    'per-serving figures are stored per 100 g like every other food',
+    () async {
+      final foodId = await createThepla();
 
-    final values = await (db.select(
-      db.foodNutrientValues,
-    )..where((v) => v.foodId.equals(foodId))).get();
+      final values = await (db.select(
+        db.foodNutrientValues,
+      )..where((v) => v.foodId.equals(foodId))).get();
 
-    final energy = values.firstWhere((v) => v.nutrientId == 'energy');
-    // 135 kcal in 45 g -> 300 kcal per 100 g.
-    expect(energy.amountPer100g, closeTo(300, 0.0001));
-    expect(energy.valueSource, 'estimated');
-  });
+      final energy = values.firstWhere((v) => v.nutrientId == 'energy');
+      // 135 kcal in 45 g -> 300 kcal per 100 g.
+      expect(energy.amountPer100g, closeTo(300, 0.0001));
+      expect(energy.valueSource, 'estimated');
+    },
+  );
 
-  test('a nutrient the user did not enter is absent, never zero (AP-4)', () async {
-    final foodId = await createThepla();
+  test(
+    'a nutrient the user did not enter is absent, never zero (AP-4)',
+    () async {
+      final foodId = await createThepla();
 
-    final values = await (db.select(
-      db.foodNutrientValues,
-    )..where((v) => v.foodId.equals(foodId))).get();
+      final values = await (db.select(
+        db.foodNutrientValues,
+      )..where((v) => v.foodId.equals(foodId))).get();
 
-    expect(values.map((v) => v.nutrientId), containsAll(['energy', 'protein']));
-    expect(values.map((v) => v.nutrientId), isNot(contains('carbs')));
-  });
+      expect(
+        values.map((v) => v.nutrientId),
+        containsAll(['energy', 'protein']),
+      );
+      expect(values.map((v) => v.nutrientId), isNot(contains('carbs')));
+    },
+  );
 
   test('it is findable by search straight away (UX-6)', () async {
     await createThepla();

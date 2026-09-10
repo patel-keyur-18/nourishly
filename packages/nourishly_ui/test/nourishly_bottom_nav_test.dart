@@ -131,10 +131,7 @@ void main() {
 
     expect(navHeight, lessThan(screenHeight / 4));
     // The body must keep the rest of the screen.
-    expect(
-      tester.getSize(find.text('body')).height,
-      greaterThan(0),
-    );
+    expect(tester.getSize(find.text('body')).height, greaterThan(0));
     expect(
       tester.getBottomLeft(find.byType(NourishlyBottomNav)).dy,
       moreOrLessEquals(screenHeight, epsilon: 0.5),

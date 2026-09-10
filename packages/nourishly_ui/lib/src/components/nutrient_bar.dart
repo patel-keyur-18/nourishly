@@ -40,10 +40,7 @@ class NutrientBar extends StatelessWidget {
         children: [
           SizedBox(
             width: 58,
-            child: Text(
-              name,
-              style: text.caption.copyWith(color: colors.ink2),
-            ),
+            child: Text(name, style: text.caption.copyWith(color: colors.ink2)),
           ),
           const SizedBox(width: NourishlySpace.s2),
           Expanded(

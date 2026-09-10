@@ -72,23 +72,20 @@ class FoodLoggingDao {
   /// row and its nutrient snapshot stay put so [restore] can bring the
   /// entry back without recomputing anything.
   Future<void> deleteEntry(String entryId) {
-    return (_db.update(_db.foodLogEntries)..where((e) => e.id.equals(entryId)))
-        .write(
-          FoodLogEntriesCompanion(
-            deletedAt: Value(DateTime.now()),
-            updatedAt: Value(DateTime.now()),
-          ),
-        );
+    return (_db.update(
+      _db.foodLogEntries,
+    )..where((e) => e.id.equals(entryId))).write(
+      FoodLogEntriesCompanion(
+        deletedAt: Value(DateTime.now()),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
   }
 
   /// Undoes [deleteEntry].
   Future<void> restore(String entryId) {
     return (_db.update(_db.foodLogEntries)..where((e) => e.id.equals(entryId)))
-        .write(
-          const FoodLogEntriesCompanion(
-            deletedAt: Value(null),
-          ),
-        );
+        .write(const FoodLogEntriesCompanion(deletedAt: Value(null)));
   }
 
   /// Edits an entry's portion and/or meal slot (FR-M-05).
@@ -137,13 +134,18 @@ class FoodLoggingDao {
           quantity: Value(newQuantity),
           gramsConsumed: Value(newGrams),
           servingSizeId: Value(newServingId),
-          mealSlotId: mealSlotId == null ? const Value.absent() : Value(mealSlotId),
+          mealSlotId: mealSlotId == null
+              ? const Value.absent()
+              : Value(mealSlotId),
           updatedAt: Value(DateTime.now()),
         ),
         where: (e) => e.id.equals(entryId),
       );
 
-      batch.deleteWhere(_db.logEntryNutrients, (n) => n.entryId.equals(entryId));
+      batch.deleteWhere(
+        _db.logEntryNutrients,
+        (n) => n.entryId.equals(entryId),
+      );
       batch.insertAll(_db.logEntryNutrients, [
         for (final n in snapshot)
           LogEntryNutrientsCompanion.insert(

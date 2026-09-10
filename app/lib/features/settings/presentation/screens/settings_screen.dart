@@ -40,7 +40,11 @@ class SettingsScreen extends StatelessWidget {
               padding: EdgeInsets.zero,
               child: Column(
                 children: [
-                  _SettingsRow(label: 'Units', detail: 'Metric', comingSoon: true),
+                  _SettingsRow(
+                    label: 'Units',
+                    detail: 'Metric',
+                    comingSoon: true,
+                  ),
                   _Divider(color: colors.line),
                   _SettingsRow(
                     label: 'Week starts',

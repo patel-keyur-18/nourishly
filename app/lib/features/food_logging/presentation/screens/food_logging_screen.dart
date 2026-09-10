@@ -182,7 +182,11 @@ class _CreateCustomFoodRow extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(Icons.add_circle_outline_rounded, color: colors.accent, size: 20),
+          Icon(
+            Icons.add_circle_outline_rounded,
+            color: colors.accent,
+            size: 20,
+          ),
           const SizedBox(width: NourishlySpace.s3),
           Expanded(
             child: Text(

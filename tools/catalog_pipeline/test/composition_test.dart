@@ -49,7 +49,9 @@ void main() {
     });
 
     test('recognizes tumbler as a household raw-measure unit', () {
-      final result = parser.parse('Rice 3 tumbler, urad dal 1 tumbler, fenugreek');
+      final result = parser.parse(
+        'Rice 3 tumbler, urad dal 1 tumbler, fenugreek',
+      );
       final recipe = result as Recipe;
       expect(recipe.ingredients, [
         const RecipeIngredient('Rice', 3, 'tumbler'),

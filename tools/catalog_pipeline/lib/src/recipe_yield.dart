@@ -59,7 +59,10 @@ const double tumblerGrams = 170;
 /// enough for the aqueous ingredients (water, milk, curd) recipes
 /// actually measure by volume; oils and other dense ingredients in this
 /// catalog are already given in grams, not ml/tsp/tbsp.
-double gramsForIngredient(RecipeIngredient ingredient, {double densityGPerMl = 1}) {
+double gramsForIngredient(
+  RecipeIngredient ingredient, {
+  double densityGPerMl = 1,
+}) {
   final amount = ingredient.amount;
   switch (ingredient.unit.toLowerCase()) {
     case 'g':
@@ -121,10 +124,9 @@ RecipeYieldResult resolveRecipeYield(
   List<ResolvedIngredient> resolvedIngredients, {
   CookingMethod? method,
 }) {
-  final recipe = Recipe(
-    [for (final r in resolvedIngredients) r.ingredient],
-    const [],
-  );
+  final recipe = Recipe([
+    for (final r in resolvedIngredients) r.ingredient,
+  ], const []);
   final cookingMethod = method ?? inferCookingMethod(recipe);
   final yieldFactor = cookingYieldFactor[cookingMethod]!;
 
