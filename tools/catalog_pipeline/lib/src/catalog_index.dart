@@ -2,6 +2,7 @@ import 'package:meta/meta.dart';
 
 import 'catalog_source_entry.dart';
 import 'composition.dart';
+import 'ingredient_aliases.dart';
 
 /// One catalog row paired with its parsed [Composition].
 @immutable
@@ -96,8 +97,18 @@ class CatalogIndex {
 
   /// The single catalog row [name] refers to, or null when nothing matches
   /// or several rows do.
+  ///
+  /// [ingredientAliases] is consulted first: it exists precisely to settle
+  /// the names the tier rules drop for ambiguity (`oil`, `curd`, `rice`),
+  /// and a curated decision outranks any inference from the name alone.
   CatalogRow? lookup(String name) {
     final key = catalogKey(name);
+    if (ingredientAliases[key] case final target?) {
+      final targetKey = catalogKey(target);
+      final row =
+          _byName[targetKey] ?? _byAlias[targetKey] ?? _byPrefix[targetKey];
+      if (row != null) return row;
+    }
     return _byName[key] ?? _byAlias[key] ?? _byPrefix[key];
   }
 }

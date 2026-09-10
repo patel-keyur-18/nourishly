@@ -150,6 +150,14 @@ class _IngredientResolver {
     String key,
     Set<String> visiting,
   ) async {
+    // Water is mass without nutrients. It has to resolve rather than be
+    // skipped: the yield factor comes from total ingredient mass against
+    // the serving weight, so dropping the water would concentrate
+    // everything else in the dish.
+    if (waterIngredients.contains(key)) {
+      return const _IngredientSource({});
+    }
+
     final row = index.lookup(name);
     final composition = row?.composition;
 
@@ -164,10 +172,17 @@ class _IngredientResolver {
       if (nested != null) return nested;
     }
 
-    final food = await _searchFdc(client, [_sanitizeQuery(name)]);
-    return food == null
-        ? null
-        : _IngredientSource(_nutrients(food), food: food);
+    // No blind FDC search on the raw ingredient string. A regional
+    // ingredient name means something in *this* catalog, not in FoodData
+    // Central, and searching it there returns whatever shares a word:
+    // "batter" found battered fish, "curd" found tofu, "milk" found milk
+    // crackers, "rice" found rice noodles. Those matched, so the pipeline
+    // reported no failure while shipping the wrong food's nutrients under
+    // a `verified` badge.
+    //
+    // An ingredient that neither the catalog nor `ingredientAliases`
+    // resolves is a curation gap. Say so (§0.2: nothing is invented).
+    return null;
   }
 
   Future<_IngredientSource?> _resolveRecipe(
@@ -334,8 +349,8 @@ Future<void> main() async {
 
       if (source == null) {
         failures.add(
-          '${entry.foodName}: no catalog row or FDC match for ingredient '
-          '"${ingredient.name}"',
+          '${entry.foodName}: ingredient "${ingredient.name}" resolves to no '
+          'catalog row. Add a row for it, or map it in ingredientAliases.',
         );
         missingIngredient = true;
         break;

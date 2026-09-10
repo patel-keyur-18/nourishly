@@ -88,10 +88,41 @@ final _quantity = RegExp(
   r'^(?<name>.*?)\s+(?<amount>\d+(?:\.\d+)?)\s*(?<unit>g|ml|kg|l|tsp|tbsp|tumbler)\b(?<note>.*)$',
 );
 
+/// Markdown emphasis used inside a composition cell for prose, not for
+/// meaning: Benne dose reads "Dosa batter 80 g, **butter 22 g** — the
+/// defining ingredient". Left in, the asterisks become part of the
+/// ingredient name and "**butter" matches nothing.
+final _emphasis = RegExp(r'\*+');
+
+/// A spaced em-dash ends the ingredient list and starts the curator's
+/// note: "…coconut 10 g — the highest-fat dish in this list", "USDA —
+/// note higher fat than cow". Everything after it is prose about the
+/// dish, and reading it as ingredients invents food: Idli podi's
+/// "…sesame — usually eaten with 5 g oil or ghee added" parses as an
+/// ingredient named "sesame — usually eaten with" weighing 5 g.
+///
+/// One row puts a real quantity after the dash (More milagai,
+/// "Curd-soaked chilli, sun-dried, fried — oil 5 g"). It has no quantity
+/// in its first segment either, so it is already held for manual review
+/// and loses nothing here.
+final _curatorNote = RegExp(r'\s+—\s+');
+
+/// A parenthetical restates what a preceding quantity already covers,
+/// rather than adding to it: Idli reads "Idli batter 90 g (rice 45 g +
+/// urad 16 g raw basis), steamed". Parsed as ingredients, that 90 g of
+/// batter is counted a second time as its own components — the dish
+/// comes out at 151 g of ingredients for a 90 g serving.
+final _parenthetical = RegExp(r'\([^)]*\)');
+
 /// Classifies and, for recipes, parses a raw `Composition` cell.
 class CompositionParser {
   Composition parse(String raw) {
-    final text = raw.trim();
+    final text = raw
+        .replaceAll(_emphasis, '')
+        .split(_curatorNote)
+        .first
+        .replaceAll(_parenthetical, ' ')
+        .trim();
 
     if (_usdaPrefix.hasMatch(text)) {
       return UsdaLookup(text.replaceFirst(_usdaPrefix, '').trim());

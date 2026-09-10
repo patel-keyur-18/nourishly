@@ -6,6 +6,7 @@ export 'src/catalog_source_parser.dart';
 export 'src/composition.dart';
 export 'src/fdc_client.dart';
 export 'src/fdc_models.dart';
+export 'src/ingredient_aliases.dart';
 export 'src/normalizer.dart';
 export 'src/nutrient_registry.dart';
 export 'src/recipe_yield.dart';
