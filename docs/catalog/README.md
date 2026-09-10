@@ -108,22 +108,13 @@ The constants still apply where a caller has no serving weight, or where a row's
 
 ## 0.3b Where a recipe ingredient's nutrients come from (resolved 2026-09-10)
 
-An ingredient string in a Composition cell is resolved in this order, and no other:
+An ingredient string in a Composition cell resolves to a catalog row: on its own name, an `Also` synonym, the leading segment before a `,` or `/`, or a line in `ingredientAliases` (`tools/catalog_pipeline/lib/src/ingredient_aliases.dart`). If none of those matches, the pipeline reports the dish and the ingredient and leaves the dish out — it does not guess.
 
-1. **A row in this catalog**, matched on its own name, then an `Also` synonym, then the leading segment before a `,` or `/`. A name several rows claim inside a tier is *not* guessed at.
-2. **`ingredientAliases`** (`tools/catalog_pipeline/lib/src/ingredient_aliases.dart`) — one curated line per ambiguity, reviewable in a diff. This is where `oil` → `Groundnut oil` and `rice` → `Rice, white, raw` are settled.
-3. **Nothing.** The pipeline reports the dish and the ingredient as a failure and drops the dish from the draft.
+There used to be one more step: search FoodData Central for the raw ingredient string. It is gone. FDC has never heard of `sev`, `khoya` or `idli batter`, but its search returns whatever shares a word — `batter` matched *APPLEBEE'S, fish, hand battered*, `rice` matched *Rice noodles, cooked*, `milk` matched *Crackers, milk*. Every one of those matched, so the pipeline reported **zero failures** while computing 55 dishes — idli, every dosa, curd rice, every rice dish — from the wrong food, under a `verified` badge. That is the failure §0.2 exists to prevent, and it is worse than a gap because it is invisible.
 
-There used to be a fourth step: search FoodData Central for the raw ingredient string. It is gone, and its removal is the point of this section. FDC has never heard of `sev`, `khoya` or `idli batter`, but its search returns whatever shares a word — so `batter` resolved to *APPLEBEE'S, fish, hand battered*, `rice` to *Rice noodles, cooked*, `milk` to *Crackers, milk*, and `potato filling` to *Dumpling, potato- or cheese-filled, frozen*. Every one of those matched, so the pipeline reported **zero failures** while computing 55 dishes — idli, every dosa, curd rice, every rice dish — from the wrong food, and shipping them under a `verified` quality badge.
+Everything else is settled in `ingredientAliases` with the closest sensible row, because this is a household tracker: `oil/ghee` means oil, a 3 g tempering is mostly oil, a coconut filling is mostly coconut, and a sambar podi is a spice blend. Being a little off on 5 g of powder changes nothing anyone would do about it. The rule that stays is the narrow one — a name maps to a row **someone chose**, never to whatever a text search returned.
 
-That is precisely the failure §0.2 exists to prevent, and it is worse than a gap because it is invisible. A dish the catalog cannot yet resolve is now simply absent, which the app already handles (AP-4, §21.5); a dish resolved from the wrong food is a number that looks sourced and is not.
-
-**An unresolved ingredient is a curation task, not a pipeline bug.** Close it one of two ways:
-
-- If it is a real, distinct food — `Pav`, `Broken wheat`, `Hung curd`, `Colocasia leaves` — give it its own row here, with its own USDA basis. Do not alias it to a near neighbour.
-- If it is another name for a row that already exists — `dosa`, `podi`, `chickpeas` — add a line to `ingredientAliases` saying which row, and why.
-
-Some cannot honestly be closed either way and are deliberately left failing: the slashed alternates (`oil/ghee`, `dudhi/methi`), the concentrations (`toor dal water`, `milk reduced`), the spice powders (`sambar podi`, `vangi bath powder`), and the composite pastes and fillings. Each needs a proportion nobody has written down, and a plausible-looking invented number is exactly what this catalog refuses to carry.
+All 249 recipe rows currently resolve every ingredient. When a new row does not, add an alias line saying which row and why; give it a row of its own only if it is a genuinely distinct food (that is where `Pav`, `Broken wheat`, `Hung curd` and `Colocasia leaves` came from).
 
 ## 0.4 Column meanings
 

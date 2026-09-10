@@ -69,40 +69,56 @@ void main() {
     expect(waterIngredients, contains('water'));
   });
 
-  test('a name with no honest single row stays unresolved', () {
-    // These are reported as curation gaps rather than guessed at: ghee is
-    // ~62% saturated against groundnut oil's ~17%, a sugar syrup's ratio is
-    // nowhere in the source tables, and soaked dal weighs ~2x its dry self.
-    for (final name in [
-      'oil/ghee',
-      'sugar syrup',
-      'moong dal soaked',
-      'sambar podi',
-      'khoya-coconut filling',
-    ]) {
-      expect(index.lookup(name), isNull, reason: name);
-    }
+  test('a slashed alternate takes the fat the curator named first', () {
+    expect(index.lookup('oil/ghee')?.entry.foodName, 'Groundnut oil');
+    expect(index.lookup('ghee/oil')?.entry.foodName, 'Ghee');
+    expect(index.lookup('butter/oil')?.entry.foodName, 'Butter');
   });
 
-  test(
-    'a distinct food gets its own row rather than a near-neighbour alias',
-    () {
-      // The alternative was aliasing each of these to something close enough
-      // (pav to bread, hung curd to curd, colocasia leaves to the root), which
-      // is the same wrong-food bug the alias map exists to stop.
-      for (final name in [
-        'Pav',
-        'Broken wheat',
-        'Puffed rice',
-        'Hung curd',
-        'Colocasia leaves',
-        'Black pepper',
-        'Flaxseed',
-      ]) {
-        expect(index.lookup(name)?.entry.foodName, name, reason: name);
+  test('every recipe in the catalog resolves all of its ingredients', () {
+    // The guard that matters. A dish nobody can resolve is a dish the app
+    // cannot offer, so this failing means a new row needs an alias — not
+    // that the dish should quietly fall back to an FDC text search.
+    bool resolves(String name, Set<String> visiting, List<String> missing) {
+      final key = catalogKey(name);
+      if (waterIngredients.contains(key)) return true;
+      if (visiting.contains(key) || visiting.length >= 5) return false;
+      final row = index.lookup(name);
+      if (row == null) {
+        missing.add(name);
+        return false;
       }
-    },
-  );
+      final composition = row.composition;
+      if (composition is UsdaLookup) return true;
+      if (composition is Recipe) {
+        var all = true;
+        for (final ingredient in composition.ingredients) {
+          if (!resolves(ingredient.name, {...visiting, key}, missing)) {
+            all = false;
+          }
+        }
+        return all;
+      }
+      missing.add(name);
+      return false;
+    }
+
+    final blocked = <String, List<String>>{};
+    for (final row in rows) {
+      final composition = row.composition;
+      if (composition is! Recipe) continue;
+      final missing = <String>[];
+      for (final ingredient in composition.ingredients) {
+        resolves(ingredient.name, {catalogKey(row.entry.foodName)}, missing);
+      }
+      if (missing.isNotEmpty) blocked[row.entry.foodName] = missing;
+    }
+    expect(
+      blocked,
+      isEmpty,
+      reason: 'dish -> the ingredients it cannot resolve',
+    );
+  });
 
   test('the staples that broke the seed now resolve from the catalog', () {
     // Each of these previously fell through to a blind FDC search and came

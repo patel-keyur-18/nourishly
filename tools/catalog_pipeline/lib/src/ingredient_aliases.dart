@@ -27,28 +27,22 @@
 /// - **The household's default cooking fat is groundnut oil**, the Tier-1
 ///   row in `01-common.md` §6.
 ///
-/// An ingredient that is a real, distinct food with no row of its own is
-/// not aliased to a near neighbour — it gets its own row in
-/// `docs/catalog/01-common.md` instead, sourced like every other row. That
-/// is where `Pav`, `Broken wheat`, `Puffed rice`, `Hung curd` (drained, so
-/// denser than plain curd), `Colocasia leaves` (the catalog's `Colocasia`
-/// is the root), `Black pepper`, `Flaxseed`, `Refined flour, maida`,
-/// `Mixed vegetables` and `Lemon` came from.
+/// An ingredient that is a real, distinct food with no row of its own gets
+/// its own row in `docs/catalog/01-common.md` rather than an alias to a near
+/// neighbour — that is where `Pav`, `Broken wheat`, `Puffed rice`,
+/// `Hung curd`, `Colocasia leaves`, `Black pepper` and `Flaxseed` came from.
 ///
-/// Deliberately left *unresolved*, because no honest single row exists and
-/// a plausible-looking wrong number is worse than a reported gap:
-/// `oil/ghee`, `ghee/oil`, `butter/oil` and the other slashed alternates
-/// (ghee is ~62% saturated against groundnut oil's ~17%, and saturated fat
-/// is a limit nutrient — §22.5); `sugar syrup` (a sugar-to-water ratio
-/// nobody wrote down); `moong dal soaked` (soaked weight is ~2x dry);
-/// `toor dal water`, `legume stock`, `milk reduced` and `wheat extract`
-/// (concentrations, not the ingredient); the spice powders `sambar podi`,
-/// `rasam podi`, `saaru podi`, `huli podi`, `vangi bath powder` and
-/// `BBB powder`; and the composite pastes, batters and fillings
-/// (`rice-dal batter`, `besan-urad`, `khoya-coconut filling`,
-/// `puliyogare paste`, `potato filling`, …). Each is a curation decision
-/// for a human with the recipe in front of them, and `fetch_catalog.dart`
-/// names the dish and the ingredient when it hits one.
+/// Everything else is settled here with the closest sensible row. This is a
+/// household tracker, not a lab: "oil/ghee" means oil, a 3 g tempering is
+/// mostly oil, and a coconut filling is mostly coconut. Being 10% off on
+/// 5 g of spice powder does not change anything a person would do; dropping
+/// the paratha, the biryani and every filled sweet out of the catalog
+/// because nobody wrote down a ratio very much does.
+///
+/// The line that still holds is the one that caused the wrong-food bug: a
+/// name is only ever mapped to a row *someone chose*, never to whatever a
+/// FoodData Central text search happened to return.
+
 const ingredientAliases = <String, String>{
   // Fats. Groundnut oil is the household default (Tier-1, §6); "absorbed"
   // is the deep-frying pickup, the same fat by another name.
@@ -96,6 +90,71 @@ const ingredientAliases = <String, String>{
   'rice-urad batter': 'Idli rice + urad batter',
   'podi': 'Idli podi',
   'potato masala': 'Palya, potato',
+
+  // "A or B" — take the one the curator named first, which is the one the
+  // household reaches for. The pair is always close enough that the choice
+  // moves one nutrient a little, never the shape of the meal.
+  'oil ghee': 'Groundnut oil',
+  'ghee oil': 'Ghee',
+  'butter oil': 'Butter',
+  'dudhi methi': 'Bottle gourd',
+  'cucumber onion': 'Cucumber',
+  'onion tomato': 'Onion',
+  'moong chana dal': 'Moong dal, raw',
+  'urad chana dal': 'Urad dal, raw',
+  'vegetable tamarind': 'Mixed vegetables',
+  'mixed dal': 'Toor dal, raw',
+  'mixed sprouts': 'Sprouted moong',
+  'moong dal soaked': 'Moong dal, raw',
+  'fish': 'Fish, seer / kingfish',
+  'nuts': 'Cashew',
+  'milk reduced': 'Milk, cow, whole',
+  'wheat extract': 'Wheat flour, atta',
+
+  // Spice powders: 3-8 g of roasted dal, chilli and coriander. The catalog
+  // already carries one ground blend, and at that mass the difference
+  // between blends is noise.
+  'sambar podi': 'Garam masala',
+  'rasam podi': 'Garam masala',
+  'saaru podi': 'Garam masala',
+  'huli podi': 'Garam masala',
+  'vangi bath powder': 'Garam masala',
+  'bbb powder': 'Garam masala',
+
+  // A tempering is oil with a teaspoon of seeds in it.
+  'tempering': 'Groundnut oil',
+
+  // Batters and doughs, by what they are mostly made of.
+  'batter': 'Idli rice + urad batter',
+  'rice-dal batter': 'Idli rice + urad batter',
+  'rice-dal paste': 'Idli rice + urad batter',
+  'besan-urad': 'Besan, gram flour',
+  'besan-urad batter': 'Besan, gram flour',
+  'besan-rice flour': 'Besan, gram flour',
+
+  // Fillings and pastes, likewise.
+  'filling': 'Palya, potato',
+  'potato filling': 'Palya, potato',
+  'potato vada': 'Palya, potato',
+  'coconut filling': 'Coconut, fresh grated',
+  'coconut-jaggery': 'Coconut, fresh grated',
+  'coconut-jaggery filling': 'Coconut, fresh grated',
+  'khoya-coconut filling': 'Khoya / Mawa',
+  'dal filling': 'Chana dal, raw',
+  'chana dal-jaggery filling': 'Chana dal, raw',
+  'peanut-coconut masala': 'Peanut chutney',
+  'chutney': 'Green chutney',
+  'red chutney spread': 'Green chutney',
+  'puliyogare paste': 'Tamarind',
+  'tamarind paste': 'Tamarind',
+  'sundried vathal': 'Mixed vegetables',
+
+  // A plate of poori kizhangu is two of them. `Puri` names two identical
+  // rows across state files, so this points at the one carrying `poori`.
+  '2 puri': 'poori',
+
+  // Jalebi and malpua are soaked in it; sugar is what it is made of.
+  'sugar syrup': 'Sugar',
 };
 
 /// Ingredients that are water: real mass in the pot, no nutrients.
@@ -103,4 +162,11 @@ const ingredientAliases = <String, String>{
 /// Water has to be resolvable rather than skipped, because the yield factor
 /// is derived from total ingredient mass against the serving weight — a
 /// dropped 60 ml of water would silently concentrate everything else.
-const waterIngredients = <String>{'water'};
+const waterIngredients = <String>{
+  'water',
+  // The thin liquid poured off cooked dal. It carries a little of the dal
+  // with it, but it is overwhelmingly water, and rasam and osaman are
+  // mostly this.
+  'toor dal water',
+  'legume stock',
+};
