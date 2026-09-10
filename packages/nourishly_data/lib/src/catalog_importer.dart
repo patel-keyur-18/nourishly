@@ -158,6 +158,12 @@ class CatalogImporter {
       (altNamesByFood[a['foodId'] as String] ??= []).add(a['name'] as String);
     }
     for (final f in foodItems) {
+      // A component-only row backs a recipe ingredient without being a
+      // catalog entry — raw USDA description, no serving size, nothing
+      // anyone would search for or could log. Imported for provenance,
+      // left out of the index.
+      if (f['provenanceSource'] == 'usda_fdc_component') continue;
+
       final foodId = f['id'] as String;
       await searchDao.indexFood(
         foodId: foodId,

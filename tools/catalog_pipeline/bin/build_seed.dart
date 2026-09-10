@@ -226,7 +226,12 @@ void main() {
             'kind': 'ingredient',
             'canonicalName': ingredient['fdcDescription'],
             'qualityTier': qualityTier,
-            'provenanceSource': 'usda_fdc',
+            // Not `usda_fdc`: this row exists only so the recipe's
+            // components trace back to a source. Its name is a raw USDA
+            // description ("Cereals ready-to-eat, rice, puffed, fortified")
+            // and it has no serving size, so it is kept out of the search
+            // index rather than shown to someone logging a meal.
+            'provenanceSource': 'usda_fdc_component',
             'provenanceId': '$fdcId',
             'isVerified': qualityTier == 'verified',
           });

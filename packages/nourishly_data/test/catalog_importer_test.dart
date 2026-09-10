@@ -63,6 +63,37 @@ void main() {
     },
   );
 
+  test('a component-only USDA row is imported but never searchable', () async {
+    await CatalogImporter(db).importIfNeeded(seed);
+
+    final componentRows = await (db.select(
+      db.foodItems,
+    )..where((f) => f.provenanceSource.equals('usda_fdc_component'))).get();
+    expect(
+      componentRows,
+      isNotEmpty,
+      reason: 'the seed should carry recipe-component source foods',
+    );
+
+    final dao = FoodSearchDao(db);
+    for (final row in componentRows) {
+      final hits = await dao.matchingFoodIds('"${row.canonicalName}"');
+      expect(
+        hits,
+        isNot(contains(row.id)),
+        reason: '${row.canonicalName} should not surface when logging',
+      );
+    }
+
+    // Its recipe still points at it, so the provenance trail is intact.
+    final components = await db.select(db.recipeComponents).get();
+    final componentIds = {for (final r in componentRows) r.id};
+    expect(
+      components.any((c) => componentIds.contains(c.ingredientFoodItemId)),
+      isTrue,
+    );
+  });
+
   test('a food is searchable by its alt-name spelling too (panir)', () async {
     await CatalogImporter(db).importIfNeeded(seed);
 
