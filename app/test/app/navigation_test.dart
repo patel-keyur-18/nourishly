@@ -3,104 +3,106 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nourishly/app/app.dart';
 import 'package:nourishly/app/router.dart';
+import 'package:nourishly/features/dashboard/presentation/screens/dashboard_screen.dart';
+import 'package:nourishly/features/food_catalog/data/food_catalog_providers.dart';
+import 'package:nourishly/features/food_logging/presentation/screens/food_logging_screen.dart';
+import 'package:nourishly/features/goals/presentation/screens/goals_screen.dart';
+import 'package:nourishly/features/reports/presentation/screens/reports_screen.dart';
+import 'package:nourishly/features/settings/presentation/screens/settings_screen.dart';
+import 'package:nourishly/features/water/presentation/screens/water_screen.dart';
+import 'package:nourishly_data/nourishly_data.dart';
 
+/// Navigation is verified by which screen widget is on stage.
+///
+/// The tab screens carry their title inline rather than in an [AppBar]
+/// (the prototype has no app bar on a root tab), and their titles collide
+/// with the nav bar's own labels — so the screen type is both the more
+/// robust assertion and the one that survives a copy change. Inactive
+/// branches of the shell's `IndexedStack` are `Offstage`, which finders
+/// skip by default, so only the visible tab matches.
 void main() {
+  late NourishlyDatabase db;
+
+  setUp(() => db = NourishlyDatabase.forTesting());
+  // Runs even when the test body throws — required so a failed assertion
+  // doesn't leak a database into the next test.
+  tearDown(() => db.close());
+
   Future<void> pumpApp(WidgetTester tester) async {
-    await tester.pumpWidget(const ProviderScope(child: NourishlyApp()));
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          nourishlyDatabaseProvider.overrideWithValue(db),
+          catalogReadyProvider.overrideWith((ref) async {}),
+        ],
+        child: const NourishlyApp(),
+      ),
+    );
     await tester.pumpAndSettle();
   }
 
-  testWidgets('starts on the Today dashboard', (tester) async {
+  Finder appBarTitle(String text) =>
+      find.descendant(of: find.byType(AppBar), matching: find.text(text));
+
+  testWidgets('starts on Today with all four tabs and the centre action', (
+    tester,
+  ) async {
     await pumpApp(tester);
 
-    expect(find.text('Today'), findsWidgets); // app bar title + nav label
-    expect(find.text('Insights'), findsOneWidget); // nav label only
+    expect(find.byType(DashboardScreen), findsOneWidget);
+    expect(find.text('Insights'), findsOneWidget); // nav label
+    expect(find.text('Water'), findsOneWidget); // nav label
+    expect(find.text('Profile'), findsOneWidget); // nav label
+    expect(find.byIcon(Icons.add_rounded), findsOneWidget);
+  });
+
+  testWidgets('tapping a nav destination switches the visible tab', (
+    tester,
+  ) async {
+    await pumpApp(tester);
+
+    await tester.tap(find.text('Water'));
+    await tester.pumpAndSettle();
+    expect(find.byType(WaterScreen), findsOneWidget);
+    expect(find.byType(DashboardScreen), findsNothing);
+
+    await tester.tap(find.text('Insights'));
+    await tester.pumpAndSettle();
+    expect(find.byType(ReportsScreen), findsOneWidget);
+
+    await tester.tap(find.text('Today').last);
+    await tester.pumpAndSettle();
+    expect(find.byType(DashboardScreen), findsOneWidget);
   });
 
   testWidgets(
-    'the bottom nav has all four destinations and the centre action',
-    (tester) async {
-      await pumpApp(tester);
-
-      expect(find.text('Today'), findsWidgets);
-      expect(find.text('Insights'), findsOneWidget);
-      expect(find.text('Water'), findsOneWidget);
-      expect(find.text('Profile'), findsOneWidget);
-      expect(find.byIcon(Icons.add_rounded), findsOneWidget);
-    },
-  );
-
-  testWidgets(
-    'tapping Water switches tabs and preserves the Today tab underneath',
-    (tester) async {
-      await pumpApp(tester);
-
-      await tester.tap(find.text('Water'));
-      await tester.pumpAndSettle();
-      expect(
-        find.text('Hydration tracking lands here alongside food logging.'),
-        findsOneWidget,
-      );
-
-      await tester.tap(find.text('Today').last);
-      await tester.pumpAndSettle();
-      expect(
-        find.text(
-          'Your daily dashboard lands here once logging and targets exist.',
-        ),
-        findsOneWidget,
-      );
-    },
-  );
-
-  testWidgets(
-    'the centre action opens the log flow modally over the current tab',
+    'the centre action opens the log flow modally and dismisses back',
     (tester) async {
       await pumpApp(tester);
 
       await tester.tap(find.byIcon(Icons.add_rounded));
       await tester.pumpAndSettle();
-
-      expect(find.text('Log food or water'), findsOneWidget);
-      expect(find.byIcon(Icons.close_rounded), findsOneWidget);
+      expect(find.byType(FoodLoggingScreen), findsOneWidget);
+      expect(appBarTitle('Add food'), findsOneWidget);
 
       await tester.tap(find.byIcon(Icons.close_rounded));
       await tester.pumpAndSettle();
-
-      // Dismisses back to the tab the user was on, not a detached screen.
-      expect(
-        find.text(
-          'Your daily dashboard lands here once logging and targets exist.',
-        ),
-        findsOneWidget,
-      );
+      expect(find.byType(FoodLoggingScreen), findsNothing);
+      expect(find.byType(DashboardScreen), findsOneWidget);
     },
   );
 
-  testWidgets('Profile tab shows its Goals entry point', (tester) async {
+  testWidgets('Profile tab pushes to the nested Goals screen', (tester) async {
     await pumpApp(tester);
 
     await tester.tap(find.text('Profile').last);
     await tester.pumpAndSettle();
-    expect(
-      find.widgetWithText(FilledButton, 'Goals & targets'),
-      findsOneWidget,
-    );
-  });
-
-  testWidgets('/profile/goals resolves to the nested Goals screen (§28.5)', (
-    tester,
-  ) async {
-    await pumpApp(tester);
+    expect(find.byType(SettingsScreen), findsOneWidget);
+    expect(find.text('Goals & targets'), findsOneWidget);
 
     appRouter.go('/profile/goals');
     await tester.pumpAndSettle();
-
-    expect(
-      find.text(
-        'Derived targets and per-nutrient overrides land here in Phase 3.',
-      ),
-      findsOneWidget,
-    );
+    expect(find.byType(GoalsScreen), findsOneWidget);
+    expect(appBarTitle('Goals & targets'), findsOneWidget);
   });
 }

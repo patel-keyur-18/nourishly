@@ -1,0 +1,87 @@
+import 'package:meta/meta.dart';
+
+import 'fdc_models.dart';
+import 'nutrient_registry.dart';
+
+/// One registry nutrient resolved to a value from an [FdcFood]'s reading.
+@immutable
+class NutrientMatch {
+  const NutrientMatch({required this.nutrient, required this.amountPer100g});
+
+  final NutrientDef nutrient;
+  final double amountPer100g;
+}
+
+/// An [FdcFood] with its readings matched against [nutrientRegistry].
+///
+/// [matches] only ever contains nutrients FDC actually reported — a
+/// registry nutrient with no matching reading is simply absent from this
+/// list, never zero-filled (AP-4). [unmatchedFdcNutrients] is diagnostic:
+/// FDC nutrient names present on the food that don't map to anything in
+/// the registry, useful for noticing the registry is missing something.
+@immutable
+class ResolvedFdcFood {
+  const ResolvedFdcFood({
+    required this.food,
+    required this.matches,
+    required this.unmatchedFdcNutrients,
+  });
+
+  final FdcFood food;
+  final List<NutrientMatch> matches;
+  final List<String> unmatchedFdcNutrients;
+}
+
+/// FDC's `/food/{id}` endpoint reports microgram units as the actual "µg"
+/// (or "μg" — MICRO SIGN U+00B5 vs GREEK SMALL LETTER MU U+03BC; sources
+/// vary) symbol, not the ASCII "UG" text its search endpoint uses.
+/// Confirmed against a live response — plain `toUpperCase()` equality
+/// silently failed to match folate/B12/vitamin A/vitamin D on every food
+/// until this normalized both to "UG".
+String _canonicalUnit(String raw) {
+  switch (raw.trim().toLowerCase()) {
+    case 'ug':
+    case 'µg':
+    case 'μg':
+    case 'mcg':
+      return 'UG';
+    default:
+      return raw.trim().toUpperCase();
+  }
+}
+
+/// Matches an [FdcFood]'s nutrient readings against [nutrientRegistry] by
+/// name (and unit, to disambiguate cases like Energy's kcal/kJ split) —
+/// deliberately not by FDC's numeric nutrient id, which this pipeline has
+/// no live response to verify against until it actually runs (see
+/// `nutrient_registry.dart`'s header comment).
+class FdcNormalizer {
+  ResolvedFdcFood normalize(FdcFood food) {
+    final matches = <NutrientMatch>[];
+    final matchedNames = <String>{};
+
+    for (final def in nutrientRegistry) {
+      for (final reading in food.nutrients) {
+        if (def.fdcNames.contains(reading.name) &&
+            _canonicalUnit(reading.unit) == def.fdcUnit) {
+          matches.add(
+            NutrientMatch(nutrient: def, amountPer100g: reading.amountPer100g),
+          );
+          matchedNames.add(reading.name);
+          break;
+        }
+      }
+    }
+
+    final unmatched = [
+      for (final r in food.nutrients)
+        if (!matchedNames.contains(r.name)) r.name,
+    ];
+
+    return ResolvedFdcFood(
+      food: food,
+      matches: matches,
+      unmatchedFdcNutrients: unmatched,
+    );
+  }
+}

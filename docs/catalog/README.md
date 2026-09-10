@@ -65,6 +65,57 @@ Standard measures used throughout:
 | Tbsp / tsp | 15 ml / 5 ml | Volume→mass via per-food density |
 | Piece | Per food | Roti, idli, vada, dosa each have their own weight |
 
+## 0.3a Cooking yield factor (resolved 2026-09-10)
+
+§0.2's "sum, apply yield factor for cooking water" step needed two decisions before the pipeline could resolve recipe entries at all — both settled from a household kitchen-scale check rather than a per-dish measurement, same spirit as §0.3's serving weights:
+
+- **Tumbler-to-gram.** Where a recipe measures a raw grain or dal by tumbler (the S. Indian raw-measure cup used for things like idli batter — not the 100 ml coffee-serving tumbler above), 1 tumbler ≈ 160–180 g depending on the grain. The pipeline uses **170 g** (the midpoint) as a single starting estimate rather than weighing each grain separately.
+- **Cooking method, which drives evaporation.** Dal (and other pulses) is always pressure-cooked — sealed, so evaporation is negligible. Rice and everything else is simmered or boiled in an **open, uncovered pot** — including rice itself, which is not treated as a special case.
+
+This gives two yield factors (raw dry ingredient weight → cooked weight), applied broadly across rice-based and other grain dishes, not just dal:
+
+| Cooking method | Applies to | Yield factor |
+|---|---|---|
+| Pressure cooker (sealed) | Dal and other pulses | 2.5× |
+| Open pot (uncovered simmer) | Rice and everything else | 2.75× |
+
+Both are starting estimates, not measurements — per §0.3, correct a specific dish's own factor once it's actually weighed. Implemented in `tools/catalog_pipeline/lib/src/recipe_yield.dart`; `fetch_catalog.dart` now resolves recipe entries end to end (each ingredient looked up, summed, yield-adjusted) instead of skipping them.
+
+### 0.3a-i Superseded: each row states its own yield factor (revised)
+
+The two constants above are now the **fallback**, not the primary source. A dish's yield factor is:
+
+```
+yield factor = the row's g column  ÷  the ingredient grams in its Composition column
+```
+
+That is not a new estimate — it is what §0.4 already says those two columns mean: **g** is "estimated grams for that serving", **Composition** is the "ingredient breakdown **per serving**". Their ratio is what the pot actually did for that specific dish, and it is available for every recipe row in this catalog.
+
+Measured across all 249 recipe rows, the constants were right for about an eighth of them:
+
+| Row's own factor | Rows | What the constants did |
+|---|---|---|
+| 0.8–1.2× | 143 | applied 2.75×, deflating per-100g values ~2.75× |
+| 1.2–1.8× | 67 | applied 2.5–2.75× |
+| 1.8–2.6× | 31 | roughly right |
+| >2.6× | 8 | applied 2.5×, concentrating rasam and thin dal 2–4× |
+
+The reason so many sit near 1.0× is that most rows are not "raw dry ingredients that will absorb water" at all — a 40 g piece of mohanthal is made from 42 g of besan, ghee and sugar, and a 100 g plate of bhel from 100 g of components. Applying an open-pot factor to those claimed the mohanthal weighed 115 g and cut its energy density by nearly two thirds. The rows at the other end (pepper rasam, 12 g of solids in a 150 g katori) are the reverse case: the water is real, and deliberately not listed as an ingredient because water has no nutrients.
+
+The constants still apply where a caller has no serving weight, or where a row's two weight columns imply a factor outside **0.5×–15×** — a range wide enough to admit every real row (the catalog spans 0.81× to 12.5×) and narrow enough to catch a typo. Such a row is reported as `yieldWarning` in the draft seed; fix the weight column rather than the pipeline.
+
+§0.3's advice is unchanged and now matters more: weighing your own katori corrects the yield factor directly, because the serving weight *is* the yield factor.
+
+## 0.3b Where a recipe ingredient's nutrients come from (resolved 2026-09-10)
+
+An ingredient string in a Composition cell resolves to a catalog row: on its own name, an `Also` synonym, the leading segment before a `,` or `/`, or a line in `ingredientAliases` (`tools/catalog_pipeline/lib/src/ingredient_aliases.dart`). If none of those matches, the pipeline reports the dish and the ingredient and leaves the dish out — it does not guess.
+
+There used to be one more step: search FoodData Central for the raw ingredient string. It is gone. FDC has never heard of `sev`, `khoya` or `idli batter`, but its search returns whatever shares a word — `batter` matched *APPLEBEE'S, fish, hand battered*, `rice` matched *Rice noodles, cooked*, `milk` matched *Crackers, milk*. Every one of those matched, so the pipeline reported **zero failures** while computing 55 dishes — idli, every dosa, curd rice, every rice dish — from the wrong food, under a `verified` badge. That is the failure §0.2 exists to prevent, and it is worse than a gap because it is invisible.
+
+Everything else is settled in `ingredientAliases` with the closest sensible row, because this is a household tracker: `oil/ghee` means oil, a 3 g tempering is mostly oil, a coconut filling is mostly coconut, and a sambar podi is a spice blend. Being a little off on 5 g of powder changes nothing anyone would do about it. The rule that stays is the narrow one — a name maps to a row **someone chose**, never to whatever a text search returned.
+
+All 249 recipe rows currently resolve every ingredient. When a new row does not, add an alias line saying which row and why; give it a row of its own only if it is a genuinely distinct food (that is where `Pav`, `Broken wheat`, `Hung curd` and `Colocasia leaves` came from).
+
 ## 0.4 Column meanings
 
 | Column | Meaning |
@@ -74,6 +125,12 @@ Standard measures used throughout:
 | **Serving** | The default serving offered when logging |
 | **g** | Estimated grams for that serving (§0.3) |
 | **Composition** | Ingredient breakdown per serving, or the sourcing basis |
+
+Two conventions inside a **Composition** cell, both of which the parser now honours:
+
+- **A spaced em-dash ends the ingredient list.** Everything after ` — ` is the curator's note about the dish, not food: `…chilli, sesame — usually eaten with 5 g oil or ghee added` is four ingredients and a remark, not five ingredients.
+- **A parenthetical restates, it does not add.** `Idli batter 90 g (rice 45 g + urad 16 g raw basis)` is 90 g of ingredients, not 151 g.
+
 
 ## 0.5 Priority tiers
 

@@ -21,6 +21,15 @@ class FoodItems extends Table with Identifiable, SoftDeletable {
 
   /// `verified` | `derived` | `label` | `community` | `user`.
   TextColumn get qualityTier => text()();
+
+  /// `usda_fdc` | `usda_fdc_component` | `catalog_pipeline_recipe` | `user`.
+  ///
+  /// `usda_fdc_component` is a USDA food that backs a recipe ingredient
+  /// without being a catalog entry in its own right — the FDC row behind
+  /// "puffed rice" in bhel. It exists so a recipe's components trace back
+  /// to their source, carries a raw USDA description rather than a name
+  /// anyone would search for, and has no serving size, so it is
+  /// deliberately kept out of the search index (`CatalogImporter`).
   TextColumn get provenanceSource => text()();
   TextColumn get provenanceId => text().nullable()();
   IntColumn get revision => integer().withDefault(const Constant(1))();

@@ -9,19 +9,14 @@ import '../tokens.g.dart';
 class NourishlyBottomNavItem {
   const NourishlyBottomNavItem({required this.icon, required this.label});
 
-  // Material icons stand in for the prototype's hand-drawn stroke icons
-  // (clock, ascending bars, droplet, person) until the design system gets
-  // custom-painted equivalents — a fidelity gap worth closing later, not
-  // in Phase 1 scaffolding.
   final IconData icon;
   final String label;
 }
 
 /// The four-tab-plus-centre-action navigation bar from prototype screen 3
-/// (§28.1): "Bottom tab navigation with four tabs and a prominent central
-/// log action, dashboard-first." The centre action is not a destination —
-/// it opens the logging flow modally (§28.4) — so it takes its own
-/// [onFabPressed] callback rather than participating in [currentIndex].
+/// (§28.1). The centre action is not a destination — it opens the logging
+/// flow modally (§28.4) — so it takes its own [onFabPressed] callback
+/// rather than participating in [currentIndex].
 class NourishlyBottomNav extends StatelessWidget {
   const NourishlyBottomNav({
     super.key,
@@ -32,8 +27,16 @@ class NourishlyBottomNav extends StatelessWidget {
   }) : assert(
          items.length == 4,
          'The prototype nav bar always carries exactly four destinations '
-         'around the centre action (Today, Insights, Water, Profile).',
+         '(Today, Insights, Water, Profile) around the centre action.',
        );
+
+  /// The bar's own height, excluding the bottom safe-area inset.
+  ///
+  /// This is fixed deliberately. `Scaffold` lays its `bottomNavigationBar`
+  /// out with *loose* constraints whose maxHeight is the whole screen, so
+  /// any unbounded-height child here (an `Align`/`Center`, a `Spacer`)
+  /// silently expands to fill the screen, collapsing the body to nothing.
+  static const double barHeight = 64;
 
   final List<NourishlyBottomNavItem> items;
   final int currentIndex;
@@ -52,13 +55,8 @@ class NourishlyBottomNav extends StatelessWidget {
       ),
       child: SafeArea(
         top: false,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(
-            NourishlySpace.s1,
-            NourishlySpace.s1,
-            NourishlySpace.s1,
-            NourishlySpace.s2,
-          ),
+        child: SizedBox(
+          height: barHeight,
           child: Row(
             children: [
               _destination(context, 0),
@@ -83,20 +81,17 @@ class NourishlyBottomNav extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: () => onDestinationSelected(index),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: NourishlySpace.s1),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(item.icon, size: 20, color: color),
-                const SizedBox(height: 3),
-                Text(
-                  item.label,
-                  style: NourishlyTypography.forInk(color).overline
-                      .copyWith(letterSpacing: 0, height: 1),
-                ),
-              ],
-            ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(item.icon, size: 22, color: color),
+              const SizedBox(height: 3),
+              Text(
+                item.label,
+                style: NourishlyTypography.forInk(color).overline
+                    .copyWith(letterSpacing: 0, height: 1),
+              ),
+            ],
           ),
         ),
       ),
@@ -113,26 +108,19 @@ class _FabSlot extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.nourishlyColors;
     return Expanded(
-      child: Center(
-        child: Semantics(
-          button: true,
-          label: 'Log food or water',
-          child: Material(
-            color: colors.accent,
-            shape: const CircleBorder(),
-            elevation: 0,
-            child: InkWell(
-              customBorder: const CircleBorder(),
-              onTap: onPressed,
-              child: SizedBox(
-                width: 44,
-                height: 44,
-                child: Icon(
-                  Icons.add_rounded,
-                  color: colors.accentInk,
-                  size: 22,
-                ),
-              ),
+      child: Semantics(
+        button: true,
+        label: 'Log food or water',
+        child: Material(
+          color: colors.accent,
+          shape: const CircleBorder(),
+          child: InkWell(
+            customBorder: const CircleBorder(),
+            onTap: onPressed,
+            child: SizedBox(
+              width: 46,
+              height: 46,
+              child: Icon(Icons.add_rounded, color: colors.accentInk, size: 24),
             ),
           ),
         ),

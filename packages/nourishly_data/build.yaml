@@ -1,0 +1,10 @@
+targets:
+  $default:
+    builders:
+      drift_dev:
+        options:
+          # Registers the fts5 module so drift_dev's SQL analyzer can parse
+          # tables/search.drift's `CREATE VIRTUAL TABLE ... USING fts5(...)`.
+          sqlite:
+            modules:
+              - fts5

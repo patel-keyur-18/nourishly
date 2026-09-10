@@ -55,7 +55,7 @@ Gujarati cooking has two properties that matter for accurate tracking, and both 
 | Kobi nu shaak | cabbage sabzi | 1 katori | 110 | Cabbage 100 g, oil 7 g, peas 15 g |
 | Flower bataka | cauliflower-potato | 1 katori | 125 | Cauliflower 70 g, potato 45 g, oil 9 g |
 | Sev tameta | — | 1 katori | 130 | See §1 |
-| Bateta poha nu shaak | — | 1 katori | 120 | Potato 90 g, poha 15 g, oil 8 g |
+| Bateta poha nu shaak | — | 1 katori | 120 | Potato 90 g, raw poha 15 g, oil 8 g |
 | **①** Undhiyu | umbadiyu | 1 katori | 160 | Surti papdi 40 g, yam 25 g, potato 25 g, brinjal 20 g, muthiya 25 g, oil 15 g, coconut 10 g — **the highest-fat dish in this list** |
 | Sambharo | cabbage-carrot stir-fry | 1 katori | 90 | Cabbage 60 g, carrot 25 g, oil 6 g, mustard |
 | Kachumber | salad | 1 katori | 80 | Cucumber 40 g, tomato 25 g, onion 15 g, lemon |
@@ -77,9 +77,9 @@ The category Gujarat is best known for, and the one where portion estimation is 
 | Muthiya, fried | — | 3 pieces | 80 | As above + absorbed oil 6 g |
 | Patra | alu vadi, colocasia rolls | 4 pieces | 80 | Colocasia leaves 30 g, besan 25 g, jaggery 5 g, oil 10 g |
 | Fafda | — | 30 g | 30 | Besan 20 g, absorbed oil 9 g |
-| Gathiya | — | 30 g | 30 | Besan 20 g, absorbed oil 9 g |
+| Gathiya | ganthiya | 30 g | 30 | Besan 20 g, absorbed oil 9 g |
 | Chorafali | — | 25 g | 25 | Besan-urad 15 g, absorbed oil 9 g |
-| Sev, thin | nylon sev | 20 g | 20 | Besan 13 g, absorbed oil 6 g |
+| Sev, thin | sev, nylon sev | 20 g | 20 | Besan 13 g, absorbed oil 6 g |
 | **①** Khakhra, plain | — | 1 piece | 20 | Wheat flour 18 g, oil 2 g |
 | Khakhra, masala/methi | — | 1 piece | 22 | As above + methi, extra oil 1 g |
 | Methi na gota | — | 3 pieces | 70 | Besan 30 g, methi 12 g, absorbed oil 18 g |

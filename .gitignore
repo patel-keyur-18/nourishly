@@ -1,0 +1,10 @@
+# Dart/Flutter build artifacts for any package under this repo that
+# doesn't carry its own .gitignore (e.g. hand-scaffolded tools/* packages
+# that weren't created via `dart create`/`flutter create`).
+.dart_tool/
+.packages
+build/
+pubspec.lock
+!/app/pubspec.lock
+
+.DS_Store

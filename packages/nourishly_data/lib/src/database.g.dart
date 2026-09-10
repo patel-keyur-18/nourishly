@@ -3,6 +3,222 @@
 part of 'database.dart';
 
 // ignore_for_file: type=lint
+class FoodSearchIndex extends Table
+    with
+        TableInfo<FoodSearchIndex, FoodSearchEntries>,
+        VirtualTableInfo<FoodSearchIndex, FoodSearchEntries> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  FoodSearchIndex(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _foodIdMeta = const VerificationMeta('foodId');
+  late final GeneratedColumn<String> foodId = GeneratedColumn<String>(
+    'food_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: '',
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: '',
+  );
+  @override
+  List<GeneratedColumn> get $columns => [foodId, name];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'food_search_index';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<FoodSearchEntries> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('food_id')) {
+      context.handle(
+        _foodIdMeta,
+        foodId.isAcceptableOrUnknown(data['food_id']!, _foodIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_foodIdMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => const {};
+  @override
+  FoodSearchEntries map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return FoodSearchEntries(
+      foodId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}food_id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+    );
+  }
+
+  @override
+  FoodSearchIndex createAlias(String alias) {
+    return FoodSearchIndex(attachedDatabase, alias);
+  }
+
+  @override
+  bool get dontWriteConstraints => true;
+  @override
+  String get moduleAndArgs => 'fts5(food_id UNINDEXED, name)';
+}
+
+class FoodSearchEntries extends DataClass
+    implements Insertable<FoodSearchEntries> {
+  final String foodId;
+  final String name;
+  const FoodSearchEntries({required this.foodId, required this.name});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['food_id'] = Variable<String>(foodId);
+    map['name'] = Variable<String>(name);
+    return map;
+  }
+
+  FoodSearchIndexCompanion toCompanion(bool nullToAbsent) {
+    return FoodSearchIndexCompanion(foodId: Value(foodId), name: Value(name));
+  }
+
+  factory FoodSearchEntries.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return FoodSearchEntries(
+      foodId: serializer.fromJson<String>(json['food_id']),
+      name: serializer.fromJson<String>(json['name']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'food_id': serializer.toJson<String>(foodId),
+      'name': serializer.toJson<String>(name),
+    };
+  }
+
+  FoodSearchEntries copyWith({String? foodId, String? name}) =>
+      FoodSearchEntries(foodId: foodId ?? this.foodId, name: name ?? this.name);
+  FoodSearchEntries copyWithCompanion(FoodSearchIndexCompanion data) {
+    return FoodSearchEntries(
+      foodId: data.foodId.present ? data.foodId.value : this.foodId,
+      name: data.name.present ? data.name.value : this.name,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FoodSearchEntries(')
+          ..write('foodId: $foodId, ')
+          ..write('name: $name')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(foodId, name);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is FoodSearchEntries &&
+          other.foodId == this.foodId &&
+          other.name == this.name);
+}
+
+class FoodSearchIndexCompanion extends UpdateCompanion<FoodSearchEntries> {
+  final Value<String> foodId;
+  final Value<String> name;
+  final Value<int> rowid;
+  const FoodSearchIndexCompanion({
+    this.foodId = const Value.absent(),
+    this.name = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  FoodSearchIndexCompanion.insert({
+    required String foodId,
+    required String name,
+    this.rowid = const Value.absent(),
+  }) : foodId = Value(foodId),
+       name = Value(name);
+  static Insertable<FoodSearchEntries> custom({
+    Expression<String>? foodId,
+    Expression<String>? name,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (foodId != null) 'food_id': foodId,
+      if (name != null) 'name': name,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  FoodSearchIndexCompanion copyWith({
+    Value<String>? foodId,
+    Value<String>? name,
+    Value<int>? rowid,
+  }) {
+    return FoodSearchIndexCompanion(
+      foodId: foodId ?? this.foodId,
+      name: name ?? this.name,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (foodId.present) {
+      map['food_id'] = Variable<String>(foodId.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FoodSearchIndexCompanion(')
+          ..write('foodId: $foodId, ')
+          ..write('name: $name, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $UsersTable extends Users with TableInfo<$UsersTable, User> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -16469,6 +16685,7 @@ class ReminderRulesCompanion extends UpdateCompanion<ReminderRule> {
 abstract class _$NourishlyDatabase extends GeneratedDatabase {
   _$NourishlyDatabase(QueryExecutor e) : super(e);
   $NourishlyDatabaseManager get managers => $NourishlyDatabaseManager(this);
+  late final FoodSearchIndex foodSearchIndex = FoodSearchIndex(this);
   late final $UsersTable users = $UsersTable(this);
   late final $UserProfileVersionsTable userProfileVersions =
       $UserProfileVersionsTable(this);
@@ -16524,6 +16741,7 @@ abstract class _$NourishlyDatabase extends GeneratedDatabase {
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
+    foodSearchIndex,
     users,
     userProfileVersions,
     goals,
@@ -16557,6 +16775,162 @@ abstract class _$NourishlyDatabase extends GeneratedDatabase {
   ];
 }
 
+typedef $FoodSearchIndexCreateCompanionBuilder =
+    FoodSearchIndexCompanion Function({
+      required String foodId,
+      required String name,
+      Value<int> rowid,
+    });
+typedef $FoodSearchIndexUpdateCompanionBuilder =
+    FoodSearchIndexCompanion Function({
+      Value<String> foodId,
+      Value<String> name,
+      Value<int> rowid,
+    });
+
+class $FoodSearchIndexFilterComposer
+    extends Composer<_$NourishlyDatabase, FoodSearchIndex> {
+  $FoodSearchIndexFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get foodId => $composableBuilder(
+    column: $table.foodId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $FoodSearchIndexOrderingComposer
+    extends Composer<_$NourishlyDatabase, FoodSearchIndex> {
+  $FoodSearchIndexOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get foodId => $composableBuilder(
+    column: $table.foodId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $FoodSearchIndexAnnotationComposer
+    extends Composer<_$NourishlyDatabase, FoodSearchIndex> {
+  $FoodSearchIndexAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get foodId =>
+      $composableBuilder(column: $table.foodId, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+}
+
+class $FoodSearchIndexTableManager
+    extends
+        RootTableManager<
+          _$NourishlyDatabase,
+          FoodSearchIndex,
+          FoodSearchEntries,
+          $FoodSearchIndexFilterComposer,
+          $FoodSearchIndexOrderingComposer,
+          $FoodSearchIndexAnnotationComposer,
+          $FoodSearchIndexCreateCompanionBuilder,
+          $FoodSearchIndexUpdateCompanionBuilder,
+          (
+            FoodSearchEntries,
+            BaseReferences<
+              _$NourishlyDatabase,
+              FoodSearchIndex,
+              FoodSearchEntries
+            >,
+          ),
+          FoodSearchEntries,
+          PrefetchHooks Function()
+        > {
+  $FoodSearchIndexTableManager(_$NourishlyDatabase db, FoodSearchIndex table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $FoodSearchIndexFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $FoodSearchIndexOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $FoodSearchIndexAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> foodId = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => FoodSearchIndexCompanion(
+                foodId: foodId,
+                name: name,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String foodId,
+                required String name,
+                Value<int> rowid = const Value.absent(),
+              }) => FoodSearchIndexCompanion.insert(
+                foodId: foodId,
+                name: name,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<FoodSearchIndex, FoodSearchEntries>(table),
+                  BaseReferences<
+                    _$NourishlyDatabase,
+                    FoodSearchIndex,
+                    FoodSearchEntries
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $FoodSearchIndexProcessedTableManager =
+    ProcessedTableManager<
+      _$NourishlyDatabase,
+      FoodSearchIndex,
+      FoodSearchEntries,
+      $FoodSearchIndexFilterComposer,
+      $FoodSearchIndexOrderingComposer,
+      $FoodSearchIndexAnnotationComposer,
+      $FoodSearchIndexCreateCompanionBuilder,
+      $FoodSearchIndexUpdateCompanionBuilder,
+      (
+        FoodSearchEntries,
+        BaseReferences<_$NourishlyDatabase, FoodSearchIndex, FoodSearchEntries>,
+      ),
+      FoodSearchEntries,
+      PrefetchHooks Function()
+    >;
 typedef $$UsersTableCreateCompanionBuilder = UsersCompanion Function({
   required String id,
   Value<DateTime> createdAt,
@@ -30382,6 +30756,8 @@ typedef $$ReminderRulesTableProcessedTableManager =
 class $NourishlyDatabaseManager {
   final _$NourishlyDatabase _db;
   $NourishlyDatabaseManager(this._db);
+  $FoodSearchIndexTableManager get foodSearchIndex =>
+      $FoodSearchIndexTableManager(_db, _db.foodSearchIndex);
   $$UsersTableTableManager get users =>
       $$UsersTableTableManager(_db, _db.users);
   $$UserProfileVersionsTableTableManager get userProfileVersions =>

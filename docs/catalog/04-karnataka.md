@@ -21,15 +21,15 @@ Treating these as one cuisine produces wrong portion sizes and wrong staples. Cu
 | **①** Set dose | set dosa | 3 pieces | 150 | Soft batter, oil 8 g total |
 | Benne dose | Davanagere benne dosa | 1 piece | 120 | Dosa batter 80 g, **butter 22 g** — the defining ingredient; a distinct food from plain dosa |
 | **①** Neer dose | neer dosa | 3 pieces | 130 | Rice batter 110 g, coconut milk 15 g, oil 4 g |
-| Open butter masala dosa | — | 1 piece | 190 | Dosa 90 g, palya 55 g, butter 28 g |
+| Open butter masala dosa | — | 1 piece | 190 | Dosa 90 g, potato palya 55 g, butter 28 g |
 | Rava dose | — | 1 piece | 95 | Rava 30 g, rice flour 15 g, oil 10 g |
 | **①** Rava idli | — | 2 pieces | 100 | Rava 35 g, curd 20 g, ghee 6 g, cashew |
 | **①** Uppittu | upma, uppuma | 1 katori | 150 | Rava 45 g, oil 8 g, onion 20 g |
 | **①** Khara bath | — | 1 katori | 160 | Rava 45 g, vegetables 30 g, ghee 10 g, vangi bath powder 4 g |
 | Kesari bath | — | 1 katori | 130 | Rava 35 g, ghee 18 g, sugar 30 g |
 | **①** Chow chow bath | — | 1 plate | 280 | Khara bath 145 g + kesari bath 135 g — logged as one plate |
-| Avalakki | poha, oggarane avalakki | 1 katori | 130 | Poha 45 g, oil 6 g, onion 20 g, peanuts 8 g |
-| Shavige bath | vermicelli | 1 katori | 150 | Vermicelli 45 g, oil 8 g, vegetables 25 g |
+| Avalakki | oggarane avalakki | 1 katori | 130 | Raw poha 45 g, oil 6 g, onion 20 g, peanuts 8 g |
+| Shavige bath | vermicelli bath | 1 katori | 150 | Vermicelli 45 g, oil 8 g, vegetables 25 g |
 | Goli baje | Mangalore bajji | 4 pieces | 80 | Refined flour 30 g, curd 10 g, absorbed oil 18 g |
 | Mangalore buns | banana buns | 2 pieces | 90 | Refined flour 35 g, banana 20 g, absorbed oil 16 g, sugar 8 g |
 | Kadubu, steamed | — | 2 pieces | 90 | Rice flour 40 g, coconut filling 20 g |
@@ -86,7 +86,7 @@ Treating these as one cuisine produces wrong portion sizes and wrong staples. Cu
 | Menthya soppu saaru | fenugreek greens | 1 katori | 150 | Methi greens 40 g, toor dal 18 g, oil 6 g |
 | **①** Palya, beans | poriyal | 1 katori | 110 | French beans 95 g, coconut 12 g, oil 6 g |
 | **①** Palya, cabbage | — | 1 katori | 110 | Cabbage 95 g, coconut 12 g, oil 6 g |
-| Palya, potato | — | 1 katori | 120 | Potato 100 g, oil 8 g, mustard, turmeric |
+| Palya, potato | potato palya | 1 katori | 120 | Potato 100 g, oil 8 g, mustard, turmeric |
 | **①** Kosambari | — | 1 katori | 90 | Moong dal soaked 25 g, cucumber 45 g, coconut 8 g, lemon |
 | Sagu | — | 1 katori | 140 | Mixed vegetables 80 g, coconut 15 g, oil 9 g — the standard set dosa accompaniment |
 
@@ -99,7 +99,7 @@ Treating these as one cuisine produces wrong portion sizes and wrong staples. Cu
 | Kori gassi | Mangalorean chicken curry | 1 katori | 160 | Chicken 85 g, coconut 25 g, coconut oil 12 g, gassi masala |
 | Meen gassi | fish curry | 1 katori | 160 | Fish 75 g, coconut 22 g, coconut oil 12 g |
 | Chicken sukka | kori sukka | 1 katori | 130 | Chicken 90 g, coconut 20 g, oil 10 g |
-| Neer dose with gassi | — | 1 plate | 290 | 3 neer dose 130 g + gassi 160 g |
+| Neer dose with gassi | — | 1 plate | 290 | Neer dose 130 g + kori gassi 160 g |
 | Pundi | rice dumplings | 3 pieces | 120 | Rice 45 g, coconut 10 g |
 | Patrode | colocasia rolls | 3 pieces | 90 | Colocasia leaves 30 g, rice-dal paste 35 g, oil 10 g |
 
@@ -113,7 +113,7 @@ Treating these as one cuisine produces wrong portion sizes and wrong staples. Cu
 | Mysore pak | — | 1 piece | 35 | Besan 12 g, ghee 15 g, sugar 14 g — **very high fat; the ghee is not optional** |
 | Dharwad peda | — | 2 pieces | 40 | Khoya 25 g, sugar 14 g |
 | Payasa, shavige | vermicelli kheer | 1 katori | 150 | Vermicelli 20 g, milk 110 ml, sugar 22 g, ghee 5 g |
-| Payasa, hesaru bele | moong dal | 1 katori | 150 | Moong dal 22 g, jaggery 30 g, coconut milk 40 g |
+| Payasa, hesaru bele | hesaru bele payasa, moong dal payasa | 1 katori | 150 | Moong dal 22 g, jaggery 30 g, coconut milk 40 g |
 | Halbai | — | 1 piece | 50 | Rice 15 g, coconut milk 20 g, jaggery 15 g |
 | Chiroti | — | 2 pieces | 45 | Refined flour 18 g, absorbed ghee 12 g, sugar 12 g |
 | Kajjaya | — | 2 pieces | 50 | Rice flour 20 g, jaggery 15 g, absorbed oil 10 g |

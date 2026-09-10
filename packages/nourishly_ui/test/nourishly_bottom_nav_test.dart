@@ -81,4 +81,60 @@ void main() {
     );
     expect(inactiveIcon.color, NourishlyLightColors.ink3);
   });
+
+  // Regression: `Scaffold` lays its `bottomNavigationBar` out with loose
+  // constraints whose maxHeight is the whole screen. An unbounded-height
+  // child in here (an `Align`/`Center`, a `Spacer`) therefore expands to
+  // fill the screen, and the body collapses to nothing — which is exactly
+  // how every tab rendered blank with the nav bar floating mid-screen.
+  testWidgets('takes only its own height, never the whole screen', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1170, 2532);
+    tester.view.devicePixelRatio = 3.0;
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: NourishlyTheme.light(),
+        home: Scaffold(
+          body: const Center(child: Text('body')),
+          bottomNavigationBar: NourishlyBottomNav(
+            items: const [
+              NourishlyBottomNavItem(
+                icon: Icons.access_time_rounded,
+                label: 'Today',
+              ),
+              NourishlyBottomNavItem(
+                icon: Icons.bar_chart_rounded,
+                label: 'Insights',
+              ),
+              NourishlyBottomNavItem(
+                icon: Icons.water_drop_rounded,
+                label: 'Water',
+              ),
+              NourishlyBottomNavItem(
+                icon: Icons.person_rounded,
+                label: 'Profile',
+              ),
+            ],
+            currentIndex: 0,
+            onDestinationSelected: (_) {},
+            onFabPressed: () {},
+          ),
+        ),
+      ),
+    );
+
+    final screenHeight = tester.getSize(find.byType(Scaffold)).height;
+    final navHeight = tester.getSize(find.byType(NourishlyBottomNav)).height;
+
+    expect(navHeight, lessThan(screenHeight / 4));
+    // The body must keep the rest of the screen.
+    expect(tester.getSize(find.text('body')).height, greaterThan(0));
+    expect(
+      tester.getBottomLeft(find.byType(NourishlyBottomNav)).dy,
+      moreOrLessEquals(screenHeight, epsilon: 0.5),
+    );
+  });
 }

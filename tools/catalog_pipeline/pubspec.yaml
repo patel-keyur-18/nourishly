@@ -1,0 +1,20 @@
+name: catalog_pipeline
+description: >-
+  Offline ETL for the Nourishly food catalog (§19.7, catalog spec §0.2).
+  Parses docs/catalog/*.md into structured source entries, resolves
+  ingredients against USDA FoodData Central, and produces the bundled
+  catalog seed. Build-time tool only — never runs on-device (AP-1).
+version: 0.1.0
+publish_to: "none"
+
+environment:
+  sdk: ^3.13.3
+
+dependencies:
+  meta: ^1.16.0
+  http: ^1.6.0
+  uuid: ^4.6.0
+
+dev_dependencies:
+  lints: ^6.0.0
+  test: ^1.25.6
