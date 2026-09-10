@@ -40,6 +40,49 @@ class WaterLogDao {
         .write(WaterLogEntriesCompanion(deletedAt: Value(DateTime.now())));
   }
 
+  /// Restores an entry [undo] soft-deleted.
+  Future<void> restore(String entryId) {
+    return (_db.update(_db.waterLogEntries)..where((e) => e.id.equals(entryId)))
+        .write(const WaterLogEntriesCompanion(deletedAt: Value(null)));
+  }
+
+  /// Changes a past entry's amount (FR-W-07).
+  ///
+  /// Delete-and-recreate, never an in-place amount change, per this DAO's
+  /// additive-by-design contract above: the original row stays as a
+  /// soft-deleted fact and a new one carries the corrected volume. The
+  /// original `loggedAt` is kept so the entry does not jump position in
+  /// the day's list just because it was corrected.
+  Future<String> edit({
+    required String entryId,
+    required double volumeMl,
+  }) async {
+    final original = await (_db.select(
+      _db.waterLogEntries,
+    )..where((e) => e.id.equals(entryId))).getSingle();
+
+    final replacementId = _uuid.v7();
+    await _db.batch((batch) {
+      batch.update(
+        _db.waterLogEntries,
+        WaterLogEntriesCompanion(deletedAt: Value(DateTime.now())),
+        where: (e) => e.id.equals(entryId),
+      );
+      batch.insert(
+        _db.waterLogEntries,
+        WaterLogEntriesCompanion.insert(
+          id: replacementId,
+          ownerId: original.ownerId,
+          logDate: original.logDate,
+          loggedAt: original.loggedAt,
+          volumeMl: volumeMl,
+          source: original.source,
+        ),
+      );
+    });
+    return replacementId;
+  }
+
   Stream<List<WaterLogEntry>> watchToday({
     required String ownerId,
     required DateTime logDate,

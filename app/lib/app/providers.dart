@@ -34,6 +34,10 @@ final waterLogDaoProvider = Provider<WaterLogDao>((ref) {
   return WaterLogDao(ref.watch(nourishlyDatabaseProvider));
 });
 
+final customFoodDaoProvider = Provider<CustomFoodDao>((ref) {
+  return CustomFoodDao(ref.watch(nourishlyDatabaseProvider));
+});
+
 /// The four meal slots, seeded by the catalog import (§16.4) — the picker
 /// on the portion-selection screen reads this rather than hardcoding them.
 final mealSlotsProvider = FutureProvider<List<MealSlot>>((ref) async {

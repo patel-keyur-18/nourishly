@@ -68,6 +68,93 @@ class FoodLoggingDao {
     return entryId;
   }
 
+  /// Soft-deletes one entry — the inline-undo path (UX-7, FR-M-05). The
+  /// row and its nutrient snapshot stay put so [restore] can bring the
+  /// entry back without recomputing anything.
+  Future<void> deleteEntry(String entryId) {
+    return (_db.update(_db.foodLogEntries)..where((e) => e.id.equals(entryId)))
+        .write(
+          FoodLogEntriesCompanion(
+            deletedAt: Value(DateTime.now()),
+            updatedAt: Value(DateTime.now()),
+          ),
+        );
+  }
+
+  /// Undoes [deleteEntry].
+  Future<void> restore(String entryId) {
+    return (_db.update(_db.foodLogEntries)..where((e) => e.id.equals(entryId)))
+        .write(
+          const FoodLogEntriesCompanion(
+            deletedAt: Value(null),
+          ),
+        );
+  }
+
+  /// Edits an entry's portion and/or meal slot (FR-M-05).
+  ///
+  /// The nutrient snapshot is replaced wholesale, as [LogEntryNutrients]
+  /// requires — but by rescaling the *frozen* amounts to the new gram
+  /// weight, not by re-reading the catalog. A correction to the portion
+  /// you ate must not quietly pull in catalog edits made since you logged
+  /// it; that is what ADR-008's immutable history protects.
+  Future<void> updateEntry({
+    required String entryId,
+    double? quantity,
+    String? servingId,
+    String? mealSlotId,
+  }) async {
+    final entry = await (_db.select(
+      _db.foodLogEntries,
+    )..where((e) => e.id.equals(entryId))).getSingle();
+
+    final newServingId = servingId ?? entry.servingSizeId;
+    final newQuantity = quantity ?? entry.quantity;
+
+    var newGrams = entry.gramsConsumed;
+    if (newServingId != null) {
+      final serving = await (_db.select(
+        _db.servingSizes,
+      )..where((s) => s.id.equals(newServingId))).getSingle();
+      newGrams = serving.grams * newQuantity;
+    } else if (entry.quantity != 0) {
+      // No serving to measure against (a grams-only entry): scale by the
+      // change in quantity alone.
+      newGrams = entry.gramsConsumed / entry.quantity * newQuantity;
+    }
+
+    final snapshot = await (_db.select(
+      _db.logEntryNutrients,
+    )..where((n) => n.entryId.equals(entryId))).get();
+    final scale = entry.gramsConsumed == 0
+        ? 0.0
+        : newGrams / entry.gramsConsumed;
+
+    await _db.batch((batch) {
+      batch.update(
+        _db.foodLogEntries,
+        FoodLogEntriesCompanion(
+          quantity: Value(newQuantity),
+          gramsConsumed: Value(newGrams),
+          servingSizeId: Value(newServingId),
+          mealSlotId: mealSlotId == null ? const Value.absent() : Value(mealSlotId),
+          updatedAt: Value(DateTime.now()),
+        ),
+        where: (e) => e.id.equals(entryId),
+      );
+
+      batch.deleteWhere(_db.logEntryNutrients, (n) => n.entryId.equals(entryId));
+      batch.insertAll(_db.logEntryNutrients, [
+        for (final n in snapshot)
+          LogEntryNutrientsCompanion.insert(
+            entryId: entryId,
+            nutrientId: n.nutrientId,
+            amount: n.amount * scale,
+          ),
+      ]);
+    });
+  }
+
   /// Today's logged entries for [ownerId], newest first, joined to the
   /// food and meal slot names — what the minimal Today screen (§27.2,
   /// pending the real dashboard in Phase 3) shows to confirm a log

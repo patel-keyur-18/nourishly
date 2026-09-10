@@ -334,39 +334,234 @@ class _MealsCard extends StatelessWidget {
       padding: EdgeInsets.zero,
       child: Column(
         children: [
-          for (final slot in bySlot.entries)
+          for (final slot in bySlot.entries) ...[
             Padding(
               padding: const EdgeInsets.fromLTRB(
                 NourishlySpace.s4,
                 NourishlySpace.s3,
                 NourishlySpace.s4,
-                NourishlySpace.s3,
+                NourishlySpace.s1,
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        slot.key,
-                        style: text.label.copyWith(color: colors.ink),
-                      ),
-                      Text(
-                        '${slot.value.length} ${slot.value.length == 1 ? 'item' : 'items'}',
-                        style: text.caption.copyWith(color: colors.ink3),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: NourishlySpace.s1),
+                  Text(slot.key, style: text.overline.copyWith(color: colors.ink3)),
                   Text(
-                    slot.value.map((e) => e.foodName).join(' · '),
-                    style: text.caption.copyWith(color: colors.ink2),
+                    '${slot.value.length} ${slot.value.length == 1 ? 'item' : 'items'}',
+                    style: text.caption.copyWith(color: colors.ink3),
                   ),
                 ],
               ),
             ),
+            for (final logged in slot.value) _LoggedFoodRow(logged: logged),
+          ],
         ],
+      ),
+    );
+  }
+}
+
+/// One logged food, with the two corrections FR-M-05 requires: swipe to
+/// remove (with inline undo, UX-7 — never a confirmation dialog), or tap
+/// to change the portion and meal.
+class _LoggedFoodRow extends ConsumerWidget {
+  const _LoggedFoodRow({required this.logged});
+
+  final LoggedFood logged;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colors = context.nourishlyColors;
+    final text = context.nourishlyText;
+    final quantity = logged.entry.quantity;
+
+    return Dismissible(
+      key: ValueKey(logged.entry.id),
+      direction: DismissDirection.endToStart,
+      background: ColoredBox(
+        color: colors.dangerSoft,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: NourishlySpace.s4),
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: Icon(Icons.delete_outline_rounded, color: colors.danger),
+          ),
+        ),
+      ),
+      onDismissed: (_) => _remove(context, ref),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => _edit(context, ref),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(
+              NourishlySpace.s4,
+              NourishlySpace.s2,
+              NourishlySpace.s4,
+              NourishlySpace.s2,
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    logged.foodName,
+                    style: text.body,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(width: NourishlySpace.s2),
+                Text(
+                  '${quantity.toStringAsFixed(quantity % 1 == 0 ? 0 : 1)}× · '
+                  '${logged.entry.gramsConsumed.toStringAsFixed(0)} g',
+                  style: text.caption.copyWith(color: colors.ink3),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _remove(BuildContext context, WidgetRef ref) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final dao = ref.read(foodLoggingDaoProvider);
+    await dao.deleteEntry(logged.entry.id);
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text('Removed ${logged.foodName}'),
+        action: SnackBarAction(
+          label: 'Undo',
+          onPressed: () => dao.restore(logged.entry.id),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _edit(BuildContext context, WidgetRef ref) {
+    return showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (context) => _EditEntrySheet(logged: logged),
+    );
+  }
+}
+
+class _EditEntrySheet extends ConsumerStatefulWidget {
+  const _EditEntrySheet({required this.logged});
+
+  final LoggedFood logged;
+
+  @override
+  ConsumerState<_EditEntrySheet> createState() => _EditEntrySheetState();
+}
+
+class _EditEntrySheetState extends ConsumerState<_EditEntrySheet> {
+  late double _quantity = widget.logged.entry.quantity;
+  late String _mealSlotId = widget.logged.entry.mealSlotId;
+  bool _saving = false;
+
+  Future<void> _save() async {
+    if (_saving) return;
+    setState(() => _saving = true);
+    await ref
+        .read(foodLoggingDaoProvider)
+        .updateEntry(
+          entryId: widget.logged.entry.id,
+          quantity: _quantity,
+          mealSlotId: _mealSlotId,
+        );
+    if (mounted) Navigator.of(context).pop();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.nourishlyColors;
+    final text = context.nourishlyText;
+    final gramsPerUnit = widget.logged.entry.quantity == 0
+        ? 0.0
+        : widget.logged.entry.gramsConsumed / widget.logged.entry.quantity;
+
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(
+          NourishlySpace.s4,
+          0,
+          NourishlySpace.s4,
+          NourishlySpace.s4,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              widget.logged.foodName,
+              style: text.heading,
+              textAlign: TextAlign.center,
+            ),
+            const NourishlySectionHeader(label: 'Quantity'),
+            Row(
+              children: [
+                IconButton(
+                  onPressed: _quantity > 0.5
+                      ? () => setState(() => _quantity -= 0.5)
+                      : null,
+                  icon: const Icon(Icons.remove_circle_outline_rounded),
+                  iconSize: 30,
+                  color: colors.accent,
+                ),
+                Expanded(
+                  child: Column(
+                    children: [
+                      Text(
+                        _quantity.toStringAsFixed(_quantity % 1 == 0 ? 0 : 1),
+                        style: text.display.copyWith(height: 1),
+                      ),
+                      const SizedBox(height: NourishlySpace.s1),
+                      Text(
+                        '${(gramsPerUnit * _quantity).toStringAsFixed(0)} g',
+                        style: text.caption.copyWith(color: colors.ink3),
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => setState(() => _quantity += 0.5),
+                  icon: const Icon(Icons.add_circle_outline_rounded),
+                  iconSize: 30,
+                  color: colors.accent,
+                ),
+              ],
+            ),
+            const NourishlySectionHeader(label: 'Meal'),
+            ref
+                .watch(mealSlotsProvider)
+                .when(
+                  loading: () => const LinearProgressIndicator(),
+                  error: (error, _) => Text('$error', style: text.caption),
+                  data: (slots) => Wrap(
+                    spacing: NourishlySpace.s2,
+                    runSpacing: NourishlySpace.s2,
+                    children: [
+                      for (final slot in slots)
+                        ChoiceChip(
+                          label: Text(slot.displayName),
+                          selected: _mealSlotId == slot.id,
+                          onSelected: (_) =>
+                              setState(() => _mealSlotId = slot.id),
+                        ),
+                    ],
+                  ),
+                ),
+            const SizedBox(height: NourishlySpace.s5),
+            FilledButton(
+              onPressed: _saving ? null : _save,
+              child: Text(_saving ? 'Saving…' : 'Save changes'),
+            ),
+          ],
+        ),
       ),
     );
   }

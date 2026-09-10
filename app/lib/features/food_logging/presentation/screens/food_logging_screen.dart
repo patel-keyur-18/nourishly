@@ -177,11 +177,9 @@ class _CreateCustomFoodRow extends StatelessWidget {
     final colors = context.nourishlyColors;
     final text = context.nourishlyText;
     return NourishlyCard(
-      onTap: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Custom food creation is coming soon.')),
-        );
-      },
+      onTap: () => context.push(
+        '/log/new?name=${Uri.encodeQueryComponent(query.trim())}',
+      ),
       child: Row(
         children: [
           Icon(Icons.add_circle_outline_rounded, color: colors.accent, size: 20),

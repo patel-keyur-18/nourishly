@@ -20,23 +20,25 @@ class NourishlyCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.nourishlyColors;
-    final decorated = DecoratedBox(
-      decoration: BoxDecoration(
-        color: colors.surface,
-        borderRadius: BorderRadius.circular(NourishlyRadius.lg),
-        border: Border.all(color: colors.line, width: NourishlyStroke.hairline),
-      ),
-      child: Padding(padding: padding, child: child),
+    final shape = RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(NourishlyRadius.lg),
+      side: BorderSide(color: colors.line, width: NourishlyStroke.hairline),
     );
 
-    if (onTap == null) return decorated;
+    // The surface is a Material, not a DecoratedBox, so that interactive
+    // children inside the card (list tiles, ink wells) have a Material
+    // ancestor to paint their splashes onto — a coloured DecoratedBox in
+    // between would hide them.
     return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(NourishlyRadius.lg),
-        onTap: onTap,
-        child: decorated,
-      ),
+      color: colors.surface,
+      shape: shape,
+      clipBehavior: Clip.antiAlias,
+      child: onTap == null
+          ? Padding(padding: padding, child: child)
+          : InkWell(
+              onTap: onTap,
+              child: Padding(padding: padding, child: child),
+            ),
     );
   }
 }

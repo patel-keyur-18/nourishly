@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../features/dashboard/presentation/screens/dashboard_screen.dart';
+import '../features/food_logging/presentation/screens/custom_food_screen.dart';
 import '../features/food_logging/presentation/screens/food_logging_screen.dart';
 import '../features/food_logging/presentation/screens/food_portion_screen.dart';
 import '../features/goals/presentation/screens/goals_screen.dart';
@@ -46,6 +47,12 @@ final GoRouter appRouter = GoRouter(
           parentNavigatorKey: rootNavigatorKey,
           builder: (context, state) =>
               FoodPortionScreen(foodId: state.pathParameters['foodId']!),
+        ),
+        GoRoute(
+          path: 'new',
+          parentNavigatorKey: rootNavigatorKey,
+          builder: (context, state) =>
+              CustomFoodScreen(initialName: state.uri.queryParameters['name']),
         ),
       ],
     ),

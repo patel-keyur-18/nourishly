@@ -8,6 +8,7 @@
 library;
 
 export 'src/catalog_importer.dart';
+export 'src/dao/custom_food_dao.dart';
 export 'src/dao/default_owner.dart';
 export 'src/dao/food_logging_dao.dart';
 export 'src/dao/food_search_dao.dart';

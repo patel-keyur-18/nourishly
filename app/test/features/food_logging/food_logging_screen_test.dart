@@ -69,7 +69,7 @@ void main() {
       await _seedFood(db, dao, name: 'Paneer');
       await pumpToLogScreen(tester);
 
-      expect(find.text('Search for a food to log.'), findsOneWidget);
+      expect(find.text('Search for a food to log'), findsOneWidget);
     },
   );
 
@@ -83,7 +83,7 @@ void main() {
     await tester.enterText(find.byType(TextField), 'panir');
     // Still within the debounce window — the query hasn't been committed yet.
     await tester.pump(const Duration(milliseconds: 60));
-    expect(find.text('Search for a food to log.'), findsOneWidget);
+    expect(find.text('Search for a food to log'), findsOneWidget);
 
     // Past the ~120ms debounce (§14.7).
     await tester.pump(const Duration(milliseconds: 120));
@@ -136,6 +136,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 150));
     await tester.pumpAndSettle();
 
-    expect(find.text('verified'), findsOneWidget);
+    // The prototype's short provenance badge for lab-measured data.
+    expect(find.text('Lab'), findsOneWidget);
   });
 }

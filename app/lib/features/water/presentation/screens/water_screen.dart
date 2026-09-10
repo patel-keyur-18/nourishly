@@ -239,36 +239,120 @@ class _WaterRow extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.nourishlyColors;
     final text = context.nourishlyText;
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: NourishlySpace.s4,
-        vertical: NourishlySpace.s3,
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.water_drop_rounded, color: colors.accent, size: 18),
-          const SizedBox(width: NourishlySpace.s3),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '${entry.volumeMl.toStringAsFixed(0)} ml',
-                  style: text.body.copyWith(fontWeight: FontWeight.w600),
-                ),
-                Text(
-                  _formatTime(entry.loggedAt),
-                  style: text.caption.copyWith(color: colors.ink3),
-                ),
-              ],
-            ),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        // Tap to correct the amount (FR-W-07).
+        onTap: () => _edit(context, ref),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: NourishlySpace.s4,
+            vertical: NourishlySpace.s3,
           ),
-          TextButton(
-            onPressed: () => ref.read(waterLogDaoProvider).undo(entry.id),
-            child: const Text('Undo'),
+          child: Row(
+            children: [
+              Icon(Icons.water_drop_rounded, color: colors.accent, size: 18),
+              const SizedBox(width: NourishlySpace.s3),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${entry.volumeMl.toStringAsFixed(0)} ml',
+                      style: text.body.copyWith(fontWeight: FontWeight.w600),
+                    ),
+                    Text(
+                      _formatTime(entry.loggedAt),
+                      style: text.caption.copyWith(color: colors.ink3),
+                    ),
+                  ],
+                ),
+              ),
+              TextButton(
+                onPressed: () => _remove(context, ref),
+                child: const Text('Remove'),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
+    );
+  }
+
+  Future<void> _remove(BuildContext context, WidgetRef ref) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final dao = ref.read(waterLogDaoProvider);
+    await dao.undo(entry.id);
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text('Removed ${entry.volumeMl.toStringAsFixed(0)} ml'),
+        action: SnackBarAction(
+          label: 'Undo',
+          onPressed: () => dao.restore(entry.id),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _edit(BuildContext context, WidgetRef ref) async {
+    final newVolume = await showDialog<double>(
+      context: context,
+      builder: (context) => _EditVolumeDialog(initialMl: entry.volumeMl),
+    );
+    if (newVolume == null) return;
+    await ref
+        .read(waterLogDaoProvider)
+        .edit(entryId: entry.id, volumeMl: newVolume);
+  }
+}
+
+class _EditVolumeDialog extends StatefulWidget {
+  const _EditVolumeDialog({required this.initialMl});
+
+  final double initialMl;
+
+  @override
+  State<_EditVolumeDialog> createState() => _EditVolumeDialogState();
+}
+
+class _EditVolumeDialogState extends State<_EditVolumeDialog> {
+  late final _controller = TextEditingController(
+    text: widget.initialMl.toStringAsFixed(0),
+  );
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _submit() {
+    final value = double.tryParse(_controller.text.trim());
+    if (value == null || value <= 0) return;
+    Navigator.of(context).pop(value);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Edit amount'),
+      content: TextField(
+        controller: _controller,
+        autofocus: true,
+        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+        onSubmitted: (_) => _submit(),
+        decoration: const InputDecoration(
+          labelText: 'Millilitres',
+          suffixText: 'ml',
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Cancel'),
+        ),
+        FilledButton(onPressed: _submit, child: const Text('Save')),
+      ],
     );
   }
 }
