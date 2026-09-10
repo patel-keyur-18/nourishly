@@ -1,0 +1,88 @@
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+import '../features/dashboard/presentation/screens/dashboard_screen.dart';
+import '../features/food_logging/presentation/screens/food_logging_screen.dart';
+import '../features/goals/presentation/screens/goals_screen.dart';
+import '../features/onboarding/presentation/screens/onboarding_screen.dart';
+import '../features/reports/presentation/screens/reports_screen.dart';
+import '../features/settings/presentation/screens/settings_screen.dart';
+import '../features/water/presentation/screens/water_screen.dart';
+import 'shell/nourishly_shell.dart';
+
+final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>(
+  debugLabel: 'root',
+);
+
+/// Declarative, typed routes (§28.5) so notification deep links resolve to
+/// a tab plus a stack rather than a detached screen (§28.4) — even though
+/// nothing sends a notification yet, the route shape is right from day one.
+///
+/// Only the routes Phase 1 can actually serve are wired: the four tab
+/// branches, the modal log route, one nested `/profile/goals` push (to
+/// prove nested navigation works), and `/onboarding` (not yet a startup
+/// gate — see [OnboardingScreen]). The rest of §28.5's route table
+/// (`/log/search`, `/today/nutrient/:id`, …) arrives with the features
+/// that need it.
+final GoRouter appRouter = GoRouter(
+  navigatorKey: rootNavigatorKey,
+  initialLocation: '/today',
+  routes: [
+    GoRoute(
+      path: '/onboarding',
+      builder: (context, state) => const OnboardingScreen(),
+    ),
+    GoRoute(
+      path: '/log',
+      parentNavigatorKey: rootNavigatorKey,
+      pageBuilder: (context, state) => const MaterialPage(
+        fullscreenDialog: true,
+        child: FoodLoggingScreen(),
+      ),
+    ),
+    StatefulShellRoute.indexedStack(
+      builder: (context, state, navigationShell) =>
+          NourishlyShell(navigationShell: navigationShell),
+      branches: [
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: '/today',
+              builder: (context, state) => const DashboardScreen(),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: '/insights',
+              builder: (context, state) => const ReportsScreen(),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: '/water',
+              builder: (context, state) => const WaterScreen(),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: '/profile',
+              builder: (context, state) => const SettingsScreen(),
+              routes: [
+                GoRoute(
+                  path: 'goals',
+                  builder: (context, state) => const GoalsScreen(),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    ),
+  ],
+);

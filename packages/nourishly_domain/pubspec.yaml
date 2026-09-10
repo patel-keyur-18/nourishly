@@ -1,0 +1,13 @@
+name: nourishly_domain
+description: >-
+  Nourishly's domain layer: entities, value objects, and repository/service
+  ports. Pure Dart — no Flutter, Drift, or network imports.
+version: 0.1.0
+publish_to: "none"
+
+environment:
+  sdk: ^3.13.3
+
+dev_dependencies:
+  lints: ^6.0.0
+  test: ^1.25.6

@@ -1,0 +1,80 @@
+name: CI
+
+on:
+  push:
+    branches: [develop, main]
+  pull_request:
+
+# The load-bearing rule this workflow exists to enforce (§12.3, NFR-M-02):
+# nutrition_core and nourishly_domain must stay pure Dart, and every
+# package must analyze, format-check, and test clean before it merges.
+
+env:
+  FLUTTER_VERSION: "3.47.3"
+
+jobs:
+  format:
+    name: Format check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+      - name: dart format --set-exit-if-changed
+        run: dart format --output=none --set-exit-if-changed .
+
+  import-lint:
+    name: Domain import lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+      - name: Check nutrition_core / nourishly_domain stay pure Dart
+        run: dart run tools/import_lint/check_domain_imports.dart
+
+  analyze-and-test:
+    name: Analyze & test (${{ matrix.package.path }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package:
+          - path: packages/nutrition_core
+            tool: dart
+          - path: packages/nourishly_domain
+            tool: dart
+          - path: packages/nourishly_ui
+            tool: flutter
+          - path: packages/nourishly_data
+            tool: flutter
+          - path: app
+            tool: flutter
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+
+      # nourishly_data's tests open a real (in-memory) SQLite database via
+      # Drift's NativeDatabase, which dlopens libsqlite3 at runtime.
+      - name: Install libsqlite3 (nourishly_data only)
+        if: matrix.package.path == 'packages/nourishly_data'
+        run: sudo apt-get update && sudo apt-get install -y libsqlite3-0
+
+      - name: Install dependencies
+        working-directory: ${{ matrix.package.path }}
+        run: ${{ matrix.package.tool }} pub get
+
+      - name: Analyze
+        working-directory: ${{ matrix.package.path }}
+        run: ${{ matrix.package.tool }} analyze --fatal-infos
+
+      - name: Test
+        working-directory: ${{ matrix.package.path }}
+        run: ${{ matrix.package.tool }} test

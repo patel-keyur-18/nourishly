@@ -1,0 +1,32 @@
+name: nourishly
+description: >-
+  A private nutrition and hydration tracker for one household — no backend,
+  no accounts, sideloaded (§0.1).
+publish_to: "none"
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.3
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_riverpod: ^3.4.3
+  go_router: ^18.0.1
+
+  nourishly_ui:
+    path: ../packages/nourishly_ui
+  nourishly_domain:
+    path: ../packages/nourishly_domain
+  nourishly_data:
+    path: ../packages/nourishly_data
+  nutrition_core:
+    path: ../packages/nutrition_core
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true

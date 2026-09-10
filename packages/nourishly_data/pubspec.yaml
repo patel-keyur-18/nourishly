@@ -1,0 +1,25 @@
+name: nourishly_data
+description: >-
+  Nourishly's data layer: the Drift (SQLite) schema, DAOs, and repository
+  implementations. No backend, no sync machinery (§0.4) — every table here
+  is the on-device source of truth.
+version: 0.1.0
+publish_to: "none"
+
+environment:
+  sdk: ^3.13.3
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  drift: ^2.35.0
+  drift_flutter: ^0.3.1
+  uuid: ^4.6.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  build_runner: ^2.10.1
+  drift_dev: ^2.35.0
