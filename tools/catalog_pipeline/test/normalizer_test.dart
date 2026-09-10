@@ -4,6 +4,48 @@ import 'package:test/test.dart';
 void main() {
   final normalizer = FdcNormalizer();
 
+  test('matches microgram nutrients reported with the µg symbol, not just ASCII "UG"', () {
+    // Confirmed against a live /food/{id} response: the details endpoint
+    // reports "µg" (micro sign), unlike the search endpoint's "UG" text.
+    // This previously made folate/B12/vitamin A/vitamin D match on zero
+    // of 123 real catalog foods.
+    final food = FdcFood.fromJson({
+      'fdcId': 1,
+      'description': 'Milk, whole',
+      'foodNutrients': [
+        {
+          'nutrient': {'name': 'Folate, total', 'unitName': 'µg'},
+          'amount': 7.0,
+        },
+        {
+          'nutrient': {'name': 'Vitamin B-12', 'unitName': 'µg'},
+          'amount': 2.28,
+        },
+      ],
+    });
+
+    final resolved = normalizer.normalize(food);
+
+    expect(
+      resolved.matches.map((m) => m.nutrient.id),
+      containsAll(['folate', 'vitamin_b12']),
+    );
+  });
+
+  test('matches "Total Sugars" (the real SR Legacy name, confirmed live)', () {
+    final food = FdcFood.fromJson({
+      'fdcId': 1,
+      'description': 'Milk, whole',
+      'foodNutrients': [
+        {'nutrientName': 'Total Sugars', 'unitName': 'G', 'value': 5.05},
+      ],
+    });
+
+    final resolved = normalizer.normalize(food);
+
+    expect(resolved.matches.single.nutrient.id, 'sugar');
+  });
+
   test('matches registry nutrients by name and unit', () {
     final food = FdcFood.fromJson({
       'fdcId': 1,

@@ -34,17 +34,25 @@ class FdcClient {
 
   static final _base = Uri.parse('https://api.nal.usda.gov/fdc/v1');
 
-  /// Searches FDC for [query], preferring `Foundation` and `SR Legacy`
-  /// data (measured/lab-analysed, not survey estimates or branded
-  /// products) — matches the catalog's `quality_tier` intent (§19.11).
-  Future<List<FdcFood>> search(String query, {int pageSize = 5}) async {
+  /// Measured/lab-analysed data (not survey estimates or branded
+  /// products) — the `dataType` filter matching the catalog's preferred
+  /// `quality_tier` (§19.11).
+  static const preferredDataTypes = 'Foundation,SR Legacy';
+
+  /// Searches FDC for [query]. Pass `dataType: null` to search all FDC
+  /// data types, for items (e.g. jaggery) absent from [preferredDataTypes].
+  Future<List<FdcFood>> search(
+    String query, {
+    int pageSize = 5,
+    String? dataType = preferredDataTypes,
+  }) async {
     final uri = _base.replace(
       path: '${_base.path}/foods/search',
       queryParameters: {
         'api_key': _apiKey,
         'query': query,
         'pageSize': '$pageSize',
-        'dataType': 'Foundation,SR Legacy',
+        if (dataType != null) 'dataType': dataType,
       },
     );
 

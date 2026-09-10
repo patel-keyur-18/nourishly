@@ -112,7 +112,7 @@ Raw weights; the pipeline applies cooking yield per dish.
 | Capsicum | simla mirch, kudaimilagai | 1 medium | 80 | USDA bell pepper |
 | Cucumber | kakdi, vellarikkai | 1 medium | 100 | USDA |
 | Radish | mooli, mullangi | 1 medium | 80 | USDA |
-| Beetroot | — | 1 medium | 80 | USDA |
+| Beetroot | beets | 1 medium | 80 | USDA |
 | Yam | suran, senaikizhangu, suvarnagadde | 100 g | 100 | USDA |
 | Colocasia | arbi, seppankizhangu, kesuvina gadde | 100 g | 100 | USDA taro |
 | Sweet potato | shakarkand, sarkaraivalli | 1 medium | 100 | USDA |

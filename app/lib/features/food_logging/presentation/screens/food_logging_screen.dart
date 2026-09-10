@@ -11,10 +11,10 @@ import '../widgets/food_search_result_tile.dart';
 /// The logging flow, opened modally from the bottom nav's centre action
 /// (§27.3, §28.4) and dismissed back to wherever the user was.
 ///
-/// Phase 2's catalog+search slice: a search field with live, debounced
-/// results (§27.4, NFR-P-03). Meal-slot selection, Recents/Favourites/
-/// Templates tabs, portion selection, and the actual write path are a
-/// follow-up — selecting a result here is not yet wired to anything.
+/// A search field with live, debounced results (§27.4, NFR-P-03) that
+/// pushes to [FoodPortionScreen] on selection, which does the actual
+/// write. Recents/Favourites/Templates tabs (§27.3's default view) and
+/// custom food creation are still a follow-up.
 class FoodLoggingScreen extends ConsumerStatefulWidget {
   const FoodLoggingScreen({super.key});
 
@@ -101,17 +101,7 @@ class _FoodLoggingScreenState extends ConsumerState<FoodLoggingScreen> {
                     final food = results[index];
                     return FoodSearchResultTile(
                       food: food,
-                      onTap: () {
-                        // Portion selection and the write path aren't
-                        // built yet (§27.5, a follow-up to this slice).
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              'Logging ${food.canonicalName} is coming soon.',
-                            ),
-                          ),
-                        );
-                      },
+                      onTap: () => context.push('/log/food/${food.id}'),
                     );
                   },
                 );

@@ -32,6 +32,24 @@ class ResolvedFdcFood {
   final List<String> unmatchedFdcNutrients;
 }
 
+/// FDC's `/food/{id}` endpoint reports microgram units as the actual "µg"
+/// (or "μg" — MICRO SIGN U+00B5 vs GREEK SMALL LETTER MU U+03BC; sources
+/// vary) symbol, not the ASCII "UG" text its search endpoint uses.
+/// Confirmed against a live response — plain `toUpperCase()` equality
+/// silently failed to match folate/B12/vitamin A/vitamin D on every food
+/// until this normalized both to "UG".
+String _canonicalUnit(String raw) {
+  switch (raw.trim().toLowerCase()) {
+    case 'ug':
+    case 'µg':
+    case 'μg':
+    case 'mcg':
+      return 'UG';
+    default:
+      return raw.trim().toUpperCase();
+  }
+}
+
 /// Matches an [FdcFood]'s nutrient readings against [nutrientRegistry] by
 /// name (and unit, to disambiguate cases like Energy's kcal/kJ split) —
 /// deliberately not by FDC's numeric nutrient id, which this pipeline has
@@ -45,7 +63,7 @@ class FdcNormalizer {
     for (final def in nutrientRegistry) {
       for (final reading in food.nutrients) {
         if (def.fdcNames.contains(reading.name) &&
-            reading.unit.toUpperCase() == def.fdcUnit) {
+            _canonicalUnit(reading.unit) == def.fdcUnit) {
           matches.add(
             NutrientMatch(nutrient: def, amountPer100g: reading.amountPer100g),
           );

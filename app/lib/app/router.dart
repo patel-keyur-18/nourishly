@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../features/dashboard/presentation/screens/dashboard_screen.dart';
 import '../features/food_logging/presentation/screens/food_logging_screen.dart';
+import '../features/food_logging/presentation/screens/food_portion_screen.dart';
 import '../features/goals/presentation/screens/goals_screen.dart';
 import '../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../features/reports/presentation/screens/reports_screen.dart';
@@ -39,6 +40,14 @@ final GoRouter appRouter = GoRouter(
         fullscreenDialog: true,
         child: FoodLoggingScreen(),
       ),
+      routes: [
+        GoRoute(
+          path: 'food/:foodId',
+          parentNavigatorKey: rootNavigatorKey,
+          builder: (context, state) =>
+              FoodPortionScreen(foodId: state.pathParameters['foodId']!),
+        ),
+      ],
     ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) =>

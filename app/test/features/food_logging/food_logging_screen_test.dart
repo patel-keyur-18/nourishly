@@ -44,7 +44,13 @@ void main() {
   Future<void> pumpToLogScreen(WidgetTester tester) async {
     await tester.pumpWidget(
       ProviderScope(
-        overrides: [nourishlyDatabaseProvider.overrideWithValue(db)],
+        overrides: [
+          nourishlyDatabaseProvider.overrideWithValue(db),
+          // Skip the real catalog import: these tests seed their own
+          // foods, and CircularProgressIndicator's animation never lets
+          // pumpAndSettle() settle while the real import is pending.
+          catalogReadyProvider.overrideWith((ref) async {}),
+        ],
         child: const NourishlyApp(),
       ),
     );

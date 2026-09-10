@@ -23,6 +23,35 @@ import 'dart:io';
 
 import 'package:catalog_pipeline/catalog_pipeline.dart';
 
+/// Strips characters FDC's search endpoint 400s on ("/", "(", ")" — seen
+/// on "paneer/queso fresco", "Chana, whole (kabuli)") and collapses
+/// whitespace.
+String _sanitizeQuery(String s) =>
+    s.replaceAll(RegExp(r'[/()]'), ' ').replaceAll(RegExp(r'\s+'), ' ').trim();
+
+/// Ordered, deduplicated search terms to try for one entry: the parsed
+/// hint (skipped if it's empty or an editorial note like "USDA — **the
+/// sodium source...**", not an actual food description), then the
+/// catalog's own name, then every `Also` synonym — which is exactly where
+/// the English/US term for a regional name (Rajma -> kidney beans,
+/// Jaggery has no FDC entry at all, Matki -> moth bean) lives. Every
+/// candidate is sanitized the same way; no per-entry special-casing.
+List<String> _queryCandidates(CatalogSourceEntry entry, UsdaLookup lookup) {
+  final hint = lookup.hint.trim();
+  final raw = [
+    if (hint.isNotEmpty && !hint.startsWith('—') && !hint.startsWith('-')) hint,
+    entry.foodName,
+    ...entry.alsoNames,
+  ];
+  final seen = <String>{};
+  final result = <String>[];
+  for (final candidate in raw) {
+    final clean = _sanitizeQuery(candidate);
+    if (clean.isNotEmpty && seen.add(clean)) result.add(clean);
+  }
+  return result;
+}
+
 Future<void> main() async {
   final apiKey = Platform.environment['FDC_API_KEY'];
   if (apiKey == null || apiKey.isEmpty) {
@@ -66,20 +95,41 @@ Future<void> main() async {
 
   for (final (entry, lookup) in lookups) {
     done++;
+    final queries = _queryCandidates(entry, lookup);
     stdout.writeln(
-      '[$done/${lookups.length}] ${entry.foodName} ("${lookup.hint}")',
+      '[$done/${lookups.length}] ${entry.foodName} (trying: ${queries.join(' / ')})',
     );
 
     try {
-      final candidates = await client.search(lookup.hint, pageSize: 3);
-      if (candidates.isEmpty) {
-        failures.add('${entry.foodName}: no FDC match for "${lookup.hint}"');
+      FdcFood? detail;
+      // Pass 1: Foundation/SR Legacy only (measured data, §19.11's
+      // preferred quality tier). Pass 2: any FDC data type — catches
+      // items like jaggery that simply aren't in the restricted set.
+      // `fdcDataType` in the output records which tier a match actually
+      // came from, so the promotion step can reflect it honestly.
+      for (final dataType in [FdcClient.preferredDataTypes, null]) {
+        for (final query in queries) {
+          final candidates = await client.search(
+            query,
+            pageSize: 3,
+            dataType: dataType,
+          );
+          if (candidates.isNotEmpty) {
+            // Full detail fetch: search results sometimes carry an
+            // abbreviated nutrient panel compared to the food's own record.
+            detail = await client.getDetails(candidates.first.fdcId);
+            break;
+          }
+          await Future<void>.delayed(const Duration(milliseconds: 150));
+        }
+        if (detail != null) break;
+      }
+
+      if (detail == null) {
+        failures.add('${entry.foodName}: no FDC match for any of $queries');
         continue;
       }
 
-      // Full detail fetch: search results sometimes carry an abbreviated
-      // nutrient panel compared to the food's own record.
-      final detail = await client.getDetails(candidates.first.fdcId);
       final result = normalizer.normalize(detail);
 
       resolved.add({

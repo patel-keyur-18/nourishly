@@ -69,7 +69,18 @@ class NourishlyDatabase extends _$NourishlyDatabase {
     : super(executor ?? _defaultExecutor());
 
   /// In-memory database for tests. Nothing touches disk.
-  NourishlyDatabase.forTesting() : super(NativeDatabase.memory());
+  ///
+  /// `closeStreamsSynchronously: true` per drift's own guidance: without
+  /// it, cancelling a `.watch()` stream schedules a cleanup `Timer` that
+  /// `flutter_test`'s strict pending-timer check flags as a leak, and
+  /// tests that watch reactive queries (§14.5) hit this immediately.
+  NourishlyDatabase.forTesting()
+    : super(
+        DatabaseConnection(
+          NativeDatabase.memory(),
+          closeStreamsSynchronously: true,
+        ),
+      );
 
   @override
   int get schemaVersion => 1;

@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nourishly_data/nourishly_data.dart';
 
@@ -18,4 +21,15 @@ final nourishlyDatabaseProvider = Provider<NourishlyDatabase>((ref) {
 /// need catalog access too (§14.4) — it isn't `food_logging`-only.
 final foodSearchDaoProvider = Provider<FoodSearchDao>((ref) {
   return FoodSearchDao(ref.watch(nourishlyDatabaseProvider));
+});
+
+/// Loads the bundled catalog seed and imports it on first run (§16.4).
+/// `main.dart` waits on this before showing the real app — see
+/// [CatalogImporter]'s doc comment for why it's safe to call on every
+/// launch (a no-op once the version is already present).
+final catalogReadyProvider = FutureProvider<void>((ref) async {
+  final raw = await rootBundle.loadString('assets/catalog/seed_v1.json');
+  final seed = jsonDecode(raw) as Map<String, dynamic>;
+  await CatalogImporter(ref.watch(nourishlyDatabaseProvider))
+      .importIfNeeded(seed);
 });

@@ -7,7 +7,11 @@
 /// `nourishly_domain`'s ports) arrive with the features that need them.
 library;
 
+export 'src/catalog_importer.dart';
+export 'src/dao/default_owner.dart';
+export 'src/dao/food_logging_dao.dart';
 export 'src/dao/food_search_dao.dart';
+export 'src/dao/water_log_dao.dart';
 export 'src/database.dart';
 export 'src/tables/catalog_tables.dart';
 export 'src/tables/common.dart';

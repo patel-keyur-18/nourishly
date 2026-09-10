@@ -106,7 +106,7 @@ const nutrientRegistry = <NutrientDef>[
     groupId: 'macronutrients',
     displayName: 'Sugars',
     canonicalUnit: 'g',
-    fdcNames: ['Sugars, total including NLEA', 'Sugars, total'],
+    fdcNames: ['Sugars, total including NLEA', 'Sugars, total', 'Total Sugars'],
     fdcUnit: 'G',
   ),
   // --- Micronutrients (17) ---
