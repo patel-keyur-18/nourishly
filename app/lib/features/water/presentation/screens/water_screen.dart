@@ -1,22 +1,154 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nourishly_data/nourishly_data.dart';
 import 'package:nourishly_ui/nourishly_ui.dart';
 
 import '../../../../app/providers.dart';
 
-String _formatTime(DateTime time) {
-  final hour12 = time.hour % 12 == 0 ? 12 : time.hour % 12;
-  final minute = time.minute.toString().padLeft(2, '0');
-  return '$hour12:$minute ${time.hour < 12 ? 'AM' : 'PM'}';
-}
-
-/// Hydration logging (§27.7) — quick-add chips, a running total, and
-/// today's entries with inline undo (UX-7). No nutrition setup required;
-/// works standalone (Persona 4, §28.3).
+/// Hydration logging (prototype screen 8, option A — fill visual).
+///
+/// Quick-add chips, a vessel that fills as you drink, and today's entries
+/// with inline undo (UX-7). Works standalone with no nutrition setup
+/// (Persona 4, §28.3).
 class WaterScreen extends ConsumerWidget {
   const WaterScreen({super.key});
 
+  /// A placeholder daily goal so the fill visual has a proportion to show.
+  /// Real per-profile hydration targets are derived in Phase 3 (§27.12);
+  /// this is labelled as a default in the UI rather than presented as a
+  /// derived target.
+  static const double defaultGoalMl = 2600;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colors = context.nourishlyColors;
+    final text = context.nourishlyText;
+    final entriesAsync = ref.watch(todayWaterLogProvider);
+    final totalMl = ref.watch(todayWaterTotalProvider);
+    final percent = ((totalMl / defaultGoalMl) * 100).clamp(0, 999).round();
+
+    return Scaffold(
+      body: SafeArea(
+        bottom: false,
+        child: entriesAsync.when(
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (error, stackTrace) => Center(
+            child: Padding(
+              padding: const EdgeInsets.all(NourishlySpace.s6),
+              child: Text(
+                'Water log could not be loaded.\n$error',
+                textAlign: TextAlign.center,
+                style: text.caption.copyWith(color: colors.ink3),
+              ),
+            ),
+          ),
+          data: (entries) => ListView(
+            padding: const EdgeInsets.fromLTRB(
+              NourishlySpace.s4,
+              NourishlySpace.s2,
+              NourishlySpace.s4,
+              NourishlySpace.s7,
+            ),
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(child: Text('Water', style: text.title)),
+                  const SizedBox(width: NourishlySpace.s2),
+                  Flexible(
+                    child: StatusChip(
+                      label: '$percent% of default',
+                      status: percent >= 100
+                          ? NourishlyStatus.ok
+                          : NourishlyStatus.low,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: NourishlySpace.s4),
+              NourishlyCard(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: NourishlySpace.s4,
+                  vertical: NourishlySpace.s5,
+                ),
+                child: Column(
+                  children: [
+                    _WaterFill(
+                      totalMl: totalMl,
+                      goalMl: defaultGoalMl,
+                    ),
+                    const SizedBox(height: NourishlySpace.s4),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: QuickAddButton(
+                            label: '+250 ml',
+                            emphasised: true,
+                            onPressed: () => _quickAdd(context, ref, 250),
+                          ),
+                        ),
+                        const SizedBox(width: NourishlySpace.s2),
+                        Expanded(
+                          child: QuickAddButton(
+                            label: '+500 ml',
+                            onPressed: () => _quickAdd(context, ref, 500),
+                          ),
+                        ),
+                        const SizedBox(width: NourishlySpace.s2),
+                        Expanded(
+                          child: QuickAddButton(
+                            label: '+1 L',
+                            onPressed: () => _quickAdd(context, ref, 1000),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const NourishlySectionHeader(label: 'Today'),
+              if (entries.isEmpty)
+                NourishlyCard(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: NourishlySpace.s4,
+                    vertical: NourishlySpace.s6,
+                  ),
+                  child: Center(
+                    child: Text(
+                      'Nothing logged yet — tap a quick-add above.',
+                      textAlign: TextAlign.center,
+                      style: text.caption.copyWith(color: colors.ink3),
+                    ),
+                  ),
+                )
+              else
+                NourishlyCard(
+                  padding: EdgeInsets.zero,
+                  child: Column(
+                    children: [
+                      for (var i = 0; i < entries.length; i++) ...[
+                        if (i > 0)
+                          Divider(height: 1, thickness: 1, color: colors.line),
+                        _WaterRow(entry: entries[i]),
+                      ],
+                    ],
+                  ),
+                ),
+              const SizedBox(height: NourishlySpace.s4),
+              Text(
+                'Chaas and tea count toward hydration. Coffee counts at a '
+                'lower rate (FR-W-09).',
+                style: text.caption.copyWith(color: colors.ink3),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Future<void> _quickAdd(BuildContext context, WidgetRef ref, double ml) async {
+    final messenger = ScaffoldMessenger.of(context);
     final ownerId = await ref.read(defaultOwnerProvider.future);
     await ref
         .read(waterLogDaoProvider)
@@ -25,131 +157,117 @@ class WaterScreen extends ConsumerWidget {
           volumeMl: ml,
           logDate: ref.read(todayProvider),
         );
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Logged ${ml.toStringAsFixed(0)} ml')),
-      );
-    }
+    messenger.showSnackBar(
+      SnackBar(content: Text('Logged ${ml.toStringAsFixed(0)} ml')),
+    );
+  }
+}
+
+/// The vessel that fills as you drink — the "fill visual" the design
+/// decision picked over a glass grid, because it reads proportion best.
+class _WaterFill extends StatelessWidget {
+  const _WaterFill({required this.totalMl, required this.goalMl});
+
+  final double totalMl;
+  final double goalMl;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.nourishlyColors;
+    final text = context.nourishlyText;
+    final fraction = goalMl <= 0 ? 0.0 : (totalMl / goalMl).clamp(0.0, 1.0);
+
+    return Container(
+      width: 132,
+      height: 168,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(NourishlyRadius.xl),
+        border: Border.all(color: colors.line, width: NourishlyStroke.hairline),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(NourishlyRadius.xl),
+        // StackFit.expand keeps every child tightly constrained: an
+        // unbounded Align or FractionallySizedBox in here would size to
+        // whatever it was given, which is how layout goes wrong quietly.
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            ColoredBox(color: colors.track),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: FractionallySizedBox(
+                heightFactor: fraction,
+                widthFactor: 1,
+                child: ColoredBox(color: colors.accentSoft),
+              ),
+            ),
+            Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    (totalMl / 1000).toStringAsFixed(2),
+                    style: text.display.copyWith(height: 1),
+                  ),
+                  const SizedBox(height: NourishlySpace.s1),
+                  Text(
+                    'of ${(goalMl / 1000).toStringAsFixed(1)} L',
+                    style: text.caption.copyWith(color: colors.ink2),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _WaterRow extends ConsumerWidget {
+  const _WaterRow({required this.entry});
+
+  final WaterLogEntry entry;
+
+  static String _formatTime(DateTime time) {
+    final hour12 = time.hour % 12 == 0 ? 12 : time.hour % 12;
+    final minute = time.minute.toString().padLeft(2, '0');
+    return '$hour12:$minute ${time.hour < 12 ? 'AM' : 'PM'}';
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.nourishlyColors;
     final text = context.nourishlyText;
-    final entriesAsync = ref.watch(todayWaterLogProvider);
-    final totalMl = ref.watch(todayWaterTotalProvider);
-    final dao = ref.watch(waterLogDaoProvider);
-
-    return Scaffold(
-      appBar: AppBar(title: const Text('Water')),
-      body: entriesAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stackTrace) => Center(child: Text('$error')),
-        data: (entries) {
-          return ListView(
-            padding: const EdgeInsets.all(NourishlySpace.s4),
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(vertical: NourishlySpace.s6),
-                decoration: BoxDecoration(
-                  color: colors.surface,
-                  borderRadius: BorderRadius.circular(NourishlyRadius.lg),
-                  border: Border.all(color: colors.line),
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: NourishlySpace.s4,
+        vertical: NourishlySpace.s3,
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.water_drop_rounded, color: colors.accent, size: 18),
+          const SizedBox(width: NourishlySpace.s3),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${entry.volumeMl.toStringAsFixed(0)} ml',
+                  style: text.body.copyWith(fontWeight: FontWeight.w600),
                 ),
-                child: Center(
-                  child: Column(
-                    children: [
-                      Container(
-                        width: 96,
-                        height: 96,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: colors.accentSoft,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Text(
-                          (totalMl / 1000).toStringAsFixed(2),
-                          style: text.numeral.copyWith(color: colors.accentSoftInk),
-                        ),
-                      ),
-                      const SizedBox(height: NourishlySpace.s3),
-                      Text(
-                        'litres today',
-                        style: text.caption.copyWith(color: colors.ink3),
-                      ),
-                    ],
-                  ),
+                Text(
+                  _formatTime(entry.loggedAt),
+                  style: text.caption.copyWith(color: colors.ink3),
                 ),
-              ),
-              const SizedBox(height: NourishlySpace.s5),
-              Row(
-                children: [
-                  Expanded(
-                    child: FilledButton(
-                      onPressed: () => _quickAdd(context, ref, 250),
-                      child: const Text('+250 ml'),
-                    ),
-                  ),
-                  const SizedBox(width: NourishlySpace.s2),
-                  Expanded(
-                    child: FilledButton.tonal(
-                      onPressed: () => _quickAdd(context, ref, 500),
-                      child: const Text('+500 ml'),
-                    ),
-                  ),
-                  const SizedBox(width: NourishlySpace.s2),
-                  Expanded(
-                    child: FilledButton.tonal(
-                      onPressed: () => _quickAdd(context, ref, 1000),
-                      child: const Text('+1 L'),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: NourishlySpace.s6),
-              Text(
-                'TODAY',
-                style: text.overline.copyWith(color: colors.ink3),
-              ),
-              const SizedBox(height: NourishlySpace.s2),
-              if (entries.isEmpty)
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: NourishlySpace.s4),
-                  child: Text(
-                    'Nothing logged yet — tap a quick-add above.',
-                    style: text.body.copyWith(color: colors.ink3),
-                  ),
-                )
-              else
-                Card(
-                  child: Column(
-                    children: [
-                      for (final entry in entries)
-                        ListTile(
-                          leading: Icon(
-                            Icons.water_drop_rounded,
-                            color: colors.accent,
-                            size: 20,
-                          ),
-                          title: Text(
-                            '${entry.volumeMl.toStringAsFixed(0)} ml',
-                            style: text.body,
-                          ),
-                          subtitle: Text(
-                            _formatTime(entry.loggedAt),
-                            style: text.caption.copyWith(color: colors.ink3),
-                          ),
-                          trailing: TextButton(
-                            onPressed: () => dao.undo(entry.id),
-                            child: const Text('Undo'),
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-            ],
-          );
-        },
+              ],
+            ),
+          ),
+          TextButton(
+            onPressed: () => ref.read(waterLogDaoProvider).undo(entry.id),
+            child: const Text('Undo'),
+          ),
+        ],
       ),
     );
   }

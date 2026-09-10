@@ -51,6 +51,17 @@ class _QualityBadge extends StatelessWidget {
 
   final String tier;
 
+  /// The prototype's short provenance badges: measured lab data reads
+  /// "Lab", a user's own food reads "You" (screen 5, option A).
+  String get _label => switch (tier) {
+    'verified' => 'Lab',
+    'derived' => 'Calc',
+    'label' => 'Label',
+    'community' => 'Comm',
+    'user' => 'You',
+    _ => tier,
+  };
+
   @override
   Widget build(BuildContext context) {
     final colors = context.nourishlyColors;
@@ -65,7 +76,7 @@ class _QualityBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(NourishlyRadius.pill),
       ),
       child: Text(
-        tier,
+        _label,
         style: text.overline.copyWith(color: colors.ink2, letterSpacing: 0),
       ),
     );

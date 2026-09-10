@@ -3,18 +3,15 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:nourishly_data/nourishly_data.dart';
 import 'package:nourishly_ui/nourishly_ui.dart';
 
 import '../state/food_search_state.dart';
 import '../widgets/food_search_result_tile.dart';
 
 /// The logging flow, opened modally from the bottom nav's centre action
-/// (§27.3, §28.4) and dismissed back to wherever the user was.
-///
-/// A search field with live, debounced results (§27.4, NFR-P-03) that
-/// pushes to [FoodPortionScreen] on selection, which does the actual
-/// write. Recents/Favourites/Templates tabs (§27.3's default view) and
-/// custom food creation are still a follow-up.
+/// (prototype screens 4 and 5 — full screen, search first; results grouped
+/// by source so provenance stays visible, §19.11).
 class FoodLoggingScreen extends ConsumerStatefulWidget {
   const FoodLoggingScreen({super.key});
 
@@ -35,8 +32,8 @@ class _FoodLoggingScreenState extends ConsumerState<FoodLoggingScreen> {
 
   void _onChanged(String value) {
     _debounce?.cancel();
-    // §14.7: "Search is debounced ~120 ms and cancels in-flight queries on
-    // new keystrokes."
+    // §14.7: search is debounced ~120 ms and cancels in-flight queries on
+    // new keystrokes.
     _debounce = Timer(NourishlyMotion.fast, () {
       ref.read(searchQueryProvider.notifier).update(value);
     });
@@ -45,13 +42,12 @@ class _FoodLoggingScreenState extends ConsumerState<FoodLoggingScreen> {
   @override
   Widget build(BuildContext context) {
     final colors = context.nourishlyColors;
-    final text = context.nourishlyText;
     final query = ref.watch(searchQueryProvider);
     final resultsAsync = ref.watch(foodSearchResultsProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Log food or water'),
+        title: const Text('Add food'),
         leading: IconButton(
           icon: const Icon(Icons.close_rounded),
           onPressed: () => context.pop(),
@@ -60,7 +56,12 @@ class _FoodLoggingScreenState extends ConsumerState<FoodLoggingScreen> {
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(NourishlySpace.s4),
+            padding: const EdgeInsets.fromLTRB(
+              NourishlySpace.s4,
+              NourishlySpace.s2,
+              NourishlySpace.s4,
+              NourishlySpace.s3,
+            ),
             child: TextField(
               controller: _controller,
               autofocus: true,
@@ -68,7 +69,16 @@ class _FoodLoggingScreenState extends ConsumerState<FoodLoggingScreen> {
               textInputAction: TextInputAction.search,
               decoration: InputDecoration(
                 hintText: 'Search foods',
-                prefixIcon: const Icon(Icons.search_rounded),
+                prefixIcon: const Icon(Icons.search_rounded, size: 20),
+                suffixIcon: query.isEmpty
+                    ? null
+                    : IconButton(
+                        icon: const Icon(Icons.close_rounded, size: 18),
+                        onPressed: () {
+                          _controller.clear();
+                          _onChanged('');
+                        },
+                      ),
                 filled: true,
                 fillColor: colors.surface2,
                 border: OutlineInputBorder(
@@ -84,43 +94,21 @@ class _FoodLoggingScreenState extends ConsumerState<FoodLoggingScreen> {
           Expanded(
             child: resultsAsync.when(
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, stackTrace) => Center(
-                child: Text(
-                  'Something went wrong searching.',
-                  style: text.body.copyWith(color: colors.ink3),
-                ),
+              error: (error, stackTrace) => _Message(
+                icon: Icons.error_outline_rounded,
+                title: 'Something went wrong searching.',
               ),
               data: (results) {
                 if (query.trim().isEmpty) {
-                  // §27.3: recents/favourites are the default view, not a
-                  // keyboard — not yet built, so this is a plain prompt.
-                  return Center(
-                    child: Text(
-                      'Search for a food to log.',
-                      style: text.body.copyWith(color: colors.ink3),
-                    ),
+                  return const _Message(
+                    icon: Icons.search_rounded,
+                    title: 'Search for a food to log',
+                    subtitle:
+                        'Recents, favourites and meal templates arrive in a '
+                        'later phase.',
                   );
                 }
-                return ListView.separated(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: NourishlySpace.s2,
-                  ),
-                  itemCount: results.length + 1,
-                  separatorBuilder: (context, index) =>
-                      index == results.length - 1
-                      ? const SizedBox.shrink()
-                      : Divider(height: 1, color: colors.line),
-                  itemBuilder: (context, index) {
-                    if (index == results.length) {
-                      return _CreateCustomFoodRow(query: query);
-                    }
-                    final food = results[index];
-                    return FoodSearchResultTile(
-                      food: food,
-                      onTap: () => context.push('/log/food/${food.id}'),
-                    );
-                  },
-                );
+                return _Results(query: query, results: results);
               },
             ),
           ),
@@ -130,8 +118,55 @@ class _FoodLoggingScreenState extends ConsumerState<FoodLoggingScreen> {
   }
 }
 
-/// `Create "<query>" as a custom food`, always pinned at the bottom of
-/// results (UX-6: nothing is unloggable). Creation itself isn't built yet.
+/// Results grouped by source (prototype screen 5, option A). Everything in
+/// the bundled catalog is one group today; user-created foods and recents
+/// become their own groups once those features exist.
+class _Results extends StatelessWidget {
+  const _Results({required this.query, required this.results});
+
+  final String query;
+  final List<FoodItem> results;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.nourishlyColors;
+
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(
+        NourishlySpace.s4,
+        0,
+        NourishlySpace.s4,
+        NourishlySpace.s7,
+      ),
+      children: [
+        if (results.isNotEmpty) ...[
+          const NourishlySectionHeader(label: 'Food catalog'),
+          NourishlyCard(
+            padding: EdgeInsets.zero,
+            child: Column(
+              children: [
+                for (var i = 0; i < results.length; i++) ...[
+                  if (i > 0)
+                    Divider(height: 1, thickness: 1, color: colors.line),
+                  FoodSearchResultTile(
+                    food: results[i],
+                    onTap: () => context.push('/log/food/${results[i].id}'),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+        const NourishlySectionHeader(label: 'Not finding it?'),
+        _CreateCustomFoodRow(query: query),
+      ],
+    );
+  }
+}
+
+/// `Create "<query>" as a custom food` — always available, so a failed
+/// search is never a dead end (UX-6). Creation itself lands with custom
+/// foods in a later phase.
 class _CreateCustomFoodRow extends StatelessWidget {
   const _CreateCustomFoodRow({required this.query});
 
@@ -141,28 +176,61 @@ class _CreateCustomFoodRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.nourishlyColors;
     final text = context.nourishlyText;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: NourishlySpace.s3),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(NourishlyRadius.md),
-        onTap: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Custom food creation is coming soon.'),
+    return NourishlyCard(
+      onTap: () {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Custom food creation is coming soon.')),
+        );
+      },
+      child: Row(
+        children: [
+          Icon(Icons.add_circle_outline_rounded, color: colors.accent, size: 20),
+          const SizedBox(width: NourishlySpace.s3),
+          Expanded(
+            child: Text(
+              'Create "$query" as a custom food',
+              style: text.label.copyWith(color: colors.accent),
             ),
-          );
-        },
-        child: Container(
-          padding: const EdgeInsets.all(NourishlySpace.s3),
-          decoration: BoxDecoration(
-            border: Border.all(color: colors.lineStrong),
-            borderRadius: BorderRadius.circular(NourishlyRadius.md),
           ),
-          child: Text(
-            'Create "$query" as a custom food',
-            textAlign: TextAlign.center,
-            style: text.label.copyWith(color: colors.accent),
-          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Message extends StatelessWidget {
+  const _Message({required this.icon, required this.title, this.subtitle});
+
+  final IconData icon;
+  final String title;
+  final String? subtitle;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.nourishlyColors;
+    final text = context.nourishlyText;
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(NourishlySpace.s6),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: colors.ink3, size: 26),
+            const SizedBox(height: NourishlySpace.s3),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: text.body.copyWith(color: colors.ink2),
+            ),
+            if (subtitle != null) ...[
+              const SizedBox(height: NourishlySpace.s2),
+              Text(
+                subtitle!,
+                textAlign: TextAlign.center,
+                style: text.caption.copyWith(color: colors.ink3),
+              ),
+            ],
+          ],
         ),
       ),
     );

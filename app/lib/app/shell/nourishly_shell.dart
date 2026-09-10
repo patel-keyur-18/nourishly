@@ -26,8 +26,8 @@ class NourishlyShell extends StatelessWidget {
       bottomNavigationBar: NourishlyBottomNav(
         items: _items,
         currentIndex: navigationShell.currentIndex,
-        // Tapping the already-active tab returns to its root (§28.4: "Tabs
-        // preserve their own navigation stacks" — but re-tapping resets,
+        // Tapping the already-active tab returns to its root (§28.4: tabs
+        // preserve their own navigation stacks, but re-tapping resets —
         // matching both platforms' own tab-bar convention).
         onDestinationSelected: (index) => navigationShell.goBranch(
           index,

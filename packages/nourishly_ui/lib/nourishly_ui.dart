@@ -8,7 +8,11 @@
 library;
 
 export 'src/tokens.g.dart';
+export 'src/components/energy_ring.dart';
 export 'src/components/nourishly_bottom_nav.dart';
+export 'src/components/nourishly_card.dart';
+export 'src/components/nutrient_bar.dart';
+export 'src/components/status_chip.dart';
 export 'src/theme/nourishly_colors.dart';
 export 'src/theme/nourishly_theme.dart';
 export 'src/theme/nourishly_typography.dart';
