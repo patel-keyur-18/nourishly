@@ -1,11 +1,13 @@
 /// Nourishly's data layer: the Drift (SQLite) schema, DAOs, and repository
 /// implementations (§12.3).
 ///
-/// Phase 1 ships schema only — [NourishlyDatabase] and its tables. DAOs and
-/// repository implementations (the concrete side of `nourishly_domain`'s
-/// ports) arrive with the features that need them.
+/// Phase 1 shipped schema only. Phase 2 adds the first DAO,
+/// [FoodSearchDao], over the FTS5 search index (§27.4, §22.7). More DAOs
+/// and repository implementations (the concrete side of
+/// `nourishly_domain`'s ports) arrive with the features that need them.
 library;
 
+export 'src/dao/food_search_dao.dart';
 export 'src/database.dart';
 export 'src/tables/catalog_tables.dart';
 export 'src/tables/common.dart';

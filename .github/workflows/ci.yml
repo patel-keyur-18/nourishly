@@ -48,6 +48,8 @@ jobs:
             tool: dart
           - path: packages/nourishly_domain
             tool: dart
+          - path: tools/catalog_pipeline
+            tool: dart
           - path: packages/nourishly_ui
             tool: flutter
           - path: packages/nourishly_data

@@ -20,10 +20,11 @@ part 'database.g.dart';
 /// `deleted_at` tombstones are kept, because export/import merge-by-id
 /// (§0.5) needs them regardless of whether a server exists.
 ///
-/// This is schema only for Phase 1 — no DAOs or repository
-/// implementations yet (§12.3's `nourishly_data` package layout; the "Data"
-/// layer in §13.3 arrives with the features that need it).
+/// Phase 2 adds the first DAO ([FoodSearchDao], `dao/food_search_dao.dart`)
+/// over the `food_search_index` FTS5 table declared in
+/// `tables/search.drift` (§22.7, NFR-P-03).
 @DriftDatabase(
+  include: {'tables/search.drift'},
   tables: [
     // Identity & Personalisation
     Users,
