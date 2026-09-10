@@ -7,11 +7,12 @@
 // Writes app/assets/catalog/seed_v1.json (committed — public-domain USDA
 // data + our own catalog structure, safe per scope doc §0.7).
 //
-// Recipe entries are NOT in the draft (fetch_catalog.dart only resolves
-// direct-USDA-lookup entries) and so are not in this seed either — they
-// need a real yield/water-adjustment factor from a kitchen-scale
-// calibration pass (catalog spec §0.3), which doesn't exist yet. Deferred,
-// not skipped.
+// Recipe entries are in the draft too (fetch_catalog.dart resolves each
+// ingredient and applies `resolveRecipeYield`'s cooking yield factor —
+// pressure cooker for dal, open pot for rice and everything else, per the
+// 2026-09-10 household decision) and get their own FoodItems row
+// (`kind: 'recipe'`, `yieldFactor` set) plus RecipeComponents rows tracing
+// back to their ingredients, same as any other catalog food.
 import 'dart:convert';
 import 'dart:io';
 
@@ -51,10 +52,35 @@ void main() {
   final nutrientValues = <Map<String, dynamic>>[];
   final servingSizes = <Map<String, dynamic>>[];
   final altNames = <Map<String, dynamic>>[];
+  final recipeComponents = <Map<String, dynamic>>[];
+
+  // An ingredient FDC id -> its FoodItems id, shared across every recipe
+  // (and the direct-lookup foods below) so an ingredient used by both a
+  // Tier-1 entry and a recipe (e.g. toor dal) gets one row, not two.
+  final ingredientFoodIdByFdcId = <int, String>{};
+
+  void addNutrientValues(
+    String foodId,
+    Map<String, dynamic> nutrientsPer100g,
+    String valueSource,
+  ) {
+    for (final entry in nutrientsPer100g.entries) {
+      nutrientValues.add({
+        'id': _uuid.v7(),
+        'foodId': foodId,
+        'nutrientId': entry.key,
+        'amountPer100g': entry.value,
+        'valueSource': valueSource,
+      });
+    }
+  }
 
   for (final food in resolvedFoods) {
+    if (food['kind'] != 'ingredient') continue;
+
     final foodId = _uuid.v7();
     final (qualityTier, valueSource) = _tierFor(food['fdcDataType'] as String);
+    ingredientFoodIdByFdcId[food['fdcId'] as int] = foodId;
 
     foodItems.add({
       'id': foodId,
@@ -66,17 +92,11 @@ void main() {
       'isVerified': qualityTier == 'verified',
     });
 
-    final nutrientsPer100g = (food['nutrientsPer100g'] as Map)
-        .cast<String, dynamic>();
-    for (final entry in nutrientsPer100g.entries) {
-      nutrientValues.add({
-        'id': _uuid.v7(),
-        'foodId': foodId,
-        'nutrientId': entry.key,
-        'amountPer100g': entry.value,
-        'valueSource': valueSource,
-      });
-    }
+    addNutrientValues(
+      foodId,
+      (food['nutrientsPer100g'] as Map).cast<String, dynamic>(),
+      valueSource,
+    );
 
     servingSizes.add({
       'id': _uuid.v7(),
@@ -100,12 +120,98 @@ void main() {
     }
   }
 
+  for (final food in resolvedFoods) {
+    if (food['kind'] != 'recipe') continue;
+
+    final foodId = _uuid.v7();
+    final ingredients = (food['ingredients'] as List).cast<Map<String, dynamic>>();
+
+    foodItems.add({
+      'id': foodId,
+      'kind': 'recipe',
+      'canonicalName': food['foodName'],
+      // Derived from summed ingredient nutrients, not a single measured
+      // source — always the 'derived' tier (§19.11).
+      'qualityTier': 'derived',
+      'provenanceSource': 'catalog_pipeline_recipe',
+      'provenanceId': null,
+      'isVerified': false,
+      'yieldFactor': food['yieldFactor'],
+    });
+
+    addNutrientValues(
+      foodId,
+      (food['nutrientsPer100g'] as Map).cast<String, dynamic>(),
+      'derived',
+    );
+
+    servingSizes.add({
+      'id': _uuid.v7(),
+      'foodId': foodId,
+      'label': food['servingLabel'],
+      'grams': food['servingAmount'],
+      'isHouseholdMeasure': true,
+      'isDefault': true,
+      'sortOrder': 0,
+    });
+
+    for (final alsoName in (food['alsoNames'] as List).cast<String>()) {
+      altNames.add({
+        'id': _uuid.v7(),
+        'foodId': foodId,
+        'name': alsoName,
+        'nameNormalized': alsoName.toLowerCase(),
+        'language': 'en',
+        'isTransliteration': true,
+      });
+    }
+
+    for (var i = 0; i < ingredients.length; i++) {
+      final ingredient = ingredients[i];
+      final fdcId = ingredient['fdcId'] as int;
+
+      // Reuse the ingredient's FoodItems row if this exact FDC food is
+      // already in the catalog (as a direct-lookup entry or an earlier
+      // recipe's ingredient); otherwise mint one so the ingredient is
+      // traceable even if it isn't its own Tier-1/2/3 catalog entry.
+      final ingredientFoodId = ingredientFoodIdByFdcId.putIfAbsent(fdcId, () {
+        final newId = _uuid.v7();
+        final (qualityTier, valueSource) = _tierFor(
+          ingredient['fdcDataType'] as String,
+        );
+        foodItems.add({
+          'id': newId,
+          'kind': 'ingredient',
+          'canonicalName': ingredient['fdcDescription'],
+          'qualityTier': qualityTier,
+          'provenanceSource': 'usda_fdc',
+          'provenanceId': '$fdcId',
+          'isVerified': qualityTier == 'verified',
+        });
+        addNutrientValues(
+          newId,
+          (ingredient['nutrientsPer100g'] as Map).cast<String, dynamic>(),
+          valueSource,
+        );
+        return newId;
+      });
+
+      recipeComponents.add({
+        'id': _uuid.v7(),
+        'recipeFoodItemId': foodId,
+        'ingredientFoodItemId': ingredientFoodId,
+        'quantityGrams': ingredient['quantityGrams'],
+        'sortOrder': i,
+      });
+    }
+  }
+
   final seed = {
     'catalogVersion': {
       'version': 1,
       'foodCount': foodItems.length,
       'checksum': 'usda-fdc-v1',
-      'notes': 'Tier-1/2/3 direct-USDA ingredients. Recipes not yet included (need yield-factor calibration).',
+      'notes': 'Tier-1/2/3 direct-USDA ingredients plus recipes (cooking yield factor applied per recipe_yield.dart).',
     },
     'nutrientGroups': [
       for (final g in nutrientGroups)
@@ -163,6 +269,7 @@ void main() {
     'foodNutrientValues': nutrientValues,
     'servingSizes': servingSizes,
     'foodAltNames': altNames,
+    'recipeComponents': recipeComponents,
   };
 
   final outFile = File('app/assets/catalog/seed_v1.json');

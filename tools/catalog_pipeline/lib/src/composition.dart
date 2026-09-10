@@ -85,7 +85,7 @@ final _explicitSelfReference = RegExp(
   caseSensitive: false,
 );
 final _quantity = RegExp(
-  r'^(?<name>.*?)\s+(?<amount>\d+(?:\.\d+)?)\s*(?<unit>g|ml|kg|l|tsp|tbsp)\b(?<note>.*)$',
+  r'^(?<name>.*?)\s+(?<amount>\d+(?:\.\d+)?)\s*(?<unit>g|ml|kg|l|tsp|tbsp|tumbler)\b(?<note>.*)$',
 );
 
 /// Classifies and, for recipes, parses a raw `Composition` cell.

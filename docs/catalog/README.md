@@ -65,6 +65,22 @@ Standard measures used throughout:
 | Tbsp / tsp | 15 ml / 5 ml | Volume→mass via per-food density |
 | Piece | Per food | Roti, idli, vada, dosa each have their own weight |
 
+## 0.3a Cooking yield factor (resolved 2026-09-10)
+
+§0.2's "sum, apply yield factor for cooking water" step needed two decisions before the pipeline could resolve recipe entries at all — both settled from a household kitchen-scale check rather than a per-dish measurement, same spirit as §0.3's serving weights:
+
+- **Tumbler-to-gram.** Where a recipe measures a raw grain or dal by tumbler (the S. Indian raw-measure cup used for things like idli batter — not the 100 ml coffee-serving tumbler above), 1 tumbler ≈ 160–180 g depending on the grain. The pipeline uses **170 g** (the midpoint) as a single starting estimate rather than weighing each grain separately.
+- **Cooking method, which drives evaporation.** Dal (and other pulses) is always pressure-cooked — sealed, so evaporation is negligible. Rice and everything else is simmered or boiled in an **open, uncovered pot** — including rice itself, which is not treated as a special case.
+
+This gives two yield factors (raw dry ingredient weight → cooked weight), applied broadly across rice-based and other grain dishes, not just dal:
+
+| Cooking method | Applies to | Yield factor |
+|---|---|---|
+| Pressure cooker (sealed) | Dal and other pulses | 2.5× |
+| Open pot (uncovered simmer) | Rice and everything else | 2.75× |
+
+Both are starting estimates, not measurements — per §0.3, correct a specific dish's own factor once it's actually weighed. Implemented in `tools/catalog_pipeline/lib/src/recipe_yield.dart`; `fetch_catalog.dart` now resolves recipe entries end to end (each ingredient looked up, summed, yield-adjusted) instead of skipping them.
+
 ## 0.4 Column meanings
 
 | Column | Meaning |
