@@ -31,8 +31,8 @@ Foods common to Gujarati, Tamil and Kannadiga households. Tier 1 items are marke
 | Jowar flour | sorghum | 100 g | 100 | USDA sorghum |
 | Bajra flour | pearl millet | 100 g | 100 | USDA pearl millet |
 | Semolina, rava | sooji, sajjige | 100 g | 100 | USDA semolina |
-| Poha, raw | avalakki, aval, flattened rice | 50 g | 50 | USDA rice flakes |
-| Vermicelli, raw | semiya, shavige, sev | 50 g | 50 | USDA |
+| Poha, raw | raw poha, aval, flattened rice | 50 g | 50 | USDA rice flakes |
+| Vermicelli, raw | semiya, shavige, sevai | 50 g | 50 | USDA |
 | Bread, white | — | 1 slice | 25 | USDA |
 | **①** Idli rice + urad batter | — | 100 g | 100 | Rice 70 g, urad dal 25 g, fenugreek — the base for idli, dosa, uttapam |
 
@@ -105,7 +105,7 @@ Raw weights; the pipeline applies cooking yield per dish.
 | Ash gourd | petha, kumbalanga, boodhkumbalakai | 100 g | 100 | USDA wax gourd |
 | Pumpkin | kaddu, parangikai, kumbalakayi | 100 g | 100 | USDA |
 | Cluster beans | guvar, kothavarangai | 100 g | 100 | USDA |
-| Field beans | valor, papdi, avarekai | 100 g | 100 | USDA hyacinth beans |
+| Field beans | valor, papdi, surti papdi, avarekai | 100 g | 100 | USDA hyacinth beans |
 | French beans | fansi, beans | 100 g | 100 | USDA green beans |
 | Drumstick | saragvo, murungakkai, nuggekayi | 1 piece | 50 | USDA |
 | **①** Green peas | vatana, pattani | 1 katori | 100 | USDA |
@@ -194,6 +194,7 @@ Raw weights; the pipeline applies cooking yield per dish.
 | **①** Tea with milk and sugar | chai, chaa | 1 cup | 120 | Milk 60 ml, water 60 ml, sugar 5 g, tea leaves. **Hydration fraction 1.0** (FR-W-09) |
 | Tea, no sugar | — | 1 cup | 120 | As above without sugar |
 | **①** Filter coffee | kaapi, degree coffee | 1 tumbler | 100 | Milk 70 ml, decoction 30 ml, sugar 6 g |
+| Coffee decoction | decoction, kaapi decoction | 30 ml | 30 | USDA coffee brewed |
 | Coffee, instant with milk | — | 1 cup | 150 | Milk 100 ml, water 50 ml, sugar 5 g |
 | Black coffee / tea | — | 1 cup | 150 | Negligible energy |
 | **①** Water | pani, thanneer, neeru | 1 glass | 200 | Hydration only |
@@ -231,7 +232,7 @@ Raw weights; the pipeline applies cooking yield per dish.
 |---|---|---|---|---|
 | **①** Khichdi, plain | khichadi, pongal-style | 1 katori | 180 | Rice 45 g, moong dal 20 g, ghee 5 g, turmeric, salt |
 | **①** Upma | uppittu, uppuma | 1 katori | 150 | Rava 45 g, oil 8 g, onion 20 g, curry leaves, mustard |
-| **①** Poha | avalakki, aval upma | 1 katori | 130 | Poha 45 g, oil 6 g, onion 20 g, potato 20 g, peanuts 8 g |
+| **①** Poha | avalakki, aval upma | 1 katori | 130 | Raw poha 45 g, oil 6 g, onion 20 g, potato 20 g, peanuts 8 g |
 | **①** Vegetable pulao | — | 1 katori | 180 | Rice 60 g raw, mixed veg 50 g, ghee/oil 8 g |
 | Lemon rice | chitranna, elumichai sadam | 1 katori | 170 | Rice cooked 150 g, oil 8 g, peanuts 8 g, lemon, turmeric |
 | Tomato rice | — | 1 katori | 170 | Rice cooked 140 g, tomato 40 g, oil 8 g |

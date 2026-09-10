@@ -59,6 +59,31 @@ void main() {
   // Tier-1 entry and a recipe (e.g. toor dal) gets one row, not two.
   final ingredientFoodIdByFdcId = <int, String>{};
 
+  // One FoodItems id per draft entry, minted up front because a recipe can
+  // list another catalog dish as an ingredient ("Bhel" lists `sev`, resolved
+  // to the "Sev, thin" row) and the two rows are not in dependency order in
+  // the draft. Those components point at the dish's own FoodItems row rather
+  // than minting a duplicate. Keyed by entry identity, not by name — a name
+  // can repeat across state files (Idli, Puri, Coconut rice), and those are
+  // separate rows with separate ids.
+  final foodIdByEntry = {for (final food in resolvedFoods) food: _uuid.v7()};
+
+  // Name -> id for resolving an ingredient's `catalogRow`. A name several
+  // rows share is left out rather than pointing at an arbitrary one; no
+  // ingredient currently resolves to such a name, and the component loop
+  // throws with the name if that ever changes.
+  final foodIdByName = <String, String>{};
+  final ambiguousNames = <String>{};
+  for (final food in resolvedFoods) {
+    final name = food['foodName'] as String;
+    if (!foodIdByName.containsKey(name)) {
+      foodIdByName[name] = foodIdByEntry[food]!;
+    } else {
+      ambiguousNames.add(name);
+    }
+  }
+  foodIdByName.removeWhere((name, _) => ambiguousNames.contains(name));
+
   void addNutrientValues(
     String foodId,
     Map<String, dynamic> nutrientsPer100g,
@@ -78,7 +103,7 @@ void main() {
   for (final food in resolvedFoods) {
     if (food['kind'] != 'ingredient') continue;
 
-    final foodId = _uuid.v7();
+    final foodId = foodIdByEntry[food]!;
     final (qualityTier, valueSource) = _tierFor(food['fdcDataType'] as String);
     ingredientFoodIdByFdcId[food['fdcId'] as int] = foodId;
 
@@ -123,7 +148,7 @@ void main() {
   for (final food in resolvedFoods) {
     if (food['kind'] != 'recipe') continue;
 
-    final foodId = _uuid.v7();
+    final foodId = foodIdByEntry[food]!;
     final ingredients = (food['ingredients'] as List)
         .cast<Map<String, dynamic>>();
 
@@ -169,33 +194,55 @@ void main() {
 
     for (var i = 0; i < ingredients.length; i++) {
       final ingredient = ingredients[i];
-      final fdcId = ingredient['fdcId'] as int;
+      final catalogRow = ingredient['catalogRow'] as String?;
+      final fdcId = ingredient['fdcId'] as int?;
 
-      // Reuse the ingredient's FoodItems row if this exact FDC food is
-      // already in the catalog (as a direct-lookup entry or an earlier
-      // recipe's ingredient); otherwise mint one so the ingredient is
-      // traceable even if it isn't its own Tier-1/2/3 catalog entry.
-      final ingredientFoodId = ingredientFoodIdByFdcId.putIfAbsent(fdcId, () {
-        final newId = _uuid.v7();
-        final (qualityTier, valueSource) = _tierFor(
-          ingredient['fdcDataType'] as String,
-        );
-        foodItems.add({
-          'id': newId,
-          'kind': 'ingredient',
-          'canonicalName': ingredient['fdcDescription'],
-          'qualityTier': qualityTier,
-          'provenanceSource': 'usda_fdc',
-          'provenanceId': '$fdcId',
-          'isVerified': qualityTier == 'verified',
+      final String ingredientFoodId;
+      if (catalogRow != null) {
+        // The ingredient is another catalog dish, already getting its own
+        // recipe row in this same loop — point at it instead of minting a
+        // duplicate, which is what makes the component chain traceable
+        // (Bhel -> Sev, thin -> besan + oil).
+        ingredientFoodId =
+            foodIdByName[catalogRow] ??
+            (throw StateError(
+              '${food['foodName']} lists "${ingredient['name']}", resolved to '
+              'catalog row "$catalogRow", which is not in the draft under a '
+              'unique name. Rename the duplicate rows, or rerun '
+              'fetch_catalog.dart.',
+            ));
+      } else if (fdcId != null) {
+        // Reuse the ingredient's FoodItems row if this exact FDC food is
+        // already in the catalog (as a direct-lookup entry or an earlier
+        // recipe's ingredient); otherwise mint one so the ingredient is
+        // traceable even if it isn't its own Tier-1/2/3 catalog entry.
+        ingredientFoodId = ingredientFoodIdByFdcId.putIfAbsent(fdcId, () {
+          final newId = _uuid.v7();
+          final (qualityTier, valueSource) = _tierFor(
+            ingredient['fdcDataType'] as String,
+          );
+          foodItems.add({
+            'id': newId,
+            'kind': 'ingredient',
+            'canonicalName': ingredient['fdcDescription'],
+            'qualityTier': qualityTier,
+            'provenanceSource': 'usda_fdc',
+            'provenanceId': '$fdcId',
+            'isVerified': qualityTier == 'verified',
+          });
+          addNutrientValues(
+            newId,
+            (ingredient['nutrientsPer100g'] as Map).cast<String, dynamic>(),
+            valueSource,
+          );
+          return newId;
         });
-        addNutrientValues(
-          newId,
-          (ingredient['nutrientsPer100g'] as Map).cast<String, dynamic>(),
-          valueSource,
+      } else {
+        throw StateError(
+          '${food['foodName']} ingredient "${ingredient['name']}" has neither '
+          'an fdcId nor a catalogRow. Rerun fetch_catalog.dart.',
         );
-        return newId;
-      });
+      }
 
       recipeComponents.add({
         'id': _uuid.v7(),

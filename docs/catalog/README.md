@@ -81,6 +81,31 @@ This gives two yield factors (raw dry ingredient weight → cooked weight), appl
 
 Both are starting estimates, not measurements — per §0.3, correct a specific dish's own factor once it's actually weighed. Implemented in `tools/catalog_pipeline/lib/src/recipe_yield.dart`; `fetch_catalog.dart` now resolves recipe entries end to end (each ingredient looked up, summed, yield-adjusted) instead of skipping them.
 
+### 0.3a-i Superseded: each row states its own yield factor (revised)
+
+The two constants above are now the **fallback**, not the primary source. A dish's yield factor is:
+
+```
+yield factor = the row's g column  ÷  the ingredient grams in its Composition column
+```
+
+That is not a new estimate — it is what §0.4 already says those two columns mean: **g** is "estimated grams for that serving", **Composition** is the "ingredient breakdown **per serving**". Their ratio is what the pot actually did for that specific dish, and it is available for every recipe row in this catalog.
+
+Measured across all 249 recipe rows, the constants were right for about an eighth of them:
+
+| Row's own factor | Rows | What the constants did |
+|---|---|---|
+| 0.8–1.2× | 143 | applied 2.75×, deflating per-100g values ~2.75× |
+| 1.2–1.8× | 67 | applied 2.5–2.75× |
+| 1.8–2.6× | 31 | roughly right |
+| >2.6× | 8 | applied 2.5×, concentrating rasam and thin dal 2–4× |
+
+The reason so many sit near 1.0× is that most rows are not "raw dry ingredients that will absorb water" at all — a 40 g piece of mohanthal is made from 42 g of besan, ghee and sugar, and a 100 g plate of bhel from 100 g of components. Applying an open-pot factor to those claimed the mohanthal weighed 115 g and cut its energy density by nearly two thirds. The rows at the other end (pepper rasam, 12 g of solids in a 150 g katori) are the reverse case: the water is real, and deliberately not listed as an ingredient because water has no nutrients.
+
+The constants still apply where a caller has no serving weight, or where a row's two weight columns imply a factor outside **0.5×–15×** — a range wide enough to admit every real row (the catalog spans 0.81× to 12.5×) and narrow enough to catch a typo. Such a row is reported as `yieldWarning` in the draft seed; fix the weight column rather than the pipeline.
+
+§0.3's advice is unchanged and now matters more: weighing your own katori corrects the yield factor directly, because the serving weight *is* the yield factor.
+
 ## 0.4 Column meanings
 
 | Column | Meaning |

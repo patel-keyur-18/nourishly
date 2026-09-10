@@ -78,6 +78,8 @@ class CatalogImporter {
             provenanceSource: f['provenanceSource'] as String,
             provenanceId: Value(f['provenanceId'] as String?),
             isVerified: Value(f['isVerified'] as bool),
+            // Recipe rows only; null on a direct-USDA ingredient.
+            yieldFactor: Value((f['yieldFactor'] as num?)?.toDouble()),
           ),
       ]);
 
@@ -117,6 +119,24 @@ class CatalogImporter {
             nameNormalized: a['nameNormalized'] as String,
             language: a['language'] as String,
             isTransliteration: Value(a['isTransliteration'] as bool),
+          ),
+      ]);
+
+      // A recipe's ingredient list. Its nutrients are already stored as
+      // ordinary FoodNutrientValues rows, so nothing reads these to log a
+      // meal — they are the provenance trail from a dish back to the USDA
+      // foods it was derived from (§19.10), and an ingredient here may be
+      // another recipe (bhel -> sev -> besan).
+      batch.insertAll(_db.recipeComponents, [
+        for (final c
+            in (seed['recipeComponents'] as List? ?? const [])
+                .cast<Map<String, dynamic>>())
+          RecipeComponentsCompanion.insert(
+            id: c['id'] as String,
+            recipeFoodItemId: c['recipeFoodItemId'] as String,
+            ingredientFoodItemId: c['ingredientFoodItemId'] as String,
+            quantityGrams: (c['quantityGrams'] as num).toDouble(),
+            sortOrder: Value(c['sortOrder'] as int),
           ),
       ]);
 

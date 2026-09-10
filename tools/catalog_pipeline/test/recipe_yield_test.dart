@@ -53,6 +53,57 @@ void main() {
     });
   });
 
+  group('resolveRecipeYield with a serving weight', () {
+    // The catalog states both weights per serving (spec §0.4), so their
+    // ratio is what the pot actually did — no constant needed.
+    List<ResolvedIngredient> oneIngredient(double grams) => [
+      ResolvedIngredient(RecipeIngredient('Thing', grams, 'g'), const {
+        'energy': 100,
+      }),
+    ];
+
+    test('the serving weight sets the yield factor, not the method', () {
+      // Bhel: 100 g plate from 100 g of components. Nothing was cooked.
+      final result = resolveRecipeYield(oneIngredient(100), servingGrams: 100);
+
+      expect(result.basis, YieldBasis.servingWeight);
+      expect(result.yieldFactor, 1.0);
+      expect(result.cookedGrams, 100);
+      expect(result.nutrientsPer100g['energy'], closeTo(100, 0.001));
+    });
+
+    test('a watery dish gets its whole ratio, well past any constant', () {
+      // Pepper rasam: 12 g of solids in a 150 g katori.
+      final result = resolveRecipeYield(oneIngredient(12), servingGrams: 150);
+
+      expect(result.basis, YieldBasis.servingWeight);
+      expect(result.yieldFactor, closeTo(12.5, 0.001));
+      expect(result.nutrientsPer100g['energy'], closeTo(8, 0.001));
+    });
+
+    test('a dish that dries out gets a factor below 1', () {
+      // Khakhra: 20 g piece from 20 g flour plus 2 g oil.
+      final result = resolveRecipeYield(oneIngredient(22), servingGrams: 20);
+
+      expect(result.yieldFactor, closeTo(0.909, 0.001));
+    });
+
+    test('an implausible ratio falls back to the cooking method', () {
+      // A weight-column typo: 2 g serving from 100 g of ingredients.
+      final result = resolveRecipeYield(oneIngredient(100), servingGrams: 2);
+
+      expect(result.basis, YieldBasis.cookingMethod);
+      expect(result.yieldFactor, 2.75);
+    });
+
+    test('no serving weight falls back to the cooking method', () {
+      final result = resolveRecipeYield(oneIngredient(100));
+
+      expect(result.basis, YieldBasis.cookingMethod);
+      expect(result.yieldFactor, 2.75);
+    });
+  });
+
   group('resolveRecipeYield', () {
     test('sums nutrients and divides by cooked (yield-adjusted) weight', () {
       // 100 g toor dal, raw: 22 kcal/g scaled down to keep the numbers

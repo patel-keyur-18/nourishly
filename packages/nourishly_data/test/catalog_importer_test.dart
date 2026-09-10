@@ -39,7 +39,15 @@ void main() {
       expect(foods.length, (seed['foodItems'] as List).length);
 
       final servings = await db.select(db.servingSizes).get();
-      expect(servings.length, foods.length);
+      expect(servings.length, (seed['servingSizes'] as List).length);
+      // Not one per food: a recipe component whose source food isn't its
+      // own catalog row (the USDA food behind "puffed rice" in bhel) gets a
+      // FoodItems row for traceability, but no household serving — nothing
+      // invents a katori for it.
+      expect(servings.length, lessThan(foods.length));
+
+      final components = await db.select(db.recipeComponents).get();
+      expect(components.length, (seed['recipeComponents'] as List).length);
     },
   );
 

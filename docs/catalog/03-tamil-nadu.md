@@ -30,7 +30,7 @@ Three properties of Tamil cooking shape how it should be modelled:
 | Rava kesari | kesari bath | 1 katori | 130 | Rava 35 g, ghee 18 g, sugar 30 g, saffron, cashew |
 | **①** Vada, medu | ulundhu vadai | 2 pieces | 80 | Urad dal 30 g raw, absorbed oil 14 g |
 | Vada, masala | paruppu vadai | 2 pieces | 80 | Chana dal 30 g, absorbed oil 14 g, onion |
-| Vada, keerai | — | 2 pieces | 80 | Chana dal 25 g, greens 12 g, oil 13 g |
+| Vada, keerai | — | 2 pieces | 80 | Chana dal 25 g, spinach 12 g, oil 13 g |
 | Paniyaram, kuzhi | gunta ponganalu | 5 pieces | 100 | Dosa batter 85 g, oil 10 g, onion |
 | Paniyaram, sweet | — | 5 pieces | 100 | Batter 70 g, jaggery 20 g, oil 10 g |
 | Adai | — | 1 piece | 110 | Mixed dal 40 g raw, rice 20 g, oil 10 g |
@@ -41,7 +41,7 @@ Three properties of Tamil cooking shape how it should be modelled:
 | Kothu parotta | — | 1 plate | 250 | Parotta 90 g, egg 50 g, salna 70 g, oil 15 g |
 | Poori kizhangu | poori masala | 1 plate | 160 | 2 puri 50 g + potato masala 110 g |
 | Semiya upma | vermicelli upma | 1 katori | 150 | Vermicelli 45 g, oil 8 g, vegetables 25 g |
-| Aval upma | poha | 1 katori | 130 | Poha 45 g, oil 6 g, onion, peanuts 8 g |
+| Aval upma | aval | 1 katori | 130 | Raw poha 45 g, oil 6 g, onion, peanuts 8 g |
 
 ---
 
@@ -93,14 +93,14 @@ The liquid accompaniments. Portion accuracy matters because they are eaten with 
 | **①** Poriyal, beans | — | 1 katori | 110 | French beans 95 g, coconut 12 g, oil 6 g, mustard, urad dal |
 | **①** Poriyal, cabbage | — | 1 katori | 110 | Cabbage 95 g, coconut 12 g, oil 6 g |
 | Poriyal, carrot | — | 1 katori | 110 | Carrot 95 g, coconut 12 g, oil 6 g |
-| Poriyal, keerai | greens | 1 katori | 100 | Greens 90 g, oil 6 g, dal 8 g |
+| Poriyal, keerai | keerai poriyal | 1 katori | 100 | Spinach 90 g, oil 6 g, urad dal 8 g |
 | Sundal, chana | kondaikadalai sundal | 1 katori | 100 | Chickpeas 35 g raw, coconut 12 g, oil 4 g |
 | Sundal, peanut | verkadalai sundal | 1 katori | 90 | Peanuts 35 g, coconut 10 g, oil 3 g |
 | **①** Idli podi | milagai podi, gunpowder | 1 tbsp | 10 | Urad dal 4 g, chana dal 3 g, chilli, sesame — **usually eaten with 5 g oil or ghee added** |
 | Podi with oil | — | 1 serving | 16 | Podi 10 g + sesame oil 6 g |
 | Paruppu podi | — | 1 tbsp | 10 | Toor dal 6 g, chilli, garlic |
 | Appalam, fried | — | 1 piece | 13 | Urad flour 10 g, absorbed oil 3 g |
-| Thogayal | thuvaiyal | 2 tbsp | 30 | Coconut 12 g, dal 8 g, chilli, oil 4 g |
+| Thogayal | thuvaiyal | 2 tbsp | 30 | Coconut 12 g, urad dal 8 g, chilli, oil 4 g |
 | Pachadi | — | 1 katori | 110 | Curd 80 g, vegetable 25 g, coconut 8 g |
 
 ---
