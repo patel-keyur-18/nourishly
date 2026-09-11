@@ -34,7 +34,7 @@ Gujarati cooking has two properties that matter for accurate tracking, and both 
 | Dhebra | — | 1 piece | 50 | Bajra flour 30 g, methi 10 g, oil 8 g |
 | Bajra no rotlo | — | 1 piece | 65 | Bajra flour 50 g, water |
 | Juwar no rotlo | jowar rotla | 1 piece | 60 | Jowar flour 45 g, water |
-| Puri | — | 1 piece | 25 | Wheat flour 18 g, absorbed oil 6 g |
+| Puri, Gujarat | — | 1 piece | 25 | Wheat flour 18 g, absorbed oil 6 g |
 | Masala puri | — | 1 piece | 27 | As above + spices, ajwain |
 | Bhakhri, masala | — | 1 piece | 58 | Bhakhri + spice mix, extra ghee 2 g |
 

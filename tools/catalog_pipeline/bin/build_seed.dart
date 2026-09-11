@@ -242,6 +242,14 @@ void main() {
           );
           return newId;
         });
+      } else if (waterIngredients.contains(
+        catalogKey(ingredient['name'] as String),
+      )) {
+        // Water: mass without nutrients (fetch_catalog.dart resolves it to
+        // an empty nutrient map, so it has no fdcId to trace to). It still
+        // counts toward the recipe's yield factor, but there is no
+        // FoodItems row for it to point a component at, so it gets none.
+        continue;
       } else {
         throw StateError(
           '${food['foodName']} ingredient "${ingredient['name']}" has neither '
