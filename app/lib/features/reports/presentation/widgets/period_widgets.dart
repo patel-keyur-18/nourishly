@@ -238,3 +238,21 @@ String metDenominator(int met, int of, {bool isLimit = false}) {
       ? 'under the limit on $met of $of $days'
       : 'target met on $met of $of $days';
 }
+
+/// Which nutrients a "short of it" finding may name.
+///
+/// Only a floor (or a plateau, which has one) can be missed. A range —
+/// energy, and the macros derived as a share of it — is neither missed
+/// nor met in that sense: being under a band is a different failure from
+/// missing a floor, and listing carbs as "consistently short" beside an
+/// energy average that reads fine is a contradiction rather than a
+/// finding. The registry's `defaultCurveType` is no help here; it is
+/// `floor` for everything. The curve that matters is the one on the
+/// target actually in force (§21.3).
+bool canBeShort(TargetCurveType? curve) =>
+    curve == TargetCurveType.floor || curve == TargetCurveType.plateau;
+
+/// And which a "went over it" finding may name: a ceiling, or a plateau's
+/// upper limit.
+bool canBeOver(TargetCurveType? curve) =>
+    curve == TargetCurveType.ceiling || curve == TargetCurveType.plateau;

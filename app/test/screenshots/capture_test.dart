@@ -150,6 +150,20 @@ void main() {
     await shoot(tester, '10-monthly-report');
   });
 
+  testWidgets('weekly report, scrolled', (tester) async {
+    await pump(tester, '/insights/week');
+    await tester.drag(find.byType(ListView), const Offset(0, -700));
+    await tester.pumpAndSettle();
+    await shoot(tester, '09b-weekly-report-lower');
+  });
+
+  testWidgets('monthly report, scrolled', (tester) async {
+    await pump(tester, '/insights/month');
+    await tester.drag(find.byType(ListView), const Offset(0, -700));
+    await tester.pumpAndSettle();
+    await shoot(tester, '10b-monthly-report-lower');
+  });
+
   testWidgets('recipes', (tester) async {
     await _seedRecipe(db, ownerId);
     await pump(tester, '/recipes');

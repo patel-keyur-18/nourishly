@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nourishly_data/nourishly_data.dart' hide DailyScore;
+import 'package:nourishly_data/nourishly_data.dart'
+    hide DailyScore, NutrientTarget;
 import 'package:nourishly_ui/nourishly_ui.dart';
 import 'package:nutrition_core/nutrition_core.dart';
 
@@ -102,7 +103,13 @@ class _WeekBody extends ConsumerWidget {
             }.toList(),
           ),
         const NourishlySectionHeader(label: 'Worth knowing'),
-        _Findings(summary: summary, labels: labels, showScore: showScore),
+        _Findings(
+          summary: summary,
+          labels: labels,
+          showScore: showScore,
+          curves:
+              ref.watch(targetsForDateProvider(summary.end)).value ?? const {},
+        ),
         const NourishlySectionHeader(label: 'Days logged'),
         _ConsistencyCard(summary: summary),
       ],
@@ -314,11 +321,15 @@ class _Findings extends StatelessWidget {
     required this.summary,
     required this.labels,
     required this.showScore,
+    required this.curves,
   });
 
   final PeriodSummary summary;
   final Map<String, Nutrient> labels;
   final bool showScore;
+
+  /// The targets in force at the end of the period, for their curve type.
+  final Map<String, NutrientTarget> curves;
 
   @override
   Widget build(BuildContext context) {
@@ -337,7 +348,11 @@ class _Findings extends StatelessWidget {
       }
     }
 
-    for (final missed in summary.mostMissed(limit: 2)) {
+    final missable = summary
+        .mostMissed(limit: 6)
+        .where((n) => canBeShort(curves[n.nutrientId]?.curveType))
+        .take(2);
+    for (final missed in missable) {
       final name = shortNutrientName(
         labels[missed.nutrientId]?.displayName ?? missed.nutrientId,
       );
@@ -349,7 +364,10 @@ class _Findings extends StatelessWidget {
       );
     }
 
-    for (final over in summary.chronicallyHigh.take(1)) {
+    final overs = summary.chronicallyHigh
+        .where((n) => canBeOver(curves[n.nutrientId]?.curveType))
+        .take(1);
+    for (final over in overs) {
       final name = shortNutrientName(
         labels[over.nutrientId]?.displayName ?? over.nutrientId,
       );

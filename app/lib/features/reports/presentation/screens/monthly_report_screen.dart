@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nourishly_data/nourishly_data.dart' hide DailyScore;
+import 'package:nourishly_data/nourishly_data.dart'
+    hide DailyScore, NutrientTarget;
 import 'package:nourishly_ui/nourishly_ui.dart';
 import 'package:nutrition_core/nutrition_core.dart';
 
@@ -71,6 +72,8 @@ class _MonthBody extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final showScore = ref.watch(showScoreProvider);
     final labels = ref.watch(nutrientLabelsProvider).value ?? const {};
+    final curves =
+        ref.watch(targetsForDateProvider(summary.end)).value ?? const {};
 
     return ListView(
       padding: const EdgeInsets.fromLTRB(
@@ -87,7 +90,7 @@ class _MonthBody extends ConsumerWidget {
           const NourishlySectionHeader(label: 'Targets met'),
           _GoalConsistencyCard(summary: summary, labels: labels),
         ],
-        if (_chronic(summary.chronicallyLow) case final low
+        if (_chronic(summary.chronicallyLow, curves, canBeShort) case final low
             when low.isNotEmpty) ...[
           const NourishlySectionHeader(label: 'Consistently short'),
           _ChronicCard(
@@ -96,7 +99,7 @@ class _MonthBody extends ConsumerWidget {
             status: NourishlyStatus.low,
           ),
         ],
-        if (_chronic(summary.chronicallyHigh) case final high
+        if (_chronic(summary.chronicallyHigh, curves, canBeOver) case final high
             when high.isNotEmpty) ...[
           const NourishlySectionHeader(label: 'Consistently over'),
           _ChronicCard(
@@ -111,14 +114,19 @@ class _MonthBody extends ConsumerWidget {
     );
   }
 
-  /// Energy is left out and the list is capped.
+  /// Only nutrients the finding can honestly be made about, capped.
   ///
-  /// Energy has its own average two cards up, against a range rather than
-  /// a floor — calling it "consistently short" both contradicts that row
-  /// and misreads what a range target is. The cap is because a callout
-  /// listing everything is not a callout.
-  static List<ChronicNutrient> _chronic(List<ChronicNutrient> all) =>
-      all.where((n) => n.nutrientId != 'energy').take(4).toList();
+  /// [suits] is [canBeShort] or [canBeOver]: a range target — energy, and
+  /// the macros derived as a share of it — is neither short nor over, and
+  /// listing energy as "consistently short" directly contradicts the
+  /// energy average two cards up. The cap is because a callout listing
+  /// everything is not a callout.
+  static List<ChronicNutrient> _chronic(
+    List<ChronicNutrient> all,
+    Map<String, NutrientTarget> curves,
+    bool Function(TargetCurveType?) suits,
+  ) =>
+      all.where((n) => suits(curves[n.nutrientId]?.curveType)).take(4).toList();
 }
 
 /// §27.10's 30-day trend with a 7-day moving average, and the comparison
