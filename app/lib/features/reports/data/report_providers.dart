@@ -94,12 +94,3 @@ final monthComparisonProvider =
       );
       return PeriodComparison.between(current: current, previous: previous);
     });
-
-/// Display names and units for the nutrients a period report names, so it
-/// can say "Fibre" and "g" rather than "fibre".
-final nutrientLabelsProvider = FutureProvider<Map<String, Nutrient>>((
-  ref,
-) async {
-  final nutrients = await ref.watch(allNutrientsProvider.future);
-  return {for (final n in nutrients) n.id: n};
-});

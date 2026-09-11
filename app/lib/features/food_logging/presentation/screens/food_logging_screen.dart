@@ -159,6 +159,8 @@ class _Results extends StatelessWidget {
         ],
         const NourishlySectionHeader(label: 'Not finding it?'),
         _CreateCustomFoodRow(query: query),
+        const SizedBox(height: NourishlySpace.s2),
+        const _BuildRecipeRow(),
       ],
     );
   }
@@ -191,6 +193,33 @@ class _CreateCustomFoodRow extends StatelessWidget {
           Expanded(
             child: Text(
               'Create "$query" as a custom food',
+              style: text.label.copyWith(color: colors.accent),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// The other way out of a failed search: a dish the catalog does not have
+/// as a dish, but does have as its ingredients (§19.10).
+class _BuildRecipeRow extends StatelessWidget {
+  const _BuildRecipeRow();
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.nourishlyColors;
+    final text = context.nourishlyText;
+    return NourishlyCard(
+      onTap: () => context.push('/recipes/new'),
+      child: Row(
+        children: [
+          Icon(Icons.blender_outlined, color: colors.accent, size: 20),
+          const SizedBox(width: NourishlySpace.s3),
+          Expanded(
+            child: Text(
+              'Build it as a recipe, from its ingredients',
               style: text.label.copyWith(color: colors.accent),
             ),
           ),

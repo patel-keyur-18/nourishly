@@ -16,6 +16,7 @@ export 'src/nutrients/nutrient_id.dart';
 export 'src/reporting/period_comparison.dart';
 export 'src/reporting/period_day.dart';
 export 'src/reporting/period_summary.dart';
+export 'src/recipes/recipe_nutrition.dart';
 export 'src/scoring/curves.dart';
 export 'src/scoring/daily_score.dart';
 export 'src/scoring/day_scorer.dart';

@@ -11,6 +11,8 @@ import '../features/profile/presentation/screens/profile_setup_screen.dart';
 import '../features/reports/presentation/screens/daily_report_screen.dart';
 import '../features/reports/presentation/screens/monthly_report_screen.dart';
 import '../features/reports/presentation/screens/reports_screen.dart';
+import '../features/recipes/presentation/screens/recipe_builder_screen.dart';
+import '../features/recipes/presentation/screens/recipes_screen.dart';
 import '../features/reports/presentation/screens/weekly_report_screen.dart';
 import '../features/settings/presentation/screens/settings_screen.dart';
 import '../features/water/presentation/screens/water_screen.dart';
@@ -59,6 +61,26 @@ final GoRouter appRouter = GoRouter(
           parentNavigatorKey: rootNavigatorKey,
           builder: (context, state) =>
               CustomFoodScreen(initialName: state.uri.queryParameters['name']),
+        ),
+      ],
+    ),
+    // Over the shell, like the other detail screens: building a recipe is
+    // a job you finish and come back from, not a tab.
+    GoRoute(
+      path: '/recipes',
+      parentNavigatorKey: rootNavigatorKey,
+      builder: (context, state) => const RecipesScreen(),
+      routes: [
+        GoRoute(
+          path: 'new',
+          parentNavigatorKey: rootNavigatorKey,
+          builder: (context, state) => const RecipeBuilderScreen(),
+        ),
+        GoRoute(
+          path: ':foodId',
+          parentNavigatorKey: rootNavigatorKey,
+          builder: (context, state) =>
+              RecipeBuilderScreen(foodId: state.pathParameters['foodId']!),
         ),
       ],
     ),

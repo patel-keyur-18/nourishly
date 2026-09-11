@@ -85,7 +85,11 @@ void main() {
         child: RepaintBoundary(key: captureKey, child: const NourishlyApp()),
       ),
     );
-    await tester.pumpAndSettle();
+    // Navigate before settling. `appRouter` is a module-level singleton,
+    // so a fresh tree starts wherever the previous test left it — and
+    // settling on someone else's screen, against this test's fresh
+    // database, is a hang waiting to happen.
+    await tester.pump();
     appRouter.go(location);
     await tester.pumpAndSettle();
   }
@@ -144,6 +148,18 @@ void main() {
   testWidgets('monthly report', (tester) async {
     await pump(tester, '/insights/month');
     await shoot(tester, '10-monthly-report');
+  });
+
+  testWidgets('recipes', (tester) async {
+    await _seedRecipe(db, ownerId);
+    await pump(tester, '/recipes');
+    await shoot(tester, '11-recipes');
+  });
+
+  testWidgets('recipe builder', (tester) async {
+    final recipeId = await _seedRecipe(db, ownerId);
+    await pump(tester, '/recipes/$recipeId');
+    await shoot(tester, '12-recipe-builder');
   });
 
   testWidgets('water, filled', (tester) async {
@@ -528,4 +544,74 @@ Future<void> _seedHistory(NourishlyDatabase db, String ownerId) async {
       logDate: today.subtract(Duration(days: back)),
     );
   }
+}
+
+/// One saved recipe, so the recipe screens have something on them.
+Future<String> _seedRecipe(NourishlyDatabase db, String ownerId) async {
+  Future<String> ingredient(String name, Map<String, double> per100g) async {
+    final id = 'ing-${name.hashCode}';
+    await db
+        .into(db.foodItems)
+        .insert(
+          FoodItemsCompanion.insert(
+            id: id,
+            kind: 'ingredient',
+            canonicalName: name,
+            qualityTier: 'verified',
+            provenanceSource: 'usda_fdc',
+            dietClass: const Value('vegan'),
+          ),
+          mode: InsertMode.insertOrReplace,
+        );
+    await db.batch((batch) {
+      for (final entry in per100g.entries) {
+        batch.insert(
+          db.foodNutrientValues,
+          FoodNutrientValuesCompanion.insert(
+            id: 'fnv-$id-${entry.key}',
+            foodId: id,
+            nutrientId: entry.key,
+            amountPer100g: entry.value,
+            valueSource: 'analytical',
+          ),
+          mode: InsertMode.insertOrReplace,
+        );
+      }
+    });
+    return id;
+  }
+
+  final dal = await ingredient('Toor dal', {
+    'energy': 343,
+    'protein': 22,
+    'carbs': 58,
+    'fat': 1.5,
+    'fibre': 15,
+  });
+  final onion = await ingredient('Onion, raw', {
+    'energy': 40,
+    'protein': 1.1,
+    'carbs': 9,
+    'fat': 0.1,
+    'fibre': 1.7,
+  });
+  final oil = await ingredient('Groundnut oil', {
+    'energy': 884,
+    'protein': 0,
+    'carbs': 0,
+    'fat': 100,
+  });
+
+  return RecipeDao(db).saveRecipe(
+    ownerId: ownerId,
+    name: "Mummy's dal",
+    ingredients: [
+      RecipeIngredient(foodId: dal, name: 'Toor dal', grams: 200),
+      RecipeIngredient(foodId: onion, name: 'Onion, raw', grams: 80),
+      RecipeIngredient(foodId: oil, name: 'Groundnut oil', grams: 15),
+    ],
+    servingGrams: 150,
+    servingLabel: '1 katori',
+    cookedGrams: 740,
+  );
 }

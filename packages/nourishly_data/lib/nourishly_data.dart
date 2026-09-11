@@ -16,6 +16,7 @@ export 'src/dao/food_logging_dao.dart';
 export 'src/dao/food_search_dao.dart';
 export 'src/dao/period_summary_dao.dart';
 export 'src/dao/preferences_dao.dart';
+export 'src/dao/recipe_dao.dart';
 export 'src/dao/profile_dao.dart';
 export 'src/dao/water_log_dao.dart';
 export 'src/database.dart';
