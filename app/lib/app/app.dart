@@ -54,9 +54,11 @@ class _NourishlyAppState extends ConsumerState<NourishlyApp> {
       debugShowCheckedModeBanner: false,
       theme: NourishlyTheme.light(),
       darkTheme: NourishlyTheme.dark(),
-      // Dark mode is first-class, not an afterthought (§27.14) — follow
-      // the system setting rather than defaulting to light.
-      themeMode: ThemeMode.system,
+      // Light by default (the palette was drawn light-first and the
+      // prototype was approved in it), but dark stays first-class
+      // (§27.14): `UserPreferences.theme` decides, and `system` is
+      // honoured in full for anyone who asks for it.
+      themeMode: _themeModeOf(preferences?.theme),
       routerConfig: appRouter,
       builder: (context, child) {
         return catalogReady.when(
@@ -68,6 +70,17 @@ class _NourishlyAppState extends ConsumerState<NourishlyApp> {
     );
   }
 }
+
+/// `UserPreferences.theme` as a [ThemeMode].
+///
+/// An unreadable or not-yet-loaded preference falls back to light rather
+/// than to the system setting, so the very first frame does not flash the
+/// wrong palette on a phone set to dark.
+ThemeMode _themeModeOf(String? stored) => switch (stored) {
+  'dark' => ThemeMode.dark,
+  'system' => ThemeMode.system,
+  _ => ThemeMode.light,
+};
 
 class _LoadingScreen extends StatelessWidget {
   const _LoadingScreen({this.error});

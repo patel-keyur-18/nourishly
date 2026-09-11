@@ -83,14 +83,20 @@ class NourishlyDatabase extends _$NourishlyDatabase {
       );
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   /// v1 -> v2 adds FR-U-16's dietary preference (plus the one-time
   /// onboarding flag) and the diet class the catalog importer computes.
-  ///
   /// Additive columns only, so there is nothing to move: existing rows get
   /// the defaults, and `dietClass` is filled in the next time the catalog
   /// importer runs, which is every launch.
+  ///
+  /// v2 -> v3 changes the default appearance from `system` to `light`.
+  /// Rows still holding `system` are rewritten rather than left alone:
+  /// nothing has ever been able to set this column, so every stored value
+  /// is an untouched default and no one's choice is being overwritten.
+  /// Once §27.13's appearance setting exists, a stored `system` will mean
+  /// somebody asked for it and this migration will be long past.
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (m) => m.createAll(),
@@ -99,6 +105,10 @@ class NourishlyDatabase extends _$NourishlyDatabase {
         await m.addColumn(userPreferences, userPreferences.dietaryPreference);
         await m.addColumn(userPreferences, userPreferences.onboardingSeen);
         await m.addColumn(foodItems, foodItems.dietClass);
+      }
+      if (from < 3) {
+        await (update(userPreferences)..where((p) => p.theme.equals('system')))
+            .write(const UserPreferencesCompanion(theme: Value('light')));
       }
     },
   );

@@ -66,7 +66,7 @@ void main() {
       // Bhel: 100 g plate from 100 g of components. Nothing was cooked.
       final result = resolveRecipeYield(oneIngredient(100), servingGrams: 100);
 
-      expect(result.basis, YieldBasis.servingWeight);
+      expect(result.basis, YieldBasis.cookedWeight);
       expect(result.yieldFactor, 1.0);
       expect(result.cookedGrams, 100);
       expect(result.nutrientsPer100g['energy'], closeTo(100, 0.001));
@@ -76,7 +76,7 @@ void main() {
       // Pepper rasam: 12 g of solids in a 150 g katori.
       final result = resolveRecipeYield(oneIngredient(12), servingGrams: 150);
 
-      expect(result.basis, YieldBasis.servingWeight);
+      expect(result.basis, YieldBasis.cookedWeight);
       expect(result.yieldFactor, closeTo(12.5, 0.001));
       expect(result.nutrientsPer100g['energy'], closeTo(8, 0.001));
     });

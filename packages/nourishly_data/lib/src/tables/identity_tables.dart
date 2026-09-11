@@ -121,8 +121,11 @@ class UserPreferences extends Table with Owned, Timestamped {
   BoolColumn get showScore => boolean().withDefault(const Constant(true))();
   BoolColumn get hideEnergy => boolean().withDefault(const Constant(false))();
 
-  /// `light` | `dark` | `system`.
-  TextColumn get theme => text().withDefault(const Constant('system'))();
+  /// `light` | `dark` | `system`. Light is the default: the palette was
+  /// drawn light-first and it is what the prototype was approved in.
+  /// Dark is still first-class (§27.14) — `system` and `dark` are honoured
+  /// in full, they are just no longer what a new profile starts on.
+  TextColumn get theme => text().withDefault(const Constant('light'))();
   TextColumn get locale => text().withDefault(const Constant('en'))();
 
   /// `vegetarian` | `vegan` | `eggetarian` | `jain` | `halal` | null

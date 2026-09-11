@@ -77,6 +77,14 @@ class SettingsScreen extends ConsumerWidget {
                       value: manualOnly ? 'Manual' : 'Derived',
                       onTap: () => context.go('/profile/goals'),
                     ),
+                    _NavRow(
+                      title: 'Your recipes',
+                      value: '',
+                      subtitle:
+                          'Dishes built from their ingredients, loggable '
+                          'like any other food.',
+                      onTap: () => context.push('/recipes'),
+                    ),
                   ],
                 ),
               ),

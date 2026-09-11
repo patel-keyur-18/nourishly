@@ -3686,7 +3686,7 @@ class $UserPreferencesTable extends UserPreferences
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
-    defaultValue: const Constant('system'),
+    defaultValue: const Constant('light'),
   );
   static const VerificationMeta _localeMeta = const VerificationMeta('locale');
   @override
@@ -4022,7 +4022,10 @@ class UserPreference extends DataClass implements Insertable<UserPreference> {
   final bool showScore;
   final bool hideEnergy;
 
-  /// `light` | `dark` | `system`.
+  /// `light` | `dark` | `system`. Light is the default: the palette was
+  /// drawn light-first and it is what the prototype was approved in.
+  /// Dark is still first-class (§27.14) — `system` and `dark` are honoured
+  /// in full, they are just no longer what a new profile starts on.
   final String theme;
   final String locale;
 

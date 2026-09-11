@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:drift/extensions/fts5.dart';
+import 'package:meta/meta.dart';
 
 import '../database.dart';
 import '../diet_classifier.dart';
@@ -53,28 +54,98 @@ class FoodSearchDao {
   /// Food ids matching [query], best match first, deduplicated across a
   /// food's multiple indexed name variants. At most [limit] results.
   ///
-  /// [query] uses fts5 query syntax directly (§22.7) — the search screen
-  /// is responsible for treating raw user input as a single term rather
-  /// than passing it through unescaped once it needs prefix/boolean
-  /// query support (Phase 2 follow-up).
+  /// [query] is raw user input, not fts5 syntax — see [matchExpression].
   Future<List<String>> matchingFoodIds(String query, {int limit = 20}) async {
-    if (query.trim().isEmpty) return const [];
+    final ranked = await _matchingNames(query, limit: limit);
+    return [for (final row in ranked) row.foodId];
+  }
 
+  /// The fts5 MATCH expression for raw user input, or null if there is
+  /// nothing to search for.
+  ///
+  /// Two things happen here, and both are the difference between a search
+  /// that works while you type and one that does not:
+  ///
+  /// * Every token gets a trailing `*`, so "pan" finds paneer (FR-F-01 asks
+  ///   for prefix matching, and §27.4 asks for live results as the user
+  ///   types — a whole-word-only match makes both impossible).
+  /// * Every token is quoted. Splitting on non-alphanumerics means a token
+  ///   can only ever be letters and digits, so quoting is enough to stop
+  ///   `-`, `:`, `*`, `(` or a bare `OR` in what someone typed being read
+  ///   as fts5 operators — which would otherwise throw mid-keystroke.
+  ///
+  /// fts5 ANDs adjacent terms, so "pan but" finds "paneer butter masala"
+  /// and typing more words narrows rather than widens.
+  @visibleForTesting
+  static String? matchExpression(String query) {
+    final tokens = query
+        .split(RegExp(r'[^\p{L}\p{N}]+', unicode: true))
+        .where((token) => token.isNotEmpty);
+    if (tokens.isEmpty) return null;
+    return tokens.map((token) => '"$token"*').join(' ');
+  }
+
+  /// Matched index rows, best first and one per food.
+  ///
+  /// Ordering is bm25 (fts5's own relevance) re-ranked by how the name
+  /// meets the query: an exact name wins, then a name that starts with
+  /// what was typed, then a name with a word starting with it, then the
+  /// rest. Without this "pan" puts "Bread, pan-fried" wherever bm25
+  /// happens to leave it, above paneer.
+  Future<List<_MatchedName>> _matchingNames(
+    String query, {
+    required int limit,
+  }) async {
+    final expression = matchExpression(query);
+    if (expression == null) return const [];
+
+    // Prefix matching on a short query can match a large slice of the
+    // catalog, so the scan is bounded before it reaches Dart. The cap is
+    // generous relative to [limit] because the re-rank below needs more
+    // than [limit] rows to have anything to choose between, and because
+    // one food can occupy several rows through its alt names.
     final rows =
         await (_db.select(_db.foodSearchIndex)
-              ..where((t) => t.match(query))
-              ..orderBy([(t) => OrderingTerm(expression: t.rank)]))
+              ..where((t) => t.match(expression))
+              ..orderBy([(t) => OrderingTerm(expression: t.rank)])
+              ..limit(limit * 20))
             .get();
 
-    final seen = <String>{};
-    final ids = <String>[];
-    for (final row in rows) {
-      if (ids.length >= limit) break;
-      if (seen.add(row.foodId)) {
-        ids.add(row.foodId);
-      }
+    final needle = query.trim().toLowerCase();
+    final matches = <_MatchedName>[];
+    for (var i = 0; i < rows.length; i++) {
+      final name = rows[i].name.toLowerCase();
+      final tier = switch (name) {
+        _ when name == needle => 0,
+        _ when name.startsWith(needle) => 1,
+        _ when _hasWordStartingWith(name, needle) => 2,
+        _ => 3,
+      };
+      matches.add(
+        _MatchedName(foodId: rows[i].foodId, tier: tier, bm25Order: i),
+      );
     }
-    return ids;
+
+    // Stable on bm25 order within a tier.
+    matches.sort((a, b) {
+      final byTier = a.tier.compareTo(b.tier);
+      return byTier != 0 ? byTier : a.bm25Order.compareTo(b.bm25Order);
+    });
+
+    final seen = <String>{};
+    final best = <_MatchedName>[];
+    for (final match in matches) {
+      if (best.length >= limit) break;
+      if (seen.add(match.foodId)) best.add(match);
+    }
+    return best;
+  }
+
+  static bool _hasWordStartingWith(String name, String needle) {
+    for (final word in name.split(RegExp(r'[^\p{L}\p{N}]+', unicode: true))) {
+      if (word.startsWith(needle)) return true;
+    }
+    return false;
   }
 
   /// [matchingFoodIds], hydrated to live (non-deleted) [FoodItem] rows and
@@ -118,4 +189,23 @@ class FoodSearchDao {
     }
     return [...suits, ...rest];
   }
+}
+
+/// One matched index row, kept only long enough to re-rank it.
+class _MatchedName {
+  const _MatchedName({
+    required this.foodId,
+    required this.tier,
+    required this.bm25Order,
+  });
+
+  final String foodId;
+
+  /// 0 exact name, 1 name starts with the query, 2 a word in the name
+  /// does, 3 matched only on a prefix inside the name.
+  final int tier;
+
+  /// Position in fts5's own relevance order, so the re-rank stays stable
+  /// within a tier.
+  final int bm25Order;
 }

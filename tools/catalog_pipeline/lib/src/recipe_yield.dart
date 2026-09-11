@@ -1,47 +1,16 @@
 import 'package:meta/meta.dart';
+import 'package:nutrition_core/nutrition_core.dart';
 
 import 'composition.dart';
 
-/// How a dish is cooked — carried through as provenance on the resolved
-/// entry, and the source of a *fallback* yield factor for a caller that
-/// has no serving weight to work from. See [resolveRecipeYield] for why a
-/// serving weight beats it whenever one exists.
-///
-/// Decided 2026-09-10 from a household kitchen-scale check rather than a
-/// per-dish measurement (§0.3 — these are starting estimates, not
-/// measurements, same as every serving weight in the catalog):
-/// - **Pressure cooker** — dal and other pulses. Sealed, so evaporation
-///   is negligible; almost all the water that goes in stays in.
-/// - **Open pot** — rice and everything else that's simmered or boiled,
-///   uncovered, *including rice itself* — some water boils off.
-/// - **None** — assemblies. Already-finished components put together,
-///   taking on no water, so the served weight *is* the ingredient weight.
-enum CookingMethod { pressureCooker, openPot, none }
-
-/// Raw dry ingredient → cooked weight, by [CookingMethod]. Commonly-cited
-/// household ratios (dal roughly 2.5x, rice roughly 3x when boiled —
-/// reduced slightly here for typical open-pot evaporation), not a
-/// measurement of any specific Nourishly dish.
-///
-/// These are the fallback, not the primary source: measured against the
-/// committed catalog they are right for about an eighth of it. See
-/// [resolveRecipeYield].
-const Map<CookingMethod, double> cookingYieldFactor = {
-  CookingMethod.pressureCooker: 2.5,
-  CookingMethod.openPot: 2.75,
-  CookingMethod.none: 1.0,
-};
-
-/// The band of yield factors a real dish can land in, used to sanity-check
-/// a factor derived from a catalog row's own two weight columns.
-///
-/// The committed catalog spans 0.81x (khakhra and other dishes that dry
-/// out) to 12.5x (pepper rasam — 12 g of solids in a 150 g katori, the
-/// rest water the composition deliberately does not list because water has
-/// no nutrients). The band is wider than that on both sides: it is here to
-/// catch a typo in a weight column, not to second-guess curation.
-const double minPlausibleYield = 0.5;
-const double maxPlausibleYield = 15.0;
+/// §19.10's recipe arithmetic — the cooking-yield constants, the
+/// plausible band, and the sum-and-divide itself — lives in
+/// `nutrition_core` so the pipeline and the in-app recipe builder cannot
+/// drift apart (AP-5). This file keeps what is specific to the catalog:
+/// parsing an ingredient's quantity into grams, and inferring how a dish
+/// was cooked from what is in it.
+export 'package:nutrition_core/nutrition_core.dart'
+    show CookingMethod, YieldBasis, maxPlausibleYield, minPlausibleYield;
 
 final _dalIngredientPattern = RegExp(
   r'\b(dal|daal|lentil|rajma|chana|matki|moong|masoor|urad|toor|chawli|lobia)\b',
@@ -110,19 +79,6 @@ class ResolvedIngredient {
   final Map<String, double> nutrientsPer100g;
 }
 
-/// Where a [RecipeYieldResult]'s yield factor came from.
-enum YieldBasis {
-  /// The catalog row's own serving weight divided by the weight of the
-  /// ingredients that make one serving. Preferred: it is measured (or at
-  /// least estimated) for this specific dish.
-  servingWeight,
-
-  /// [cookingYieldFactor] for the dish's [CookingMethod] — used when no
-  /// serving weight was supplied, or the one supplied implied a factor
-  /// outside [minPlausibleYield]..[maxPlausibleYield].
-  cookingMethod,
-}
-
 @immutable
 class RecipeYieldResult {
   const RecipeYieldResult({
@@ -148,6 +104,11 @@ class RecipeYieldResult {
 /// ingredients" into "nutrients per 100g of the finished dish" (catalog
 /// spec §0.2).
 ///
+/// The arithmetic is [computeRecipeNutrition]; what this adds is the
+/// catalog's own inputs — each ingredient's quantity converted to grams by
+/// [gramsForIngredient], and the cooking method inferred from the
+/// ingredient list when the caller does not state one.
+///
 /// [servingGrams] is the dish's own served weight — the catalog's `g`
 /// column. When it is given, the yield factor is simply
 /// `servingGrams / ingredient grams`, because catalog spec §0.4 defines
@@ -161,12 +122,6 @@ class RecipeYieldResult {
 /// catalog, 143 of 249 recipes land between 0.8x and 1.2x, so the
 /// [CookingMethod] constants — the only thing this used to consult — were
 /// deflating most of the catalog's per-100g values by roughly 2.75x.
-///
-/// Without [servingGrams], or when it implies something outside
-/// [minPlausibleYield]..[maxPlausibleYield] (a typo in a weight column),
-/// it falls back to [cookingYieldFactor] and says so via
-/// [RecipeYieldResult.basis]. Pass [method] to override the inferred
-/// cooking method for that fallback.
 RecipeYieldResult resolveRecipeYield(
   List<ResolvedIngredient> resolvedIngredients, {
   CookingMethod? method,
@@ -177,37 +132,25 @@ RecipeYieldResult resolveRecipeYield(
   ], const []);
   final cookingMethod = method ?? inferCookingMethod(recipe);
 
-  var rawGrams = 0.0;
-  final totals = <String, double>{};
-  for (final resolved in resolvedIngredients) {
-    final grams = gramsForIngredient(resolved.ingredient);
-    rawGrams += grams;
-    resolved.nutrientsPer100g.forEach((nutrientId, per100g) {
-      totals[nutrientId] = (totals[nutrientId] ?? 0) + per100g * grams / 100;
-    });
-  }
-
-  final stated = servingGrams == null || rawGrams == 0
-      ? null
-      : servingGrams / rawGrams;
-  final usesStated =
-      stated != null &&
-      stated >= minPlausibleYield &&
-      stated <= maxPlausibleYield;
-
-  final yieldFactor = usesStated ? stated : cookingYieldFactor[cookingMethod]!;
-  final cookedGrams = rawGrams * yieldFactor;
-  final per100g = <String, double>{
-    for (final entry in totals.entries)
-      entry.key: cookedGrams == 0 ? 0.0 : entry.value / cookedGrams * 100,
-  };
+  final nutrition = computeRecipeNutrition(
+    components: [
+      for (final resolved in resolvedIngredients)
+        RecipeComponentInput(
+          foodId: resolved.ingredient.name,
+          grams: gramsForIngredient(resolved.ingredient),
+          nutrientsPer100g: resolved.nutrientsPer100g,
+        ),
+    ],
+    cookedGrams: servingGrams,
+    method: cookingMethod,
+  );
 
   return RecipeYieldResult(
-    nutrientsPer100g: per100g,
+    nutrientsPer100g: nutrition.per100g,
     method: cookingMethod,
-    basis: usesStated ? YieldBasis.servingWeight : YieldBasis.cookingMethod,
-    yieldFactor: yieldFactor,
-    rawIngredientGrams: rawGrams,
-    cookedGrams: cookedGrams,
+    basis: nutrition.basis,
+    yieldFactor: nutrition.yieldFactor,
+    rawIngredientGrams: nutrition.rawGrams,
+    cookedGrams: nutrition.cookedGrams,
   );
 }

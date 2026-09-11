@@ -73,7 +73,7 @@ class WaterScreen extends ConsumerWidget {
                 ),
                 child: Column(
                   children: [
-                    _WaterFill(totalMl: totalMl, goalMl: defaultGoalMl),
+                    WaterVessel(totalMl: totalMl, goalMl: defaultGoalMl),
                     const SizedBox(height: NourishlySpace.s4),
                     Row(
                       children: [
@@ -156,67 +156,6 @@ class WaterScreen extends ConsumerWidget {
         );
     messenger.showSnackBar(
       SnackBar(content: Text('Logged ${ml.toStringAsFixed(0)} ml')),
-    );
-  }
-}
-
-/// The vessel that fills as you drink — the "fill visual" the design
-/// decision picked over a glass grid, because it reads proportion best.
-class _WaterFill extends StatelessWidget {
-  const _WaterFill({required this.totalMl, required this.goalMl});
-
-  final double totalMl;
-  final double goalMl;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.nourishlyColors;
-    final text = context.nourishlyText;
-    final fraction = goalMl <= 0 ? 0.0 : (totalMl / goalMl).clamp(0.0, 1.0);
-
-    return Container(
-      width: 132,
-      height: 168,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(NourishlyRadius.xl),
-        border: Border.all(color: colors.line, width: NourishlyStroke.hairline),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(NourishlyRadius.xl),
-        // StackFit.expand keeps every child tightly constrained: an
-        // unbounded Align or FractionallySizedBox in here would size to
-        // whatever it was given, which is how layout goes wrong quietly.
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            ColoredBox(color: colors.track),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: FractionallySizedBox(
-                heightFactor: fraction,
-                widthFactor: 1,
-                child: ColoredBox(color: colors.accentSoft),
-              ),
-            ),
-            Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    (totalMl / 1000).toStringAsFixed(2),
-                    style: text.display.copyWith(height: 1),
-                  ),
-                  const SizedBox(height: NourishlySpace.s1),
-                  Text(
-                    'of ${(goalMl / 1000).toStringAsFixed(1)} L',
-                    style: text.caption.copyWith(color: colors.ink2),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

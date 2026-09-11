@@ -69,6 +69,15 @@ final allNutrientsProvider = FutureProvider<List<Nutrient>>((ref) async {
   )..orderBy([(n) => OrderingTerm.asc(n.sortOrder)])).get();
 });
 
+/// The registry keyed by nutrient id, so a screen can turn "fibre" into
+/// "Dietary fibre" and "g" without carrying the list around.
+final nutrientLabelsProvider = FutureProvider<Map<String, Nutrient>>((
+  ref,
+) async {
+  final nutrients = await ref.watch(allNutrientsProvider.future);
+  return {for (final n in nutrients) n.id: n};
+});
+
 /// The foods behind one nutrient on one day (FR-D-03).
 typedef ContributorQuery = ({DateTime date, String nutrientId});
 

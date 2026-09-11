@@ -64,6 +64,7 @@ void main() {
     await PreferencesDao(db).update(ownerId, onboardingSeen: true);
     await _seedProfile(db, ownerId);
     await _seedDay(db, ownerId);
+    await _seedHistory(db, ownerId);
   });
 
   tearDown(() => db.close());
@@ -84,7 +85,11 @@ void main() {
         child: RepaintBoundary(key: captureKey, child: const NourishlyApp()),
       ),
     );
-    await tester.pumpAndSettle();
+    // Navigate before settling. `appRouter` is a module-level singleton,
+    // so a fresh tree starts wherever the previous test left it — and
+    // settling on someone else's screen, against this test's fresh
+    // database, is a hang waiting to happen.
+    await tester.pump();
     appRouter.go(location);
     await tester.pumpAndSettle();
   }
@@ -133,6 +138,69 @@ void main() {
   testWidgets('insights', (tester) async {
     await pump(tester, '/insights');
     await shoot(tester, '06-insights');
+  });
+
+  testWidgets('weekly report', (tester) async {
+    await pump(tester, '/insights/week');
+    await shoot(tester, '09-weekly-report');
+  });
+
+  testWidgets('monthly report', (tester) async {
+    await pump(tester, '/insights/month');
+    await shoot(tester, '10-monthly-report');
+  });
+
+  testWidgets('weekly report, scrolled', (tester) async {
+    await pump(tester, '/insights/week');
+    await tester.drag(find.byType(ListView), const Offset(0, -700));
+    await tester.pumpAndSettle();
+    await shoot(tester, '09b-weekly-report-lower');
+  });
+
+  testWidgets('monthly report, scrolled', (tester) async {
+    await pump(tester, '/insights/month');
+    await tester.drag(find.byType(ListView), const Offset(0, -700));
+    await tester.pumpAndSettle();
+    await shoot(tester, '10b-monthly-report-lower');
+  });
+
+  testWidgets('weekly nutrient detail', (tester) async {
+    await pump(tester, '/insights/week/nutrient/protein');
+    await shoot(tester, '09c-weekly-nutrient');
+  });
+
+  testWidgets('recipes', (tester) async {
+    await _seedRecipe(db, ownerId);
+    await pump(tester, '/recipes');
+    await shoot(tester, '11-recipes');
+  });
+
+  testWidgets('recipe builder', (tester) async {
+    final recipeId = await _seedRecipe(db, ownerId);
+    await pump(tester, '/recipes/$recipeId');
+    await shoot(tester, '12-recipe-builder');
+  });
+
+  testWidgets('water, filled', (tester) async {
+    await pump(tester, '/water');
+    await shoot(tester, '07-water');
+  });
+
+  testWidgets('water, mid-pour', (tester) async {
+    // The user's actual report: tap a quick-add and watch. Bounded pumps
+    // rather than `pumpAndSettle`, to catch the vessel part-way up with
+    // the surface still moving — the frame the settled shot cannot show.
+    await pump(tester, '/water');
+    await tester.tap(find.text('+500 ml'));
+    // Let the write land and the stream emit, without settling past the
+    // animation it kicks off.
+    for (var i = 0; i < 8; i++) {
+      await tester.pump(const Duration(milliseconds: 16));
+    }
+    await tester.pump(const Duration(milliseconds: 260));
+    await shoot(tester, '08-water-mid-pour');
+    // Leave no timer running behind the test.
+    await tester.pumpAndSettle();
   });
 }
 
@@ -368,4 +436,201 @@ Future<void> _seedDay(NourishlyDatabase db, String ownerId) async {
 
   await WaterLogDao(db)
       .logWater(ownerId: ownerId, volumeMl: 1600, logDate: today);
+}
+
+/// Six weeks of plausible days behind today, so the weekly and monthly
+/// reports have a shape to draw rather than a single day and six gaps.
+///
+/// The numbers wander the way a real household's do: a couple of days
+/// short, one day nobody finished logging, and two days a week untouched.
+Future<void> _seedHistory(NourishlyDatabase db, String ownerId) async {
+  final now = DateTime.now();
+  final today = DateTime(now.year, now.month, now.day);
+
+  // Deterministic, so two runs of the harness produce the same picture.
+  const energyByOffset = [
+    1980,
+    2120,
+    1840,
+    0,
+    2260,
+    1920,
+    0,
+    2040,
+    1760,
+    2180,
+    620,
+    2100,
+    1880,
+    0,
+    2020,
+    1940,
+    2210,
+    1790,
+    0,
+    2160,
+    1850,
+    1990,
+    2070,
+    0,
+    1830,
+    2240,
+    1910,
+    0,
+    2050,
+    1870,
+    2130,
+    1780,
+    0,
+    2190,
+    1960,
+    2010,
+    1840,
+    0,
+    2080,
+    1900,
+    2150,
+    1820,
+  ];
+
+  await db.batch((batch) {
+    for (var back = 1; back <= energyByOffset.length; back++) {
+      final energy = energyByOffset[back - 1].toDouble();
+      if (energy == 0) continue;
+      final date = today.subtract(Duration(days: back));
+      final key = 'h$back';
+
+      batch.insert(
+        db.foodItems,
+        FoodItemsCompanion.insert(
+          id: 'food-$key',
+          kind: 'dish',
+          canonicalName: 'A day of home cooking',
+          qualityTier: 'derived',
+          provenanceSource: 'catalog_pipeline_recipe',
+        ),
+        mode: InsertMode.insertOrReplace,
+      );
+      batch.insert(
+        db.foodLogEntries,
+        FoodLogEntriesCompanion.insert(
+          id: 'entry-$key',
+          ownerId: ownerId,
+          logDate: date,
+          mealSlotId: 'lunch',
+          foodId: 'food-$key',
+          foodRevision: 1,
+          quantity: 1,
+          gramsConsumed: 900,
+          loggedAt: date,
+          source: 'manual',
+        ),
+        mode: InsertMode.insertOrReplace,
+      );
+
+      // Protein tracks energy; fibre is short most days, which is the
+      // household's actual pattern and what the reports should surface.
+      final scale = energy / 2050;
+      for (final entry in {
+        'energy': energy,
+        'protein': 96 * scale,
+        'carbs': 250 * scale,
+        'fat': 62 * scale,
+        'fibre': (back % 5 == 0 ? 31.0 : 18.0) * scale,
+        'sodium': 2300 * scale,
+        'iron': 14 * scale,
+        'calcium': 780 * scale,
+        'vitamin_c': 62 * scale,
+      }.entries) {
+        batch.insert(
+          db.logEntryNutrients,
+          LogEntryNutrientsCompanion.insert(
+            entryId: 'entry-$key',
+            nutrientId: entry.key,
+            amount: entry.value,
+          ),
+          mode: InsertMode.insertOrReplace,
+        );
+      }
+    }
+  });
+
+  for (var back = 1; back <= energyByOffset.length; back++) {
+    if (energyByOffset[back - 1] == 0) continue;
+    await WaterLogDao(db).logWater(
+      ownerId: ownerId,
+      volumeMl: back % 3 == 0 ? 1900 : 2700,
+      logDate: today.subtract(Duration(days: back)),
+    );
+  }
+}
+
+/// One saved recipe, so the recipe screens have something on them.
+Future<String> _seedRecipe(NourishlyDatabase db, String ownerId) async {
+  Future<String> ingredient(String name, Map<String, double> per100g) async {
+    final id = 'ing-${name.hashCode}';
+    await db
+        .into(db.foodItems)
+        .insert(
+          FoodItemsCompanion.insert(
+            id: id,
+            kind: 'ingredient',
+            canonicalName: name,
+            qualityTier: 'verified',
+            provenanceSource: 'usda_fdc',
+            dietClass: const Value('vegan'),
+          ),
+          mode: InsertMode.insertOrReplace,
+        );
+    await db.batch((batch) {
+      for (final entry in per100g.entries) {
+        batch.insert(
+          db.foodNutrientValues,
+          FoodNutrientValuesCompanion.insert(
+            id: 'fnv-$id-${entry.key}',
+            foodId: id,
+            nutrientId: entry.key,
+            amountPer100g: entry.value,
+            valueSource: 'analytical',
+          ),
+          mode: InsertMode.insertOrReplace,
+        );
+      }
+    });
+    return id;
+  }
+
+  final dal = await ingredient('Toor dal', {
+    'energy': 343,
+    'protein': 22,
+    'carbs': 58,
+    'fat': 1.5,
+    'fibre': 15,
+  });
+  final onion = await ingredient('Onion, raw', {
+    'energy': 40,
+    'protein': 1.1,
+    'carbs': 9,
+    'fat': 0.1,
+    'fibre': 1.7,
+  });
+  final oil = await ingredient('Groundnut oil', {
+    'energy': 884,
+    'protein': 0,
+    'carbs': 0,
+    'fat': 100,
+  });
+
+  return RecipeDao(db).saveRecipe(
+    ownerId: ownerId,
+    name: "Mummy's dal",
+    ingredients: [
+      RecipeIngredient(foodId: dal, name: 'Toor dal', grams: 200),
+      RecipeIngredient(foodId: onion, name: 'Onion, raw', grams: 80),
+      RecipeIngredient(foodId: oil, name: 'Groundnut oil', grams: 15),
+    ],
+    servingGrams: 150,
+    servingLabel: '1 katori',
+    cookedGrams: 740,
+  );
 }
