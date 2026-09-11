@@ -1,12 +1,15 @@
 import 'dart:io';
 
 import 'package:drift/drift.dart' show InsertMode;
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nourishly/app/app.dart';
-import 'package:nourishly/app/router.dart';
 import 'package:nourishly/app/providers.dart';
+import 'package:nourishly/app/router.dart';
 import 'package:nourishly/features/food_catalog/data/food_catalog_providers.dart';
+import 'package:nourishly/features/reports/presentation/screens/daily_report_screen.dart';
+import 'package:nourishly/shared/formatting.dart';
 import 'package:nourishly_data/nourishly_data.dart';
 import 'package:nourishly_domain/nourishly_domain.dart';
 import 'package:nourishly_ui/nourishly_ui.dart';
@@ -105,6 +108,14 @@ void main() {
   }
 
   Future<void> pumpTo(WidgetTester tester, String location) async {
+    // A tall window so a whole report is on screen at once. A ListView
+    // builds its children lazily, so on a phone-sized test view the
+    // sections below the fold are simply not in the tree and nothing can
+    // find them.
+    tester.view.physicalSize = const Size(390 * 3, 4000 * 3);
+    tester.view.devicePixelRatio = 3;
+    addTearDown(tester.view.reset);
+
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
@@ -201,6 +212,97 @@ void main() {
     });
   });
 
+  group('§27.9s remaining content and actions', () {
+    testWidgets('the best day says what it did, not just what it scored', (
+      tester,
+    ) async {
+      // Five ordinary days and one that clears the fibre floor nothing
+      // else does. That is the reason the finding should give.
+      for (var back = 1; back <= 5; back++) {
+        await logDay(back);
+      }
+      await logDay(6, fibre: 45);
+      await pumpTo(tester, '/insights/week');
+
+      expect(find.textContaining('Best day was'), findsOneWidget);
+      expect(
+        find.textContaining('the only day Fibre was met'),
+        findsOneWidget,
+        reason: '§27.9 asks for the best day *with reason*',
+      );
+    });
+
+    testWidgets('the consistency strip covers meals as well as days', (
+      tester,
+    ) async {
+      for (var back = 1; back <= 4; back++) {
+        await logDay(back);
+      }
+      await pumpTo(tester, '/insights/week');
+
+      final grid = tester.widget<MealConsistencyGrid>(
+        find.byType(MealConsistencyGrid),
+      );
+      expect(grid.meals.map((m) => m.label), ['Breakfast', 'Lunch', 'Dinner']);
+      expect(
+        grid.meals.every((m) => m.logged.length == 7),
+        isTrue,
+        reason: 'one cell per calendar day, so the gaps show',
+      );
+      // Everything is logged at lunch in this fixture and nothing at
+      // breakfast, which is exactly the pattern the grid exists to show.
+      expect(grid.meals[1].logged.where((l) => l).length, 4);
+      expect(grid.meals[0].logged.where((l) => l).length, 0);
+      expect(find.textContaining('was logged least often'), findsOneWidget);
+    });
+
+    testWidgets('tapping a nutrient opens its week', (tester) async {
+      for (var back = 1; back <= 4; back++) {
+        await logDay(back);
+      }
+      await pumpTo(tester, '/insights/week');
+
+      await tester.tap(find.text('Protein'));
+      await tester.pumpAndSettle();
+      // NourishlySectionHeader uppercases its label.
+      expect(find.text('ACROSS THE WEEK'), findsOneWidget);
+      expect(find.text('DAY BY DAY'), findsOneWidget);
+      // Its own chart of the nutrient, not the energy one.
+      final chart = tester.widget<DayBarChart>(find.byType(DayBarChart));
+      expect(chart.bars, hasLength(7));
+      expect(chart.semanticsLabel, contains('Protein'));
+    });
+
+    testWidgets('a day with no value for the nutrient shows a dash, not 0', (
+      tester,
+    ) async {
+      for (var back = 1; back <= 4; back++) {
+        await logDay(back);
+      }
+      await pumpTo(tester, '/insights/week/nutrient/protein');
+
+      // AP-4: the unlogged days of the week are em dashes.
+      expect(find.text('\u2014'), findsWidgets);
+      expect(find.text('0 g'), findsNothing);
+    });
+
+    testWidgets('the weekly detail states the coverage it is built on', (
+      tester,
+    ) async {
+      for (var back = 1; back <= 4; back++) {
+        await logDay(back);
+      }
+      await pumpTo(tester, '/insights/week/nutrient/protein');
+
+      expect(find.text('Based on'), findsOneWidget);
+      expect(
+        find.textContaining('of the energy logged on those days reported it'),
+        findsOneWidget,
+        reason: '§20.8: an average has to say how much of the day it saw',
+      );
+    });
+  });
+
   group('the monthly report', () {
     testWidgets(
       'a sparse previous month blocks the comparison, with a reason',
@@ -218,6 +320,28 @@ void main() {
         expect(find.text('Not compared'), findsWidgets);
       },
     );
+
+    testWidgets('a logged day can be opened from the month (§27.10)', (
+      tester,
+    ) async {
+      for (var back = 1; back <= 6; back++) {
+        await logDay(back);
+      }
+      await pumpTo(tester, '/insights/month');
+
+      // The chip row is horizontally scrollable and builds lazily, so
+      // this picks a day near its start rather than the most recent one.
+      final day = today.subtract(const Duration(days: 6));
+      await tester.tap(find.widgetWithText(ActionChip, '${day.day}'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(DailyReportScreen), findsOneWidget);
+      expect(
+        find.text(formatLongDate(day)),
+        findsOneWidget,
+        reason: 'and it is that day, not merely some day',
+      );
+    });
 
     testWidgets('the score chart carries the smoothed line as well', (
       tester,

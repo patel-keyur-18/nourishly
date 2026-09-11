@@ -487,7 +487,40 @@ class _MonthConsistencyCard extends ConsumerWidget {
             'logged.',
             style: text.caption.copyWith(color: colors.ink3),
           ),
-          const SizedBox(height: NourishlySpace.s3),
+          if (summary.loggedDayCount > 0) ...[
+            const SizedBox(height: NourishlySpace.s3),
+            // §27.10: drill into a day. The strip's own cells are a
+            // thirtieth of the width and nowhere near a 48dp touch
+            // target, so the days are offered as chips — the same
+            // affordance the weekly screen uses, scrolled because a
+            // well-logged month has thirty of them.
+            SizedBox(
+              height: NourishlyTarget.minTouch,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: [
+                  for (final day in summary.days)
+                    if (day.wasLogged)
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          right: NourishlySpace.s2,
+                        ),
+                        child: ActionChip(
+                          label: Text('${day.date.day}'),
+                          tooltip: formatLongDate(day.date),
+                          onPressed: () {
+                            ref
+                                .read(selectedDateProvider.notifier)
+                                .setTo(day.date);
+                            context.go('/today/report');
+                          },
+                        ),
+                      ),
+                ],
+              ),
+            ),
+          ],
+          const SizedBox(height: NourishlySpace.s2),
           Align(
             alignment: Alignment.centerLeft,
             child: TextButton(

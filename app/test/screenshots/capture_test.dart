@@ -164,6 +164,11 @@ void main() {
     await shoot(tester, '10b-monthly-report-lower');
   });
 
+  testWidgets('weekly nutrient detail', (tester) async {
+    await pump(tester, '/insights/week/nutrient/protein');
+    await shoot(tester, '09c-weekly-nutrient');
+  });
+
   testWidgets('recipes', (tester) async {
     await _seedRecipe(db, ownerId);
     await pump(tester, '/recipes');

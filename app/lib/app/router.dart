@@ -13,6 +13,7 @@ import '../features/reports/presentation/screens/monthly_report_screen.dart';
 import '../features/reports/presentation/screens/reports_screen.dart';
 import '../features/recipes/presentation/screens/recipe_builder_screen.dart';
 import '../features/recipes/presentation/screens/recipes_screen.dart';
+import '../features/reports/presentation/screens/weekly_nutrient_screen.dart';
 import '../features/reports/presentation/screens/weekly_report_screen.dart';
 import '../features/settings/presentation/screens/settings_screen.dart';
 import '../features/water/presentation/screens/water_screen.dart';
@@ -119,6 +120,14 @@ final GoRouter appRouter = GoRouter(
                 GoRoute(
                   path: 'week',
                   builder: (context, state) => const WeeklyReportScreen(),
+                  routes: [
+                    GoRoute(
+                      path: 'nutrient/:nutrientId',
+                      builder: (context, state) => WeeklyNutrientScreen(
+                        nutrientId: state.pathParameters['nutrientId']!,
+                      ),
+                    ),
+                  ],
                 ),
                 GoRoute(
                   path: 'month',

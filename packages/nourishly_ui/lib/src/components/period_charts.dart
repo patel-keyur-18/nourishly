@@ -563,3 +563,115 @@ enum ConsistencyCell {
   /// Nothing at all.
   none,
 }
+
+/// One meal slot's row in a [MealConsistencyGrid].
+@immutable
+class MealRow {
+  const MealRow({required this.label, required this.logged});
+
+  /// "Breakfast", "Lunch"…
+  final String label;
+
+  /// One per day of the period, in the same order as the day labels.
+  final List<bool> logged;
+}
+
+/// Which days *and which meals* were logged (§27.9), as a grid: one row
+/// per meal slot, one column per day.
+///
+/// A day strip alone answers "did I log on Tuesday". This answers the more
+/// useful question — which meal is the one that keeps getting missed —
+/// and it is the same denominator framing rather than a streak (§21.8).
+class MealConsistencyGrid extends StatelessWidget {
+  const MealConsistencyGrid({
+    super.key,
+    required this.meals,
+    required this.dayLabels,
+    this.semanticsLabel,
+  });
+
+  final List<MealRow> meals;
+  final List<String> dayLabels;
+  final String? semanticsLabel;
+
+  /// Wide enough for "Breakfast" at caption size without wrapping, and
+  /// narrow enough to leave the grid the rest of a phone's width.
+  static const double _labelWidth = 66;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.nourishlyColors;
+    final text = context.nourishlyText;
+
+    Widget cellRow(List<Widget> cells) => Row(
+      children: [
+        for (var i = 0; i < cells.length; i++) ...[
+          if (i > 0) const SizedBox(width: 4),
+          Expanded(child: cells[i]),
+        ],
+      ],
+    );
+
+    return Semantics(
+      label: semanticsLabel,
+      container: semanticsLabel != null,
+      child: ExcludeSemantics(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const SizedBox(width: _labelWidth),
+                Expanded(
+                  child: cellRow([
+                    for (final label in dayLabels)
+                      Text(
+                        label,
+                        textAlign: TextAlign.center,
+                        style: text.caption.copyWith(
+                          fontSize: 10,
+                          color: colors.ink3,
+                        ),
+                      ),
+                  ]),
+                ),
+              ],
+            ),
+            const SizedBox(height: NourishlySpace.s1),
+            for (var m = 0; m < meals.length; m++) ...[
+              if (m > 0) const SizedBox(height: 4),
+              Row(
+                children: [
+                  SizedBox(
+                    width: _labelWidth,
+                    child: Text(
+                      meals[m].label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: text.caption.copyWith(
+                        fontSize: 10.5,
+                        color: colors.ink2,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: cellRow([
+                      for (final logged in meals[m].logged)
+                        Container(
+                          height: 10,
+                          decoration: BoxDecoration(
+                            color: logged ? colors.accent : colors.track,
+                            borderRadius: BorderRadius.circular(3),
+                          ),
+                        ),
+                    ]),
+                  ),
+                ],
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}

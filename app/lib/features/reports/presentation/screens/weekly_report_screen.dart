@@ -266,6 +266,8 @@ class _AveragesCard extends ConsumerWidget {
                   isLimit: nutrient?.isLimitNutrient ?? false,
                 ),
           showDivider: false,
+          // §27.9: tap a nutrient for its weekly detail.
+          onTap: () => context.go('/insights/week/nutrient/$id'),
         ),
       );
     }
@@ -339,10 +341,12 @@ class _Findings extends StatelessWidget {
 
     if (showScore) {
       if (summary.bestDay case final best? when best.score != null) {
+        final reason = _bestDayReason(best);
         findings.add(
           PeriodFinding.good(
             'Best day was ${weekdayName(best.date.weekday)} '
-            '(${best.score!.round()}).',
+            '(${best.score!.round()})'
+            '${reason == null ? '.' : ' \u2014 $reason.'}',
           ),
         );
       }
@@ -401,6 +405,61 @@ class _Findings extends StatelessWidget {
 
     return FindingsCard(findings: findings);
   }
+
+  /// §27.9 asks for the best day *with reason*: naming a day and a number
+  /// says which day scored highest, not what it did differently.
+  ///
+  /// The most useful reason is the thing that day managed and the rest of
+  /// the week did not — the prototype's own example is "the only day fibre
+  /// was met". Failing that, how many of its targets it met, which is
+  /// always available and always true.
+  String? _bestDayReason(PeriodDay best) {
+    // Only floors: "met" is an achievement against something to reach, and
+    // a range or a ceiling does not read that way (see [canBeShort]).
+    final others = summary.averagedDays
+        .where((day) => day.date != best.date)
+        .toList();
+
+    String? rarest;
+    var fewestOthers = 0;
+    var targetsMet = 0;
+    var targetsHad = 0;
+
+    for (final average in summary.nutrientAverages) {
+      final id = average.nutrientId;
+      if (!canBeShort(curves[id]?.curveType)) continue;
+      final onBest = best.nutrients[id];
+      if (onBest == null || !onBest.hasData || onBest.targetAmount == null) {
+        continue;
+      }
+      targetsHad++;
+      if (!onBest.metTarget) continue;
+      targetsMet++;
+
+      final alsoMet = others
+          .where((day) => day.nutrients[id]?.metTarget ?? false)
+          .length;
+      if (rarest == null || alsoMet < fewestOthers) {
+        rarest = shortNutrientName(labels[id]?.displayName ?? id);
+        fewestOthers = alsoMet;
+      }
+    }
+
+    if (rarest != null && others.isNotEmpty) {
+      if (fewestOthers == 0) return 'the only day $rarest was met';
+      if (fewestOthers < others.length) {
+        return 'one of only ${fewestOthers + 1} days $rarest was met';
+      }
+    }
+    // Only when it is actually a good number. "Best day — 1 of its 5
+    // targets met" is true and reads as a contradiction: a reason has to
+    // add something to the claim, not undercut it. Below a majority the
+    // score stands on its own.
+    if (targetsHad > 0 && targetsMet * 2 > targetsHad) {
+      return '$targetsMet of its $targetsHad targets met';
+    }
+    return null;
+  }
 }
 
 /// §27.11's consistency strip: which days were logged, shown as a
@@ -414,6 +473,7 @@ class _ConsistencyCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.nourishlyColors;
     final text = context.nourishlyText;
+    final slots = ref.watch(mealSlotsProvider).value ?? const [];
 
     return NourishlyCard(
       child: Column(
@@ -445,6 +505,34 @@ class _ConsistencyCard extends ConsumerWidget {
             'logged.',
             style: text.caption.copyWith(color: colors.ink3),
           ),
+          // §27.9 asks the strip to show which days *and meals* were
+          // logged. Which meal keeps getting missed is the more useful
+          // half, and the day strip alone cannot say it.
+          if (slots.isNotEmpty && summary.loggedDayCount > 0) ...[
+            const SizedBox(height: NourishlySpace.s4),
+            MealConsistencyGrid(
+              semanticsLabel: _mealsLabel(slots),
+              dayLabels: [
+                for (final day in summary.days)
+                  weekdayInitial(day.date.weekday),
+              ],
+              meals: [
+                for (final slot in slots)
+                  MealRow(
+                    label: slot.displayName,
+                    logged: [
+                      for (final day in summary.days)
+                        day.loggedMealSlots.contains(slot.id),
+                    ],
+                  ),
+              ],
+            ),
+            const SizedBox(height: NourishlySpace.s3),
+            Text(
+              _mealsSummary(slots),
+              style: text.caption.copyWith(color: colors.ink3, height: 1.4),
+            ),
+          ],
           const SizedBox(height: NourishlySpace.s3),
           Wrap(
             spacing: NourishlySpace.s2,
@@ -467,5 +555,31 @@ class _ConsistencyCard extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  int _daysWith(MealSlot slot) =>
+      summary.days.where((d) => d.loggedMealSlots.contains(slot.id)).length;
+
+  /// The grid's text alternative: the conclusion, not the cells.
+  String _mealsLabel(List<MealSlot> slots) => [
+    for (final slot in slots)
+      '${slot.displayName} logged on ${_daysWith(slot)} of '
+          '${summary.calendarDayCount} days',
+  ].join(', ');
+
+  /// Names the meal that is missed most, which is the point of the grid.
+  String _mealsSummary(List<MealSlot> slots) {
+    final counted = [for (final slot in slots) (slot, _daysWith(slot))]
+      ..sort((a, b) => a.$2.compareTo(b.$2));
+    if (counted.isEmpty) return '';
+    final (weakest, days) = counted.first;
+    final (strongest, best) = counted.last;
+    if (days == best) {
+      return 'Every meal was logged on the same $days '
+          '${days == 1 ? 'day' : 'days'}.';
+    }
+    return '${weakest.displayName} was logged least often ($days of '
+        '${summary.calendarDayCount} days), ${strongest.displayName} most '
+        '($best).';
   }
 }
