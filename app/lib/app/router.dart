@@ -9,7 +9,9 @@ import '../features/goals/presentation/screens/goals_screen.dart';
 import '../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../features/profile/presentation/screens/profile_setup_screen.dart';
 import '../features/reports/presentation/screens/daily_report_screen.dart';
+import '../features/reports/presentation/screens/monthly_report_screen.dart';
 import '../features/reports/presentation/screens/reports_screen.dart';
+import '../features/reports/presentation/screens/weekly_report_screen.dart';
 import '../features/settings/presentation/screens/settings_screen.dart';
 import '../features/water/presentation/screens/water_screen.dart';
 import 'shell/nourishly_shell.dart';
@@ -88,6 +90,19 @@ final GoRouter appRouter = GoRouter(
             GoRoute(
               path: '/insights',
               builder: (context, state) => const ReportsScreen(),
+              routes: [
+                // Inside the branch, not over the shell: the prototype
+                // keeps the bottom nav on 10A and 11A and only the daily
+                // report (9C) covers it.
+                GoRoute(
+                  path: 'week',
+                  builder: (context, state) => const WeeklyReportScreen(),
+                ),
+                GoRoute(
+                  path: 'month',
+                  builder: (context, state) => const MonthlyReportScreen(),
+                ),
+              ],
             ),
           ],
         ),

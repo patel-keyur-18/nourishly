@@ -212,6 +212,7 @@ class Sparkline extends StatelessWidget {
     this.height = 64,
     this.minimum,
     this.maximum,
+    this.minimumSpan = 0,
     this.semanticsLabel,
   });
 
@@ -228,6 +229,13 @@ class Sparkline extends StatelessWidget {
   /// sparklines are read against each other.
   final double? minimum;
   final double? maximum;
+
+  /// The narrowest range the axis will scale to.
+  ///
+  /// Without it, a month whose scores run 86 to 88 is drawn as a mountain
+  /// range: auto-scaling amplifies two points of noise into the full
+  /// height of the card, which is a chart that lies about its own data.
+  final double minimumSpan;
 
   final String? semanticsLabel;
 
@@ -249,6 +257,7 @@ class Sparkline extends StatelessWidget {
             dotBorder: colors.surface,
             minimum: minimum,
             maximum: maximum,
+            minimumSpan: minimumSpan,
           ),
         ),
       ),
@@ -266,6 +275,7 @@ class SparklinePainter extends CustomPainter {
     this.smoothed,
     this.minimum,
     this.maximum,
+    this.minimumSpan = 0,
   });
 
   final List<double?> values;
@@ -275,6 +285,7 @@ class SparklinePainter extends CustomPainter {
   final Color dotBorder;
   final double? minimum;
   final double? maximum;
+  final double minimumSpan;
 
   /// Breathing room above and below the data, as a fraction of its range,
   /// so the highest point is not welded to the top edge.
@@ -298,6 +309,14 @@ class SparklinePainter extends CustomPainter {
       if (maximum == null) high += pad;
     }
 
+    // Widen a narrow range around its own midpoint rather than letting the
+    // axis magnify a couple of points of noise.
+    if (high - low < minimumSpan) {
+      final middle = (high + low) / 2;
+      low = middle - minimumSpan / 2;
+      high = middle + minimumSpan / 2;
+    }
+
     Offset at(int index, double value) => Offset(
       values.length == 1 ? 0 : size.width * index / (values.length - 1),
       size.height * (1 - (value - low) / (high - low)),
@@ -305,9 +324,15 @@ class SparklinePainter extends CustomPainter {
 
     final runs = _runs(values);
 
-    // Area under each run, then the run itself on top of it.
+    // With a smoothed series present, that is the line: §27.11 calls the
+    // moving average the signal and the raw daily values the noise, so the
+    // raw series drops back to a faint trace behind it and the fill and
+    // the end dot follow the smoothed line. Without one, the raw series is
+    // all there is and carries both.
+    final leadRuns = smoothed == null ? runs : _runs(smoothed!);
+
     final fillPaint = Paint()..color = fill;
-    for (final run in runs) {
+    for (final run in leadRuns) {
       if (run.length < 2) continue;
       final path = Path()
         ..moveTo(at(run.first.$1, run.first.$2).dx, size.height);
@@ -321,15 +346,15 @@ class SparklinePainter extends CustomPainter {
       canvas.drawPath(path, fillPaint);
     }
 
-    if (smoothed case final smoothed?) {
+    if (smoothed != null) {
       _strokeRuns(
         canvas,
-        _runs(smoothed),
+        runs,
         at,
         Paint()
-          ..color = line.withValues(alpha: 0.35)
+          ..color = line.withValues(alpha: 0.3)
           ..style = PaintingStyle.stroke
-          ..strokeWidth = 3
+          ..strokeWidth = 1.5
           ..strokeCap = StrokeCap.round
           ..strokeJoin = StrokeJoin.round,
       );
@@ -337,7 +362,7 @@ class SparklinePainter extends CustomPainter {
 
     _strokeRuns(
       canvas,
-      runs,
+      leadRuns,
       at,
       Paint()
         ..color = line
@@ -349,7 +374,7 @@ class SparklinePainter extends CustomPainter {
 
     // The last point plotted, marked so the eye lands on where the series
     // actually ends rather than on the right edge of the box.
-    final last = runs.isEmpty ? null : runs.last.last;
+    final last = leadRuns.isEmpty ? null : leadRuns.last.last;
     if (last != null) {
       final point = at(last.$1, last.$2);
       canvas.drawCircle(point, 3.5, Paint()..color = line);
@@ -424,7 +449,8 @@ class SparklinePainter extends CustomPainter {
       oldDelegate.line != line ||
       oldDelegate.fill != fill ||
       oldDelegate.minimum != minimum ||
-      oldDelegate.maximum != maximum;
+      oldDelegate.maximum != maximum ||
+      oldDelegate.minimumSpan != minimumSpan;
 
   static bool _sameSeries(List<double?>? a, List<double?>? b) {
     if (identical(a, b)) return true;

@@ -64,6 +64,7 @@ void main() {
     await PreferencesDao(db).update(ownerId, onboardingSeen: true);
     await _seedProfile(db, ownerId);
     await _seedDay(db, ownerId);
+    await _seedHistory(db, ownerId);
   });
 
   tearDown(() => db.close());
@@ -133,6 +134,16 @@ void main() {
   testWidgets('insights', (tester) async {
     await pump(tester, '/insights');
     await shoot(tester, '06-insights');
+  });
+
+  testWidgets('weekly report', (tester) async {
+    await pump(tester, '/insights/week');
+    await shoot(tester, '09-weekly-report');
+  });
+
+  testWidgets('monthly report', (tester) async {
+    await pump(tester, '/insights/month');
+    await shoot(tester, '10-monthly-report');
   });
 
   testWidgets('water, filled', (tester) async {
@@ -390,4 +401,131 @@ Future<void> _seedDay(NourishlyDatabase db, String ownerId) async {
 
   await WaterLogDao(db)
       .logWater(ownerId: ownerId, volumeMl: 1600, logDate: today);
+}
+
+/// Six weeks of plausible days behind today, so the weekly and monthly
+/// reports have a shape to draw rather than a single day and six gaps.
+///
+/// The numbers wander the way a real household's do: a couple of days
+/// short, one day nobody finished logging, and two days a week untouched.
+Future<void> _seedHistory(NourishlyDatabase db, String ownerId) async {
+  final now = DateTime.now();
+  final today = DateTime(now.year, now.month, now.day);
+
+  // Deterministic, so two runs of the harness produce the same picture.
+  const energyByOffset = [
+    1980,
+    2120,
+    1840,
+    0,
+    2260,
+    1920,
+    0,
+    2040,
+    1760,
+    2180,
+    620,
+    2100,
+    1880,
+    0,
+    2020,
+    1940,
+    2210,
+    1790,
+    0,
+    2160,
+    1850,
+    1990,
+    2070,
+    0,
+    1830,
+    2240,
+    1910,
+    0,
+    2050,
+    1870,
+    2130,
+    1780,
+    0,
+    2190,
+    1960,
+    2010,
+    1840,
+    0,
+    2080,
+    1900,
+    2150,
+    1820,
+  ];
+
+  await db.batch((batch) {
+    for (var back = 1; back <= energyByOffset.length; back++) {
+      final energy = energyByOffset[back - 1].toDouble();
+      if (energy == 0) continue;
+      final date = today.subtract(Duration(days: back));
+      final key = 'h$back';
+
+      batch.insert(
+        db.foodItems,
+        FoodItemsCompanion.insert(
+          id: 'food-$key',
+          kind: 'dish',
+          canonicalName: 'A day of home cooking',
+          qualityTier: 'derived',
+          provenanceSource: 'catalog_pipeline_recipe',
+        ),
+        mode: InsertMode.insertOrReplace,
+      );
+      batch.insert(
+        db.foodLogEntries,
+        FoodLogEntriesCompanion.insert(
+          id: 'entry-$key',
+          ownerId: ownerId,
+          logDate: date,
+          mealSlotId: 'lunch',
+          foodId: 'food-$key',
+          foodRevision: 1,
+          quantity: 1,
+          gramsConsumed: 900,
+          loggedAt: date,
+          source: 'manual',
+        ),
+        mode: InsertMode.insertOrReplace,
+      );
+
+      // Protein tracks energy; fibre is short most days, which is the
+      // household's actual pattern and what the reports should surface.
+      final scale = energy / 2050;
+      for (final entry in {
+        'energy': energy,
+        'protein': 96 * scale,
+        'carbs': 250 * scale,
+        'fat': 62 * scale,
+        'fibre': (back % 5 == 0 ? 31.0 : 18.0) * scale,
+        'sodium': 2300 * scale,
+        'iron': 14 * scale,
+        'calcium': 780 * scale,
+        'vitamin_c': 62 * scale,
+      }.entries) {
+        batch.insert(
+          db.logEntryNutrients,
+          LogEntryNutrientsCompanion.insert(
+            entryId: 'entry-$key',
+            nutrientId: entry.key,
+            amount: entry.value,
+          ),
+          mode: InsertMode.insertOrReplace,
+        );
+      }
+    }
+  });
+
+  for (var back = 1; back <= energyByOffset.length; back++) {
+    if (energyByOffset[back - 1] == 0) continue;
+    await WaterLogDao(db).logWater(
+      ownerId: ownerId,
+      volumeMl: back % 3 == 0 ? 1900 : 2700,
+      logDate: today.subtract(Duration(days: back)),
+    );
+  }
 }

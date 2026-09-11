@@ -5,7 +5,6 @@ import 'package:nourishly_ui/nourishly_ui.dart';
 import 'package:nutrition_core/nutrition_core.dart';
 
 import '../../../../shared/formatting.dart';
-import '../../../dashboard/presentation/widgets/day_header.dart';
 import '../../../profile/data/profile_providers.dart';
 
 /// The daily report (prototype screen 9, option C — full table).

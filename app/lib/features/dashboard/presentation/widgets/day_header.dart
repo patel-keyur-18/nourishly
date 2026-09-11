@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:nourishly_ui/nourishly_ui.dart';
 import 'package:nutrition_core/nutrition_core.dart';
 
+import '../../../../shared/formatting.dart';
+
 /// The prototype's `.dh` row: the date, the profile name, and the score
 /// chip — plus §27.2 item 1's quick navigation to adjacent days.
 class DayHeader extends StatelessWidget {
@@ -134,51 +136,10 @@ class ScoreChip extends StatelessWidget {
   }
 }
 
-const _weekdays = [
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday',
-  'Sunday',
-];
-
-const _months = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
-];
-
-/// "Thursday, 9 Sep" — the prototype's date format.
-String formatLongDate(DateTime date) =>
-    '${_weekdays[date.weekday - 1]}, ${date.day} ${_months[date.month - 1]}';
-
 String _headline(DateTime date, String? profileName) {
   final label = relativeDayLabel(date);
   if (label == 'Today' && profileName != null && profileName.isNotEmpty) {
     return profileName;
   }
   return label;
-}
-
-String relativeDayLabel(DateTime date) {
-  final now = DateTime.now();
-  final today = DateTime(now.year, now.month, now.day);
-  final target = DateTime(date.year, date.month, date.day);
-  final difference = today.difference(target).inDays;
-  return switch (difference) {
-    0 => 'Today',
-    1 => 'Yesterday',
-    _ => '$difference days ago',
-  };
 }
