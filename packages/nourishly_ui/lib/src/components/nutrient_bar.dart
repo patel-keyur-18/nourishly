@@ -122,6 +122,15 @@ class NutrientBar extends StatelessWidget {
     );
   }
 
-  static String _format(double v) =>
-      v % 1 == 0 ? v.toStringAsFixed(0) : v.toStringAsFixed(1);
+  /// Whole grams past 10, one decimal below it. The prototype writes
+  /// "198/240g", not "203.8/321.6g": a decigram of carbohydrate is not a
+  /// distinction anyone acts on, and the extra characters wrap the value
+  /// onto a second line at phone width.
+  static String _format(double v) {
+    if (v < 10) return v.toStringAsFixed(1);
+    final rounded = v.round();
+    if (rounded < 1000) return '$rounded';
+    return '${rounded ~/ 1000},'
+        '${(rounded % 1000).toString().padLeft(3, '0')}';
+  }
 }

@@ -34,3 +34,4 @@ flutter:
   uses-material-design: true
   assets:
     - assets/catalog/seed_v1.json
+    - assets/reference/rda_icmr_nin_2020.json

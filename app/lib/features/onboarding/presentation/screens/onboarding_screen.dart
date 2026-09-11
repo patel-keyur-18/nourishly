@@ -4,10 +4,10 @@ import 'package:nourishly_ui/nourishly_ui.dart';
 
 /// Onboarding (prototype screen 1, option B — single promise screen).
 ///
-/// One screen, one sentence, straight into setup. Not yet a startup gate:
-/// profile setup itself (screen 2) needs Phase 3's profile model, so
-/// "Set up my profile" goes to the app for now rather than to a form that
-/// cannot save anything.
+/// One screen, one sentence, straight into setup — which now exists, so
+/// the primary action goes there rather than into the app. Skip is beside
+/// it and equally reachable: §27.1 makes every step of setup optional, and
+/// a skipped profile is a working app with generic targets.
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
 
@@ -70,7 +70,7 @@ class OnboardingScreen extends StatelessWidget {
                 ),
               const Spacer(),
               FilledButton(
-                onPressed: () => context.go('/today'),
+                onPressed: () => context.go('/profile/setup'),
                 child: const Text('Set up my profile'),
               ),
               const SizedBox(height: NourishlySpace.s2),

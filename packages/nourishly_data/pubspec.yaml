@@ -16,6 +16,8 @@ dependencies:
   drift: ^2.35.0
   drift_flutter: ^0.3.1
   uuid: ^4.6.0
+  nutrition_core:
+    path: ../nutrition_core
 
 dev_dependencies:
   flutter_test:

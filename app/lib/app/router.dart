@@ -7,6 +7,8 @@ import '../features/food_logging/presentation/screens/food_logging_screen.dart';
 import '../features/food_logging/presentation/screens/food_portion_screen.dart';
 import '../features/goals/presentation/screens/goals_screen.dart';
 import '../features/onboarding/presentation/screens/onboarding_screen.dart';
+import '../features/profile/presentation/screens/profile_setup_screen.dart';
+import '../features/reports/presentation/screens/daily_report_screen.dart';
 import '../features/reports/presentation/screens/reports_screen.dart';
 import '../features/settings/presentation/screens/settings_screen.dart';
 import '../features/water/presentation/screens/water_screen.dart';
@@ -65,6 +67,17 @@ final GoRouter appRouter = GoRouter(
             GoRoute(
               path: '/today',
               builder: (context, state) => const DashboardScreen(),
+              routes: [
+                // On the root navigator, so it covers the shell: the
+                // prototype draws the report as a pushed screen with a
+                // back arrow and no bottom nav, and a tab bar under a
+                // detail screen invites tapping away mid-read.
+                GoRoute(
+                  path: 'report',
+                  parentNavigatorKey: rootNavigatorKey,
+                  builder: (context, state) => const DailyReportScreen(),
+                ),
+              ],
             ),
           ],
         ),
@@ -90,9 +103,16 @@ final GoRouter appRouter = GoRouter(
               path: '/profile',
               builder: (context, state) => const SettingsScreen(),
               routes: [
+                // Both pushed over the shell, as above.
                 GoRoute(
                   path: 'goals',
+                  parentNavigatorKey: rootNavigatorKey,
                   builder: (context, state) => const GoalsScreen(),
+                ),
+                GoRoute(
+                  path: 'setup',
+                  parentNavigatorKey: rootNavigatorKey,
+                  builder: (context, state) => const ProfileSetupScreen(),
                 ),
               ],
             ),

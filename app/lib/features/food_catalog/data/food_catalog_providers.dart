@@ -28,8 +28,18 @@ final foodSearchDaoProvider = Provider<FoodSearchDao>((ref) {
 /// [CatalogImporter]'s doc comment for why it's safe to call on every
 /// launch (a no-op once the version is already present).
 final catalogReadyProvider = FutureProvider<void>((ref) async {
+  final db = ref.watch(nourishlyDatabaseProvider);
+
   final raw = await rootBundle.loadString('assets/catalog/seed_v1.json');
   final seed = jsonDecode(raw) as Map<String, dynamic>;
-  await CatalogImporter(ref.watch(nourishlyDatabaseProvider))
-      .importIfNeeded(seed);
+  await CatalogImporter(db).importIfNeeded(seed);
+
+  // The RDA table is a separate import on purpose — see [RdaImporter].
+  // Without it, target derivation produces energy and macros but no
+  // micronutrient targets, which is a working app with a thinner report
+  // rather than a broken one.
+  final rda = await rootBundle.loadString(
+    'assets/reference/rda_icmr_nin_2020.json',
+  );
+  await RdaImporter(db).importFromString(rda);
 });

@@ -9,11 +9,14 @@ library;
 
 export 'src/catalog_importer.dart';
 export 'src/dao/custom_food_dao.dart';
+export 'src/dao/daily_summary_dao.dart';
 export 'src/dao/default_owner.dart';
 export 'src/dao/food_logging_dao.dart';
 export 'src/dao/food_search_dao.dart';
+export 'src/dao/profile_dao.dart';
 export 'src/dao/water_log_dao.dart';
 export 'src/database.dart';
+export 'src/rda_importer.dart';
 export 'src/tables/catalog_tables.dart';
 export 'src/tables/common.dart';
 export 'src/tables/derived_tables.dart';
