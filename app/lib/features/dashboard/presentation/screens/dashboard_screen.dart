@@ -26,6 +26,8 @@ class DashboardScreen extends ConsumerWidget {
     final summaryAsync = ref.watch(selectedDaySummaryProvider);
     final date = ref.watch(selectedDateProvider);
     final profileName = ref.watch(profileDisplayNameProvider).value;
+    final showScore = ref.watch(showScoreProvider);
+    final hideEnergy = ref.watch(hideEnergyProvider);
 
     return Scaffold(
       body: SafeArea(
@@ -48,18 +50,24 @@ class DashboardScreen extends ConsumerWidget {
                   date: date,
                   score: summary.score,
                   profileName: profileName,
+                  // §21.8: the score is fully dismissible, and a profile
+                  // that hides it never sees it anywhere.
+                  showScore: showScore,
                   onPreviousDay: () => _shiftDay(ref, -1),
                   onNextDay: date.isBefore(ref.read(todayProvider))
                       ? () => _shiftDay(ref, 1)
                       : null,
                 ),
                 const SizedBox(height: NourishlySpace.s4),
-                EnergyCard(summary: summary),
-                const SizedBox(height: NourishlySpace.s3),
+                if (!hideEnergy) ...[
+                  EnergyCard(summary: summary),
+                  const SizedBox(height: NourishlySpace.s3),
+                ],
                 MacroCard(summary: summary),
                 const SizedBox(height: NourishlySpace.s3),
                 WaterCard(summary: summary),
                 const SizedBox(height: NourishlySpace.s3),
+                FocusNutrientsCard(summary: summary),
                 StatusChipRow(summary: summary),
                 const SizedBox(height: NourishlySpace.s3),
                 MealsCard(summary: summary),

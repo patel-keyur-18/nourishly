@@ -415,3 +415,72 @@ class _KeyValue extends StatelessWidget {
     );
   }
 }
+
+/// §27.2 item 5 — up to three user-chosen nutrients, promoted onto the
+/// dashboard (FR-U-09). Persona 3's screen: someone tracking iron or
+/// sodium should not have to open the report to see it.
+///
+/// A focus nutrient with too little coverage says so rather than showing a
+/// bar filled to a number the day cannot support (§21.5).
+class FocusNutrientsCard extends ConsumerWidget {
+  const FocusNutrientsCard({super.key, required this.summary});
+
+  final DaySummary summary;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colors = context.nourishlyColors;
+    final text = context.nourishlyText;
+    final ids = ref.watch(focusNutrientIdsProvider);
+    if (ids.isEmpty) return const SizedBox.shrink();
+
+    final rows = <Widget>[];
+    for (final id in ids) {
+      final nutrient = summary.nutrient(id);
+      if (nutrient == null) continue;
+      if (!nutrient.hasData || nutrient.targetAmount == null) {
+        rows.add(
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: NourishlySpace.s2),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 58,
+                  child: Text(
+                    shortNutrientName(nutrient.displayName),
+                    style: text.caption.copyWith(color: colors.ink2),
+                  ),
+                ),
+                const SizedBox(width: NourishlySpace.s2),
+                Expanded(
+                  child: Text(
+                    nutrient.targetAmount == null
+                        ? 'No target set'
+                        : 'Too little of today reports this',
+                    style: text.caption.copyWith(color: colors.ink3),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+        continue;
+      }
+      rows.add(
+        NutrientBar(
+          name: shortNutrientName(nutrient.displayName),
+          value: nutrient.amount,
+          target: nutrient.targetAmount!,
+          unit: nutrient.unit,
+          color: colors.statusUnknown,
+        ),
+      );
+    }
+    if (rows.isEmpty) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: NourishlySpace.s3),
+      child: NourishlyCard(child: Column(children: rows)),
+    );
+  }
+}

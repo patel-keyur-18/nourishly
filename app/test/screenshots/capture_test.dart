@@ -123,6 +123,16 @@ void main() {
     await pump(tester, '/profile/setup');
     await shoot(tester, '04-profile-setup');
   });
+
+  testWidgets('settings', (tester) async {
+    await pump(tester, '/profile');
+    await shoot(tester, '05-settings');
+  });
+
+  testWidgets('insights', (tester) async {
+    await pump(tester, '/insights');
+    await shoot(tester, '06-insights');
+  });
 }
 
 Future<void> _seedReferenceData(NourishlyDatabase db) async {

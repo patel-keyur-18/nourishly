@@ -10,6 +10,7 @@ class DayHeader extends StatelessWidget {
     required this.date,
     required this.score,
     this.profileName,
+    this.showScore = true,
     this.title,
     this.onPreviousDay,
     this.onNextDay,
@@ -22,6 +23,10 @@ class DayHeader extends StatelessWidget {
   /// already says which day this is; on any other day the relative label
   /// ("Yesterday") is the more useful thing to put there.
   final String? profileName;
+
+  /// §21.8's dismissible score. False hides the chip entirely rather than
+  /// showing a placeholder — a hidden score is not a withheld one.
+  final bool showScore;
 
   final String? title;
 
@@ -55,11 +60,13 @@ class DayHeader extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(width: NourishlySpace.s2),
-        // Flexible here rather than inside ScoreChip: the chip is also used
-        // in the Insights list inside a shrink-wrapped Row, where a flex
-        // child has no width to expand into and throws.
-        Flexible(child: ScoreChip(score: score)),
+        if (showScore) ...[
+          const SizedBox(width: NourishlySpace.s2),
+          // Flexible here rather than inside ScoreChip: the chip is also
+          // used in the Insights list inside a shrink-wrapped Row, where a
+          // flex child has no width to expand into and throws.
+          Flexible(child: ScoreChip(score: score)),
+        ],
         if (onNextDay != null)
           _DayArrow(
             icon: Icons.chevron_right_rounded,

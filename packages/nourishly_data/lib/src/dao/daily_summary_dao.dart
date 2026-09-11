@@ -55,6 +55,22 @@ class MealSummary {
   bool get isEmpty => itemNames.isEmpty;
 }
 
+/// One food's contribution to one nutrient on one day — what FR-D-03's
+/// "tapping it shows exactly what contributed" resolves to.
+class NutrientContributor {
+  const NutrientContributor({
+    required this.foodName,
+    required this.mealName,
+    required this.amount,
+    required this.gramsConsumed,
+  });
+
+  final String foodName;
+  final String mealName;
+  final double amount;
+  final double gramsConsumed;
+}
+
 /// Everything a day's screens need, in one object.
 class DaySummary {
   const DaySummary({
@@ -465,6 +481,59 @@ class DailySummaryDao {
       energyTargetKcal: targets['energy']?.amount,
       waterTargetMl: targets['water']?.amount,
     );
+  }
+
+  /// The foods that supplied a nutrient on a day, largest first (FR-D-03).
+  ///
+  /// Read from the frozen snapshots, not from the catalog: the report has
+  /// to explain the number it actually showed, which is the number that
+  /// was true when the food was logged (ADR-008).
+  Future<List<NutrientContributor>> contributorsTo({
+    required String ownerId,
+    required DateTime logDate,
+    required String nutrientId,
+  }) async {
+    final date = dateOnly(logDate);
+    final entries =
+        await (_db.select(_db.foodLogEntries)..where(
+              (e) =>
+                  e.ownerId.equals(ownerId) &
+                  e.logDate.equals(date) &
+                  e.deletedAt.isNull(),
+            ))
+            .get();
+    if (entries.isEmpty) return const [];
+
+    final amounts =
+        await (_db.select(_db.logEntryNutrients)..where(
+              (n) =>
+                  n.entryId.isIn(entries.map((e) => e.id).toList()) &
+                  n.nutrientId.equals(nutrientId),
+            ))
+            .get();
+    if (amounts.isEmpty) return const [];
+
+    final byEntry = {for (final a in amounts) a.entryId: a.amount};
+    final foods =
+        await (_db.select(_db.foodItems)..where(
+              (f) => f.id.isIn(entries.map((e) => e.foodId).toSet().toList()),
+            ))
+            .get();
+    final foodNames = {for (final f in foods) f.id: f.canonicalName};
+    final slots = await _db.select(_db.mealSlots).get();
+    final slotNames = {for (final s in slots) s.id: s.displayName};
+
+    final contributors = [
+      for (final entry in entries)
+        if (byEntry[entry.id] case final amount?)
+          NutrientContributor(
+            foodName: foodNames[entry.foodId] ?? 'Unknown food',
+            mealName: slotNames[entry.mealSlotId] ?? '',
+            amount: amount,
+            gramsConsumed: entry.gramsConsumed,
+          ),
+    ]..sort((a, b) => b.amount.compareTo(a.amount));
+    return contributors;
   }
 
   Future<List<MealSummary>> _meals(String ownerId, DateTime date) async {

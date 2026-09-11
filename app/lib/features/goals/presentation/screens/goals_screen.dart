@@ -63,6 +63,8 @@ class GoalsScreen extends ConsumerWidget {
                 trailing: '${micros.length} tracked',
               ),
               _MicroList(ids: micros, targets: targets),
+              const NourishlySectionHeader(label: 'How targets are set'),
+              const _ManualTargetsCard(),
               const SizedBox(height: NourishlySpace.s4),
               const _EffectiveDatingNote(),
               const SizedBox(height: NourishlySpace.s2),
@@ -73,6 +75,63 @@ class GoalsScreen extends ConsumerWidget {
             ],
           );
         },
+      ),
+    );
+  }
+}
+
+/// Q-27's manual-targets-only mode, as §0.3 scopes it: a should-have on
+/// top of FR-U-05's per-target overrides, which already cover most of the
+/// need.
+///
+/// It is the override mechanism applied to every target at once, not a
+/// second code path: turning it on freezes today's numbers as user-set, so
+/// a weight or goal change stops recomputing them.
+class _ManualTargetsCard extends ConsumerWidget {
+  const _ManualTargetsCard();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colors = context.nourishlyColors;
+    final text = context.nourishlyText;
+    final manualOnly = ref.watch(manualTargetsOnlyProvider).value ?? false;
+
+    return NourishlyCard(
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Set my own targets',
+                  style: text.body.copyWith(fontWeight: FontWeight.w700),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  manualOnly
+                      ? 'Your targets stay where you put them. Changing your '
+                            'weight or goal records the change but does not '
+                            'move them.'
+                      : 'Targets follow your profile. Turn this on to keep '
+                            'them exactly where you set them instead.',
+                  style: text.caption.copyWith(color: colors.ink3, height: 1.4),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: NourishlySpace.s2),
+          Switch(
+            value: manualOnly,
+            onChanged: (enabled) async {
+              final ownerId = await ref.read(defaultOwnerProvider.future);
+              await ref
+                  .read(profileDaoProvider)
+                  .setManualTargetsOnly(ownerId: ownerId, enabled: enabled);
+              ref.read(summaryRevisionProvider.notifier).bump();
+            },
+          ),
+        ],
       ),
     );
   }

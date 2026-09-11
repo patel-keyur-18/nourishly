@@ -60,6 +60,13 @@ class ProfileDao {
   }
 
   /// The target set in force on [on] — the one a day is scored against.
+  ///
+  /// Ties on `effectiveFrom` are broken by creation order, and they are
+  /// common: every override, every goal change and every weight entry on
+  /// the same day writes another set effective from that same midnight.
+  /// Without the tiebreak, which of them is "in force" is whatever SQLite
+  /// happens to return, and the second change of the day silently does
+  /// nothing.
   Future<TargetSet?> targetSetOn(String ownerId, DateTime on) async {
     final rows =
         await (_db.select(_db.targetSets)
@@ -69,7 +76,13 @@ class ProfileDao {
                     t.deletedAt.isNull() &
                     t.effectiveFrom.isSmallerOrEqualValue(on),
               )
-              ..orderBy([(t) => OrderingTerm.desc(t.effectiveFrom)])
+              ..orderBy([
+                (t) => OrderingTerm.desc(t.effectiveFrom),
+                (t) => OrderingTerm.desc(t.createdAt),
+                // UUIDv7 is time-ordered, so this settles two sets written
+                // inside the same clock tick.
+                (t) => OrderingTerm.desc(t.id),
+              ])
               ..limit(1))
             .get();
     return rows.isEmpty ? null : rows.first;
@@ -153,6 +166,10 @@ class ProfileDao {
     final targetSetId = _uuid.v7();
 
     final previousSet = await targetSetOn(ownerId, from);
+    // Manual-targets-only means exactly that: the profile version is still
+    // appended (it is a record of the body, and FR-U-02 lets you edit it),
+    // but nothing recomputes the numbers.
+    final manualOnly = previousSet?.derivationSource == 'manual';
     final previousOverrides = <String, NutrientTarget>{};
     if (keepUserOverrides && previousSet != null) {
       final previous = await targetsIn(previousSet.id);
@@ -207,6 +224,8 @@ class ProfileDao {
         goalRateKgPerWeek: goalRateKgPerWeek,
       );
 
+      if (manualOnly) return;
+
       await _writeTargetSet(
         targetSetId: targetSetId,
         ownerId: ownerId,
@@ -218,7 +237,7 @@ class ProfileDao {
       );
     });
 
-    return targetSetId;
+    return manualOnly ? previousSet!.id : targetSetId;
   }
 
   /// Overrides one target from today forward (§27.12). Copies the whole set
@@ -314,6 +333,79 @@ class ProfileDao {
         ))
         .write(const NutrientTargetsCompanion(isUserOverride: Value(false)));
     return setId;
+  }
+
+  /// Q-27's manual-targets-only mode, as a should-have (§0.3).
+  ///
+  /// Copies the current numbers into a new set whose `derivationSource` is
+  /// `manual`, which is what [saveProfileAndDeriveTargets] and
+  /// [BodyWeightDao] check before recomputing anything.
+  ///
+  /// The per-target `isUserOverride` flags are copied across untouched, and
+  /// deliberately: marking all of them user-set on the way in would make
+  /// the switch one-way, because turning it off cannot then tell a target
+  /// the user actually set by hand from one the freeze marked.
+  Future<String> setManualTargetsOnly({
+    required String ownerId,
+    required bool enabled,
+    DateTime? effectiveFrom,
+  }) async {
+    final from = effectiveFrom ?? _startOfToday();
+    final current = await targetSetOn(ownerId, from);
+    if (current == null) {
+      throw StateError('No target set in force — derive one first.');
+    }
+    final targets = await targetsIn(current.id);
+    final newSetId = _uuid.v7();
+
+    await _db.transaction(() async {
+      await _db
+          .into(_db.targetSets)
+          .insert(
+            TargetSetsCompanion.insert(
+              id: newSetId,
+              ownerId: ownerId,
+              effectiveFrom: from,
+              derivationSource: enabled ? 'manual' : 'mixed',
+              rulesetVersion: derivationRulesetVersion,
+              derivedFromProfileVersionId: Value(
+                current.derivedFromProfileVersionId,
+              ),
+              derivedFromGoalId: Value(current.derivedFromGoalId),
+              notes: Value(
+                enabled
+                    ? 'Manual targets only: profile changes no longer '
+                          'recompute these.'
+                    : null,
+              ),
+            ),
+          );
+
+      await _db.batch((batch) {
+        targets.forEach((id, target) {
+          batch.insert(
+            _db.nutrientTargets,
+            NutrientTargetsCompanion.insert(
+              id: _uuid.v7(),
+              targetSetId: newSetId,
+              nutrientId: id,
+              targetAmount: target.amount,
+              upperLimit: Value(target.upperLimit),
+              curveType: target.curveType.name,
+              tolerance: target.tolerance,
+              isUserOverride: Value(target.isUserOverride),
+            ),
+          );
+        });
+      });
+    });
+    return newSetId;
+  }
+
+  /// True when the target set in force is fully manual.
+  Future<bool> isManualTargetsOnly(String ownerId, {DateTime? on}) async {
+    final set = await targetSetOn(ownerId, on ?? DateTime.now());
+    return set?.derivationSource == 'manual';
   }
 
   Future<void> _writeTargetSet({

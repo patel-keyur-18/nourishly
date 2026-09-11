@@ -4,19 +4,29 @@ import 'package:nourishly_data/nourishly_data.dart';
 import 'package:nourishly_domain/nourishly_domain.dart';
 
 import '../features/food_catalog/data/food_catalog_providers.dart';
+import '../features/profile/data/profile_providers.dart';
 
 /// The one [ClockPort] instance for the app — day-boundary logic (§14.6)
 /// reads "now" through this rather than calling `DateTime.now()` directly,
 /// so it stays swappable for tests.
 final clockProvider = Provider<ClockPort>((ref) => const SystemClock());
 
-/// Today's date, midnight-truncated — the `log_date` every entry is
-/// grouped by (§22.5). Recomputed on each read rather than cached, since
-/// day rollover isn't itself an event this app reacts to yet (Phase 3's
-/// configurable rollover time, §14.5).
+/// The `log_date` a moment belongs to (§22.5), honouring the profile's
+/// rollover time (FR-U-08).
+///
+/// With a 04:00 rollover, 1am on Saturday still logs to Friday — a late
+/// dinner belongs to the day you ate it, not to the calendar. Falls back
+/// to midnight while preferences are still loading, which is also the
+/// default.
+final dayRolloverMinutesProvider = Provider<int>((ref) {
+  return ref.watch(preferencesProvider).value?.dayRolloverTime ?? 0;
+});
+
 final todayProvider = Provider<DateTime>((ref) {
-  final now = ref.watch(clockProvider).now();
-  return DateTime(now.year, now.month, now.day);
+  return logDateFor(
+    ref.watch(clockProvider).now(),
+    rolloverMinutes: ref.watch(dayRolloverMinutesProvider),
+  );
 });
 
 /// The device's local profile (§0.4), created on first use — see

@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart' show OrderingTerm;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nourishly_data/nourishly_data.dart' hide NutrientTarget;
 import 'package:nutrition_core/nutrition_core.dart' show NutrientTarget;
@@ -11,6 +12,81 @@ final profileDaoProvider = Provider<ProfileDao>((ref) {
 
 final dailySummaryDaoProvider = Provider<DailySummaryDao>((ref) {
   return DailySummaryDao(ref.watch(nourishlyDatabaseProvider));
+});
+
+final preferencesDaoProvider = Provider<PreferencesDao>((ref) {
+  return PreferencesDao(ref.watch(nourishlyDatabaseProvider));
+});
+
+final bodyWeightDaoProvider = Provider<BodyWeightDao>((ref) {
+  return BodyWeightDao(ref.watch(nourishlyDatabaseProvider));
+});
+
+/// The profile's preferences, created with defaults on first read.
+final preferencesProvider = FutureProvider<UserPreference>((ref) async {
+  ref.watch(summaryRevisionProvider);
+  final ownerId = await ref.watch(defaultOwnerProvider.future);
+  return ref.watch(preferencesDaoProvider).forOwner(ownerId);
+});
+
+/// Up to three nutrients promoted onto the dashboard (FR-U-09, §27.2).
+final focusNutrientIdsProvider = Provider<List<String>>((ref) {
+  final preferences = ref.watch(preferencesProvider).value;
+  return preferences == null ? const [] : focusNutrientsOf(preferences);
+});
+
+/// §21.8's dismissible score. When false the score disappears everywhere,
+/// leaving the raw numbers and the insights.
+final showScoreProvider = Provider<bool>((ref) {
+  return ref.watch(preferencesProvider).value?.showScore ?? true;
+});
+
+/// §21.8's hide-energy preference, for tracking nutrients without calories.
+final hideEnergyProvider = Provider<bool>((ref) {
+  return ref.watch(preferencesProvider).value?.hideEnergy ?? false;
+});
+
+/// Whether the profile has frozen its targets (Q-27).
+final manualTargetsOnlyProvider = FutureProvider<bool>((ref) async {
+  ref.watch(summaryRevisionProvider);
+  final ownerId = await ref.watch(defaultOwnerProvider.future);
+  return ref.watch(profileDaoProvider).isManualTargetsOnly(ownerId);
+});
+
+/// Every nutrient in the registry, for the focus-nutrient picker.
+final allNutrientsProvider = FutureProvider<List<Nutrient>>((ref) async {
+  await ref.watch(catalogReadyProvider.future);
+  final db = ref.watch(nourishlyDatabaseProvider);
+  return (db.select(
+    db.nutrients,
+  )..orderBy([(n) => OrderingTerm.asc(n.sortOrder)])).get();
+});
+
+/// The foods behind one nutrient on one day (FR-D-03).
+typedef ContributorQuery = ({DateTime date, String nutrientId});
+
+final nutrientContributorsProvider =
+    FutureProvider.family<List<NutrientContributor>, ContributorQuery>((
+      ref,
+      query,
+    ) async {
+      ref.watch(summaryRevisionProvider);
+      final ownerId = await ref.watch(defaultOwnerProvider.future);
+      return ref
+          .watch(dailySummaryDaoProvider)
+          .contributorsTo(
+            ownerId: ownerId,
+            logDate: query.date,
+            nutrientId: query.nutrientId,
+          );
+    });
+
+final bodyWeightHistoryProvider = FutureProvider<List<BodyWeightEntry>>((
+  ref,
+) async {
+  ref.watch(summaryRevisionProvider);
+  final ownerId = await ref.watch(defaultOwnerProvider.future);
+  return ref.watch(bodyWeightDaoProvider).history(ownerId);
 });
 
 /// Bumped after any write that changes what a day contains, so the

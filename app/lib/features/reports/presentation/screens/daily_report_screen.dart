@@ -21,6 +21,7 @@ class DailyReportScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final summaryAsync = ref.watch(selectedDaySummaryProvider);
     final date = ref.watch(selectedDateProvider);
+    final showScore = ref.watch(showScoreProvider);
 
     return Scaffold(
       appBar: AppBar(title: Text(formatLongDate(date))),
@@ -35,9 +36,11 @@ class DailyReportScreen extends ConsumerWidget {
             NourishlySpace.s7,
           ),
           children: [
-            _VerdictCard(summary: summary),
-            const NourishlySectionHeader(label: 'How the score is made up'),
-            _SubScoreCard(score: summary.score),
+            _VerdictCard(summary: summary, showScore: showScore),
+            if (showScore) ...[
+              const NourishlySectionHeader(label: 'How the score is made up'),
+              _SubScoreCard(score: summary.score),
+            ],
             NourishlySectionHeader(
               label: 'Every nutrient',
               trailing:
@@ -61,9 +64,10 @@ class DailyReportScreen extends ConsumerWidget {
 /// §27.8 items 1-2: one sentence, then the band and the composite — or the
 /// withheld reason, stated plainly.
 class _VerdictCard extends StatelessWidget {
-  const _VerdictCard({required this.summary});
+  const _VerdictCard({required this.summary, required this.showScore});
 
   final DaySummary summary;
+  final bool showScore;
 
   @override
   Widget build(BuildContext context) {
@@ -76,42 +80,48 @@ class _VerdictCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(_verdict(summary), style: text.body.copyWith(height: 1.45)),
-          const SizedBox(height: NourishlySpace.s3),
-          if (score.isWithheld)
-            // The reason is the verdict sentence directly above; repeating
-            // the whole thing in a chip only truncates it.
-            StatusChip(
-              label: switch (score.withheldReason!) {
-                ScoreWithheldReason.dayIncomplete => 'Not scored yet',
-                ScoreWithheldReason.looksIncompletelyLogged =>
-                  'Not scored \u2014 partly logged',
-                ScoreWithheldReason.nothingLogged => 'Nothing logged',
-                ScoreWithheldReason.noTargets => 'No targets set',
-                ScoreWithheldReason.allComponentsExcluded => 'Not enough data',
-              },
-              status: NourishlyStatus.unknown,
-            )
-          else
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.baseline,
-              textBaseline: TextBaseline.alphabetic,
-              children: [
-                Text(
-                  score.band!.label,
-                  style: text.caption.copyWith(
-                    color: colors.ink2,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.4,
+          if (showScore) ...[
+            const SizedBox(height: NourishlySpace.s3),
+            if (score.isWithheld)
+              // The reason is the verdict sentence directly above;
+              // repeating the whole thing in a chip only truncates it.
+              StatusChip(
+                label: switch (score.withheldReason!) {
+                  ScoreWithheldReason.dayIncomplete => 'Not scored yet',
+                  ScoreWithheldReason.looksIncompletelyLogged =>
+                    'Not scored \u2014 partly logged',
+                  ScoreWithheldReason.nothingLogged => 'Nothing logged',
+                  ScoreWithheldReason.noTargets => 'No targets set',
+                  ScoreWithheldReason.allComponentsExcluded =>
+                    'Not enough data',
+                },
+                status: NourishlyStatus.unknown,
+              )
+            else
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
+                children: [
+                  Text(
+                    score.band!.label,
+                    style: text.caption.copyWith(
+                      color: colors.ink2,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.4,
+                    ),
                   ),
-                ),
-                const SizedBox(width: NourishlySpace.s3),
-                Text(
-                  '${score.composite!.round()}',
-                  style: text.display.copyWith(height: 1),
-                ),
-                Text('/100', style: text.caption.copyWith(color: colors.ink3)),
-              ],
-            ),
+                  const SizedBox(width: NourishlySpace.s3),
+                  Text(
+                    '${score.composite!.round()}',
+                    style: text.display.copyWith(height: 1),
+                  ),
+                  Text(
+                    '/100',
+                    style: text.caption.copyWith(color: colors.ink3),
+                  ),
+                ],
+              ),
+          ],
         ],
       ),
     );
@@ -191,37 +201,50 @@ class _SubScoreCard extends StatelessWidget {
       child: Column(
         children: [
           for (final component in ordered)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                NourishlySpace.s4,
-                NourishlySpace.s2,
-                NourishlySpace.s4,
-                NourishlySpace.s2,
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(component.key.label, style: text.body),
-                        Text(
-                          component.wasExcluded
-                              ? _exclusionLabel(component.exclusion!)
-                              : '${(component.appliedWeight * 100).round()}% of the score',
-                          style: text.caption.copyWith(color: colors.ink3),
-                        ),
-                      ],
+            // FR-D-03: every score is explainable, and tapping it shows
+            // exactly what contributed.
+            _Tappable(
+              onTap: () => _explainComponent(context, component),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  NourishlySpace.s4,
+                  NourishlySpace.s2,
+                  NourishlySpace.s4,
+                  NourishlySpace.s2,
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(component.key.label, style: text.body),
+                          Text(
+                            component.wasExcluded
+                                ? _exclusionLabel(component.exclusion!)
+                                : '${(component.appliedWeight * 100).round()}% of the score',
+                            style: text.caption.copyWith(color: colors.ink3),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: NourishlySpace.s2),
-                  Text(
-                    component.wasExcluded ? '—' : '${component.score!.round()}',
-                    style: text.heading.copyWith(
-                      color: component.wasExcluded ? colors.ink3 : colors.ink,
+                    const SizedBox(width: NourishlySpace.s2),
+                    Text(
+                      component.wasExcluded
+                          ? '—'
+                          : '${component.score!.round()}',
+                      style: text.heading.copyWith(
+                        color: component.wasExcluded ? colors.ink3 : colors.ink,
+                      ),
                     ),
-                  ),
-                ],
+                    const SizedBox(width: NourishlySpace.s1),
+                    Icon(
+                      Icons.chevron_right_rounded,
+                      size: 18,
+                      color: colors.ink3,
+                    ),
+                  ],
+                ),
               ),
             ),
         ],
@@ -286,13 +309,13 @@ class _NutrientTable extends StatelessWidget {
   }
 }
 
-class _NutrientRow extends StatelessWidget {
+class _NutrientRow extends ConsumerWidget {
   const _NutrientRow({required this.nutrient});
 
   final SummaryNutrient nutrient;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.nourishlyColors;
     final text = context.nourishlyText;
     final pct = nutrient.pctOfTarget;
@@ -311,79 +334,83 @@ class _NutrientRow extends StatelessWidget {
           ? '${nutrient.displayName}: ${_amount(nutrient)}'
                 '${pct == null ? '' : ' of target, ${pct.round()}%'}, $label'
           : '${nutrient.displayName}: no data',
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: NourishlySpace.s4,
-          vertical: NourishlySpace.s2,
-        ),
-        child: Row(
-          children: [
-            SizedBox(
-              width: 66,
-              child: Text(
-                shortNutrientName(nutrient.displayName),
-                style: text.caption.copyWith(color: colors.ink2),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+      // FR-D-03's second tap: from a number to the foods behind it.
+      child: _Tappable(
+        onTap: () => _explainNutrient(context, ref, nutrient),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: NourishlySpace.s4,
+            vertical: NourishlySpace.s2,
+          ),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 66,
+                child: Text(
+                  shortNutrientName(nutrient.displayName),
+                  style: text.caption.copyWith(color: colors.ink2),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
-            ),
-            const SizedBox(width: NourishlySpace.s2),
-            Expanded(
-              child: SizedBox(
-                height: NourishlyStroke.bar,
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: colors.track,
-                        borderRadius: BorderRadius.circular(
-                          NourishlyStroke.bar,
-                        ),
-                      ),
-                    ),
-                    FractionallySizedBox(
-                      alignment: Alignment.centerLeft,
-                      // A row that will not state its amount does not draw
-                      // a bar for it either: a filled track next to "—"
-                      // implies a quantity the row has just declined to
-                      // give (AP-4).
-                      widthFactor: nutrient.hasData
-                          ? ((pct ?? 0) / 100).clamp(0.0, 1.0)
-                          : 0.0,
-                      child: DecoratedBox(
+              const SizedBox(width: NourishlySpace.s2),
+              Expanded(
+                child: SizedBox(
+                  height: NourishlyStroke.bar,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      DecoratedBox(
                         decoration: BoxDecoration(
-                          color: switch (status) {
-                            NourishlyStatus.high => colors.statusHigh,
-                            NourishlyStatus.unknown => colors.statusUnknown,
-                            NourishlyStatus.low => colors.statusLow,
-                            _ => colors.accent,
-                          },
+                          color: colors.track,
                           borderRadius: BorderRadius.circular(
                             NourishlyStroke.bar,
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                      FractionallySizedBox(
+                        alignment: Alignment.centerLeft,
+                        // A row that will not state its amount does not draw
+                        // a bar for it either: a filled track next to "—"
+                        // implies a quantity the row has just declined to
+                        // give (AP-4).
+                        widthFactor: nutrient.hasData
+                            ? ((pct ?? 0) / 100).clamp(0.0, 1.0)
+                            : 0.0,
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: switch (status) {
+                              NourishlyStatus.high => colors.statusHigh,
+                              NourishlyStatus.unknown => colors.statusUnknown,
+                              NourishlyStatus.low => colors.statusLow,
+                              _ => colors.accent,
+                            },
+                            borderRadius: BorderRadius.circular(
+                              NourishlyStroke.bar,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(width: NourishlySpace.s2),
-            SizedBox(
-              width: 76,
-              child: Text(
-                nutrient.hasData ? _amount(nutrient) : '—',
-                textAlign: TextAlign.right,
-                style: text.caption.copyWith(fontWeight: FontWeight.w700),
+              const SizedBox(width: NourishlySpace.s2),
+              SizedBox(
+                width: 76,
+                child: Text(
+                  nutrient.hasData ? _amount(nutrient) : '—',
+                  textAlign: TextAlign.right,
+                  style: text.caption.copyWith(fontWeight: FontWeight.w700),
+                ),
               ),
-            ),
-            const SizedBox(width: NourishlySpace.s2),
-            SizedBox(
-              width: 62,
-              child: StatusChip(label: label, status: status, dense: true),
-            ),
-          ],
+              const SizedBox(width: NourishlySpace.s2),
+              SizedBox(
+                width: 62,
+                child: StatusChip(label: label, status: status, dense: true),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -534,4 +561,266 @@ class _MealBreakdown extends StatelessWidget {
     colors.seriesFat,
     colors.seriesFibre,
   ];
+}
+
+/// A row that responds to a tap without changing how it looks — the report
+/// is a table, and giving every row a button's chrome would bury the
+/// numbers it exists to show.
+class _Tappable extends StatelessWidget {
+  const _Tappable({required this.onTap, required this.child});
+
+  final VoidCallback onTap;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(onTap: onTap, child: child),
+    );
+  }
+}
+
+/// FR-D-03 for a sub-score: its value, its weight, the curve behind it and
+/// why it was excluded if it was.
+void _explainComponent(BuildContext context, ScoredComponent component) {
+  showModalBottomSheet<void>(
+    context: context,
+    showDragHandle: true,
+    builder: (context) {
+      final colors = context.nourishlyColors;
+      final text = context.nourishlyText;
+      return SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            NourishlySpace.s4,
+            0,
+            NourishlySpace.s4,
+            NourishlySpace.s6,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(component.key.label, style: text.heading),
+              const SizedBox(height: NourishlySpace.s3),
+              _ExplainRow(
+                label: 'Score',
+                value: component.wasExcluded
+                    ? 'Not scored'
+                    : '${component.score!.round()} / 100',
+              ),
+              _ExplainRow(
+                label: 'Weight in the ruleset',
+                value: '${(component.weight * 100).round()}%',
+              ),
+              _ExplainRow(
+                label: 'Weight applied today',
+                value: component.wasExcluded
+                    ? '0% — excluded'
+                    : '${(component.appliedWeight * 100).round()}%',
+              ),
+              const SizedBox(height: NourishlySpace.s3),
+              Text(
+                component.wasExcluded
+                    ? _exclusionExplanation(component.exclusion!)
+                    : _componentExplanation(component.key),
+                style: text.caption.copyWith(color: colors.ink3, height: 1.5),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+String _componentExplanation(ScoreComponentKey key) => switch (key) {
+  ScoreComponentKey.energyAdherence =>
+    'Energy is scored against a range, not a point: eating well under the '
+        'band costs points just as eating well over it does.',
+  ScoreComponentKey.macroBalance =>
+    'Protein, fibre, fat and carbohydrate, weighted within this component. '
+        'Each is capped at its target — exceeding one cannot make up for '
+        'missing another.',
+  ScoreComponentKey.micronutrientCoverage =>
+    'The average of the micronutrients that enough of the day reported. '
+        'Ones below the coverage threshold are left out rather than guessed '
+        'at.',
+  ScoreComponentKey.limitNutrients =>
+    'Sodium, added sugar and saturated fat. Full credit up to the limit, '
+        'decaying above it.',
+  ScoreComponentKey.hydration =>
+    'Water against your daily target. More than the target earns no extra '
+        'credit.',
+};
+
+String _exclusionExplanation(ScoreExclusion exclusion) => switch (exclusion) {
+  ScoreExclusion.insufficientCoverage =>
+    'Too little of what you logged reports these nutrients to say anything '
+        'useful, so this component was left out and its weight was shared '
+        'across the others.',
+  ScoreExclusion.noTarget =>
+    'There is no target to measure this against yet. Its weight was shared '
+        'across the components that do have one.',
+  ScoreExclusion.noData =>
+    'Nothing logged today carries this, so there was nothing to score. Its '
+        'weight was shared across the others.',
+};
+
+/// FR-D-03 for a nutrient: the foods that supplied it, largest first.
+void _explainNutrient(
+  BuildContext context,
+  WidgetRef ref,
+  SummaryNutrient nutrient,
+) {
+  final date = ref.read(selectedDateProvider);
+  showModalBottomSheet<void>(
+    context: context,
+    showDragHandle: true,
+    isScrollControlled: true,
+    builder: (context) => _NutrientSheet(nutrient: nutrient, date: date),
+  );
+}
+
+class _NutrientSheet extends ConsumerWidget {
+  const _NutrientSheet({required this.nutrient, required this.date});
+
+  final SummaryNutrient nutrient;
+  final DateTime date;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colors = context.nourishlyColors;
+    final text = context.nourishlyText;
+    final contributors = ref.watch(
+      nutrientContributorsProvider((
+        date: date,
+        nutrientId: nutrient.nutrientId,
+      )),
+    );
+
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(
+          NourishlySpace.s4,
+          0,
+          NourishlySpace.s4,
+          NourishlySpace.s6,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(nutrient.displayName, style: text.heading),
+            const SizedBox(height: NourishlySpace.s3),
+            _ExplainRow(
+              label: 'Logged',
+              value: nutrient.hasData
+                  ? '${_round(nutrient.amount)} ${nutrient.unit}'
+                  : 'Not enough data',
+            ),
+            if (nutrient.targetAmount != null)
+              _ExplainRow(
+                label: 'Target',
+                value: '${_round(nutrient.targetAmount!)} ${nutrient.unit}',
+              ),
+            _ExplainRow(
+              label: 'Coverage',
+              value:
+                  '${(nutrient.coverage * 100).round()}% of the day\u2019s energy',
+            ),
+            const SizedBox(height: NourishlySpace.s4),
+            Text(
+              'Where it came from',
+              style: text.caption.copyWith(
+                color: colors.ink3,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.4,
+              ),
+            ),
+            const SizedBox(height: NourishlySpace.s2),
+            contributors.when(
+              loading: () => const Padding(
+                padding: EdgeInsets.all(NourishlySpace.s3),
+                child: LinearProgressIndicator(),
+              ),
+              error: (error, _) => Text('$error', style: text.caption),
+              data: (rows) => rows.isEmpty
+                  ? Text(
+                      'Nothing logged today reports this nutrient.',
+                      style: text.caption.copyWith(color: colors.ink3),
+                    )
+                  : Column(
+                      children: [
+                        for (final row in rows.take(8))
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 4),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(row.foodName, style: text.body),
+                                      Text(
+                                        '${row.mealName} \u00b7 '
+                                        '${row.gramsConsumed.round()} g',
+                                        style: text.caption.copyWith(
+                                          color: colors.ink3,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Text(
+                                  '${_round(row.amount)} ${nutrient.unit}',
+                                  style: text.body.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                      ],
+                    ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  static String _round(double v) =>
+      v >= 10 ? formatThousands(v) : v.toStringAsFixed(1);
+}
+
+class _ExplainRow extends StatelessWidget {
+  const _ExplainRow({required this.label, required this.value});
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.nourishlyColors;
+    final text = context.nourishlyText;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 3),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: text.caption.copyWith(color: colors.ink3)),
+          Flexible(
+            child: Text(
+              value,
+              textAlign: TextAlign.right,
+              style: text.body.copyWith(fontWeight: FontWeight.w700),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
