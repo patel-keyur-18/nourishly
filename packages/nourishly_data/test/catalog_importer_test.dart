@@ -40,11 +40,11 @@ void main() {
 
       final servings = await db.select(db.servingSizes).get();
       expect(servings.length, (seed['servingSizes'] as List).length);
-      // Not one per food: a recipe component whose source food isn't its
-      // own catalog row (the USDA food behind "puffed rice" in bhel) gets a
-      // FoodItems row for traceability, but no household serving — nothing
-      // invents a katori for it.
-      expect(servings.length, lessThan(foods.length));
+      // One per food, now that every recipe ingredient resolves to a
+      // catalog row: there is no longer a FoodItems row whose only reason
+      // to exist is backing an ingredient, so there is no food without a
+      // household serving.
+      expect(servings.length, foods.length);
 
       final components = await db.select(db.recipeComponents).get();
       expect(components.length, (seed['recipeComponents'] as List).length);
@@ -63,35 +63,52 @@ void main() {
     },
   );
 
-  test('a component-only USDA row is imported but never searchable', () async {
+  test('the seed no longer needs component-only rows at all', () async {
+    // Before recipe ingredients resolved against the catalog, an
+    // unrecognised one minted a FoodItems row from a raw USDA description
+    // ("Cereals ready-to-eat, rice, puffed") purely so the recipe had
+    // something to point at. Every ingredient now names a catalog row, so
+    // none are left. The importer still knows how to keep such a row out
+    // of the search index — see below — in case a future seed has one.
     await CatalogImporter(db).importIfNeeded(seed);
 
     final componentRows = await (db.select(
       db.foodItems,
     )..where((f) => f.provenanceSource.equals('usda_fdc_component'))).get();
-    expect(
-      componentRows,
-      isNotEmpty,
-      reason: 'the seed should carry recipe-component source foods',
-    );
 
-    final dao = FoodSearchDao(db);
-    for (final row in componentRows) {
-      final hits = await dao.matchingFoodIds('"${row.canonicalName}"');
-      expect(
-        hits,
-        isNot(contains(row.id)),
-        reason: '${row.canonicalName} should not surface when logging',
-      );
-    }
+    expect(componentRows, isEmpty);
+  });
 
-    // Its recipe still points at it, so the provenance trail is intact.
-    final components = await db.select(db.recipeComponents).get();
-    final componentIds = {for (final r in componentRows) r.id};
-    expect(
-      components.any((c) => componentIds.contains(c.ingredientFoodItemId)),
-      isTrue,
-    );
+  test('a component-only row would be imported but never searchable', () async {
+    // The guard itself, on a seed built to contain one. It matters because
+    // such a row is a raw USDA description with no serving size: findable
+    // in search, it would offer the user a food they cannot portion.
+    final withComponent = {
+      ...seed,
+      'foodItems': [
+        ...(seed['foodItems'] as List),
+        {
+          'id': 'component-only-test-row',
+          'kind': 'ingredient',
+          'canonicalName': 'Cereals ready-to-eat, rice, puffed',
+          'qualityTier': 'verified',
+          'provenanceSource': 'usda_fdc_component',
+          'provenanceId': '173861',
+          'isVerified': true,
+        },
+      ],
+    };
+
+    await CatalogImporter(db).importIfNeeded(withComponent);
+
+    final hits = await FoodSearchDao(db)
+        .matchingFoodIds('"Cereals ready-to-eat, rice, puffed"');
+
+    expect(hits, isNot(contains('component-only-test-row')));
+    final imported = await (db.select(
+      db.foodItems,
+    )..where((f) => f.id.equals('component-only-test-row'))).get();
+    expect(imported, hasLength(1), reason: 'imported for provenance');
   });
 
   test('a food is searchable by its alt-name spelling too (panir)', () async {

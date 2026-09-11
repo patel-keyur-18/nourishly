@@ -1,15 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nourishly_ui/nourishly_ui.dart';
 
+import '../../../../app/providers.dart';
+import '../../../profile/data/profile_providers.dart';
+
 /// Onboarding (prototype screen 1, option B — single promise screen).
 ///
-/// One screen, one sentence, straight into setup. Not yet a startup gate:
-/// profile setup itself (screen 2) needs Phase 3's profile model, so
-/// "Set up my profile" goes to the app for now rather than to a form that
-/// cannot save anything.
-class OnboardingScreen extends StatelessWidget {
+/// One screen, one sentence, straight into setup — which now exists, so
+/// the primary action goes there rather than into the app. Skip is beside
+/// it and equally reachable: §27.1 makes every step of setup optional, and
+/// a skipped profile is a working app with generic targets.
+class OnboardingScreen extends ConsumerWidget {
   const OnboardingScreen({super.key});
+
+  /// Marks the welcome seen whichever way the user leaves it. Skipping is
+  /// a decision, not a deferral — §27.1 makes setup optional, so asking
+  /// again next launch would be nagging.
+  static Future<void> _dismiss(WidgetRef ref, String destination) async {
+    final router = GoRouter.of(ref.context);
+    final ownerId = await ref.read(defaultOwnerProvider.future);
+    await ref
+        .read(preferencesDaoProvider)
+        .update(ownerId, onboardingSeen: true);
+    ref.read(summaryRevisionProvider.notifier).bump();
+    router.go(destination);
+  }
 
   static const _promises = [
     (Icons.wifi_off_rounded, 'Works with no signal'),
@@ -18,7 +35,7 @@ class OnboardingScreen extends StatelessWidget {
   ];
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.nourishlyColors;
     final text = context.nourishlyText;
 
@@ -70,12 +87,12 @@ class OnboardingScreen extends StatelessWidget {
                 ),
               const Spacer(),
               FilledButton(
-                onPressed: () => context.go('/today'),
+                onPressed: () => _dismiss(ref, '/profile/setup'),
                 child: const Text('Set up my profile'),
               ),
               const SizedBox(height: NourishlySpace.s2),
               TextButton(
-                onPressed: () => context.go('/today'),
+                onPressed: () => _dismiss(ref, '/today'),
                 child: const Text('Skip for now'),
               ),
             ],

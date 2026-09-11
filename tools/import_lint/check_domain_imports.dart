@@ -31,6 +31,18 @@ const _forbidden = <String, String>{
   'dart:html': 'dart:html (web network access)',
 };
 
+/// Forbidden in `lib/`, allowed under `test/`.
+///
+/// The rule protects the *engine*: a scoring function that reads a file is
+/// not portable off the client, and that is what AP-5 is about. A test that
+/// reads a fixture is a different thing — the golden scoring vectors are
+/// deliberately a JSON file so a reviewer can read them as a specification
+/// rather than as a Dart literal, and loading them needs dart:io.
+///
+/// Flutter, Drift and the HTTP clients stay banned everywhere, because a
+/// *test* reaching for them says the library is about to.
+const _libraryOnly = {'dart:io'};
+
 final _importExportPattern = RegExp(
   r'''^\s*(?:import|export)\s+['"]([^'"]+)['"]''',
   multiLine: true,
@@ -54,10 +66,18 @@ void main() {
         continue;
       }
 
+      final inTests =
+          entity.path.contains(
+            '${Platform.pathSeparator}test'
+            '${Platform.pathSeparator}',
+          ) ||
+          entity.path.contains('/test/');
+
       final content = entity.readAsStringSync();
       for (final match in _importExportPattern.allMatches(content)) {
         final uri = match.group(1)!;
         for (final entry in _forbidden.entries) {
+          if (inTests && _libraryOnly.contains(entry.key)) continue;
           if (uri.startsWith(entry.key)) {
             violations.add(
               '${entity.path}: imports "$uri" (${entry.value} is forbidden in the domain layer)',

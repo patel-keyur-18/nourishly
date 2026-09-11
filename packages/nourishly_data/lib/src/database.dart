@@ -83,7 +83,25 @@ class NourishlyDatabase extends _$NourishlyDatabase {
       );
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  /// v1 -> v2 adds FR-U-16's dietary preference (plus the one-time
+  /// onboarding flag) and the diet class the catalog importer computes.
+  ///
+  /// Additive columns only, so there is nothing to move: existing rows get
+  /// the defaults, and `dietClass` is filled in the next time the catalog
+  /// importer runs, which is every launch.
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    onCreate: (m) => m.createAll(),
+    onUpgrade: (m, from, to) async {
+      if (from < 2) {
+        await m.addColumn(userPreferences, userPreferences.dietaryPreference);
+        await m.addColumn(userPreferences, userPreferences.onboardingSeen);
+        await m.addColumn(foodItems, foodItems.dietClass);
+      }
+    },
+  );
 
   /// The bundled food catalog is excluded from platform backup (Android
   /// Auto Backup, iOS device backup) because it is large, identical on

@@ -1,0 +1,59 @@
+{
+  "rulesetVersion": "1.0.0",
+  "region": "IN",
+  "sourceCitation": "ICMR-NIN, Nutrient Requirements for Indians, 2020 (RDA/EAR report)",
+  "reviewStatus": "pending_review",
+  "notes": [
+    "Transcribed from the ICMR-NIN 2020 recommendations for Indian adults.",
+    "These values are PENDING the nutrition review packet (scope doc §0.6, §37 item 8) and",
+    "ADR-010 stays Proposed until that review happens. They are here so the app can derive",
+    "micronutrient targets at all; they are not a substitute for the review.",
+    "Sodium is WHO guidance (<2,000 mg/day) rather than an ICMR RDA — it is a limit, not an",
+    "intake to reach, and it is scored as a ceiling.",
+    "Sugar and saturated fat are absent on purpose: WHO states both as a share of energy, so",
+    "they are derived per-profile in target_derivation.dart rather than looked up here.",
+    "One adult band (19+) rather than 19-59 and 60+: ICMR's adult recommendations for these",
+    "nutrients are given against a reference body weight, and inventing a second band would",
+    "imply a distinction this transcription cannot support."
+  ],
+  "references": [
+    {"nutrientId": "calcium", "sex": null, "ageMin": 19, "ageMax": 120, "rdaAmount": 1000, "unit": "mg"},
+    {"nutrientId": "phosphorus", "sex": null, "ageMin": 19, "ageMax": 120, "rdaAmount": 1000, "unit": "mg"},
+    {"nutrientId": "potassium", "sex": null, "ageMin": 19, "ageMax": 120, "rdaAmount": 3500, "unit": "mg"},
+
+    {"nutrientId": "iron", "sex": "male", "ageMin": 19, "ageMax": 120, "rdaAmount": 19, "upperLimit": 45, "unit": "mg"},
+    {"nutrientId": "iron", "sex": "female", "ageMin": 19, "ageMax": 49, "rdaAmount": 29, "upperLimit": 45, "unit": "mg"},
+    {"nutrientId": "iron", "sex": "female", "ageMin": 50, "ageMax": 120, "rdaAmount": 19, "upperLimit": 45, "unit": "mg"},
+
+    {"nutrientId": "zinc", "sex": "male", "ageMin": 19, "ageMax": 120, "rdaAmount": 17, "upperLimit": 40, "unit": "mg"},
+    {"nutrientId": "zinc", "sex": "female", "ageMin": 19, "ageMax": 120, "rdaAmount": 13.2, "upperLimit": 40, "unit": "mg"},
+
+    {"nutrientId": "magnesium", "sex": "male", "ageMin": 19, "ageMax": 120, "rdaAmount": 440, "unit": "mg"},
+    {"nutrientId": "magnesium", "sex": "female", "ageMin": 19, "ageMax": 120, "rdaAmount": 370, "unit": "mg"},
+
+    {"nutrientId": "sodium", "sex": null, "ageMin": 19, "ageMax": 120, "rdaAmount": 2000, "unit": "mg",
+     "sourceCitation": "WHO guideline: sodium intake for adults and children (2012)"},
+
+    {"nutrientId": "vitamin_a", "sex": "male", "ageMin": 19, "ageMax": 120, "rdaAmount": 1000, "unit": "ug"},
+    {"nutrientId": "vitamin_a", "sex": "female", "ageMin": 19, "ageMax": 120, "rdaAmount": 840, "unit": "ug"},
+
+    {"nutrientId": "vitamin_c", "sex": "male", "ageMin": 19, "ageMax": 120, "rdaAmount": 80, "unit": "mg"},
+    {"nutrientId": "vitamin_c", "sex": "female", "ageMin": 19, "ageMax": 120, "rdaAmount": 65, "unit": "mg"},
+
+    {"nutrientId": "vitamin_d", "sex": null, "ageMin": 19, "ageMax": 120, "rdaAmount": 15, "unit": "ug"},
+    {"nutrientId": "vitamin_e", "sex": null, "ageMin": 19, "ageMax": 120, "rdaAmount": 10, "unit": "mg"},
+
+    {"nutrientId": "thiamin", "sex": "male", "ageMin": 19, "ageMax": 120, "rdaAmount": 1.4, "unit": "mg"},
+    {"nutrientId": "thiamin", "sex": "female", "ageMin": 19, "ageMax": 120, "rdaAmount": 1.4, "unit": "mg"},
+
+    {"nutrientId": "riboflavin", "sex": "male", "ageMin": 19, "ageMax": 120, "rdaAmount": 2.0, "unit": "mg"},
+    {"nutrientId": "riboflavin", "sex": "female", "ageMin": 19, "ageMax": 120, "rdaAmount": 1.9, "unit": "mg"},
+
+    {"nutrientId": "niacin", "sex": "male", "ageMin": 19, "ageMax": 120, "rdaAmount": 18, "unit": "mg"},
+    {"nutrientId": "niacin", "sex": "female", "ageMin": 19, "ageMax": 120, "rdaAmount": 14, "unit": "mg"},
+
+    {"nutrientId": "vitamin_b6", "sex": null, "ageMin": 19, "ageMax": 120, "rdaAmount": 1.9, "unit": "mg"},
+    {"nutrientId": "vitamin_b12", "sex": null, "ageMin": 19, "ageMax": 120, "rdaAmount": 2.2, "unit": "ug"},
+    {"nutrientId": "folate", "sex": null, "ageMin": 19, "ageMax": 120, "rdaAmount": 300, "upperLimit": 1000, "unit": "ug"}
+  ]
+}

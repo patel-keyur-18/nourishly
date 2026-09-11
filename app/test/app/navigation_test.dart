@@ -7,10 +7,12 @@ import 'package:nourishly/features/dashboard/presentation/screens/dashboard_scre
 import 'package:nourishly/features/food_catalog/data/food_catalog_providers.dart';
 import 'package:nourishly/features/food_logging/presentation/screens/food_logging_screen.dart';
 import 'package:nourishly/features/goals/presentation/screens/goals_screen.dart';
+import 'package:nourishly/features/onboarding/presentation/screens/onboarding_screen.dart';
 import 'package:nourishly/features/reports/presentation/screens/reports_screen.dart';
 import 'package:nourishly/features/settings/presentation/screens/settings_screen.dart';
 import 'package:nourishly/features/water/presentation/screens/water_screen.dart';
 import 'package:nourishly_data/nourishly_data.dart';
+import 'package:nourishly_ui/nourishly_ui.dart';
 
 /// Navigation is verified by which screen widget is on stage.
 ///
@@ -23,7 +25,13 @@ import 'package:nourishly_data/nourishly_data.dart';
 void main() {
   late NourishlyDatabase db;
 
-  setUp(() => db = NourishlyDatabase.forTesting());
+  setUp(() async {
+    db = NourishlyDatabase.forTesting();
+    // These tests are about navigation between tabs, so they start where a
+    // returning user starts. First-run onboarding has its own test below.
+    final ownerId = await ensureDefaultOwner(db);
+    await PreferencesDao(db).update(ownerId, onboardingSeen: true);
+  });
   // Runs even when the test body throws — required so a failed assertion
   // doesn't leak a database into the next test.
   tearDown(() => db.close());
@@ -44,15 +52,60 @@ void main() {
   Finder appBarTitle(String text) =>
       find.descendant(of: find.byType(AppBar), matching: find.text(text));
 
+  /// Scoped to the nav bar: the dashboard now carries its own "Water" row
+  /// label, so a bare `find.text('Water')` matches twice.
+  Finder navLabel(String text) => find.descendant(
+    of: find.byType(NourishlyBottomNav),
+    matching: find.text(text),
+  );
+
+  testWidgets('a first run is sent to the welcome once (§27.1)', (
+    tester,
+  ) async {
+    // A fresh profile: no preferences row, so `onboardingSeen` is false.
+    final fresh = NourishlyDatabase.forTesting();
+    addTearDown(fresh.close);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          nourishlyDatabaseProvider.overrideWithValue(fresh),
+          catalogReadyProvider.overrideWith((ref) async {}),
+        ],
+        child: const NourishlyApp(),
+      ),
+    );
+    // Bounded pumps rather than pumpAndSettle: the redirect happens in a
+    // post-frame callback, and the route transition it starts keeps
+    // pumpAndSettle going.
+    for (var i = 0; i < 8; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+
+    expect(find.byType(OnboardingScreen), findsOneWidget);
+    expect(find.text('Set up my profile'), findsOneWidget);
+    expect(find.text('Skip for now'), findsOneWidget);
+
+    // Skipping still counts as having seen it — §27.1 makes setup
+    // optional, so asking again next launch would be nagging.
+    await tester.tap(find.text('Skip for now'));
+    for (var i = 0; i < 8; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    final ownerId = await ensureDefaultOwner(fresh);
+    final preferences = await PreferencesDao(fresh).forOwner(ownerId);
+    expect(preferences.onboardingSeen, isTrue);
+  });
+
   testWidgets('starts on Today with all four tabs and the centre action', (
     tester,
   ) async {
     await pumpApp(tester);
 
     expect(find.byType(DashboardScreen), findsOneWidget);
-    expect(find.text('Insights'), findsOneWidget); // nav label
-    expect(find.text('Water'), findsOneWidget); // nav label
-    expect(find.text('Profile'), findsOneWidget); // nav label
+    expect(navLabel('Insights'), findsOneWidget);
+    expect(navLabel('Water'), findsOneWidget);
+    expect(navLabel('Profile'), findsOneWidget);
     expect(find.byIcon(Icons.add_rounded), findsOneWidget);
   });
 
@@ -61,16 +114,16 @@ void main() {
   ) async {
     await pumpApp(tester);
 
-    await tester.tap(find.text('Water'));
+    await tester.tap(navLabel('Water'));
     await tester.pumpAndSettle();
     expect(find.byType(WaterScreen), findsOneWidget);
     expect(find.byType(DashboardScreen), findsNothing);
 
-    await tester.tap(find.text('Insights'));
+    await tester.tap(navLabel('Insights'));
     await tester.pumpAndSettle();
     expect(find.byType(ReportsScreen), findsOneWidget);
 
-    await tester.tap(find.text('Today').last);
+    await tester.tap(navLabel('Today'));
     await tester.pumpAndSettle();
     expect(find.byType(DashboardScreen), findsOneWidget);
   });
@@ -95,7 +148,7 @@ void main() {
   testWidgets('Profile tab pushes to the nested Goals screen', (tester) async {
     await pumpApp(tester);
 
-    await tester.tap(find.text('Profile').last);
+    await tester.tap(navLabel('Profile'));
     await tester.pumpAndSettle();
     expect(find.byType(SettingsScreen), findsOneWidget);
     expect(find.text('Goals & targets'), findsOneWidget);

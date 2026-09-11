@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nourishly_data/nourishly_data.dart';
 
 import '../../../food_catalog/data/food_catalog_providers.dart';
+import '../../../profile/data/profile_providers.dart';
 
 /// The search box's current text — ephemeral UI state, scoped to the
 /// screen and auto-disposed (§14.5). The screen debounces keystrokes
@@ -34,5 +35,6 @@ final foodSearchResultsProvider = FutureProvider.autoDispose<List<FoodItem>>((
   if (query.isEmpty) return const [];
 
   final dao = ref.watch(foodSearchDaoProvider);
-  return dao.search(query);
+  // FR-U-16: the stated preference reorders results, never filters them.
+  return dao.search(query, preference: ref.watch(dietaryPreferenceProvider));
 });

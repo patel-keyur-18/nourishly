@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:uuid/uuid.dart';
 
 import '../database.dart';
+import 'daily_summary_dao.dart';
 
 const _uuid = Uuid();
 
@@ -12,6 +13,18 @@ class FoodLoggingDao {
   FoodLoggingDao(this._db);
 
   final NourishlyDatabase _db;
+
+  /// Marks the affected day for rebuild (§25.3). Every mutation here goes
+  /// through it, so no caller has to remember that the dashboard reads a
+  /// materialised summary rather than the entries themselves.
+  Future<void> _invalidate(String entryId) async {
+    final rows = await (_db.select(
+      _db.foodLogEntries,
+    )..where((e) => e.id.equals(entryId))).get();
+    if (rows.isEmpty) return;
+    await DailySummaryDao(_db)
+        .markStale(ownerId: rows.first.ownerId, logDate: rows.first.logDate);
+  }
 
   /// Logs [quantity] servings of [servingId] against [foodId], in
   /// [mealSlotId], on [logDate]. Returns the new entry's id.
@@ -65,14 +78,16 @@ class FoodLoggingDao {
       ]);
     });
 
+    await DailySummaryDao(_db).markStale(ownerId: ownerId, logDate: logDate);
     return entryId;
   }
 
   /// Soft-deletes one entry — the inline-undo path (UX-7, FR-M-05). The
   /// row and its nutrient snapshot stay put so [restore] can bring the
   /// entry back without recomputing anything.
-  Future<void> deleteEntry(String entryId) {
-    return (_db.update(
+  Future<void> deleteEntry(String entryId) async {
+    await _invalidate(entryId);
+    await (_db.update(
       _db.foodLogEntries,
     )..where((e) => e.id.equals(entryId))).write(
       FoodLogEntriesCompanion(
@@ -83,9 +98,10 @@ class FoodLoggingDao {
   }
 
   /// Undoes [deleteEntry].
-  Future<void> restore(String entryId) {
-    return (_db.update(_db.foodLogEntries)..where((e) => e.id.equals(entryId)))
+  Future<void> restore(String entryId) async {
+    await (_db.update(_db.foodLogEntries)..where((e) => e.id.equals(entryId)))
         .write(const FoodLogEntriesCompanion(deletedAt: Value(null)));
+    await _invalidate(entryId);
   }
 
   /// Edits an entry's portion and/or meal slot (FR-M-05).
@@ -155,6 +171,7 @@ class FoodLoggingDao {
           ),
       ]);
     });
+    await _invalidate(entryId);
   }
 
   /// Today's logged entries for [ownerId], newest first, joined to the

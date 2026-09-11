@@ -51,11 +51,16 @@ class NourishlySectionHeader extends StatelessWidget {
     required this.label,
     this.actionLabel,
     this.onActionPressed,
+    this.trailing,
   });
 
   final String label;
   final String? actionLabel;
   final VoidCallback? onActionPressed;
+
+  /// A plain value on the right — the prototype's `.sec-a` used as a
+  /// readout ("1,640 of 2,050 kcal") rather than as an action.
+  final String? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -69,10 +74,27 @@ class NourishlySectionHeader extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            label.toUpperCase(),
-            style: text.overline.copyWith(color: colors.ink3),
+          Flexible(
+            child: Text(
+              label.toUpperCase(),
+              style: text.overline.copyWith(color: colors.ink3),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
+          if (trailing != null)
+            Flexible(
+              child: Padding(
+                padding: const EdgeInsets.only(left: NourishlySpace.s2),
+                child: Text(
+                  trailing!,
+                  textAlign: TextAlign.right,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: text.caption.copyWith(color: colors.ink3),
+                ),
+              ),
+            ),
           if (actionLabel != null)
             GestureDetector(
               onTap: onActionPressed,

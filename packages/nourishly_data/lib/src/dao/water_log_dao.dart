@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:uuid/uuid.dart';
 
 import '../database.dart';
+import 'daily_summary_dao.dart';
 
 const _uuid = Uuid();
 
@@ -11,6 +12,17 @@ class WaterLogDao {
   WaterLogDao(this._db);
 
   final NourishlyDatabase _db;
+
+  /// See [FoodLoggingDao]: water counts towards the day's hydration score,
+  /// so a water change invalidates the day's summary too.
+  Future<void> _invalidate(String entryId) async {
+    final rows = await (_db.select(
+      _db.waterLogEntries,
+    )..where((e) => e.id.equals(entryId))).get();
+    if (rows.isEmpty) return;
+    await DailySummaryDao(_db)
+        .markStale(ownerId: rows.first.ownerId, logDate: rows.first.logDate);
+  }
 
   Future<String> logWater({
     required String ownerId,
@@ -31,19 +43,22 @@ class WaterLogDao {
             source: 'quick_add',
           ),
         );
+    await DailySummaryDao(_db).markStale(ownerId: ownerId, logDate: logDate);
     return id;
   }
 
   /// Soft-deletes one entry — the inline-undo path (UX-7, §27.7).
-  Future<void> undo(String entryId) {
-    return (_db.update(_db.waterLogEntries)..where((e) => e.id.equals(entryId)))
+  Future<void> undo(String entryId) async {
+    await (_db.update(_db.waterLogEntries)..where((e) => e.id.equals(entryId)))
         .write(WaterLogEntriesCompanion(deletedAt: Value(DateTime.now())));
+    await _invalidate(entryId);
   }
 
   /// Restores an entry [undo] soft-deleted.
-  Future<void> restore(String entryId) {
-    return (_db.update(_db.waterLogEntries)..where((e) => e.id.equals(entryId)))
+  Future<void> restore(String entryId) async {
+    await (_db.update(_db.waterLogEntries)..where((e) => e.id.equals(entryId)))
         .write(const WaterLogEntriesCompanion(deletedAt: Value(null)));
+    await _invalidate(entryId);
   }
 
   /// Changes a past entry's amount (FR-W-07).
@@ -80,6 +95,7 @@ class WaterLogDao {
         ),
       );
     });
+    await _invalidate(replacementId);
     return replacementId;
   }
 

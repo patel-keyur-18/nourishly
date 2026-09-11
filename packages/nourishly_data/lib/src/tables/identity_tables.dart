@@ -124,6 +124,27 @@ class UserPreferences extends Table with Owned, Timestamped {
   /// `light` | `dark` | `system`.
   TextColumn get theme => text().withDefault(const Constant('system'))();
   TextColumn get locale => text().withDefault(const Constant('en'))();
+
+  /// `vegetarian` | `vegan` | `eggetarian` | `jain` | `halal` | null
+  /// (FR-U-16). Null means not stated, which is the default and stays the
+  /// default — the question is skippable.
+  ///
+  /// A preference rather than a profile attribute: it changes search
+  /// ranking and which foods an insight may suggest, not any derived
+  /// target, so it does not need effective dating.
+  ///
+  /// §30.1 counts this as sensitive — a food log already reveals religious
+  /// and cultural practice, and this states it outright. In the
+  /// personal-use scope that means it stays on the device like everything
+  /// else; it is never used to hide a food from search, only to order
+  /// results.
+  TextColumn get dietaryPreference => text().nullable()();
+
+  /// Whether the one-time welcome has been shown. Separate from "has a
+  /// profile", so skipping setup does not mean seeing the welcome again on
+  /// every launch.
+  BoolColumn get onboardingSeen =>
+      boolean().withDefault(const Constant(false))();
 }
 
 class BodyWeightEntries extends Table

@@ -12,10 +12,22 @@ enum NourishlyStatus { ok, low, high, unknown, score }
 /// The dot is never the only signal: every chip carries a written label
 /// too, because colour alone must not encode meaning (NFR-A-04).
 class StatusChip extends StatelessWidget {
-  const StatusChip({super.key, required this.label, required this.status});
+  const StatusChip({
+    super.key,
+    required this.label,
+    required this.status,
+    this.dense = false,
+  });
 
   final String label;
   final NourishlyStatus status;
+
+  /// The daily report's status column: one chip at the end of every
+  /// nutrient row, in 62px. The dot is dropped and the label takes the
+  /// status colour instead — the written label is what NFR-A-04 requires,
+  /// and keeping the dot here costs the space that turns "Short" into
+  /// "Sh…".
+  final bool dense;
 
   @override
   Widget build(BuildContext context) {
@@ -36,22 +48,24 @@ class StatusChip extends StatelessWidget {
         border: Border.all(color: colors.line, width: NourishlyStroke.hairline),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: NourishlySpace.s3,
-          vertical: NourishlySpace.s1 + 2,
+        padding: EdgeInsets.symmetric(
+          horizontal: dense ? NourishlySpace.s2 : NourishlySpace.s3,
+          vertical: dense ? 2 : NourishlySpace.s1 + 2,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              width: 7,
-              height: 7,
-              decoration: BoxDecoration(
-                color: dotColor,
-                shape: BoxShape.circle,
+            if (!dense) ...[
+              Container(
+                width: 7,
+                height: 7,
+                decoration: BoxDecoration(
+                  color: dotColor,
+                  shape: BoxShape.circle,
+                ),
               ),
-            ),
-            const SizedBox(width: NourishlySpace.s2),
+              const SizedBox(width: NourishlySpace.s2),
+            ],
             // Flexible so a long label ellipsises rather than overflowing
             // whatever row the chip has been dropped into.
             Flexible(
@@ -59,8 +73,9 @@ class StatusChip extends StatelessWidget {
                 label,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
+                textAlign: dense ? TextAlign.center : TextAlign.start,
                 style: text.caption.copyWith(
-                  color: colors.ink2,
+                  color: dense ? dotColor : colors.ink2,
                   fontWeight: FontWeight.w600,
                 ),
               ),

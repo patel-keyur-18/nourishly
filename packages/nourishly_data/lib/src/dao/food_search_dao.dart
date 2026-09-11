@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:drift/extensions/fts5.dart';
 
 import '../database.dart';
+import '../diet_classifier.dart';
 
 /// Full-text search over food names (§27.4, NFR-P-03: offline, p95 <
 /// 120ms).
@@ -78,7 +79,17 @@ class FoodSearchDao {
 
   /// [matchingFoodIds], hydrated to live (non-deleted) [FoodItem] rows and
   /// still in relevance order — what the search screen (§27.4) renders.
-  Future<List<FoodItem>> search(String query, {int limit = 20}) async {
+  ///
+  /// [preference] reorders, it never filters (FR-U-16, §27.4): foods the
+  /// stated preference eats come first, the rest keep their relevance
+  /// order below them. Hiding a food would be the wrong call twice over —
+  /// a household cooks for guests, and a search that silently omits what
+  /// you typed is the dead end §27.4 rules out.
+  Future<List<FoodItem>> search(
+    String query, {
+    int limit = 20,
+    DietaryPreference? preference,
+  }) async {
     final ids = await matchingFoodIds(query, limit: limit);
     if (ids.isEmpty) return const [];
 
@@ -87,6 +98,24 @@ class FoodSearchDao {
     )..where((f) => f.id.isIn(ids) & f.deletedAt.isNull())).get();
 
     final byId = {for (final row in rows) row.id: row};
-    return [for (final id in ids) ?byId[id]];
+    final ordered = [for (final id in ids) ?byId[id]];
+
+    if (preference == null || preference == DietaryPreference.none) {
+      return ordered;
+    }
+
+    // A stable partition rather than a sort: relevance is still the
+    // primary order, and two foods the preference treats alike must not
+    // swap places.
+    final suits = <FoodItem>[];
+    final rest = <FoodItem>[];
+    for (final food in ordered) {
+      if (suitsPreference(preference, DietClass.fromId(food.dietClass))) {
+        suits.add(food);
+      } else {
+        rest.add(food);
+      }
+    }
+    return [...suits, ...rest];
   }
 }
