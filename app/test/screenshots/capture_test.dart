@@ -61,6 +61,7 @@ void main() {
     db = NourishlyDatabase.forTesting();
     ownerId = await ensureDefaultOwner(db);
     await _seedReferenceData(db);
+    await PreferencesDao(db).update(ownerId, onboardingSeen: true);
     await _seedProfile(db, ownerId);
     await _seedDay(db, ownerId);
   });

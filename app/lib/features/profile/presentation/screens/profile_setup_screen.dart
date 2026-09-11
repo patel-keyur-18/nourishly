@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:nourishly_data/nourishly_data.dart' hide NutrientTarget;
 import 'package:nourishly_ui/nourishly_ui.dart';
 import 'package:nutrition_core/nutrition_core.dart';
 
@@ -20,7 +21,7 @@ class ProfileSetupScreen extends ConsumerStatefulWidget {
 }
 
 class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
-  static const _stepCount = 5;
+  static const _stepCount = 6;
 
   int _step = 0;
   DateTime _dateOfBirth = DateTime(1992, 3, 14);
@@ -30,6 +31,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
   double _weightKg = 71;
   ActivityLevel _activity = ActivityLevel.light;
   GoalType _goal = GoalType.generalHealth;
+  DietaryPreference? _diet;
   bool _saving = false;
 
   int get _age => _ageFrom(_dateOfBirth);
@@ -56,6 +58,14 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           inputs: _inputs,
           dateOfBirth: _dateOfBirth,
           goal: _goal,
+        );
+    await ref
+        .read(preferencesDaoProvider)
+        .update(
+          ownerId,
+          dietaryPreference: _diet?.id,
+          clearDietaryPreference: _diet == null,
+          onboardingSeen: true,
         );
     ref.read(summaryRevisionProvider.notifier).bump();
     if (mounted) router.go('/today');
@@ -119,6 +129,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                     1 => _bodyStep(),
                     2 => _activityStep(),
                     3 => _goalStep(),
+                    4 => _dietStep(),
                     _ => _targetsStep(),
                   },
                 ],
@@ -267,6 +278,45 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
         ),
     ],
   );
+
+  /// FR-U-16. Skippable like every other step, and framed as what it
+  /// actually does — it changes the order of search results, not what the
+  /// app will let you log.
+  Widget _dietStep() => _Step(
+    question: 'Do you eat to a particular diet?',
+    subtitle:
+        'This only changes the order of search results, so what you eat '
+        'most comes up first. Nothing is ever hidden, and you can skip '
+        'this.',
+    children: [
+      for (final preference in DietaryPreference.values)
+        _ChoiceTile(
+          title: preference.label,
+          subtitle: _dietSubtitle(preference),
+          selected: _diet == preference,
+          onTap: () =>
+              setState(() => _diet = _diet == preference ? null : preference),
+        ),
+      const _NoteBox(
+        'Kept on this phone like everything else, and used only to rank '
+        'search results.',
+      ),
+    ],
+  );
+
+  static String? _dietSubtitle(DietaryPreference preference) =>
+      switch (preference) {
+        // Said plainly rather than implied: the catalog records neither
+        // root vegetables nor slaughter method, so these two order results
+        // the same way their nearest recorded neighbour does.
+        DietaryPreference.jain =>
+          'Ranked as vegetarian — the catalog does not record root '
+              'vegetables',
+        DietaryPreference.halal =>
+          'The catalog does not record slaughter method, so this does not '
+              'reorder anything',
+        _ => null,
+      };
 
   /// §27.1: the targets screen explains *why*, once, in one sentence.
   Widget _targetsStep() {

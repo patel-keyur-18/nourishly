@@ -44,6 +44,16 @@ class FoodItems extends Table with Identifiable, SoftDeletable {
   TextColumn get defaultServingId =>
       text().nullable().customConstraint('REFERENCES serving_sizes (id)')();
   BoolColumn get isVerified => boolean().withDefault(const Constant(false))();
+
+  /// `vegan` | `vegetarian` | `eggetarian` | `non_vegetarian` | null when
+  /// it could not be determined (FR-U-16).
+  ///
+  /// Computed at import time by walking `recipe_components` down to the
+  /// ingredients a dish is actually built from, not guessed from its name:
+  /// "Kori gassi" and "Meen kuzhambu" say nothing to a substring match,
+  /// but their components say chicken and fish. Null is a real answer and
+  /// is treated as "don't rank on this", never as "safe".
+  TextColumn get dietClass => text().nullable()();
 }
 
 /// Absence of a row means unknown — there is no null-amount row and no

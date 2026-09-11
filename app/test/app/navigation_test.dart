@@ -7,6 +7,7 @@ import 'package:nourishly/features/dashboard/presentation/screens/dashboard_scre
 import 'package:nourishly/features/food_catalog/data/food_catalog_providers.dart';
 import 'package:nourishly/features/food_logging/presentation/screens/food_logging_screen.dart';
 import 'package:nourishly/features/goals/presentation/screens/goals_screen.dart';
+import 'package:nourishly/features/onboarding/presentation/screens/onboarding_screen.dart';
 import 'package:nourishly/features/reports/presentation/screens/reports_screen.dart';
 import 'package:nourishly/features/settings/presentation/screens/settings_screen.dart';
 import 'package:nourishly/features/water/presentation/screens/water_screen.dart';
@@ -24,7 +25,13 @@ import 'package:nourishly_ui/nourishly_ui.dart';
 void main() {
   late NourishlyDatabase db;
 
-  setUp(() => db = NourishlyDatabase.forTesting());
+  setUp(() async {
+    db = NourishlyDatabase.forTesting();
+    // These tests are about navigation between tabs, so they start where a
+    // returning user starts. First-run onboarding has its own test below.
+    final ownerId = await ensureDefaultOwner(db);
+    await PreferencesDao(db).update(ownerId, onboardingSeen: true);
+  });
   // Runs even when the test body throws — required so a failed assertion
   // doesn't leak a database into the next test.
   tearDown(() => db.close());
@@ -51,6 +58,44 @@ void main() {
     of: find.byType(NourishlyBottomNav),
     matching: find.text(text),
   );
+
+  testWidgets('a first run is sent to the welcome once (§27.1)', (
+    tester,
+  ) async {
+    // A fresh profile: no preferences row, so `onboardingSeen` is false.
+    final fresh = NourishlyDatabase.forTesting();
+    addTearDown(fresh.close);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          nourishlyDatabaseProvider.overrideWithValue(fresh),
+          catalogReadyProvider.overrideWith((ref) async {}),
+        ],
+        child: const NourishlyApp(),
+      ),
+    );
+    // Bounded pumps rather than pumpAndSettle: the redirect happens in a
+    // post-frame callback, and the route transition it starts keeps
+    // pumpAndSettle going.
+    for (var i = 0; i < 8; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+
+    expect(find.byType(OnboardingScreen), findsOneWidget);
+    expect(find.text('Set up my profile'), findsOneWidget);
+    expect(find.text('Skip for now'), findsOneWidget);
+
+    // Skipping still counts as having seen it — §27.1 makes setup
+    // optional, so asking again next launch would be nagging.
+    await tester.tap(find.text('Skip for now'));
+    for (var i = 0; i < 8; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    final ownerId = await ensureDefaultOwner(fresh);
+    final preferences = await PreferencesDao(fresh).forOwner(ownerId);
+    expect(preferences.onboardingSeen, isTrue);
+  });
 
   testWidgets('starts on Today with all four tabs and the centre action', (
     tester,

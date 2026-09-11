@@ -46,6 +46,13 @@ final hideEnergyProvider = Provider<bool>((ref) {
   return ref.watch(preferencesProvider).value?.hideEnergy ?? false;
 });
 
+/// The stated dietary preference, or null for "not said" (FR-U-16).
+final dietaryPreferenceProvider = Provider<DietaryPreference?>((ref) {
+  return DietaryPreference.fromId(
+    ref.watch(preferencesProvider).value?.dietaryPreference,
+  );
+});
+
 /// Whether the profile has frozen its targets (Q-27).
 final manualTargetsOnlyProvider = FutureProvider<bool>((ref) async {
   ref.watch(summaryRevisionProvider);

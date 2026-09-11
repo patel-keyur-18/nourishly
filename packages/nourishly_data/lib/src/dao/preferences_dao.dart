@@ -60,6 +60,9 @@ class PreferencesDao {
     int? dayRolloverTime,
     String? unitSystem,
     List<String>? focusNutrientIds,
+    String? dietaryPreference,
+    bool clearDietaryPreference = false,
+    bool? onboardingSeen,
   }) async {
     await forOwner(ownerId);
     await (_db.update(
@@ -85,6 +88,17 @@ class PreferencesDao {
         focusNutrientIds: focusNutrientIds == null
             ? const Value.absent()
             : Value(jsonEncode(focusNutrientIds.take(3).toList())),
+        // Null is a real answer here ("prefer not to say"), so clearing
+        // needs its own flag rather than being indistinguishable from
+        // "leave it alone".
+        dietaryPreference: clearDietaryPreference
+            ? const Value(null)
+            : dietaryPreference == null
+            ? const Value.absent()
+            : Value(dietaryPreference),
+        onboardingSeen: onboardingSeen == null
+            ? const Value.absent()
+            : Value(onboardingSeen),
         updatedAt: Value(DateTime.now()),
       ),
     );

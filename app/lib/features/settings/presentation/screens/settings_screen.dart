@@ -63,6 +63,16 @@ class SettingsScreen extends ConsumerWidget {
                       onTap: () => context.go('/profile/setup'),
                     ),
                     _NavRow(
+                      title: 'Diet',
+                      value:
+                          DietaryPreference.fromId(
+                            preferences.dietaryPreference,
+                          )?.label ??
+                          'Not said',
+                      subtitle: 'Orders search results. Hides nothing.',
+                      onTap: () => _editDiet(context, ref, preferences),
+                    ),
+                    _NavRow(
                       title: 'Goals & targets',
                       value: manualOnly ? 'Manual' : 'Derived',
                       onTap: () => context.go('/profile/goals'),
@@ -243,6 +253,53 @@ class SettingsScreen extends ConsumerWidget {
     );
     if (picked == null) return;
     _update(ref, dayRolloverTime: picked.hour * 60 + picked.minute);
+  }
+
+  Future<void> _editDiet(
+    BuildContext context,
+    WidgetRef ref,
+    UserPreference preferences,
+  ) async {
+    final current = DietaryPreference.fromId(preferences.dietaryPreference);
+    final choice = await showModalBottomSheet<Object?>(
+      context: context,
+      showDragHandle: true,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // A plain list rather than RadioListTile: the sheet closes on
+            // the tap, so there is no group state for a RadioGroup to hold.
+            for (final preference in DietaryPreference.values)
+              ListTile(
+                title: Text(preference.label),
+                trailing: preference == current
+                    ? Icon(
+                        Icons.check_rounded,
+                        color: context.nourishlyColors.accent,
+                      )
+                    : null,
+                onTap: () => Navigator.of(context).pop(preference),
+              ),
+            ListTile(
+              title: const Text('Prefer not to say'),
+              onTap: () => Navigator.of(context).pop('clear'),
+            ),
+            const SizedBox(height: NourishlySpace.s3),
+          ],
+        ),
+      ),
+    );
+    if (choice == null) return;
+    final ownerId = await ref.read(defaultOwnerProvider.future);
+    await ref
+        .read(preferencesDaoProvider)
+        .update(
+          ownerId,
+          dietaryPreference: choice is DietaryPreference ? choice.id : null,
+          clearDietaryPreference: choice == 'clear',
+        );
+    ref.read(summaryRevisionProvider.notifier).bump();
   }
 
   Future<void> _editFocusNutrients(BuildContext context, WidgetRef ref) {

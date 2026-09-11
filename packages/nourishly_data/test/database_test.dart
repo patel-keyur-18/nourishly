@@ -9,13 +9,34 @@ void main() {
     setUp(() => db = NourishlyDatabase.forTesting());
     tearDown(() => db.close());
 
-    test('schema v1 has no pending migration on a fresh database', () async {
+    test('a fresh database opens at the current schema version', () async {
       // Opening the in-memory database already runs onCreate against
-      // schemaVersion; this just asserts nothing throws and the version is
-      // what we expect (§22 schema v1).
-      expect(db.schemaVersion, 1);
+      // schemaVersion; this asserts nothing throws and that the file's
+      // recorded version matches what the code thinks it is.
       final result = await db.customSelect('PRAGMA user_version').getSingle();
-      expect(result.data.values.first, 1);
+      expect(result.data.values.first, db.schemaVersion);
+    });
+
+    test('v2 columns exist and carry their defaults', () async {
+      // The v1 -> v2 migration is three additive columns (FR-U-16's
+      // dietary preference, the onboarding flag, and the catalog's diet
+      // class). This covers the shape on a *fresh* database.
+      //
+      // It does not exercise the upgrade path itself — that needs drift's
+      // schema-snapshot tooling, which this repo has not set up. The
+      // migration is `ALTER TABLE ... ADD COLUMN` three times, each
+      // nullable or defaulted, which is the form SQLite accepts; but an
+      // untested upgrade on real data is still an untested upgrade.
+      final ownerId = await ensureDefaultOwner(db);
+      final preferences = await PreferencesDao(db).forOwner(ownerId);
+
+      expect(preferences.dietaryPreference, isNull);
+      expect(preferences.onboardingSeen, isFalse);
+
+      final columns = await db
+          .customSelect("PRAGMA table_info('food_items')")
+          .get();
+      expect(columns.map((row) => row.data['name']), contains('diet_class'));
     });
 
     test(

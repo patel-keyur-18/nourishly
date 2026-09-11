@@ -22,12 +22,14 @@ final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>(
 /// a tab plus a stack rather than a detached screen (§28.4) — even though
 /// nothing sends a notification yet, the route shape is right from day one.
 ///
-/// Only the routes Phase 1 can actually serve are wired: the four tab
-/// branches, the modal log route, one nested `/profile/goals` push (to
-/// prove nested navigation works), and `/onboarding` (not yet a startup
-/// gate — see [OnboardingScreen]). The rest of §28.5's route table
-/// (`/log/search`, `/today/nutrient/:id`, …) arrives with the features
-/// that need it.
+/// §27.1's one way in: the app always starts at `/today`, and
+/// [NourishlyApp] sends a profile that has never seen the welcome to
+/// `/onboarding` once, after preferences load. The flag is separate from
+/// "has a profile" so that skipping setup does not mean seeing the welcome
+/// again on every launch.
+///
+/// The rest of §28.5's route table (`/log/search`, `/today/nutrient/:id`,
+/// …) arrives with the features that need it.
 final GoRouter appRouter = GoRouter(
   navigatorKey: rootNavigatorKey,
   initialLocation: '/today',

@@ -18,6 +18,7 @@ export 'src/dao/preferences_dao.dart';
 export 'src/dao/profile_dao.dart';
 export 'src/dao/water_log_dao.dart';
 export 'src/database.dart';
+export 'src/diet_classifier.dart';
 export 'src/rda_importer.dart';
 export 'src/tables/catalog_tables.dart';
 export 'src/tables/common.dart';

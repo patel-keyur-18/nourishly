@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 
 import 'dao/food_search_dao.dart';
 import 'database.dart';
+import 'diet_classifier.dart';
 
 /// Imports the bundled catalog seed (`app/assets/catalog/seed_v1.json`,
 /// built by `tools/catalog_pipeline/bin/build_seed.dart`) on first run
@@ -22,7 +23,12 @@ class CatalogImporter {
     final existing = await (_db.select(
       _db.catalogVersions,
     )..where((c) => c.version.equals(targetVersion))).getSingleOrNull();
-    if (existing != null) return false;
+    if (existing != null) {
+      // Already imported, but a device upgrading from schema v1 has no
+      // diet classes yet (FR-U-16) — and a no-op once they are filled in.
+      await DietClassifier(_db).classifyMissing();
+      return false;
+    }
 
     final foodItems = (seed['foodItems'] as List).cast<Map<String, dynamic>>();
     final altNames = (seed['foodAltNames'] as List)
@@ -171,6 +177,11 @@ class CatalogImporter {
         altNames: altNamesByFood[foodId] ?? const [],
       );
     }
+
+    // Computed from the rows that were just imported (FR-U-16). Cheap,
+    // and it keeps the pipeline free of a concern that is really about how
+    // this household eats rather than about the food data itself.
+    await DietClassifier(_db).classifyAll();
 
     return true;
   }

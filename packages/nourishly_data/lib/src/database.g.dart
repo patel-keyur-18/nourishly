@@ -3698,6 +3698,33 @@ class $UserPreferencesTable extends UserPreferences
     requiredDuringInsert: false,
     defaultValue: const Constant('en'),
   );
+  static const VerificationMeta _dietaryPreferenceMeta = const VerificationMeta(
+    'dietaryPreference',
+  );
+  @override
+  late final GeneratedColumn<String> dietaryPreference =
+      GeneratedColumn<String>(
+        'dietary_preference',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _onboardingSeenMeta = const VerificationMeta(
+    'onboardingSeen',
+  );
+  @override
+  late final GeneratedColumn<bool> onboardingSeen = GeneratedColumn<bool>(
+    'onboarding_seen',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("onboarding_seen" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     ownerId,
@@ -3716,6 +3743,8 @@ class $UserPreferencesTable extends UserPreferences
     hideEnergy,
     theme,
     locale,
+    dietaryPreference,
+    onboardingSeen,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3857,6 +3886,24 @@ class $UserPreferencesTable extends UserPreferences
         locale.isAcceptableOrUnknown(data['locale']!, _localeMeta),
       );
     }
+    if (data.containsKey('dietary_preference')) {
+      context.handle(
+        _dietaryPreferenceMeta,
+        dietaryPreference.isAcceptableOrUnknown(
+          data['dietary_preference']!,
+          _dietaryPreferenceMeta,
+        ),
+      );
+    }
+    if (data.containsKey('onboarding_seen')) {
+      context.handle(
+        _onboardingSeenMeta,
+        onboardingSeen.isAcceptableOrUnknown(
+          data['onboarding_seen']!,
+          _onboardingSeenMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -3930,6 +3977,14 @@ class $UserPreferencesTable extends UserPreferences
         DriftSqlType.string,
         data['${effectivePrefix}locale'],
       )!,
+      dietaryPreference: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}dietary_preference'],
+      ),
+      onboardingSeen: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}onboarding_seen'],
+      )!,
     );
   }
 
@@ -3970,6 +4025,26 @@ class UserPreference extends DataClass implements Insertable<UserPreference> {
   /// `light` | `dark` | `system`.
   final String theme;
   final String locale;
+
+  /// `vegetarian` | `vegan` | `eggetarian` | `jain` | `halal` | null
+  /// (FR-U-16). Null means not stated, which is the default and stays the
+  /// default — the question is skippable.
+  ///
+  /// A preference rather than a profile attribute: it changes search
+  /// ranking and which foods an insight may suggest, not any derived
+  /// target, so it does not need effective dating.
+  ///
+  /// §30.1 counts this as sensitive — a food log already reveals religious
+  /// and cultural practice, and this states it outright. In the
+  /// personal-use scope that means it stays on the device like everything
+  /// else; it is never used to hide a food from search, only to order
+  /// results.
+  final String? dietaryPreference;
+
+  /// Whether the one-time welcome has been shown. Separate from "has a
+  /// profile", so skipping setup does not mean seeing the welcome again on
+  /// every launch.
+  final bool onboardingSeen;
   const UserPreference({
     required this.ownerId,
     required this.createdAt,
@@ -3987,6 +4062,8 @@ class UserPreference extends DataClass implements Insertable<UserPreference> {
     required this.hideEnergy,
     required this.theme,
     required this.locale,
+    this.dietaryPreference,
+    required this.onboardingSeen,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -4007,6 +4084,10 @@ class UserPreference extends DataClass implements Insertable<UserPreference> {
     map['hide_energy'] = Variable<bool>(hideEnergy);
     map['theme'] = Variable<String>(theme);
     map['locale'] = Variable<String>(locale);
+    if (!nullToAbsent || dietaryPreference != null) {
+      map['dietary_preference'] = Variable<String>(dietaryPreference);
+    }
+    map['onboarding_seen'] = Variable<bool>(onboardingSeen);
     return map;
   }
 
@@ -4028,6 +4109,10 @@ class UserPreference extends DataClass implements Insertable<UserPreference> {
       hideEnergy: Value(hideEnergy),
       theme: Value(theme),
       locale: Value(locale),
+      dietaryPreference: dietaryPreference == null && nullToAbsent
+          ? const Value.absent()
+          : Value(dietaryPreference),
+      onboardingSeen: Value(onboardingSeen),
     );
   }
 
@@ -4055,6 +4140,10 @@ class UserPreference extends DataClass implements Insertable<UserPreference> {
       hideEnergy: serializer.fromJson<bool>(json['hideEnergy']),
       theme: serializer.fromJson<String>(json['theme']),
       locale: serializer.fromJson<String>(json['locale']),
+      dietaryPreference: serializer.fromJson<String?>(
+        json['dietaryPreference'],
+      ),
+      onboardingSeen: serializer.fromJson<bool>(json['onboardingSeen']),
     );
   }
   @override
@@ -4077,6 +4166,8 @@ class UserPreference extends DataClass implements Insertable<UserPreference> {
       'hideEnergy': serializer.toJson<bool>(hideEnergy),
       'theme': serializer.toJson<String>(theme),
       'locale': serializer.toJson<String>(locale),
+      'dietaryPreference': serializer.toJson<String?>(dietaryPreference),
+      'onboardingSeen': serializer.toJson<bool>(onboardingSeen),
     };
   }
 
@@ -4097,6 +4188,8 @@ class UserPreference extends DataClass implements Insertable<UserPreference> {
     bool? hideEnergy,
     String? theme,
     String? locale,
+    Value<String?> dietaryPreference = const Value.absent(),
+    bool? onboardingSeen,
   }) => UserPreference(
     ownerId: ownerId ?? this.ownerId,
     createdAt: createdAt ?? this.createdAt,
@@ -4114,6 +4207,10 @@ class UserPreference extends DataClass implements Insertable<UserPreference> {
     hideEnergy: hideEnergy ?? this.hideEnergy,
     theme: theme ?? this.theme,
     locale: locale ?? this.locale,
+    dietaryPreference: dietaryPreference.present
+        ? dietaryPreference.value
+        : this.dietaryPreference,
+    onboardingSeen: onboardingSeen ?? this.onboardingSeen,
   );
   UserPreference copyWithCompanion(UserPreferencesCompanion data) {
     return UserPreference(
@@ -4151,6 +4248,12 @@ class UserPreference extends DataClass implements Insertable<UserPreference> {
           : this.hideEnergy,
       theme: data.theme.present ? data.theme.value : this.theme,
       locale: data.locale.present ? data.locale.value : this.locale,
+      dietaryPreference: data.dietaryPreference.present
+          ? data.dietaryPreference.value
+          : this.dietaryPreference,
+      onboardingSeen: data.onboardingSeen.present
+          ? data.onboardingSeen.value
+          : this.onboardingSeen,
     );
   }
 
@@ -4172,7 +4275,9 @@ class UserPreference extends DataClass implements Insertable<UserPreference> {
           ..write('showScore: $showScore, ')
           ..write('hideEnergy: $hideEnergy, ')
           ..write('theme: $theme, ')
-          ..write('locale: $locale')
+          ..write('locale: $locale, ')
+          ..write('dietaryPreference: $dietaryPreference, ')
+          ..write('onboardingSeen: $onboardingSeen')
           ..write(')'))
         .toString();
   }
@@ -4195,6 +4300,8 @@ class UserPreference extends DataClass implements Insertable<UserPreference> {
     hideEnergy,
     theme,
     locale,
+    dietaryPreference,
+    onboardingSeen,
   );
   @override
   bool operator ==(Object other) =>
@@ -4215,7 +4322,9 @@ class UserPreference extends DataClass implements Insertable<UserPreference> {
           other.showScore == this.showScore &&
           other.hideEnergy == this.hideEnergy &&
           other.theme == this.theme &&
-          other.locale == this.locale);
+          other.locale == this.locale &&
+          other.dietaryPreference == this.dietaryPreference &&
+          other.onboardingSeen == this.onboardingSeen);
 }
 
 class UserPreferencesCompanion extends UpdateCompanion<UserPreference> {
@@ -4235,6 +4344,8 @@ class UserPreferencesCompanion extends UpdateCompanion<UserPreference> {
   final Value<bool> hideEnergy;
   final Value<String> theme;
   final Value<String> locale;
+  final Value<String?> dietaryPreference;
+  final Value<bool> onboardingSeen;
   final Value<int> rowid;
   const UserPreferencesCompanion({
     this.ownerId = const Value.absent(),
@@ -4253,6 +4364,8 @@ class UserPreferencesCompanion extends UpdateCompanion<UserPreference> {
     this.hideEnergy = const Value.absent(),
     this.theme = const Value.absent(),
     this.locale = const Value.absent(),
+    this.dietaryPreference = const Value.absent(),
+    this.onboardingSeen = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   UserPreferencesCompanion.insert({
@@ -4272,6 +4385,8 @@ class UserPreferencesCompanion extends UpdateCompanion<UserPreference> {
     this.hideEnergy = const Value.absent(),
     this.theme = const Value.absent(),
     this.locale = const Value.absent(),
+    this.dietaryPreference = const Value.absent(),
+    this.onboardingSeen = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : ownerId = Value(ownerId),
        unitSystem = Value(unitSystem),
@@ -4300,6 +4415,8 @@ class UserPreferencesCompanion extends UpdateCompanion<UserPreference> {
     Expression<bool>? hideEnergy,
     Expression<String>? theme,
     Expression<String>? locale,
+    Expression<String>? dietaryPreference,
+    Expression<bool>? onboardingSeen,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -4320,6 +4437,8 @@ class UserPreferencesCompanion extends UpdateCompanion<UserPreference> {
       if (hideEnergy != null) 'hide_energy': hideEnergy,
       if (theme != null) 'theme': theme,
       if (locale != null) 'locale': locale,
+      if (dietaryPreference != null) 'dietary_preference': dietaryPreference,
+      if (onboardingSeen != null) 'onboarding_seen': onboardingSeen,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -4341,6 +4460,8 @@ class UserPreferencesCompanion extends UpdateCompanion<UserPreference> {
     Value<bool>? hideEnergy,
     Value<String>? theme,
     Value<String>? locale,
+    Value<String?>? dietaryPreference,
+    Value<bool>? onboardingSeen,
     Value<int>? rowid,
   }) {
     return UserPreferencesCompanion(
@@ -4360,6 +4481,8 @@ class UserPreferencesCompanion extends UpdateCompanion<UserPreference> {
       hideEnergy: hideEnergy ?? this.hideEnergy,
       theme: theme ?? this.theme,
       locale: locale ?? this.locale,
+      dietaryPreference: dietaryPreference ?? this.dietaryPreference,
+      onboardingSeen: onboardingSeen ?? this.onboardingSeen,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -4417,6 +4540,12 @@ class UserPreferencesCompanion extends UpdateCompanion<UserPreference> {
     if (locale.present) {
       map['locale'] = Variable<String>(locale.value);
     }
+    if (dietaryPreference.present) {
+      map['dietary_preference'] = Variable<String>(dietaryPreference.value);
+    }
+    if (onboardingSeen.present) {
+      map['onboarding_seen'] = Variable<bool>(onboardingSeen.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -4442,6 +4571,8 @@ class UserPreferencesCompanion extends UpdateCompanion<UserPreference> {
           ..write('hideEnergy: $hideEnergy, ')
           ..write('theme: $theme, ')
           ..write('locale: $locale, ')
+          ..write('dietaryPreference: $dietaryPreference, ')
+          ..write('onboardingSeen: $onboardingSeen, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -7646,6 +7777,17 @@ class $FoodItemsTable extends FoodItems
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _dietClassMeta = const VerificationMeta(
+    'dietClass',
+  );
+  @override
+  late final GeneratedColumn<String> dietClass = GeneratedColumn<String>(
+    'diet_class',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -7664,6 +7806,7 @@ class $FoodItemsTable extends FoodItems
     yieldFactor,
     defaultServingId,
     isVerified,
+    dietClass,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -7807,6 +7950,12 @@ class $FoodItemsTable extends FoodItems
         isVerified.isAcceptableOrUnknown(data['is_verified']!, _isVerifiedMeta),
       );
     }
+    if (data.containsKey('diet_class')) {
+      context.handle(
+        _dietClassMeta,
+        dietClass.isAcceptableOrUnknown(data['diet_class']!, _dietClassMeta),
+      );
+    }
     return context;
   }
 
@@ -7880,6 +8029,10 @@ class $FoodItemsTable extends FoodItems
         DriftSqlType.bool,
         data['${effectivePrefix}is_verified'],
       )!,
+      dietClass: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}diet_class'],
+      ),
     );
   }
 
@@ -7906,6 +8059,15 @@ class FoodItem extends DataClass implements Insertable<FoodItem> {
 
   /// `verified` | `derived` | `label` | `community` | `user`.
   final String qualityTier;
+
+  /// `usda_fdc` | `usda_fdc_component` | `catalog_pipeline_recipe` | `user`.
+  ///
+  /// `usda_fdc_component` is a USDA food that backs a recipe ingredient
+  /// without being a catalog entry in its own right — the FDC row behind
+  /// "puffed rice" in bhel. It exists so a recipe's components trace back
+  /// to their source, carries a raw USDA description rather than a name
+  /// anyone would search for, and has no serving size, so it is
+  /// deliberately kept out of the search index (`CatalogImporter`).
   final String provenanceSource;
   final String? provenanceId;
   final int revision;
@@ -7917,6 +8079,16 @@ class FoodItem extends DataClass implements Insertable<FoodItem> {
   final double? yieldFactor;
   final String? defaultServingId;
   final bool isVerified;
+
+  /// `vegan` | `vegetarian` | `eggetarian` | `non_vegetarian` | null when
+  /// it could not be determined (FR-U-16).
+  ///
+  /// Computed at import time by walking `recipe_components` down to the
+  /// ingredients a dish is actually built from, not guessed from its name:
+  /// "Kori gassi" and "Meen kuzhambu" say nothing to a substring match,
+  /// but their components say chicken and fish. Null is a real answer and
+  /// is treated as "don't rank on this", never as "safe".
+  final String? dietClass;
   const FoodItem({
     required this.id,
     this.deletedAt,
@@ -7934,6 +8106,7 @@ class FoodItem extends DataClass implements Insertable<FoodItem> {
     this.yieldFactor,
     this.defaultServingId,
     required this.isVerified,
+    this.dietClass,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -7970,6 +8143,9 @@ class FoodItem extends DataClass implements Insertable<FoodItem> {
       map['default_serving_id'] = Variable<String>(defaultServingId);
     }
     map['is_verified'] = Variable<bool>(isVerified);
+    if (!nullToAbsent || dietClass != null) {
+      map['diet_class'] = Variable<String>(dietClass);
+    }
     return map;
   }
 
@@ -8007,6 +8183,9 @@ class FoodItem extends DataClass implements Insertable<FoodItem> {
           ? const Value.absent()
           : Value(defaultServingId),
       isVerified: Value(isVerified),
+      dietClass: dietClass == null && nullToAbsent
+          ? const Value.absent()
+          : Value(dietClass),
     );
   }
 
@@ -8032,6 +8211,7 @@ class FoodItem extends DataClass implements Insertable<FoodItem> {
       yieldFactor: serializer.fromJson<double?>(json['yieldFactor']),
       defaultServingId: serializer.fromJson<String?>(json['defaultServingId']),
       isVerified: serializer.fromJson<bool>(json['isVerified']),
+      dietClass: serializer.fromJson<String?>(json['dietClass']),
     );
   }
   @override
@@ -8054,6 +8234,7 @@ class FoodItem extends DataClass implements Insertable<FoodItem> {
       'yieldFactor': serializer.toJson<double?>(yieldFactor),
       'defaultServingId': serializer.toJson<String?>(defaultServingId),
       'isVerified': serializer.toJson<bool>(isVerified),
+      'dietClass': serializer.toJson<String?>(dietClass),
     };
   }
 
@@ -8074,6 +8255,7 @@ class FoodItem extends DataClass implements Insertable<FoodItem> {
     Value<double?> yieldFactor = const Value.absent(),
     Value<String?> defaultServingId = const Value.absent(),
     bool? isVerified,
+    Value<String?> dietClass = const Value.absent(),
   }) => FoodItem(
     id: id ?? this.id,
     deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
@@ -8097,6 +8279,7 @@ class FoodItem extends DataClass implements Insertable<FoodItem> {
         ? defaultServingId.value
         : this.defaultServingId,
     isVerified: isVerified ?? this.isVerified,
+    dietClass: dietClass.present ? dietClass.value : this.dietClass,
   );
   FoodItem copyWithCompanion(FoodItemsCompanion data) {
     return FoodItem(
@@ -8136,6 +8319,7 @@ class FoodItem extends DataClass implements Insertable<FoodItem> {
       isVerified: data.isVerified.present
           ? data.isVerified.value
           : this.isVerified,
+      dietClass: data.dietClass.present ? data.dietClass.value : this.dietClass,
     );
   }
 
@@ -8157,7 +8341,8 @@ class FoodItem extends DataClass implements Insertable<FoodItem> {
           ..write('densityGPerMl: $densityGPerMl, ')
           ..write('yieldFactor: $yieldFactor, ')
           ..write('defaultServingId: $defaultServingId, ')
-          ..write('isVerified: $isVerified')
+          ..write('isVerified: $isVerified, ')
+          ..write('dietClass: $dietClass')
           ..write(')'))
         .toString();
   }
@@ -8180,6 +8365,7 @@ class FoodItem extends DataClass implements Insertable<FoodItem> {
     yieldFactor,
     defaultServingId,
     isVerified,
+    dietClass,
   );
   @override
   bool operator ==(Object other) =>
@@ -8200,7 +8386,8 @@ class FoodItem extends DataClass implements Insertable<FoodItem> {
           other.densityGPerMl == this.densityGPerMl &&
           other.yieldFactor == this.yieldFactor &&
           other.defaultServingId == this.defaultServingId &&
-          other.isVerified == this.isVerified);
+          other.isVerified == this.isVerified &&
+          other.dietClass == this.dietClass);
 }
 
 class FoodItemsCompanion extends UpdateCompanion<FoodItem> {
@@ -8220,6 +8407,7 @@ class FoodItemsCompanion extends UpdateCompanion<FoodItem> {
   final Value<double?> yieldFactor;
   final Value<String?> defaultServingId;
   final Value<bool> isVerified;
+  final Value<String?> dietClass;
   final Value<int> rowid;
   const FoodItemsCompanion({
     this.id = const Value.absent(),
@@ -8238,6 +8426,7 @@ class FoodItemsCompanion extends UpdateCompanion<FoodItem> {
     this.yieldFactor = const Value.absent(),
     this.defaultServingId = const Value.absent(),
     this.isVerified = const Value.absent(),
+    this.dietClass = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   FoodItemsCompanion.insert({
@@ -8257,6 +8446,7 @@ class FoodItemsCompanion extends UpdateCompanion<FoodItem> {
     this.yieldFactor = const Value.absent(),
     this.defaultServingId = const Value.absent(),
     this.isVerified = const Value.absent(),
+    this.dietClass = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        kind = Value(kind),
@@ -8280,6 +8470,7 @@ class FoodItemsCompanion extends UpdateCompanion<FoodItem> {
     Expression<double>? yieldFactor,
     Expression<String>? defaultServingId,
     Expression<bool>? isVerified,
+    Expression<String>? dietClass,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -8299,6 +8490,7 @@ class FoodItemsCompanion extends UpdateCompanion<FoodItem> {
       if (yieldFactor != null) 'yield_factor': yieldFactor,
       if (defaultServingId != null) 'default_serving_id': defaultServingId,
       if (isVerified != null) 'is_verified': isVerified,
+      if (dietClass != null) 'diet_class': dietClass,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -8320,6 +8512,7 @@ class FoodItemsCompanion extends UpdateCompanion<FoodItem> {
     Value<double?>? yieldFactor,
     Value<String?>? defaultServingId,
     Value<bool>? isVerified,
+    Value<String?>? dietClass,
     Value<int>? rowid,
   }) {
     return FoodItemsCompanion(
@@ -8339,6 +8532,7 @@ class FoodItemsCompanion extends UpdateCompanion<FoodItem> {
       yieldFactor: yieldFactor ?? this.yieldFactor,
       defaultServingId: defaultServingId ?? this.defaultServingId,
       isVerified: isVerified ?? this.isVerified,
+      dietClass: dietClass ?? this.dietClass,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -8394,6 +8588,9 @@ class FoodItemsCompanion extends UpdateCompanion<FoodItem> {
     if (isVerified.present) {
       map['is_verified'] = Variable<bool>(isVerified.value);
     }
+    if (dietClass.present) {
+      map['diet_class'] = Variable<String>(dietClass.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -8419,6 +8616,7 @@ class FoodItemsCompanion extends UpdateCompanion<FoodItem> {
           ..write('yieldFactor: $yieldFactor, ')
           ..write('defaultServingId: $defaultServingId, ')
           ..write('isVerified: $isVerified, ')
+          ..write('dietClass: $dietClass, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -19932,6 +20130,8 @@ typedef $$UserPreferencesTableCreateCompanionBuilder =
       Value<bool> hideEnergy,
       Value<String> theme,
       Value<String> locale,
+      Value<String?> dietaryPreference,
+      Value<bool> onboardingSeen,
       Value<int> rowid,
     });
 typedef $$UserPreferencesTableUpdateCompanionBuilder =
@@ -19952,6 +20152,8 @@ typedef $$UserPreferencesTableUpdateCompanionBuilder =
       Value<bool> hideEnergy,
       Value<String> theme,
       Value<String> locale,
+      Value<String?> dietaryPreference,
+      Value<bool> onboardingSeen,
       Value<int> rowid,
     });
 
@@ -20070,6 +20272,16 @@ class $$UserPreferencesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get dietaryPreference => $composableBuilder(
+    column: $table.dietaryPreference,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get onboardingSeen => $composableBuilder(
+    column: $table.onboardingSeen,
+    builder: (column) => ColumnFilters(column),
+  );
+
   $$UsersTableFilterComposer get ownerId {
     final $$UsersTableFilterComposer composer = $composerBuilder(
       composer: this,
@@ -20178,6 +20390,16 @@ class $$UserPreferencesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get dietaryPreference => $composableBuilder(
+    column: $table.dietaryPreference,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get onboardingSeen => $composableBuilder(
+    column: $table.onboardingSeen,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$UsersTableOrderingComposer get ownerId {
     final $$UsersTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -20274,6 +20496,16 @@ class $$UserPreferencesTableAnnotationComposer
   GeneratedColumn<String> get locale =>
       $composableBuilder(column: $table.locale, builder: (column) => column);
 
+  GeneratedColumn<String> get dietaryPreference => $composableBuilder(
+    column: $table.dietaryPreference,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get onboardingSeen => $composableBuilder(
+    column: $table.onboardingSeen,
+    builder: (column) => column,
+  );
+
   $$UsersTableAnnotationComposer get ownerId {
     final $$UsersTableAnnotationComposer composer = $composerBuilder(
       composer: this,
@@ -20344,6 +20576,8 @@ class $$UserPreferencesTableTableManager
                 Value<bool> hideEnergy = const Value.absent(),
                 Value<String> theme = const Value.absent(),
                 Value<String> locale = const Value.absent(),
+                Value<String?> dietaryPreference = const Value.absent(),
+                Value<bool> onboardingSeen = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => UserPreferencesCompanion(
                 ownerId: ownerId,
@@ -20362,6 +20596,8 @@ class $$UserPreferencesTableTableManager
                 hideEnergy: hideEnergy,
                 theme: theme,
                 locale: locale,
+                dietaryPreference: dietaryPreference,
+                onboardingSeen: onboardingSeen,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -20382,6 +20618,8 @@ class $$UserPreferencesTableTableManager
                 Value<bool> hideEnergy = const Value.absent(),
                 Value<String> theme = const Value.absent(),
                 Value<String> locale = const Value.absent(),
+                Value<String?> dietaryPreference = const Value.absent(),
+                Value<bool> onboardingSeen = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => UserPreferencesCompanion.insert(
                 ownerId: ownerId,
@@ -20400,6 +20638,8 @@ class $$UserPreferencesTableTableManager
                 hideEnergy: hideEnergy,
                 theme: theme,
                 locale: locale,
+                dietaryPreference: dietaryPreference,
+                onboardingSeen: onboardingSeen,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -22896,6 +23136,7 @@ typedef $$FoodItemsTableCreateCompanionBuilder = FoodItemsCompanion Function({
   Value<double?> yieldFactor,
   Value<String?> defaultServingId,
   Value<bool> isVerified,
+  Value<String?> dietClass,
   Value<int> rowid,
 });
 typedef $$FoodItemsTableUpdateCompanionBuilder = FoodItemsCompanion Function({
@@ -22915,6 +23156,7 @@ typedef $$FoodItemsTableUpdateCompanionBuilder = FoodItemsCompanion Function({
   Value<double?> yieldFactor,
   Value<String?> defaultServingId,
   Value<bool> isVerified,
+  Value<String?> dietClass,
   Value<int> rowid,
 });
 
@@ -23116,6 +23358,11 @@ class $$FoodItemsTableFilterComposer
 
   ColumnFilters<bool> get isVerified => $composableBuilder(
     column: $table.isVerified,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get dietClass => $composableBuilder(
+    column: $table.dietClass,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -23345,6 +23592,11 @@ class $$FoodItemsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get dietClass => $composableBuilder(
+    column: $table.dietClass,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$CatalogVersionsTableOrderingComposer get catalogVersion {
     final $$CatalogVersionsTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -23458,6 +23710,9 @@ class $$FoodItemsTableAnnotationComposer
     column: $table.isVerified,
     builder: (column) => column,
   );
+
+  GeneratedColumn<String> get dietClass =>
+      $composableBuilder(column: $table.dietClass, builder: (column) => column);
 
   $$CatalogVersionsTableAnnotationComposer get catalogVersion {
     final $$CatalogVersionsTableAnnotationComposer composer = $composerBuilder(
@@ -23658,6 +23913,7 @@ class $$FoodItemsTableTableManager
                 Value<double?> yieldFactor = const Value.absent(),
                 Value<String?> defaultServingId = const Value.absent(),
                 Value<bool> isVerified = const Value.absent(),
+                Value<String?> dietClass = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => FoodItemsCompanion(
                 id: id,
@@ -23676,6 +23932,7 @@ class $$FoodItemsTableTableManager
                 yieldFactor: yieldFactor,
                 defaultServingId: defaultServingId,
                 isVerified: isVerified,
+                dietClass: dietClass,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -23696,6 +23953,7 @@ class $$FoodItemsTableTableManager
                 Value<double?> yieldFactor = const Value.absent(),
                 Value<String?> defaultServingId = const Value.absent(),
                 Value<bool> isVerified = const Value.absent(),
+                Value<String?> dietClass = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => FoodItemsCompanion.insert(
                 id: id,
@@ -23714,6 +23972,7 @@ class $$FoodItemsTableTableManager
                 yieldFactor: yieldFactor,
                 defaultServingId: defaultServingId,
                 isVerified: isVerified,
+                dietClass: dietClass,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

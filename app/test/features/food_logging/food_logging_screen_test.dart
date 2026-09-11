@@ -35,9 +35,13 @@ void main() {
   late NourishlyDatabase db;
   late FoodSearchDao dao;
 
-  setUp(() {
+  setUp(() async {
     db = NourishlyDatabase.forTesting();
     dao = FoodSearchDao(db);
+    // A returning user: first-run onboarding has its own test in
+    // test/app/navigation_test.dart.
+    await PreferencesDao(db)
+        .update(await ensureDefaultOwner(db), onboardingSeen: true);
   });
   tearDown(() => db.close());
 
