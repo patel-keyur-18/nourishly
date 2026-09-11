@@ -134,6 +134,121 @@ void main() {
       },
     );
 
+    group('prefix matching (FR-F-01)', () {
+      test('a partial word finds the food — "pan" finds paneer', () async {
+        final id = await _insertFood(db, name: 'Paneer');
+        await dao.indexFood(
+          foodId: id,
+          canonicalName: 'Paneer',
+          altNames: const [],
+        );
+
+        // The bug this covers: fts5 matches whole tokens, so before the
+        // trailing `*` only the complete word "paneer" found anything.
+        expect(await dao.matchingFoodIds('pan'), [id]);
+        expect(await dao.matchingFoodIds('pa'), [id]);
+        expect(await dao.matchingFoodIds('p'), [id]);
+      });
+
+      test('a prefix of an alt name works the same way', () async {
+        final id = await _insertFood(db, name: 'Paneer');
+        await dao.indexFood(
+          foodId: id,
+          canonicalName: 'Paneer',
+          altNames: const ['panir'],
+        );
+
+        expect(await dao.matchingFoodIds('pani'), [id]);
+      });
+
+      test(
+        'every word is a prefix, so more words narrow the results',
+        () async {
+          final butter = await _insertFood(db, name: 'Paneer butter masala');
+          final tikka = await _insertFood(db, name: 'Paneer tikka');
+          for (final entry in {
+            butter: 'Paneer butter masala',
+            tikka: 'Paneer tikka',
+          }.entries) {
+            await dao.indexFood(
+              foodId: entry.key,
+              canonicalName: entry.value,
+              altNames: const [],
+            );
+          }
+
+          expect(await dao.matchingFoodIds('pan'), hasLength(2));
+          expect(await dao.matchingFoodIds('pan but'), [butter]);
+        },
+      );
+
+      test(
+        'an exact name outranks a longer one that merely contains it',
+        () async {
+          final pancake = await _insertFood(db, name: 'Pancake, plain');
+          final paneer = await _insertFood(db, name: 'Paneer');
+          await dao.indexFood(
+            foodId: pancake,
+            canonicalName: 'Pancake, plain',
+            altNames: const [],
+          );
+          await dao.indexFood(
+            foodId: paneer,
+            canonicalName: 'Paneer',
+            altNames: const [],
+          );
+
+          expect(await dao.matchingFoodIds('paneer'), [paneer]);
+          // "pan" prefixes both; the shorter, whole-name match leads.
+          expect((await dao.matchingFoodIds('pan')).first, paneer);
+        },
+      );
+
+      test(
+        'punctuation in what someone types is matched, not parsed',
+        () async {
+          final id = await _insertFood(db, name: 'Rice, white, cooked');
+          await dao.indexFood(
+            foodId: id,
+            canonicalName: 'Rice, white, cooked',
+            altNames: const [],
+          );
+
+          // Each of these is fts5 syntax if passed through unquoted: a
+          // NEAR/OR keyword, a column filter, a phrase quote, an operator.
+          // Every one of them used to throw mid-keystroke.
+          for (final typed in [
+            'rice,',
+            'rice, white',
+            'rice OR',
+            'rice:',
+            'rice "',
+            'rice -white',
+            'rice (white',
+            '"',
+            '*',
+            '-',
+          ]) {
+            expect(
+              () async => dao.matchingFoodIds(typed),
+              returnsNormally,
+              reason: typed,
+            );
+            await dao.matchingFoodIds(typed);
+          }
+
+          expect(await dao.matchingFoodIds('rice, white'), [id]);
+        },
+      );
+
+      test('a query with no letters or digits searches for nothing', () async {
+        expect(FoodSearchDao.matchExpression('   '), isNull);
+        expect(FoodSearchDao.matchExpression('-- '), isNull);
+        expect(FoodSearchDao.matchExpression('pan'), '"pan"*');
+        expect(FoodSearchDao.matchExpression('pan but'), '"pan"* "but"*');
+      });
+    });
+
     test('limit caps the number of results', () async {
       for (var i = 0; i < 5; i++) {
         final id = await _insertFood(db, name: 'Dal variant $i');

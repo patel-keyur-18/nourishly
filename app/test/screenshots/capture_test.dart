@@ -134,6 +134,28 @@ void main() {
     await pump(tester, '/insights');
     await shoot(tester, '06-insights');
   });
+
+  testWidgets('water, filled', (tester) async {
+    await pump(tester, '/water');
+    await shoot(tester, '07-water');
+  });
+
+  testWidgets('water, mid-pour', (tester) async {
+    // The user's actual report: tap a quick-add and watch. Bounded pumps
+    // rather than `pumpAndSettle`, to catch the vessel part-way up with
+    // the surface still moving — the frame the settled shot cannot show.
+    await pump(tester, '/water');
+    await tester.tap(find.text('+500 ml'));
+    // Let the write land and the stream emit, without settling past the
+    // animation it kicks off.
+    for (var i = 0; i < 8; i++) {
+      await tester.pump(const Duration(milliseconds: 16));
+    }
+    await tester.pump(const Duration(milliseconds: 260));
+    await shoot(tester, '08-water-mid-pour');
+    // Leave no timer running behind the test.
+    await tester.pumpAndSettle();
+  });
 }
 
 Future<void> _seedReferenceData(NourishlyDatabase db) async {
