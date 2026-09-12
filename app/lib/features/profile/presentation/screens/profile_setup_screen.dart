@@ -6,15 +6,33 @@ import 'package:nourishly_ui/nourishly_ui.dart';
 import 'package:nutrition_core/nutrition_core.dart';
 
 import '../../../../app/providers.dart';
+import '../../data/profile_editor.dart';
 import '../../data/profile_providers.dart';
+import '../profile_labels.dart';
 
 /// Profile setup (prototype screen 2, option A — one question per step).
 ///
 /// Five steps, and §27.1's rule holds at every one of them: **skippable**,
 /// prominently, not hidden. A skipped profile is a working app with
 /// generic targets, so nothing here is a gate.
+///
+/// **First run, or a deliberate re-run.** Every later change to one of
+/// these fields is edited in place on `/profile/me` — six steps is the
+/// wrong way to correct a weight, and it used to be the only way. Two
+/// consequences of that, fixed here:
+///
+/// - the wizard now **prefills from the saved profile** rather than from
+///   its own defaults, so re-running it cannot quietly replace a real
+///   height with 174 cm;
+/// - it **returns the way it came in** — popping when it was pushed — so
+///   arriving from Settings does not land you on the dashboard.
 class ProfileSetupScreen extends ConsumerStatefulWidget {
-  const ProfileSetupScreen({super.key});
+  const ProfileSetupScreen({super.key, this.fromWelcome = false});
+
+  /// True when this is the first run, reached from the welcome. Finishing
+  /// then lands on the dashboard; reached from Profile instead, finishing
+  /// goes back to Profile.
+  final bool fromWelcome;
 
   @override
   ConsumerState<ProfileSetupScreen> createState() => _ProfileSetupScreenState();
@@ -34,7 +52,39 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
   DietaryPreference? _diet;
   bool _saving = false;
 
-  int get _age => _ageFrom(_dateOfBirth);
+  /// The defaults above are a starting point for a profile that does not
+  /// exist yet. One that does wins, and is read in once.
+  bool _prefilled = false;
+
+  void _prefillOnce(
+    UserProfileVersion? profile,
+    Goal? goal,
+    UserPreference? preferences,
+  ) {
+    if (_prefilled || profile == null) return;
+    _prefilled = true;
+    _dateOfBirth = profile.dateOfBirth;
+    final sex = BiologicalSex.fromId(profile.biologicalSex);
+    _sex = sex ?? _sex;
+    _sexDeclined = sex == null;
+    _heightCm = profile.heightCm.clamp(120, 210).toDouble();
+    _weightKg = profile.weightKg.clamp(30, 180).toDouble();
+    _activity = ActivityLevel.fromId(profile.activityLevel);
+    if (goal != null) _goal = GoalType.fromId(goal.goalType);
+    _diet = DietaryPreference.fromId(preferences?.dietaryPreference);
+  }
+
+  /// Back to wherever this was opened from: the dashboard on first run,
+  /// Profile when it was pushed from there.
+  void _leave() {
+    if (!widget.fromWelcome && context.canPop()) {
+      context.pop();
+    } else {
+      context.go('/today');
+    }
+  }
+
+  int get _age => ageFromDateOfBirth(_dateOfBirth);
 
   ProfileInputs get _inputs => ProfileInputs(
     ageYears: _age,
@@ -68,7 +118,14 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           onboardingSeen: true,
         );
     ref.read(summaryRevisionProvider.notifier).bump();
-    if (mounted) router.go('/today');
+    if (!mounted) return;
+    final messenger = ScaffoldMessenger.of(context);
+    if (!widget.fromWelcome && router.canPop()) {
+      router.pop();
+    } else {
+      router.go('/today');
+    }
+    showNourishlySnackOn(messenger, 'Your targets are set.');
   }
 
   void _next() {
@@ -81,7 +138,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
 
   void _back() {
     if (_step == 0) {
-      context.go('/today');
+      _leave();
     } else {
       setState(() => _step--);
     }
@@ -91,6 +148,12 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
   Widget build(BuildContext context) {
     final colors = context.nourishlyColors;
     final text = context.nourishlyText;
+
+    _prefillOnce(
+      ref.watch(currentProfileProvider).value,
+      ref.watch(currentGoalProvider).value,
+      ref.watch(preferencesProvider).value,
+    );
 
     return Scaffold(
       appBar: AppBar(
@@ -157,7 +220,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                   ),
                   // §27.1: skip is prominent at every step, not hidden.
                   TextButton(
-                    onPressed: _saving ? null : () => context.go('/today'),
+                    onPressed: _saving ? null : _leave,
                     child: const Text('Skip for now'),
                   ),
                 ],
@@ -257,7 +320,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     children: [
       for (final level in ActivityLevel.values)
         _ChoiceTile(
-          title: _activityTitle(level),
+          title: ProfileLabels.activity(level),
           subtitle: level.description,
           selected: _activity == level,
           onTap: () => setState(() => _activity = level),
@@ -272,7 +335,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       for (final goal in GoalType.values)
         _ChoiceTile(
           title: goal.label,
-          subtitle: _goalSubtitle(goal),
+          subtitle: ProfileLabels.goalSubtitle(goal),
           selected: _goal == goal,
           onTap: () => setState(() => _goal = goal),
         ),
@@ -292,7 +355,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       for (final preference in DietaryPreference.values)
         _ChoiceTile(
           title: preference.label,
-          subtitle: _dietSubtitle(preference),
+          subtitle: ProfileLabels.dietSubtitle(preference),
           selected: _diet == preference,
           onTap: () =>
               setState(() => _diet = _diet == preference ? null : preference),
@@ -303,20 +366,6 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       ),
     ],
   );
-
-  static String? _dietSubtitle(DietaryPreference preference) =>
-      switch (preference) {
-        // Said plainly rather than implied: the catalog records neither
-        // root vegetables nor slaughter method, so these two order results
-        // the same way their nearest recorded neighbour does.
-        DietaryPreference.jain =>
-          'Ranked as vegetarian — the catalog does not record root '
-              'vegetables',
-        DietaryPreference.halal =>
-          'The catalog does not record slaughter method, so this does not '
-              'reorder anything',
-        _ => null,
-      };
 
   /// §27.1: the targets screen explains *why*, once, in one sentence.
   Widget _targetsStep() {
@@ -377,31 +426,6 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     );
   }
 
-  static String _activityTitle(ActivityLevel level) => switch (level) {
-    ActivityLevel.sedentary => 'Not very',
-    ActivityLevel.light => 'A little',
-    ActivityLevel.moderate => 'Moderately',
-    ActivityLevel.active => 'Very',
-    ActivityLevel.veryActive => 'Extremely',
-  };
-
-  static String _goalSubtitle(GoalType goal) => switch (goal) {
-    GoalType.maintain => 'Keep things where they are',
-    GoalType.loseWeight => 'A bounded deficit, never an aggressive one',
-    GoalType.gainWeight => 'A bounded surplus',
-    GoalType.gainMuscle => 'More protein, and the score weighs it heavier',
-    GoalType.generalHealth => 'Balanced targets, nothing pushed',
-    GoalType.hydration => 'Water only — no nutrition setup needed',
-  };
-}
-
-int _ageFrom(DateTime dob) {
-  final now = DateTime.now();
-  var age = now.year - dob.year;
-  if (now.month < dob.month || (now.month == dob.month && now.day < dob.day)) {
-    age -= 1;
-  }
-  return age;
 }
 
 String _monthName(int month) => const [

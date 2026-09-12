@@ -141,6 +141,11 @@ void main() {
     await shoot(tester, '05-settings');
   });
 
+  testWidgets('profile', (tester) async {
+    await pump(tester, '/profile/me');
+    await shoot(tester, '05c-profile');
+  });
+
   testWidgets('insights', (tester) async {
     await pump(tester, '/insights');
     await shoot(tester, '06-insights');
