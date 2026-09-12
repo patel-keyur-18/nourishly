@@ -215,6 +215,18 @@ void main() {
     await shoot(tester, '14-your-data');
   });
 
+  testWidgets('settings in dark mode', (tester) async {
+    await PreferencesDao(db).update(ownerId, theme: 'dark');
+    await pump(tester, '/profile');
+    await shoot(tester, '15-settings-dark');
+  });
+
+  testWidgets('dashboard in dark mode', (tester) async {
+    await PreferencesDao(db).update(ownerId, theme: 'dark');
+    await pump(tester, '/today');
+    await shoot(tester, '16-dashboard-dark');
+  });
+
   testWidgets('water, mid-pour', (tester) async {
     // The user's actual report: tap a quick-add and watch. Bounded pumps
     // rather than `pumpAndSettle`, to catch the vessel part-way up with

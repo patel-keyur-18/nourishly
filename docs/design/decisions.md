@@ -48,7 +48,35 @@ A card per target reads well for the six headline targets. Applied to all 24 tra
 
 **Applied.** Cards for the six headline targets — energy, protein, carbs, fat, fibre, water — under a *The six you look at* heading, then the remaining 18 micronutrients as a compact list that opens as a card when tapped. B's clarity where targets are actually adjusted, without a screen that scrolls forever.
 
-## One deliberate departure from the prototype
+## Two deliberate departures from the prototype
+
+### Screen 13 — an Appearance row the prototype does not draw ✅
+
+*Decided 2026-09-12.*
+
+Prototype 13A's Preferences group is Units, Week starts, Day rolls over,
+Reminders and Show daily score. There is no appearance control anywhere on
+it, and there was none in the app either.
+
+That turned out to be a gap rather than a decision. Dark mode has been
+first-class since Phase 1 — a complete dark palette in the token file, a
+full `NourishlyTheme.dark()`, and `UserPreferences.theme` read and honoured
+at the root of the app. **Nothing could write that column.** The only code
+that ever set it was the v2→v3 migration, which pins every row to `light`.
+So a priority-1 requirement (FR-S-09, "full dark mode and dynamic type
+support") was built, wired, and unreachable, and the dark half of the
+design system was seen only by tests.
+
+**Applied.** A single **Appearance** row in the *What you see* group,
+beside *Show the daily score* and *Hide energy* — Light, Dark, or **Match
+my phone**, in the same bottom sheet the diet picker uses. Light stays the
+default, because the palette was drawn light-first and the prototype was
+approved in it (§27.14); what changes is that it is now a default rather
+than a sentence.
+
+The row is in the group where a display preference belongs, and it follows
+13A's own treatment of *Show daily score*: a list row with its value on
+the right. The departure is that the row exists at all.
 
 ### Screen 13 — one profile per phone ✅
 
@@ -71,13 +99,13 @@ treatment, Preferences with its **Reminders** row, the **Your data**
 group with export, backup and the destructive row in red, and the centred
 version footer.
 
-**This is the one place the implementation deliberately diverges from an
-approved screen.** It is recorded here rather than in a code comment so
-that the next person to compare the app against `prototype.html` finds
-the answer where they will look for it.
+**These two are the only places the implementation deliberately diverges
+from an approved screen.** They are recorded here rather than only in a
+code comment, so that the next person holding the app next to
+`prototype.html` finds the answer where they will look for it.
 
 ## What happens next
 
-These decisions become the implementation targets, one feature module per screen under the structure in §12.3 of the architecture. The prototype is the reference for layout and hierarchy; `tokens/nourishly-indigo.json` is the reference for every value.
+These decisions became the implementation targets, one feature module per screen under the structure in §12.3 of the architecture. The prototype is the reference for layout and hierarchy; `tokens/nourishly-indigo.json` is the reference for every value.
 
-**No implementation has begun, and none will until it is approved.**
+**All 13 screens are built**, through Phase 5 of the [roadmap](../architecture/00-scope.md#09-revised-effort-estimate) — with the two departures above, each recorded with its reasoning. Phase 6 puts the app on real phones, which is where the design gets its first honest test.
