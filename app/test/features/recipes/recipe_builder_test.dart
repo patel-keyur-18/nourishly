@@ -245,10 +245,7 @@ void main() {
     );
 
     // And it is still usable at that size, not merely non-overflowing.
-    await tester.enterText(
-      find.byKey(const Key('ingredient-search')),
-      'toor',
-    );
+    await tester.enterText(find.byKey(const Key('ingredient-search')), 'toor');
     await tester.pumpAndSettle();
     expect(find.text('Toor dal'), findsOneWidget);
     expect(tester.takeException(), isNull);

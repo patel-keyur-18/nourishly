@@ -135,9 +135,8 @@ class ProfileScreen extends ConsumerWidget {
                           ),
                     subtitle: profile == null
                         ? null
-                        : ActivityLevel.fromId(
-                            profile.activityLevel,
-                          ).description,
+                        : ActivityLevel.fromId(profile.activityLevel)
+                              .description,
                     onTap: profile == null
                         ? null
                         : () => _editActivity(context, ref, profile),
@@ -165,9 +164,8 @@ class ProfileScreen extends ConsumerWidget {
                   NourishlyListRow(
                     title: 'Dietary preference',
                     value:
-                        DietaryPreference.fromId(
-                          preferences?.dietaryPreference,
-                        )?.label ??
+                        DietaryPreference.fromId(preferences?.dietaryPreference)
+                            ?.label ??
                         'Not said',
                     subtitle: 'Orders search results. Hides nothing.',
                     onTap: preferences == null
@@ -343,7 +341,8 @@ class ProfileScreen extends ConsumerWidget {
     final choice = await showNourishlyOptions<ActivityLevel>(
       context: context,
       title: 'How active are you on a normal day?',
-      message: 'Pick the description that matches, not the one you are '
+      message:
+          'Pick the description that matches, not the one you are '
           'aiming for.',
       selected: ActivityLevel.fromId(profile.activityLevel),
       options: [

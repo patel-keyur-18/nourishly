@@ -425,7 +425,6 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       ],
     );
   }
-
 }
 
 String _monthName(int month) => const [

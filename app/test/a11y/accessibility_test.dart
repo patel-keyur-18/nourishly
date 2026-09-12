@@ -75,9 +75,8 @@ void main() {
         // weaker promise than it looked.
         child: Builder(
           builder: (context) => MediaQuery(
-            data: MediaQueryData.fromView(
-              View.of(context),
-            ).copyWith(textScaler: TextScaler.linear(textScale)),
+            data: MediaQueryData.fromView(View.of(context))
+                .copyWith(textScaler: TextScaler.linear(textScale)),
             child: const NourishlyApp(),
           ),
         ),
