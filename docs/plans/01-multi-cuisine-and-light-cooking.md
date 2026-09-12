@@ -1,7 +1,9 @@
 # Plan — Multi-cuisine catalog, a safe way to keep adding to it, and "our kitchen" light-cooking versions
 
-*Draft 0.6 · 2026-09-12 · approved; WP0–WP4 and WP6 built · [Catalog spec](../catalog/README.md) · [Food & nutrition](../architecture/05-food-and-nutrition.md) · [Scope](../architecture/00-scope.md)*
+*Draft 0.7 · 2026-09-12 · approved; all work packages built · [Catalog spec](../catalog/README.md) · [Food & nutrition](../architecture/05-food-and-nutrition.md) · [Scope](../architecture/00-scope.md)*
 
+> **0.6 → 0.7** — WP5 and WP7 built, the repo-wide `dart format` failure fixed, and the millet confirmed as jowar. Every work package in this plan is now done.
+>
 > **0.5 → 0.6** — approved and implemented. §0 records what was built, what changed while building it, and what is still open.
 >
 > **0.4 → 0.5** — adds §11, a pre-approval readiness review: what is verified against the code, one thing rev 0.3 got wrong (meal templates are not built), seven ranked open risks, and a re-ordering that makes the risky refactor provable.
@@ -26,10 +28,10 @@ Approved and built, in this order. Every figure below was produced by running th
 | **WP3** | Wave 1 rows | ✅ Built. 33 rows; catalog 408 → 441 |
 | **WP4** | `cuisineTags` populated and surfaced | ✅ Built. Cuisine shows in search results |
 | **WP6** | Light cooking — fork a catalog recipe | ✅ Built. "Make this our version" + "Use less oil" |
-| **WP5** | Cuisine ranking and browse chips | Not built |
-| **WP7** | Oil-saved insight, cuisine mix in reports | Not built |
+| **WP5** | Cuisine ranking and browse chips | ✅ Built. Search follows what the log shows you eat; an empty search box browses by cuisine |
+| **WP7** | Oil-saved insight, cuisine mix in reports | ✅ Built. Both cards on the weekly and monthly reports |
 
-**Tests: 587 passing** — 128 catalog_pipeline, 164 nourishly_data, 118 app, 112 nutrition_core, 41 nourishly_ui, 28 nourishly_domain. `analyze --fatal-infos` clean in all six. `parse_catalog --check` passes: **33 rows added, zero retargets** — nothing that was already in the catalog changed meaning.
+**Tests: 632 passing** — 128 catalog_pipeline, 194 nourishly_data, 129 app, 112 nutrition_core, 41 nourishly_ui, 28 nourishly_domain. `analyze --fatal-infos` clean in all six, and the whole repo passes `dart format`. `parse_catalog --check` passes: **33 rows added, zero retargets** — nothing that was already in the catalog changed meaning.
 
 ### What changed from the plan while building it
 
@@ -38,14 +40,17 @@ Approved and built, in this order. Every figure below was produced by running th
 - **Tags are prefixed** — `cuisine:gujarati`, not `gujarati`. The first version matched bare tags against a list of known cuisines, and a widget test caught what that costs: an unfamiliar cuisine read as a course. A tag that says what it is cannot be misread.
 - **The lighter-oil preset asks per ingredient instead of halving everything.** §7 wanted it to skip absorbed oil automatically. It cannot: `absorbed oil 6 g` and `oil 6 g` both resolve to the Groundnut oil row, so by the time a recipe is stored the two are indistinguishable. Halving both would claim a reduction that never happened, so each fat is shown for the cook to accept or skip. Teaching `recipe_components` to carry each ingredient's original wording would let it filter properly — that is the follow-up.
 - **One pre-existing bug fixed because a new test found it.** `_GramsField` built its controller once, so a value changed from outside the field never reached the screen: the recipe would have been computed from 4 g while the box still read 8. It also rendered 4.5 g as "5".
+- **WP7 needed a schema change nobody had planned for.** A fork carried no link back to the recipe it came from, so "36 kcal less than the usual recipe" could not be computed at all — the lighter version was just another food. `food_items.forked_from_food_id` (v5 → v6, one nullable column, no backfill) is what makes the two comparable. Matching on a name was the alternative, and a name is not an identity.
+- **Both report cards say nothing rather than nothing-much.** A card appearing every week reading "0 g saved" teaches the reader to skip that part of the report; one cuisine is not a mix; and the cuisine shares are taken against what could actually be classified, never rounded up over foods nobody tagged.
 
 ### Still open
 
 | | |
 |---|---|
 | **A forked recipe's quality badge** | It reads "You" (`qualityTier: 'user'`), weaker than the catalog row's "Calc", though her measured version is the more accurate one for this kitchen. Left as it was rather than changed unasked — §10.3 risk 5 |
+| **Absorbed oil cannot be told from pan oil** in a stored recipe, so "use less oil" asks per ingredient instead of filtering. Teaching `recipe_components` to carry each ingredient's original wording would fix it |
 | **The upsert import** | Not needed until the app is on a phone. Stable ids are the half that had to land first; §10.3 risk 6 names the rest |
-| **6 files fail `dart format`** | Pre-existing on `develop`, none of them touched here. Two of the original eight are now clean because this work edited them anyway |
+| ~~6 files fail `dart format`~~ | Fixed, as its own formatting-only commit. The whole repo is clean |
 
 ### Running it
 
