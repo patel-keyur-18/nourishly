@@ -168,6 +168,7 @@ class _DataBackupScreenState extends ConsumerState<DataBackupScreen> {
 
   Future<void> _export(ExportFormat format) async {
     final messenger = ScaffoldMessenger.of(context);
+    final colors = context.nourishlyColors;
     setState(() {
       _busyLabel = 'Writing your ${format.label} export…';
       _progress = 0;
@@ -209,17 +210,17 @@ class _DataBackupScreenState extends ConsumerState<DataBackupScreen> {
         ),
       );
 
-      messenger.showSnackBar(
-        SnackBar(
-          content: Text(
-            '${formatThousands(result.rowCount)} rows exported. Keep this '
-            'file somewhere that is not this phone.',
-          ),
-        ),
+      showNourishlySnackOn(
+        messenger,
+        '${formatThousands(result.rowCount)} rows exported. Keep this file '
+        'somewhere that is not this phone.',
       );
     } on Object catch (error) {
-      messenger.showSnackBar(
-        SnackBar(content: Text('The export did not finish: $error')),
+      showNourishlySnackOn(
+        messenger,
+        'The export did not finish: $error',
+        isError: true,
+        colors: colors,
       );
     } finally {
       if (mounted) setState(() => _busyLabel = null);
@@ -228,6 +229,7 @@ class _DataBackupScreenState extends ConsumerState<DataBackupScreen> {
 
   Future<void> _import() async {
     final messenger = ScaffoldMessenger.of(context);
+    final colors = context.nourishlyColors;
 
     // Inside the try, deliberately. This call used to sit outside it, so
     // when the picker threw there was no snackbar, no dialog and no
@@ -239,8 +241,11 @@ class _DataBackupScreenState extends ConsumerState<DataBackupScreen> {
         acceptedTypeGroups: const [nourishlyExportFileType],
       );
     } on Object catch (error) {
-      messenger.showSnackBar(
-        SnackBar(content: Text('Could not open the file picker: $error')),
+      showNourishlySnackOn(
+        messenger,
+        'Could not open the file picker: $error',
+        isError: true,
+        colors: colors,
       );
       return;
     }
@@ -264,15 +269,23 @@ class _DataBackupScreenState extends ConsumerState<DataBackupScreen> {
       ref.read(summaryRevisionProvider.notifier).bump();
 
       if (!mounted) return;
-      await showDialog<void>(
+      await showNourishlyDialog<void>(
         context: context,
         builder: (context) => _ImportReportDialog(report: report),
       );
     } on ExportFormatException catch (error) {
-      messenger.showSnackBar(SnackBar(content: Text(error.message)));
+      showNourishlySnackOn(
+        messenger,
+        error.message,
+        isError: true,
+        colors: colors,
+      );
     } on Object catch (error) {
-      messenger.showSnackBar(
-        SnackBar(content: Text('The import did not finish: $error')),
+      showNourishlySnackOn(
+        messenger,
+        'The import did not finish: $error',
+        isError: true,
+        colors: colors,
       );
     } finally {
       if (mounted) setState(() => _busyLabel = null);
@@ -282,30 +295,33 @@ class _DataBackupScreenState extends ConsumerState<DataBackupScreen> {
   /// §30.7: two steps, export offered first, and irreversibility stated
   /// rather than implied. No dark patterns — but no one-tap either.
   Future<void> _confirmDelete() async {
-    final offered = await showDialog<_DeleteChoice>(
+    final offered = await showNourishlyDialog<_DeleteChoice>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Delete everything?'),
-        content: const Text(
-          'This removes every entry, every custom food, your profile and '
-          'your targets from this phone. It cannot be undone, and an '
-          'automatic phone backup taken after this will not contain them '
-          'either.\n\nWould you like to export a copy first?',
-        ),
+      builder: (context) => NourishlyDialog(
+        title: 'Delete everything?',
+        icon: Icons.delete_forever_rounded,
+        danger: true,
+        message:
+            'This removes every entry, every custom food, your profile and '
+            'your targets from this phone. It cannot be undone, and an '
+            'automatic phone backup taken after this will not contain them '
+            'either.\n\nWould you like to export a copy first?',
         actions: [
-          TextButton(
+          NourishlyDialogAction(
+            label: 'Cancel',
             onPressed: () => Navigator.of(context).pop(_DeleteChoice.cancel),
-            child: const Text('Cancel'),
           ),
-          TextButton(
+          NourishlyDialogAction(
+            label: 'Export first',
             onPressed: () =>
                 Navigator.of(context).pop(_DeleteChoice.exportFirst),
-            child: const Text('Export first'),
           ),
-          TextButton(
+          NourishlyDialogAction(
+            label: 'Continue',
+            isPrimary: true,
+            danger: true,
             onPressed: () =>
                 Navigator.of(context).pop(_DeleteChoice.continueToDelete),
-            child: const Text('Continue'),
           ),
         ],
       ),
@@ -317,39 +333,28 @@ class _DataBackupScreenState extends ConsumerState<DataBackupScreen> {
     }
     if (offered != _DeleteChoice.continueToDelete || !mounted) return;
 
-    // Step two: a typed confirmation. The one destructive action in the
-    // app is the one place a stray tap must not be enough.
-    final controller = TextEditingController();
-    final confirmed = await showDialog<bool>(
+    // Step two: a typed confirmation, and the confirming button stays
+    // disabled until the word is actually typed — it used to accept the tap
+    // and then silently do nothing, which reads as a broken button.
+    final typed = await showNourishlyPrompt(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Type DELETE to confirm'),
-        content: TextField(
-          controller: controller,
-          autofocus: true,
-          textCapitalization: TextCapitalization.characters,
-          decoration: const InputDecoration(hintText: 'DELETE'),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            style: FilledButton.styleFrom(
-              backgroundColor: context.nourishlyColors.danger,
-            ),
-            onPressed: () =>
-                Navigator.of(context)
-                    .pop(controller.text.trim().toUpperCase() == 'DELETE'),
-            child: const Text('Delete everything'),
-          ),
-        ],
-      ),
+      title: 'Type DELETE to confirm',
+      icon: Icons.delete_forever_rounded,
+      danger: true,
+      message:
+          'The one destructive action in the app is the one place a stray '
+          'tap must not be enough.',
+      label: 'Confirmation',
+      hint: 'DELETE',
+      confirmLabel: 'Delete everything',
+      textCapitalization: TextCapitalization.characters,
+      validator: (value) => value.toUpperCase() == 'DELETE',
     );
-    if (confirmed != true || !mounted) return;
+    final confirmed = typed?.toUpperCase() == 'DELETE';
+    if (!confirmed || !mounted) return;
 
     final messenger = ScaffoldMessenger.of(context);
+    final colors = context.nourishlyColors;
     setState(() {
       _busyLabel = 'Deleting…';
       _progress = null;
@@ -379,15 +384,17 @@ class _DataBackupScreenState extends ConsumerState<DataBackupScreen> {
       );
 
       ref.read(summaryRevisionProvider.notifier).bump();
-      messenger.showSnackBar(
-        const SnackBar(
-          // §30.7: the app returns to a fresh state, not an error state.
-          content: Text('Deleted. Nourishly is back to a clean start.'),
-        ),
+      // §30.7: the app returns to a fresh state, not an error state.
+      showNourishlySnackOn(
+        messenger,
+        'Deleted. Nourishly is back to a clean start.',
       );
     } on Object catch (error) {
-      messenger.showSnackBar(
-        SnackBar(content: Text('The deletion did not finish: $error')),
+      showNourishlySnackOn(
+        messenger,
+        'The deletion did not finish: $error',
+        isError: true,
+        colors: colors,
       );
     } finally {
       if (mounted) setState(() => _busyLabel = null);
@@ -422,65 +429,67 @@ class _ImportReportDialog extends StatelessWidget {
         .where((e) => e.inserted > 0 || e.updated > 0)
         .toList();
 
-    return AlertDialog(
-      title: Text(report.succeeded ? 'Imported' : 'Imported with gaps'),
-      content: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              report.succeeded
-                  ? '${formatThousands(report.totalInserted)} added, '
-                        '${formatThousands(report.totalUpdated)} updated, '
-                        '${formatThousands(report.totalSkipped)} already '
-                        'newer here.'
-                  : 'Some rows in the file did not make it. Nothing already '
-                        'on this phone was changed by the ones that failed.',
-              style: text.body.copyWith(height: 1.5),
+    return NourishlyDialog(
+      title: report.succeeded ? 'Imported' : 'Imported with gaps',
+      icon: report.succeeded
+          ? Icons.check_circle_outline_rounded
+          : Icons.info_outline_rounded,
+      content: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            report.succeeded
+                ? '${formatThousands(report.totalInserted)} added, '
+                      '${formatThousands(report.totalUpdated)} updated, '
+                      '${formatThousands(report.totalSkipped)} already '
+                      'newer here.'
+                : 'Some rows in the file did not make it. Nothing already '
+                      'on this phone was changed by the ones that failed.',
+            style: text.body.copyWith(height: 1.5),
+          ),
+          if (changed.isEmpty && report.succeeded)
+            Padding(
+              padding: const EdgeInsets.only(top: NourishlySpace.s2),
+              child: Text(
+                'Everything in the file was already here.',
+                style: text.caption.copyWith(color: colors.ink3),
+              ),
             ),
-            if (changed.isEmpty && report.succeeded)
-              Padding(
-                padding: const EdgeInsets.only(top: NourishlySpace.s2),
-                child: Text(
-                  'Everything in the file was already here.',
-                  style: text.caption.copyWith(color: colors.ink3),
-                ),
+          for (final entity in changed)
+            Padding(
+              padding: const EdgeInsets.only(top: NourishlySpace.s1),
+              child: Text(
+                '${_label(entity.table)}: ${entity.inserted} added'
+                '${entity.updated > 0 ? ', ${entity.updated} updated' : ''}',
+                style: text.caption.copyWith(color: colors.ink3),
               ),
-            for (final entity in changed)
-              Padding(
-                padding: const EdgeInsets.only(top: NourishlySpace.s1),
-                child: Text(
-                  '${_label(entity.table)}: ${entity.inserted} added'
-                  '${entity.updated > 0 ? ', ${entity.updated} updated' : ''}',
-                  style: text.caption.copyWith(color: colors.ink3),
-                ),
+            ),
+          for (final entity in report.unreconciled)
+            Padding(
+              padding: const EdgeInsets.only(top: NourishlySpace.s1),
+              child: Text(
+                '${_label(entity.table)}: ${entity.missing} missing',
+                style: text.caption.copyWith(color: colors.danger),
               ),
-            for (final entity in report.unreconciled)
-              Padding(
-                padding: const EdgeInsets.only(top: NourishlySpace.s1),
-                child: Text(
-                  '${_label(entity.table)}: ${entity.missing} missing',
-                  style: text.caption.copyWith(color: colors.danger),
-                ),
+            ),
+          if (report.daysAffected > 0)
+            Padding(
+              padding: const EdgeInsets.only(top: NourishlySpace.s3),
+              child: Text(
+                '${report.daysAffected} '
+                '${report.daysAffected == 1 ? 'day' : 'days'} will be '
+                'recalculated the next time you open them.',
+                style: text.caption.copyWith(color: colors.ink3, height: 1.5),
               ),
-            if (report.daysAffected > 0)
-              Padding(
-                padding: const EdgeInsets.only(top: NourishlySpace.s3),
-                child: Text(
-                  '${report.daysAffected} '
-                  '${report.daysAffected == 1 ? 'day' : 'days'} will be '
-                  'recalculated the next time you open them.',
-                  style: text.caption.copyWith(color: colors.ink3, height: 1.5),
-                ),
-              ),
-          ],
-        ),
+            ),
+        ],
       ),
       actions: [
-        FilledButton(
+        NourishlyDialogAction(
+          label: 'Done',
+          isPrimary: true,
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Done'),
         ),
       ],
     );

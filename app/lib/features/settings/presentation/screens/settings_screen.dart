@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nourishly_data/nourishly_data.dart' hide NutrientTarget;
 import 'package:nourishly_ui/nourishly_ui.dart';
+import 'package:nutrition_core/nutrition_core.dart';
 
 import '../../../../app/providers.dart';
 import '../../../../shared/app_version.dart';
@@ -10,217 +11,154 @@ import '../appearance.dart';
 import '../../../data_backup/data/backup_providers.dart';
 import '../../../food_catalog/data/food_catalog_providers.dart';
 import '../../../profile/data/profile_providers.dart';
+import '../../../profile/presentation/profile_labels.dart';
 import '../../../reminders/data/reminder_providers.dart';
 
-/// Settings (prototype screen 13) — the Profile tab's root.
+/// Settings (prototype screen 13, option A — grouped list).
 ///
-/// Everything here is a preference the spec names: units (FR-U-07), week
-/// start and day rollover (FR-U-08), focus nutrients (FR-U-09), weight as
-/// a series (FR-U-14), and §21.8's two safety toggles — the score is
-/// dismissible, and energy can be hidden.
+/// Redrawn on 2026-09-12 to be the screen that was approved. What had been
+/// built was feature-led: five groups that grew one at a time, an inline
+/// title where the prototype has an app bar, a body-weight history card in
+/// the middle of the preferences, two paragraphs of disclaimer in a card of
+/// their own, and an explanatory subtitle under almost every row. Option A
+/// was chosen for being "dense, scannable, nothing to read", and it had
+/// become the opposite.
 ///
-/// Phase 5 completes the prototype's two remaining pieces: the
-/// **Reminders** row in Preferences (§29), and the **Your data** group —
-/// export, backup and deletion (§0.5, §30.6, §30.7), which §27.13 requires
-/// to be "discoverable, not buried".
+/// What it is now, top to bottom, is 13A: an app bar titled **Settings**,
+/// three groups — *Profile*, *Preferences*, *Your data* — of uniform
+/// label-plus-value rows, and the prototype's centred fine print at the
+/// bottom. Explanation moved to the screen each row opens, which is where
+/// there is room for it.
 ///
-/// Two deliberate departures from prototype 13A, both recorded with their
-/// reasoning in `docs/design/decisions.md`:
+/// Three deliberate departures, each recorded with its reasoning in
+/// `docs/design/decisions.md`:
 ///
-/// - **No profile switcher.** The household runs one profile per phone
-///   (§0.4's typical case), so a switcher would add a second concept to
-///   every screen in service of a case that does not arise. `owner_id`
-///   stays on every owned row, so this forecloses nothing.
+/// - **No profile switcher.** One profile per phone (§0.4's typical case),
+///   so a switcher would add a second concept to every screen in service
+///   of a case that does not arise. `owner_id` stays on every owned row, so
+///   this forecloses nothing.
 /// - **An Appearance row the prototype does not draw.** Dark mode was
-///   built and honoured from Phase 1 but had no control, so FR-S-09 was
-///   unreachable and every profile sat on light forever.
+///   built and honoured from Phase 1 but had no control (FR-S-09).
+/// - **Switches for the two §21.8 toggles**, where 13A draws a value and a
+///   chevron. A chevron on a boolean promises a screen that should not
+///   exist; the row still reads as one dense line.
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final preferencesAsync = ref.watch(preferencesProvider);
-    final profileName = ref.watch(profileDisplayNameProvider).value;
+    final profileName = ref.watch(profileDisplayNameProvider).value ?? 'You';
+    final goal = ref.watch(currentGoalProvider).value;
     final profile = ref.watch(currentProfileProvider).value;
-    final weights = ref.watch(bodyWeightHistoryProvider).value ?? const [];
-    final manualOnly = ref.watch(manualTargetsOnlyProvider).value ?? false;
 
     return Scaffold(
-      body: SafeArea(
-        bottom: false,
-        child: preferencesAsync.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (error, _) => Center(child: Text('$error')),
-          data: (preferences) => ListView(
-            padding: const EdgeInsets.fromLTRB(
-              NourishlySpace.s4,
-              NourishlySpace.s4,
-              NourishlySpace.s4,
-              NourishlySpace.s7,
-            ),
-            children: [
-              Text('Profile', style: context.nourishlyText.title),
-
-              const NourishlySectionHeader(label: 'You'),
-              NourishlyCard(
-                padding: EdgeInsets.zero,
-                child: Column(
-                  children: [
-                    _NavRow(
-                      title: 'Name',
-                      value: profileName ?? 'You',
-                      onTap: () => _renameProfile(context, ref, profileName),
-                    ),
-                    _NavRow(
-                      title: 'Body and activity',
-                      value: profile == null
-                          ? 'Not set up'
-                          : '${profile.heightCm.round()} cm · '
-                                '${profile.weightKg.round()} kg',
-                      onTap: () => context.go('/profile/setup'),
-                    ),
-                    _NavRow(
-                      title: 'Diet',
-                      value:
-                          DietaryPreference.fromId(
-                            preferences.dietaryPreference,
-                          )?.label ??
-                          'Not said',
-                      subtitle: 'Orders search results. Hides nothing.',
-                      onTap: () => _editDiet(context, ref, preferences),
-                    ),
-                    _NavRow(
-                      title: 'Goals & targets',
-                      value: manualOnly ? 'Manual' : 'Derived',
-                      onTap: () => context.go('/profile/goals'),
-                    ),
-                    _NavRow(
-                      title: 'Your recipes',
-                      value: '',
-                      subtitle:
-                          'Dishes built from their ingredients, loggable '
-                          'like any other food.',
-                      onTap: () => context.push('/recipes'),
-                    ),
-                  ],
-                ),
-              ),
-
-              NourishlySectionHeader(
-                label: 'Weight',
-                trailing: weights.isEmpty
-                    ? null
-                    : '${weights.first.weightKg.toStringAsFixed(1)} kg',
-              ),
-              _WeightCard(entries: weights),
-
-              const NourishlySectionHeader(label: 'What you see'),
-              NourishlyCard(
-                padding: EdgeInsets.zero,
-                child: Column(
-                  children: [
-                    // §21.8: the score is fully dismissible, leaving the
-                    // raw data and the insights.
-                    _SwitchRow(
-                      title: 'Show the daily score',
-                      subtitle:
-                          'Turn this off to keep the numbers and the '
-                          'insights without a score anywhere.',
-                      value: preferences.showScore,
-                      onChanged: (v) => _update(ref, showScore: v),
-                    ),
-                    // §21.8: for tracking nutrients without calories.
-                    _SwitchRow(
-                      title: 'Hide energy',
-                      subtitle:
-                          'Hides the calorie ring and the energy row. '
-                          'Everything else keeps working.',
-                      value: preferences.hideEnergy,
-                      onChanged: (v) => _update(ref, hideEnergy: v),
-                    ),
-                    _NavRow(
-                      title: 'Focus nutrients',
-                      value: _focusSummary(ref),
-                      onTap: () => _editFocusNutrients(context, ref),
-                    ),
-                    // FR-S-09 and §27.13's accessibility options. Dark
-                    // mode has been first-class since Phase 1 — full
-                    // palette, full theme — but nothing could reach it,
-                    // so every profile sat on light whether that suited
-                    // them or not. A display preference belongs in this
-                    // group, beside the other two.
-                    _NavRow(
-                      title: 'Appearance',
-                      value: Appearance.fromId(preferences.theme).label,
-                      onTap: () => _editAppearance(context, ref, preferences),
-                    ),
-                  ],
-                ),
-              ),
-
-              const NourishlySectionHeader(label: 'Units and the day'),
-              NourishlyCard(
-                padding: EdgeInsets.zero,
-                child: Column(
-                  children: [
-                    _NavRow(
-                      title: 'Units',
-                      value: preferences.unitSystem == 'metric'
-                          ? 'Metric (kg, cm, ml)'
-                          : 'Imperial (lb, ft/in, fl oz)',
-                      onTap: () => _update(
-                        ref,
-                        unitSystem: preferences.unitSystem == 'metric'
-                            ? 'imperial'
-                            : 'metric',
-                      ),
-                    ),
-                    _NavRow(
-                      title: 'Week starts on',
-                      value: preferences.weekStartDay == DateTime.sunday
-                          ? 'Sunday'
-                          : 'Monday',
-                      onTap: () => _update(
-                        ref,
-                        weekStartDay:
-                            preferences.weekStartDay == DateTime.sunday
-                            ? DateTime.monday
-                            : DateTime.sunday,
-                      ),
-                    ),
-                    _NavRow(
-                      title: 'Day rolls over at',
-                      value: _formatMinutes(preferences.dayRolloverTime),
-                      subtitle:
-                          'A late dinner belongs to the day you ate it, not '
-                          'to the calendar.',
-                      onTap: () => _editRollover(context, ref, preferences),
-                    ),
-                    // Prototype 13A puts reminders in Preferences, with
-                    // the count as its value. §29.1 keeps them opt-in, so
-                    // the resting state of this row is "Off".
-                    _NavRow(
-                      title: 'Reminders',
-                      value: _reminderSummary(ref),
-                      onTap: () => context.push('/profile/reminders'),
-                    ),
-                  ],
-                ),
-              ),
-
-              // Prototype 13A's third group. §27.13: export and deletion
-              // are discoverable, not buried.
-              const NourishlySectionHeader(label: 'Your data'),
-              const _YourDataCard(),
-
-              const NourishlySectionHeader(label: 'About'),
-              const _AboutCard(),
-              const _VersionFooter(),
-            ],
+      appBar: AppBar(title: const Text('Settings')),
+      body: preferencesAsync.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, _) => _ErrorBody(error: error),
+        data: (preferences) => ListView(
+          padding: const EdgeInsets.fromLTRB(
+            NourishlySpace.s4,
+            0,
+            NourishlySpace.s4,
+            NourishlySpace.s7,
           ),
+          children: [
+            // 13A's first group. One profile rather than the prototype's
+            // three, and it opens the profile screen rather than switching
+            // between them.
+            const NourishlySectionHeader(label: 'Profile'),
+            NourishlyRowGroup(
+              children: [
+                NourishlyListRow(
+                  leading: NourishlyAvatar(name: profileName),
+                  title: profileName,
+                  subtitle: _profileSummary(goal, profile),
+                  onTap: () => context.push('/profile/me'),
+                ),
+                NourishlyListRow(
+                  title: 'Your recipes',
+                  onTap: () => context.push('/recipes'),
+                ),
+              ],
+            ),
+
+            const NourishlySectionHeader(label: 'Preferences'),
+            NourishlyRowGroup(
+              children: [
+                NourishlyListRow(
+                  title: 'Units',
+                  value: preferences.unitSystem == 'metric'
+                      ? 'Metric'
+                      : 'Imperial',
+                  onTap: () => _editUnits(context, ref, preferences),
+                ),
+                NourishlyListRow(
+                  title: 'Week starts',
+                  value: preferences.weekStartDay == DateTime.sunday
+                      ? 'Sunday'
+                      : 'Monday',
+                  onTap: () => _editWeekStart(context, ref, preferences),
+                ),
+                NourishlyListRow(
+                  title: 'Day rolls over',
+                  value: _formatMinutes(preferences.dayRolloverTime),
+                  onTap: () => _editRollover(context, ref, preferences),
+                ),
+                NourishlyListRow(
+                  title: 'Reminders',
+                  value: _reminderSummary(ref),
+                  onTap: () => context.push('/profile/reminders'),
+                ),
+                NourishlyListRow(
+                  title: 'Focus nutrients',
+                  value: _focusSummary(ref),
+                  onTap: () => _editFocusNutrients(context, ref),
+                ),
+                NourishlyListRow(
+                  title: 'Appearance',
+                  value: Appearance.fromId(preferences.theme).label,
+                  onTap: () => _editAppearance(context, ref, preferences),
+                ),
+                // §21.8: the score is fully dismissible, leaving the raw
+                // data and the insights.
+                NourishlyListRow.switched(
+                  title: 'Show daily score',
+                  value: preferences.showScore,
+                  onChanged: (v) => _update(ref, showScore: v),
+                ),
+                // §21.8: for tracking nutrients without calories.
+                NourishlyListRow.switched(
+                  title: 'Hide energy',
+                  value: preferences.hideEnergy,
+                  onChanged: (v) => _update(ref, hideEnergy: v),
+                ),
+              ],
+            ),
+
+            // 13A's third group. §27.13: export and deletion are
+            // discoverable, not buried.
+            const NourishlySectionHeader(label: 'Your data'),
+            const _YourDataGroup(),
+
+            const _AboutFooter(),
+          ],
         ),
       ),
     );
+  }
+
+  /// The prototype's `.lr-sub` on a profile row: "General health · active".
+  static String _profileSummary(Goal? goal, UserProfileVersion? profile) {
+    final parts = [
+      if (goal != null) GoalType.fromId(goal.goalType).label,
+      if (profile != null)
+        ProfileLabels.activityInline(
+          ActivityLevel.fromId(profile.activityLevel),
+        ),
+    ];
+    return parts.isEmpty ? 'Not set up yet' : parts.join(' · ');
   }
 
   String _reminderSummary(WidgetRef ref) {
@@ -261,39 +199,52 @@ class SettingsScreen extends ConsumerWidget {
     ref.read(summaryRevisionProvider.notifier).bump();
   }
 
-  Future<void> _renameProfile(
+  /// A picker rather than a blind flip. Tapping "Units" used to swap metric
+  /// for imperial with no confirmation of what it had become until the row
+  /// redrew — fine when you meant it, baffling when you did not.
+  Future<void> _editUnits(
     BuildContext context,
     WidgetRef ref,
-    String? current,
+    UserPreference preferences,
   ) async {
-    final controller = TextEditingController(text: current ?? '');
-    final name = await showDialog<String>(
+    final choice = await showNourishlyOptions<String>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Your name'),
-        content: TextField(
-          controller: controller,
-          autofocus: true,
-          textCapitalization: TextCapitalization.words,
-          decoration: const InputDecoration(hintText: 'Name'),
+      title: 'Units',
+      selected: preferences.unitSystem,
+      options: const [
+        NourishlyOption(
+          value: 'metric',
+          label: 'Metric',
+          subtitle: 'kg, cm, ml',
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(context).pop(controller.text.trim()),
-            child: const Text('Save'),
-          ),
-        ],
-      ),
+        NourishlyOption(
+          value: 'imperial',
+          label: 'Imperial',
+          subtitle: 'lb, ft/in, fl oz',
+        ),
+      ],
     );
-    if (name == null || name.isEmpty) return;
-    final ownerId = await ref.read(defaultOwnerProvider.future);
-    await ref.read(preferencesDaoProvider).renameProfile(ownerId, name);
-    ref.read(summaryRevisionProvider.notifier).bump();
-    ref.invalidate(profileDisplayNameProvider);
+    if (choice == null) return;
+    _update(ref, unitSystem: choice);
+  }
+
+  Future<void> _editWeekStart(
+    BuildContext context,
+    WidgetRef ref,
+    UserPreference preferences,
+  ) async {
+    final choice = await showNourishlyOptions<int>(
+      context: context,
+      title: 'Week starts',
+      message: 'Used by the weekly report and the consistency strip.',
+      selected: preferences.weekStartDay,
+      options: const [
+        NourishlyOption(value: DateTime.monday, label: 'Monday'),
+        NourishlyOption(value: DateTime.sunday, label: 'Sunday'),
+      ],
+    );
+    if (choice == null) return;
+    _update(ref, weekStartDay: choice);
   }
 
   Future<void> _editRollover(
@@ -313,92 +264,29 @@ class SettingsScreen extends ConsumerWidget {
     _update(ref, dayRolloverTime: picked.hour * 60 + picked.minute);
   }
 
-  /// Same sheet pattern as the diet picker below — a plain list that
-  /// closes on the tap, with a tick against the current value.
   Future<void> _editAppearance(
     BuildContext context,
     WidgetRef ref,
     UserPreference preferences,
   ) async {
-    final current = Appearance.fromId(preferences.theme);
-    final choice = await showModalBottomSheet<Appearance>(
+    final choice = await showNourishlyOptions<Appearance>(
       context: context,
-      showDragHandle: true,
-      builder: (context) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            for (final appearance in Appearance.values)
-              ListTile(
-                title: Text(appearance.label),
-                trailing: appearance == current
-                    ? Icon(
-                        Icons.check_rounded,
-                        color: context.nourishlyColors.accent,
-                      )
-                    : null,
-                onTap: () => Navigator.of(context).pop(appearance),
-              ),
-            const SizedBox(height: NourishlySpace.s3),
-          ],
-        ),
-      ),
+      title: 'Appearance',
+      selected: Appearance.fromId(preferences.theme),
+      options: [
+        for (final appearance in Appearance.values)
+          NourishlyOption(value: appearance, label: appearance.label),
+      ],
     );
     if (choice == null) return;
     _update(ref, theme: choice.id);
-  }
-
-  Future<void> _editDiet(
-    BuildContext context,
-    WidgetRef ref,
-    UserPreference preferences,
-  ) async {
-    final current = DietaryPreference.fromId(preferences.dietaryPreference);
-    final choice = await showModalBottomSheet<Object?>(
-      context: context,
-      showDragHandle: true,
-      builder: (context) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // A plain list rather than RadioListTile: the sheet closes on
-            // the tap, so there is no group state for a RadioGroup to hold.
-            for (final preference in DietaryPreference.values)
-              ListTile(
-                title: Text(preference.label),
-                trailing: preference == current
-                    ? Icon(
-                        Icons.check_rounded,
-                        color: context.nourishlyColors.accent,
-                      )
-                    : null,
-                onTap: () => Navigator.of(context).pop(preference),
-              ),
-            ListTile(
-              title: const Text('Prefer not to say'),
-              onTap: () => Navigator.of(context).pop('clear'),
-            ),
-            const SizedBox(height: NourishlySpace.s3),
-          ],
-        ),
-      ),
-    );
-    if (choice == null) return;
-    final ownerId = await ref.read(defaultOwnerProvider.future);
-    await ref
-        .read(preferencesDaoProvider)
-        .update(
-          ownerId,
-          dietaryPreference: choice is DietaryPreference ? choice.id : null,
-          clearDietaryPreference: choice == 'clear',
-        );
-    ref.read(summaryRevisionProvider.notifier).bump();
   }
 
   Future<void> _editFocusNutrients(BuildContext context, WidgetRef ref) {
     return showModalBottomSheet<void>(
       context: context,
       showDragHandle: true,
+      useSafeArea: true,
       isScrollControlled: true,
       builder: (context) => const _FocusNutrientSheet(),
     );
@@ -418,11 +306,12 @@ class _FocusNutrientSheet extends ConsumerWidget {
     final nutrients = ref.watch(allNutrientsProvider).value ?? const [];
 
     return SafeArea(
+      top: false,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(
-          NourishlySpace.s4,
+          NourishlySpace.s5,
           0,
-          NourishlySpace.s4,
+          NourishlySpace.s5,
           NourishlySpace.s4,
         ),
         child: Column(
@@ -474,197 +363,43 @@ class _FocusNutrientSheet extends ConsumerWidget {
   }
 }
 
-/// FR-U-14 — weight as a series, never a verdict (§21.8): no BMI, no
-/// category, just the numbers and when they were taken.
-class _WeightCard extends ConsumerWidget {
-  const _WeightCard({required this.entries});
-
-  final List<BodyWeightEntry> entries;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final colors = context.nourishlyColors;
-    final text = context.nourishlyText;
-
-    return NourishlyCard(
-      padding: EdgeInsets.zero,
-      child: Column(
-        children: [
-          if (entries.isEmpty)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                NourishlySpace.s4,
-                NourishlySpace.s3,
-                NourishlySpace.s4,
-                NourishlySpace.s1,
-              ),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Nothing recorded yet.',
-                  style: text.caption.copyWith(color: colors.ink3),
-                ),
-              ),
-            )
-          else
-            for (final entry in entries.take(5))
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: NourishlySpace.s4,
-                  vertical: NourishlySpace.s2,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      _formatDate(entry.recordedAt),
-                      style: text.caption.copyWith(color: colors.ink3),
-                    ),
-                    Text(
-                      '${entry.weightKg.toStringAsFixed(1)} kg',
-                      style: text.body.copyWith(fontWeight: FontWeight.w700),
-                    ),
-                  ],
-                ),
-              ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(
-              NourishlySpace.s4,
-              NourishlySpace.s2,
-              NourishlySpace.s4,
-              NourishlySpace.s3,
-            ),
-            child: SizedBox(
-              width: double.infinity,
-              child: OutlinedButton(
-                onPressed: () => _record(context, ref),
-                child: const Text("Record today's weight"),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<void> _record(BuildContext context, WidgetRef ref) async {
-    final profile = ref.read(currentProfileProvider).value;
-    final controller = TextEditingController(
-      text:
-          (entries.isNotEmpty
-                  ? entries.first.weightKg
-                  : profile?.weightKg ?? 70)
-              .toStringAsFixed(1),
-    );
-    final messenger = ScaffoldMessenger.of(context);
-    final entered = await showDialog<String>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Weight today'),
-        content: TextField(
-          controller: controller,
-          autofocus: true,
-          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          decoration: const InputDecoration(suffixText: 'kg'),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(context).pop(controller.text.trim()),
-            child: const Text('Save'),
-          ),
-        ],
-      ),
-    );
-    final weight = double.tryParse(entered ?? '');
-    if (weight == null || weight <= 0) return;
-
-    final ownerId = await ref.read(defaultOwnerProvider.future);
-    final newTargets = await ref
-        .read(bodyWeightDaoProvider)
-        .record(ownerId: ownerId, weightKg: weight);
-    ref.read(summaryRevisionProvider.notifier).bump();
-    messenger.showSnackBar(
-      SnackBar(
-        content: Text(
-          newTargets == null
-              ? 'Recorded ${weight.toStringAsFixed(1)} kg.'
-              : 'Recorded ${weight.toStringAsFixed(1)} kg. Your targets '
-                    'follow it from today; past days keep theirs.',
-        ),
-      ),
-    );
-  }
-}
-
 /// Prototype 13A's "Your data": export, backup, and the destructive row.
 ///
 /// The backup row is not a button — there is nothing to press. Android and
 /// iOS back the app up on their own schedule (§0.5's mechanism 1), and the
 /// honest thing to show is what that means, plus the one number the user
 /// can actually act on: when they last took a copy of their own.
-class _YourDataCard extends ConsumerWidget {
-  const _YourDataCard();
+class _YourDataGroup extends ConsumerWidget {
+  const _YourDataGroup();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final colors = context.nourishlyColors;
-    final text = context.nourishlyText;
     final lastExport = ref.watch(lastExportedAtProvider);
 
-    return NourishlyCard(
-      padding: EdgeInsets.zero,
-      child: Column(
-        children: [
-          _NavRow(
-            title: 'Export everything',
-            value: '',
-            subtitle: 'JSON and CSV',
-            onTap: () => context.push('/profile/data'),
-          ),
-          _NavRow(
-            title: 'Backup',
-            value: '',
-            // The prototype's "Last backed up 2 days ago" — one short
-            // line, because option A was chosen for being scannable with
-            // nothing to read. The longer explanation lives on the screen
-            // this row opens.
-            subtitle: lastExport == null
-                ? 'Automatic. No export of your own yet'
-                : 'Automatic. You last exported '
-                      '${_relativeDays(ref, lastExport)}',
-            onTap: () => context.push('/profile/data'),
-          ),
-          // §30.7: deletion is two-step, offers export first, and says
-          // plainly that it cannot be undone. Red is reserved for exactly
-          // this (§21.8) — it is the one destructive action in the app.
-          Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: () => context.push('/profile/data'),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: NourishlySpace.s4,
-                  vertical: NourishlySpace.s3,
-                ),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Delete everything on this phone',
-                    style: text.body.copyWith(
-                      color: colors.danger,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
+    return NourishlyRowGroup(
+      children: [
+        NourishlyListRow(
+          title: 'Export everything',
+          subtitle: 'JSON and CSV',
+          onTap: () => context.push('/profile/data'),
+        ),
+        NourishlyListRow(
+          title: 'Backup',
+          subtitle: lastExport == null
+              ? 'Automatic. No export of your own yet'
+              : 'Automatic. You last exported '
+                    '${_relativeDays(ref, lastExport)}',
+          onTap: () => context.push('/profile/data'),
+        ),
+        // §30.7: deletion is two-step, offers export first, and says
+        // plainly that it cannot be undone. Red is reserved for exactly
+        // this (§21.8) — it is the one destructive action in the app.
+        NourishlyListRow(
+          title: 'Delete everything on this phone',
+          style: NourishlyRowStyle.danger,
+          onTap: () => context.push('/profile/data'),
+        ),
+      ],
     );
   }
 
@@ -678,10 +413,12 @@ class _YourDataCard extends ConsumerWidget {
   }
 }
 
-/// The prototype's centred fine print: "Nourishly v1.0 · catalog 2026.09 ·
-/// all data stays on this phone."
-class _VersionFooter extends ConsumerWidget {
-  const _VersionFooter();
+/// The prototype's centred fine print — "Nourishly v1.0 · catalog 2026.09 ·
+/// all data stays on this phone" — plus §21.8's signposting, which §27.13
+/// requires somewhere and which reads as fine print rather than as a card
+/// demanding to be read first.
+class _AboutFooter extends ConsumerWidget {
+  const _AboutFooter();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -689,40 +426,22 @@ class _VersionFooter extends ConsumerWidget {
     final text = context.nourishlyText;
     final catalog = ref.watch(catalogVersionProvider).value;
     return Padding(
-      padding: const EdgeInsets.only(top: NourishlySpace.s5),
-      child: Text(
-        'Nourishly $appVersion'
-        '${catalog == null ? '' : ' · catalog $catalog'}'
-        ' · all data stays on this phone',
-        textAlign: TextAlign.center,
-        style: text.caption.copyWith(color: colors.ink3),
-      ),
-    );
-  }
-}
-
-class _AboutCard extends StatelessWidget {
-  const _AboutCard();
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.nourishlyColors;
-    final text = context.nourishlyText;
-    return NourishlyCard(
+      padding: const EdgeInsets.only(top: NourishlySpace.s6),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Everything stays on this phone. There is no account and no '
-            'server.',
-            style: text.caption.copyWith(color: colors.ink2, height: 1.5),
+            'Nourishly $appVersion'
+            '${catalog == null ? '' : ' · catalog $catalog'}'
+            ' · all data stays on this phone',
+            textAlign: TextAlign.center,
+            style: text.caption.copyWith(color: colors.ink3),
           ),
-          const SizedBox(height: NourishlySpace.s3),
-          // §21.8's signposting: plain, and not alarmist.
+          const SizedBox(height: NourishlySpace.s2),
           Text(
-            'Nourishly is not suitable for managing a diagnosed condition '
-            'or an eating disorder. A qualified professional is the right '
-            'resource for that.',
+            'Not suitable for managing a diagnosed condition or an eating '
+            'disorder. A qualified professional is the right resource for '
+            'that.',
+            textAlign: TextAlign.center,
             style: text.caption.copyWith(color: colors.ink3, height: 1.5),
           ),
         ],
@@ -731,107 +450,35 @@ class _AboutCard extends StatelessWidget {
   }
 }
 
-class _NavRow extends StatelessWidget {
-  const _NavRow({
-    required this.title,
-    required this.value,
-    required this.onTap,
-    this.subtitle,
-  });
+class _ErrorBody extends StatelessWidget {
+  const _ErrorBody({required this.error});
 
-  final String title;
-  final String value;
-  final String? subtitle;
-  final VoidCallback onTap;
+  final Object error;
 
   @override
   Widget build(BuildContext context) {
     final colors = context.nourishlyColors;
     final text = context.nourishlyText;
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: NourishlySpace.s4,
-            vertical: NourishlySpace.s3,
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(title, style: text.body),
-                    if (subtitle != null)
-                      Text(
-                        subtitle!,
-                        style: text.caption.copyWith(color: colors.ink3),
-                      ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: NourishlySpace.s2),
-              Flexible(
-                child: Text(
-                  value,
-                  textAlign: TextAlign.right,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: text.caption.copyWith(color: colors.ink3),
-                ),
-              ),
-              Icon(Icons.chevron_right_rounded, size: 20, color: colors.ink3),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _SwitchRow extends StatelessWidget {
-  const _SwitchRow({
-    required this.title,
-    required this.subtitle,
-    required this.value,
-    required this.onChanged,
-  });
-
-  final String title;
-  final String subtitle;
-  final bool value;
-  final ValueChanged<bool> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.nourishlyColors;
-    final text = context.nourishlyText;
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        NourishlySpace.s4,
-        NourishlySpace.s2,
-        NourishlySpace.s3,
-        NourishlySpace.s2,
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: text.body),
-                Text(
-                  subtitle,
-                  style: text.caption.copyWith(color: colors.ink3, height: 1.4),
-                ),
-              ],
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(NourishlySpace.s6),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.error_outline_rounded, color: colors.danger, size: 28),
+            const SizedBox(height: NourishlySpace.s3),
+            Text(
+              'Your settings could not be loaded.',
+              style: text.body.copyWith(fontWeight: FontWeight.w600),
             ),
-          ),
-          const SizedBox(width: NourishlySpace.s2),
-          Switch(value: value, onChanged: onChanged),
-        ],
+            const SizedBox(height: NourishlySpace.s2),
+            Text(
+              '$error',
+              textAlign: TextAlign.center,
+              style: text.caption.copyWith(color: colors.ink3),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -843,24 +490,6 @@ String _formatMinutes(int minutes) {
   final suffix = hour < 12 ? 'am' : 'pm';
   final displayHour = hour % 12 == 0 ? 12 : hour % 12;
   return '$displayHour:${minute.toString().padLeft(2, '0')} $suffix';
-}
-
-String _formatDate(DateTime date) {
-  const months = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ];
-  return '${date.day} ${months[date.month - 1]}';
 }
 
 String _titleCase(String id) => [

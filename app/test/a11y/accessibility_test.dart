@@ -65,9 +65,21 @@ void main() {
             (ref) => _NoFilesExportService(db),
           ),
         ],
-        child: MediaQuery(
-          data: MediaQueryData(textScaler: TextScaler.linear(textScale)),
-          child: const NourishlyApp(),
+        // Built from the view, not from a bare `MediaQueryData`.
+        //
+        // `WidgetsApp` only inserts its own `MediaQuery.fromView` when
+        // there is not one above it, so a bare `MediaQueryData(textScaler:
+        // …)` here was the one every screen saw — and its `size` is
+        // `Size.zero`. Anything laid out from `MediaQuery.sizeOf` was
+        // therefore measuring nothing, and "survives 200% type" was a
+        // weaker promise than it looked.
+        child: Builder(
+          builder: (context) => MediaQuery(
+            data: MediaQueryData.fromView(
+              View.of(context),
+            ).copyWith(textScaler: TextScaler.linear(textScale)),
+            child: const NourishlyApp(),
+          ),
         ),
       ),
     );
@@ -127,8 +139,12 @@ void main() {
       '/today',
       '/water',
       '/profile',
+      '/profile/me',
       '/profile/reminders',
       '/profile/data',
+      // The recipe builder puts a name, a weight field and a remove button
+      // on one row, which is the shape that breaks first at large type.
+      '/recipes/new',
     ]) {
       testWidgets('$route survives 200% type', (tester) async {
         await pump(tester, route, textScale: 2);
@@ -151,7 +167,12 @@ void main() {
   });
 
   group('NFR-A-05 — primary touch targets are at least 48 dp', () {
-    for (final route in const ['/profile/reminders', '/profile/data']) {
+    for (final route in const [
+      '/profile',
+      '/profile/me',
+      '/profile/reminders',
+      '/profile/data',
+    ]) {
       testWidgets(route, (tester) async {
         final handle = tester.ensureSemantics();
         await pump(tester, route);
@@ -258,6 +279,9 @@ void main() {
       await tester.tap(find.text('Continue'));
       await tester.pumpAndSettle();
       await tester.enterText(find.byType(TextField), 'DELETE');
+      // The confirming button stays disabled until the word is typed, so
+      // the frame that enables it has to happen before the tap.
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Delete everything'));
       // Bounded pumps rather than pumpAndSettle: the busy overlay uses an
       // indeterminate progress bar, which by design never stops animating
@@ -292,6 +316,12 @@ void main() {
       expect(find.textContaining('back to a clean start'), findsOneWidget);
       // And the screen is usable again, not stuck behind the overlay.
       expect(find.text('Deleting…'), findsNothing);
+
+      // The message is transient by design (item 8 of the 2026-09-12 UX
+      // revision), and its watchdog is a real timer — so pump past it.
+      await tester.pump(nourishlySnackDuration + const Duration(seconds: 1));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('back to a clean start'), findsNothing);
     });
   });
 }

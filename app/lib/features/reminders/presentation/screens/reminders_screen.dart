@@ -150,13 +150,10 @@ class _MasterSwitch extends ConsumerWidget {
           ? current
           : await scheduler.requestPermission();
       if (granted == NotificationPermission.denied) {
-        messenger.showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Your phone is set to block notifications from Nourishly. '
-              'Reminders will stay off until that changes.',
-            ),
-          ),
+        showNourishlySnackOn(
+          messenger,
+          'Your phone is set to block notifications from Nourishly. '
+          'Reminders will stay off until that changes.',
         );
       }
     }

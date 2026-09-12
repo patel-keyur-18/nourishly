@@ -103,7 +103,7 @@ class _NoTargetCard extends StatelessWidget {
           ),
           const SizedBox(height: NourishlySpace.s3),
           FilledButton(
-            onPressed: () => context.go('/profile/setup'),
+            onPressed: () => context.push('/profile/setup'),
             child: const Text('Personalise my targets'),
           ),
         ],
@@ -214,17 +214,14 @@ class WaterCard extends ConsumerWidget {
       logDate: ref.read(selectedDateProvider),
     );
     ref.read(summaryRevisionProvider.notifier).bump();
-    messenger.showSnackBar(
-      SnackBar(
-        content: Text('Logged ${ml.round()} ml'),
-        action: SnackBarAction(
-          label: 'Undo',
-          onPressed: () async {
-            await dao.undo(entryId);
-            ref.read(summaryRevisionProvider.notifier).bump();
-          },
-        ),
-      ),
+    showNourishlySnackOn(
+      messenger,
+      'Logged ${ml.round()} ml',
+      actionLabel: 'Undo',
+      onAction: () async {
+        await dao.undo(entryId);
+        ref.read(summaryRevisionProvider.notifier).bump();
+      },
     );
   }
 }
@@ -328,7 +325,12 @@ class MealsCard extends ConsumerWidget {
             Material(
               color: Colors.transparent,
               child: InkWell(
-                onTap: () => context.go('/log'),
+                // `push`, not `go`: `go` replaces the stack, which left
+                // the logging screen with nothing under it — its close
+                // button had nothing to pop, the nav bar was gone, and the
+                // only way out was to kill the app. The slot comes along,
+                // so tapping "Breakfast" logs to breakfast.
+                onTap: () => context.push('/log?meal=${meal.slotId}'),
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(
                     NourishlySpace.s4,

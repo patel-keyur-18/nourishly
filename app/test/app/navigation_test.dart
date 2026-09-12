@@ -10,6 +10,8 @@ import 'package:nourishly/features/food_catalog/data/food_catalog_providers.dart
 import 'package:nourishly/features/food_logging/presentation/screens/food_logging_screen.dart';
 import 'package:nourishly/features/goals/presentation/screens/goals_screen.dart';
 import 'package:nourishly/features/onboarding/presentation/screens/onboarding_screen.dart';
+import 'package:nourishly/features/profile/presentation/screens/profile_screen.dart';
+import 'package:nourishly/features/recipes/presentation/screens/recipes_screen.dart';
 import 'package:nourishly/features/reports/presentation/screens/reports_screen.dart';
 import 'package:nourishly/features/settings/presentation/screens/settings_screen.dart';
 import 'package:nourishly/features/water/presentation/screens/water_screen.dart';
@@ -33,6 +35,26 @@ void main() {
     // returning user starts. First-run onboarding has its own test below.
     final ownerId = await ensureDefaultOwner(db);
     await PreferencesDao(db).update(ownerId, onboardingSeen: true);
+    // The four slots the catalog import normally seeds. The dashboard's
+    // meal rows are one of the ways into the logging flow, and with no
+    // slots there are no rows to tap.
+    for (final (key, name, order) in const [
+      ('breakfast', 'Breakfast', 0),
+      ('lunch', 'Lunch', 1),
+      ('dinner', 'Dinner', 2),
+      ('snack', 'Snack', 3),
+    ]) {
+      await db
+          .into(db.mealSlots)
+          .insert(
+            MealSlotsCompanion.insert(
+              id: 'slot-$key',
+              key: key,
+              displayName: name,
+              sortOrder: order,
+            ),
+          );
+    }
   });
   // Runs even when the test body throws — required so a failed assertion
   // doesn't leak a database into the next test.
@@ -52,6 +74,11 @@ void main() {
         child: const NourishlyApp(),
       ),
     );
+    await tester.pumpAndSettle();
+    // `appRouter` is a top-level global, so its location survives from one
+    // test to the next: without this, a test starts wherever the previous
+    // one left off rather than where a user starts.
+    appRouter.go('/today');
     await tester.pumpAndSettle();
   }
 
@@ -155,17 +182,77 @@ void main() {
     },
   );
 
-  testWidgets('Profile tab pushes to the nested Goals screen', (tester) async {
+  testWidgets('Profile tab opens Settings, which pushes to Goals', (
+    tester,
+  ) async {
     await pumpApp(tester);
 
     await tester.tap(navLabel('Profile'));
     await tester.pumpAndSettle();
     expect(find.byType(SettingsScreen), findsOneWidget);
-    expect(find.text('Goals & targets'), findsOneWidget);
+    // Prototype 13A's app bar and its three groups. "Goals & targets" is
+    // no longer here — it moved to the profile screen with the rest of the
+    // profile (2026-09-12 UX revision).
+    expect(appBarTitle('Settings'), findsOneWidget);
+    expect(find.text('Your recipes'), findsOneWidget);
 
     appRouter.go('/profile/goals');
     await tester.pumpAndSettle();
     expect(find.byType(GoalsScreen), findsOneWidget);
     expect(appBarTitle('Goals & targets'), findsOneWidget);
+  });
+
+  testWidgets('Settings pushes to the profile, and back returns to it', (
+    tester,
+  ) async {
+    await pumpApp(tester);
+
+    await tester.tap(navLabel('Profile'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Your recipes'));
+    await tester.pumpAndSettle();
+    expect(find.byType(RecipesScreen), findsOneWidget);
+
+    // Recipes stay in Settings; the profile is its own screen.
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    appRouter.push('/profile/me');
+    await tester.pumpAndSettle();
+    expect(find.byType(ProfileScreen), findsOneWidget);
+    expect(appBarTitle('Profile'), findsOneWidget);
+
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    expect(find.byType(SettingsScreen), findsOneWidget);
+  });
+
+  /// The regression the 2026-09-12 revision was reported for.
+  ///
+  /// The dashboard's meal rows used `go('/log')`, which replaces the stack:
+  /// the logging screen had nothing under it, so its close button popped
+  /// nothing, the shell and its nav bar were gone, and the app could not be
+  /// navigated again without being killed.
+  testWidgets('a meal row opens the log flow and closes back to Today', (
+    tester,
+  ) async {
+    await pumpApp(tester);
+
+    await tester.scrollUntilVisible(find.text('Breakfast'), 200);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Breakfast'));
+    await tester.pumpAndSettle();
+    expect(find.byType(FoodLoggingScreen), findsOneWidget);
+
+    await tester.tap(find.byTooltip('Close'));
+    await tester.pumpAndSettle();
+    expect(find.byType(FoodLoggingScreen), findsNothing);
+    expect(find.byType(DashboardScreen), findsOneWidget);
+    // The nav bar is still there, which is the part that was broken: with
+    // the shell replaced, nothing could be reached from here at all.
+    expect(navLabel('Water'), findsOneWidget);
+
+    await tester.tap(navLabel('Water'));
+    await tester.pumpAndSettle();
+    expect(find.byType(WaterScreen), findsOneWidget);
   });
 }

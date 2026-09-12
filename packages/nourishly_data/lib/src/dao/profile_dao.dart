@@ -24,6 +24,15 @@ class ProfileDao {
 
   final NourishlyDatabase _db;
 
+  /// The profile version in force on [on].
+  ///
+  /// Ties on `effectiveFrom` are broken by creation order, for the same
+  /// reason [targetSetOn] does it and they are just as common: every
+  /// version is effective from a midnight, so two changes on one day —
+  /// correcting your height, then your activity — share one
+  /// `effectiveFrom`. Without the tiebreak, which of them is "current" is
+  /// whatever SQLite happens to return, and the second change of the day
+  /// silently does nothing.
   Future<UserProfileVersion?> currentProfile(
     String ownerId, {
     DateTime? on,
@@ -37,7 +46,13 @@ class ProfileDao {
                     p.deletedAt.isNull() &
                     p.effectiveFrom.isSmallerOrEqualValue(at),
               )
-              ..orderBy([(p) => OrderingTerm.desc(p.effectiveFrom)])
+              ..orderBy([
+                (p) => OrderingTerm.desc(p.effectiveFrom),
+                (p) => OrderingTerm.desc(p.createdAt),
+                // UUIDv7 is time-ordered, so this settles two versions
+                // written inside the same clock tick.
+                (p) => OrderingTerm.desc(p.id),
+              ])
               ..limit(1))
             .get();
     return rows.isEmpty ? null : rows.first;
@@ -53,7 +68,11 @@ class ProfileDao {
                     g.deletedAt.isNull() &
                     g.effectiveFrom.isSmallerOrEqualValue(at),
               )
-              ..orderBy([(g) => OrderingTerm.desc(g.effectiveFrom)])
+              ..orderBy([
+                (g) => OrderingTerm.desc(g.effectiveFrom),
+                (g) => OrderingTerm.desc(g.createdAt),
+                (g) => OrderingTerm.desc(g.id),
+              ])
               ..limit(1))
             .get();
     return rows.isEmpty ? null : rows.first;

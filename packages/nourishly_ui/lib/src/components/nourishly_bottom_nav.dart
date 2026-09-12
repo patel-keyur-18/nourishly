@@ -80,6 +80,14 @@ class NourishlyBottomNav extends StatelessWidget {
         child: SizedBox(
           height: heightFor(context),
           child: Row(
+            // Stretch, so each destination's tappable area is the full
+            // height of the bar rather than just the icon and its label.
+            // With the default centre alignment the children got loose
+            // constraints and each `InkWell` shrank to its content — a
+            // 78 × 36 target for the app's primary navigation, under
+            // NFR-A-05's 48 dp minimum. Nothing moves visually; the
+            // column inside is still centred.
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               _destination(context, 0),
               _destination(context, 1),
@@ -147,9 +155,12 @@ class _FabSlot extends StatelessWidget {
           child: InkWell(
             customBorder: const CircleBorder(),
             onTap: onPressed,
+            // The minimum touch target *is* the size here: the action was
+            // 46 square, which is below NFR-A-05's floor for the most
+            // frequently tapped control in the app.
             child: SizedBox(
-              width: 46,
-              height: 46,
+              width: NourishlyTarget.minTouch,
+              height: NourishlyTarget.minTouch,
               child: Icon(Icons.add_rounded, color: colors.accentInk, size: 24),
             ),
           ),

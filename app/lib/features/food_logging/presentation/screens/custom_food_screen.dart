@@ -64,6 +64,7 @@ class _CustomFoodScreenState extends ConsumerState<CustomFoodScreen> {
     setState(() => _saving = true);
 
     final messenger = ScaffoldMessenger.of(context);
+    final colors = context.nourishlyColors;
     try {
       final ownerId = await ref.read(defaultOwnerProvider.future);
       final foodId = await ref
@@ -94,8 +95,11 @@ class _CustomFoodScreenState extends ConsumerState<CustomFoodScreen> {
     } on Object catch (error) {
       if (!mounted) return;
       setState(() => _saving = false);
-      messenger.showSnackBar(
-        SnackBar(content: Text('Could not save that food: $error')),
+      showNourishlySnackOn(
+        messenger,
+        'Could not save that food: $error',
+        isError: true,
+        colors: colors,
       );
     }
   }

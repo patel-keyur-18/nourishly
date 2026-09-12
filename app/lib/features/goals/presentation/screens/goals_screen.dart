@@ -69,7 +69,9 @@ class GoalsScreen extends ConsumerWidget {
               const _EffectiveDatingNote(),
               const SizedBox(height: NourishlySpace.s2),
               OutlinedButton(
-                onPressed: () => context.go('/profile/setup'),
+                // The profile screen, not setup: changing a goal is one
+                // field, and it is edited there in place.
+                onPressed: () => context.push('/profile/me'),
                 child: const Text('Change my profile or goal'),
               ),
             ],
@@ -493,7 +495,8 @@ class _NoTargetsYet extends StatelessWidget {
             ),
             const SizedBox(height: NourishlySpace.s4),
             FilledButton(
-              onPressed: () => context.go('/profile/setup'),
+              // First run genuinely is setup — there is nothing to amend.
+              onPressed: () => context.push('/profile/setup'),
               child: const Text('Set up my targets'),
             ),
           ],
