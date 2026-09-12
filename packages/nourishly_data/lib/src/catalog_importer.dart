@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:drift/drift.dart';
 
 import 'dao/food_search_dao.dart';
@@ -80,6 +82,12 @@ class CatalogImporter {
             id: f['id'] as String,
             kind: f['kind'] as String,
             canonicalName: f['canonicalName'] as String,
+            // Cuisine and course (§0.8). Defaulted rather than required:
+            // a seed built before tags existed still imports, its foods
+            // simply carry none.
+            cuisineTags: Value(
+              jsonEncode((f['cuisineTags'] as List?) ?? const <String>[]),
+            ),
             qualityTier: f['qualityTier'] as String,
             provenanceSource: f['provenanceSource'] as String,
             provenanceId: Value(f['provenanceId'] as String?),

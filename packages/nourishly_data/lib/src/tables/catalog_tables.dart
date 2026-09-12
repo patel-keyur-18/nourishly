@@ -16,7 +16,11 @@ class FoodItems extends Table with Identifiable, SoftDeletable {
   TextColumn get canonicalName => text()();
   TextColumn get brand => text().nullable()();
 
-  /// JSON-encoded list, e.g. `["gujarati", "tiffin"]`.
+  /// JSON-encoded list of prefixed tags, e.g.
+  /// `["cuisine:gujarati", "course:tiffin"]` — read through the
+  /// `FoodItemCuisineTags` extension, written by the catalog pipeline.
+  /// Empty for a food nobody has classified, and for the component-only
+  /// rows that exist purely as a provenance trail.
   TextColumn get cuisineTags => text().withDefault(const Constant('[]'))();
 
   /// `verified` | `derived` | `label` | `community` | `user`.

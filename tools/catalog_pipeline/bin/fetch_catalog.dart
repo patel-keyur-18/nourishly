@@ -358,6 +358,11 @@ Future<void> main(List<String> args) async {
         'kind': 'ingredient',
         'key': entry.key,
         'sourceFile': entry.sourceFile,
+        'cuisineTags': cuisineTagsFor(
+          sourceFile: entry.sourceFile,
+          section: entry.section,
+          isIngredient: true,
+        ),
         'foodName': entry.foodName,
         'isTier1': entry.isTier1,
         'alsoNames': entry.alsoNames,
@@ -458,6 +463,11 @@ Future<void> main(List<String> args) async {
       'kind': 'recipe',
       'key': entry.key,
       'sourceFile': entry.sourceFile,
+      'cuisineTags': cuisineTagsFor(
+        sourceFile: entry.sourceFile,
+        section: entry.section,
+        isIngredient: false,
+      ),
       'foodName': entry.foodName,
       'isTier1': entry.isTier1,
       'alsoNames': entry.alsoNames,

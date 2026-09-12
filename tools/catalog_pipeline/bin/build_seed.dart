@@ -141,6 +141,7 @@ void main() {
       'id': foodId,
       'kind': 'ingredient',
       'canonicalName': food['foodName'],
+      'cuisineTags': food['cuisineTags'] ?? const <String>[],
       'qualityTier': qualityTier,
       'provenanceSource': 'usda_fdc',
       'provenanceId': '${food['fdcId']}',
@@ -186,6 +187,7 @@ void main() {
       'id': foodId,
       'kind': 'recipe',
       'canonicalName': food['foodName'],
+      'cuisineTags': food['cuisineTags'] ?? const <String>[],
       // Derived from summed ingredient nutrients, not a single measured
       // source — always the 'derived' tier (§19.11).
       'qualityTier': 'derived',
@@ -257,6 +259,9 @@ void main() {
             'id': newId,
             'kind': 'ingredient',
             'canonicalName': ingredient['fdcDescription'],
+            // A component-only row is a provenance trail, not something
+            // anyone searches or browses, so it carries no tags.
+            'cuisineTags': const <String>[],
             'qualityTier': qualityTier,
             // Not `usda_fdc`: this row exists only so the recipe's
             // components trace back to a source. Its name is a raw USDA

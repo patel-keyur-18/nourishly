@@ -6,6 +6,7 @@ export 'src/catalog_row_key.dart';
 export 'src/catalog_source_entry.dart';
 export 'src/catalog_source_parser.dart';
 export 'src/composition.dart';
+export 'src/cuisine_tags.dart';
 export 'src/fdc_cache.dart';
 export 'src/fdc_client.dart';
 export 'src/fdc_models.dart';
