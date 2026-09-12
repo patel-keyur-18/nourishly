@@ -75,6 +75,11 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
+    // `appRouter` is a top-level global, so its location survives from one
+    // test to the next: without this, a test starts wherever the previous
+    // one left off rather than where a user starts.
+    appRouter.go('/today');
+    await tester.pumpAndSettle();
   }
 
   Finder appBarTitle(String text) =>
@@ -232,6 +237,8 @@ void main() {
   ) async {
     await pumpApp(tester);
 
+    await tester.scrollUntilVisible(find.text('Breakfast'), 200);
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Breakfast'));
     await tester.pumpAndSettle();
     expect(find.byType(FoodLoggingScreen), findsOneWidget);

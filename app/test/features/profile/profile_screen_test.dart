@@ -70,6 +70,15 @@ void main() {
     await tester.pumpAndSettle();
   }
 
+  /// The rows lower down the screen are below the default 800 × 600 test
+  /// viewport, and a tap at an off-screen coordinate silently hits nothing.
+  Future<void> tapRow(WidgetTester tester, String title) async {
+    await tester.ensureVisible(find.text(title));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(title));
+    await tester.pumpAndSettle();
+  }
+
   testWidgets('the profile screen shows what is actually saved', (
     tester,
   ) async {
@@ -99,8 +108,7 @@ void main() {
   ) async {
     await pump(tester, '/profile/me');
 
-    await tester.tap(find.text('Height'));
-    await tester.pumpAndSettle();
+    await tapRow(tester, 'Height');
 
     // A dialog, not the wizard.
     expect(find.byType(ProfileSetupScreen), findsNothing);
@@ -131,8 +139,7 @@ void main() {
   ) async {
     await pump(tester, '/profile/me');
 
-    await tester.tap(find.text('Goal'));
-    await tester.pumpAndSettle();
+    await tapRow(tester, 'Goal');
     await tester.tap(find.text('Lose weight'));
     await tester.pumpAndSettle();
 
@@ -150,8 +157,7 @@ void main() {
   ) async {
     await pump(tester, '/profile/me');
 
-    await tester.tap(find.text('Weight'));
-    await tester.pumpAndSettle();
+    await tapRow(tester, 'Weight');
     await tester.enterText(find.byType(TextField), '76.5');
     await tester.pumpAndSettle();
     await tester.tap(find.widgetWithText(FilledButton, 'Save'));

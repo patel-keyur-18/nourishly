@@ -92,13 +92,20 @@ void main() {
     return id;
   }
 
-  Future<void> pumpTo(WidgetTester tester, String location) async {
-    // A tall window so the whole form is on screen at once. A ListView
-    // builds its children lazily, so on a phone-sized test view the
-    // serving fields and the preview are simply not in the tree and
-    // nothing can be typed into them.
-    tester.view.physicalSize = const Size(390 * 3, 1800 * 3);
+  /// [size] defaults to a deliberately tall window so the whole form is on
+  /// screen at once: a `ListView` builds its children lazily, so on a
+  /// phone-sized view the serving fields and the preview are simply not in
+  /// the tree and nothing can be typed into them. Pass a real phone size to
+  /// test what a phone actually shows.
+  Future<void> pumpTo(
+    WidgetTester tester,
+    String location, {
+    Size size = const Size(390, 1800),
+    double keyboardInset = 0,
+  }) async {
+    tester.view.physicalSize = size * 3;
     tester.view.devicePixelRatio = 3;
+    tester.view.viewInsets = FakeViewPadding(bottom: keyboardInset * 3);
     addTearDown(tester.view.reset);
 
     await tester.pumpWidget(
@@ -154,6 +161,9 @@ void main() {
     await tester.tap(find.text('Toor dal').last);
     await tester.pumpAndSettle();
     await tester.enterText(find.widgetWithText(TextField, 'Raw weight'), '200');
+    // The dialog's Add button stays disabled until the weight is a real
+    // number, so the frame that enables it has to happen before the tap.
+    await tester.pumpAndSettle();
     await tester.tap(find.widgetWithText(FilledButton, 'Add'));
     await tester.pumpAndSettle();
 
@@ -190,6 +200,58 @@ void main() {
     final found = await FoodSearchDao(db).search('everyday');
     expect(found.single.id, saved.foodId);
     expect(found.single.kind, 'recipe');
+  });
+
+  /// The conditions the ingredient picker was reported broken under, which
+  /// nothing else in this file covers: the other tests use a deliberately
+  /// tall 390 × 1800 window so the whole form is reachable, and the sheet
+  /// asked for a flat `0.7 × screenHeight` plus the keyboard inset on top
+  /// of that — a size that takes no account of what is left. Its search
+  /// field is autofocused, so the keyboard is always up.
+  testWidgets('the ingredient picker fits a small screen with the keyboard '
+      'up', (tester) async {
+    await seedIngredient('Toor dal', {'energy': 343, 'protein': 22});
+
+    // A small phone, and the space a keyboard takes on one.
+    await pumpTo(
+      tester,
+      '/recipes/new',
+      size: const Size(360, 640),
+      keyboardInset: 336,
+    );
+    await tester.tap(
+      find.descendant(
+        of: find.byType(NourishlySectionHeader),
+        matching: find.text('Add'),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('ingredient-search')), findsOneWidget);
+    expect(
+      tester.takeException(),
+      isNull,
+      reason: 'the ingredient sheet overflows with the keyboard up',
+    );
+
+    // Above the keyboard, not behind it: the search field is the control
+    // the sheet autofocuses, so if it is under the keyboard the sheet is
+    // unusable however it was sized.
+    final field = tester.getRect(find.byKey(const Key('ingredient-search')));
+    expect(
+      field.bottom,
+      lessThanOrEqualTo(640 - 336),
+      reason: 'the search field is behind the keyboard',
+    );
+
+    // And it is still usable at that size, not merely non-overflowing.
+    await tester.enterText(
+      find.byKey(const Key('ingredient-search')),
+      'toor',
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Toor dal'), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('a recipe with no ingredients is refused, with a reason', (

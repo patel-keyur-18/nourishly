@@ -89,8 +89,6 @@ class ProfileScreen extends ConsumerWidget {
                       BiologicalSex.male => 'Male',
                       null => 'Neutral',
                     },
-                    subtitle: 'Which reference intakes iron, calcium and a '
-                        'few others are read against.',
                     onTap: profile == null
                         ? null
                         : () => _editReference(context, ref, profile),
@@ -115,8 +113,7 @@ class ProfileScreen extends ConsumerWidget {
                     value: profile == null
                         ? 'Not set'
                         : '${profile.weightKg.toStringAsFixed(1)} kg',
-                    subtitle: 'Recorded as a series — past reports keep the '
-                        'targets they were measured against.',
+                    subtitle: 'Kept as a series, never overwritten.',
                     onTap: () => _recordWeight(context, ref, weights, profile),
                   ),
                 ],
@@ -150,15 +147,13 @@ class ProfileScreen extends ConsumerWidget {
                     value: goal == null
                         ? 'Not set'
                         : GoalType.fromId(goal.goalType).label,
-                    subtitle: 'Changes what the daily score weighs most.',
                     onTap: profile == null
                         ? null
                         : () => _editGoal(context, ref, goal),
                   ),
                   NourishlyListRow(
                     title: 'Goals & targets',
-                    subtitle: 'Every target, with the reasoning and a way to '
-                        'set your own.',
+                    subtitle: 'Every target, and a way to set your own.',
                     onTap: () => context.push('/profile/goals'),
                   ),
                 ],
@@ -174,8 +169,7 @@ class ProfileScreen extends ConsumerWidget {
                           preferences?.dietaryPreference,
                         )?.label ??
                         'Not said',
-                    subtitle: 'Orders search results so what you eat most '
-                        'comes up first. Hides nothing.',
+                    subtitle: 'Orders search results. Hides nothing.',
                     onTap: preferences == null
                         ? null
                         : () => _editDiet(context, ref, preferences),

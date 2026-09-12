@@ -16,6 +16,7 @@ import 'package:nourishly/features/reminders/data/reminder_providers.dart';
 import 'package:nourishly/features/food_catalog/data/food_catalog_providers.dart';
 
 import 'package:nourishly_data/nourishly_data.dart';
+import 'package:nourishly_ui/nourishly_ui.dart';
 import 'package:nutrition_core/nutrition_core.dart' hide NutrientTarget;
 import 'package:drift/drift.dart' show Value, InsertMode;
 
@@ -245,6 +246,10 @@ void main() {
     }
     await tester.pump(const Duration(milliseconds: 260));
     await shoot(tester, '08-water-mid-pour');
+    // The quick-add message is transient and its watchdog is a real timer,
+    // so pump past it rather than ending the test with one pending.
+    await tester.pump(nourishlySnackDuration + const Duration(seconds: 1));
+    await tester.pumpAndSettle();
     // Leave no timer running behind the test.
     await tester.pumpAndSettle();
   });
