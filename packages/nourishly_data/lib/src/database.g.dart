@@ -7947,6 +7947,18 @@ class $FoodItemsTable extends FoodItems
     type: DriftSqlType.double,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _forkedFromFoodIdMeta = const VerificationMeta(
+    'forkedFromFoodId',
+  );
+  @override
+  late final GeneratedColumn<String> forkedFromFoodId = GeneratedColumn<String>(
+    'forked_from_food_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: 'REFERENCES food_items (id)',
+  );
   static const VerificationMeta _defaultServingIdMeta = const VerificationMeta(
     'defaultServingId',
   );
@@ -8001,6 +8013,7 @@ class $FoodItemsTable extends FoodItems
     catalogVersion,
     densityGPerMl,
     yieldFactor,
+    forkedFromFoodId,
     defaultServingId,
     isVerified,
     dietClass,
@@ -8132,6 +8145,15 @@ class $FoodItemsTable extends FoodItems
         ),
       );
     }
+    if (data.containsKey('forked_from_food_id')) {
+      context.handle(
+        _forkedFromFoodIdMeta,
+        forkedFromFoodId.isAcceptableOrUnknown(
+          data['forked_from_food_id']!,
+          _forkedFromFoodIdMeta,
+        ),
+      );
+    }
     if (data.containsKey('default_serving_id')) {
       context.handle(
         _defaultServingIdMeta,
@@ -8218,6 +8240,10 @@ class $FoodItemsTable extends FoodItems
         DriftSqlType.double,
         data['${effectivePrefix}yield_factor'],
       ),
+      forkedFromFoodId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}forked_from_food_id'],
+      ),
       defaultServingId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}default_serving_id'],
@@ -8251,7 +8277,11 @@ class FoodItem extends DataClass implements Insertable<FoodItem> {
   final String canonicalName;
   final String? brand;
 
-  /// JSON-encoded list, e.g. `["gujarati", "tiffin"]`.
+  /// JSON-encoded list of prefixed tags, e.g.
+  /// `["cuisine:gujarati", "course:tiffin"]` — read through the
+  /// `FoodItemCuisineTags` extension, written by the catalog pipeline.
+  /// Empty for a food nobody has classified, and for the component-only
+  /// rows that exist purely as a provenance trail.
   final String cuisineTags;
 
   /// `verified` | `derived` | `label` | `community` | `user`.
@@ -8274,6 +8304,19 @@ class FoodItem extends DataClass implements Insertable<FoodItem> {
   /// For `kind == 'recipe'` only — cooking yield applied when the pipeline
   /// sums ingredient nutrients (catalog spec §0.2).
   final double? yieldFactor;
+
+  /// The recipe this one was forked from — "make this our version" on a
+  /// catalog dish — or null for a recipe written from scratch.
+  ///
+  /// It is the only thing that makes a household's lighter version
+  /// *comparable* to the standard one. Without it the fork is just
+  /// another food, and "36 kcal less than the usual recipe, eleven times
+  /// this month" cannot be computed at all. Matching on a name would be
+  /// the alternative, and a name is not an identity.
+  ///
+  /// Never cascades: the parent is a catalog row that the fork does not
+  /// own and must not affect.
+  final String? forkedFromFoodId;
   final String? defaultServingId;
   final bool isVerified;
 
@@ -8301,6 +8344,7 @@ class FoodItem extends DataClass implements Insertable<FoodItem> {
     this.catalogVersion,
     this.densityGPerMl,
     this.yieldFactor,
+    this.forkedFromFoodId,
     this.defaultServingId,
     required this.isVerified,
     this.dietClass,
@@ -8335,6 +8379,9 @@ class FoodItem extends DataClass implements Insertable<FoodItem> {
     }
     if (!nullToAbsent || yieldFactor != null) {
       map['yield_factor'] = Variable<double>(yieldFactor);
+    }
+    if (!nullToAbsent || forkedFromFoodId != null) {
+      map['forked_from_food_id'] = Variable<String>(forkedFromFoodId);
     }
     if (!nullToAbsent || defaultServingId != null) {
       map['default_serving_id'] = Variable<String>(defaultServingId);
@@ -8376,6 +8423,9 @@ class FoodItem extends DataClass implements Insertable<FoodItem> {
       yieldFactor: yieldFactor == null && nullToAbsent
           ? const Value.absent()
           : Value(yieldFactor),
+      forkedFromFoodId: forkedFromFoodId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(forkedFromFoodId),
       defaultServingId: defaultServingId == null && nullToAbsent
           ? const Value.absent()
           : Value(defaultServingId),
@@ -8406,6 +8456,7 @@ class FoodItem extends DataClass implements Insertable<FoodItem> {
       catalogVersion: serializer.fromJson<int?>(json['catalogVersion']),
       densityGPerMl: serializer.fromJson<double?>(json['densityGPerMl']),
       yieldFactor: serializer.fromJson<double?>(json['yieldFactor']),
+      forkedFromFoodId: serializer.fromJson<String?>(json['forkedFromFoodId']),
       defaultServingId: serializer.fromJson<String?>(json['defaultServingId']),
       isVerified: serializer.fromJson<bool>(json['isVerified']),
       dietClass: serializer.fromJson<String?>(json['dietClass']),
@@ -8429,6 +8480,7 @@ class FoodItem extends DataClass implements Insertable<FoodItem> {
       'catalogVersion': serializer.toJson<int?>(catalogVersion),
       'densityGPerMl': serializer.toJson<double?>(densityGPerMl),
       'yieldFactor': serializer.toJson<double?>(yieldFactor),
+      'forkedFromFoodId': serializer.toJson<String?>(forkedFromFoodId),
       'defaultServingId': serializer.toJson<String?>(defaultServingId),
       'isVerified': serializer.toJson<bool>(isVerified),
       'dietClass': serializer.toJson<String?>(dietClass),
@@ -8450,6 +8502,7 @@ class FoodItem extends DataClass implements Insertable<FoodItem> {
     Value<int?> catalogVersion = const Value.absent(),
     Value<double?> densityGPerMl = const Value.absent(),
     Value<double?> yieldFactor = const Value.absent(),
+    Value<String?> forkedFromFoodId = const Value.absent(),
     Value<String?> defaultServingId = const Value.absent(),
     bool? isVerified,
     Value<String?> dietClass = const Value.absent(),
@@ -8472,6 +8525,9 @@ class FoodItem extends DataClass implements Insertable<FoodItem> {
         ? densityGPerMl.value
         : this.densityGPerMl,
     yieldFactor: yieldFactor.present ? yieldFactor.value : this.yieldFactor,
+    forkedFromFoodId: forkedFromFoodId.present
+        ? forkedFromFoodId.value
+        : this.forkedFromFoodId,
     defaultServingId: defaultServingId.present
         ? defaultServingId.value
         : this.defaultServingId,
@@ -8510,6 +8566,9 @@ class FoodItem extends DataClass implements Insertable<FoodItem> {
       yieldFactor: data.yieldFactor.present
           ? data.yieldFactor.value
           : this.yieldFactor,
+      forkedFromFoodId: data.forkedFromFoodId.present
+          ? data.forkedFromFoodId.value
+          : this.forkedFromFoodId,
       defaultServingId: data.defaultServingId.present
           ? data.defaultServingId.value
           : this.defaultServingId,
@@ -8537,6 +8596,7 @@ class FoodItem extends DataClass implements Insertable<FoodItem> {
           ..write('catalogVersion: $catalogVersion, ')
           ..write('densityGPerMl: $densityGPerMl, ')
           ..write('yieldFactor: $yieldFactor, ')
+          ..write('forkedFromFoodId: $forkedFromFoodId, ')
           ..write('defaultServingId: $defaultServingId, ')
           ..write('isVerified: $isVerified, ')
           ..write('dietClass: $dietClass')
@@ -8560,6 +8620,7 @@ class FoodItem extends DataClass implements Insertable<FoodItem> {
     catalogVersion,
     densityGPerMl,
     yieldFactor,
+    forkedFromFoodId,
     defaultServingId,
     isVerified,
     dietClass,
@@ -8582,6 +8643,7 @@ class FoodItem extends DataClass implements Insertable<FoodItem> {
           other.catalogVersion == this.catalogVersion &&
           other.densityGPerMl == this.densityGPerMl &&
           other.yieldFactor == this.yieldFactor &&
+          other.forkedFromFoodId == this.forkedFromFoodId &&
           other.defaultServingId == this.defaultServingId &&
           other.isVerified == this.isVerified &&
           other.dietClass == this.dietClass);
@@ -8602,6 +8664,7 @@ class FoodItemsCompanion extends UpdateCompanion<FoodItem> {
   final Value<int?> catalogVersion;
   final Value<double?> densityGPerMl;
   final Value<double?> yieldFactor;
+  final Value<String?> forkedFromFoodId;
   final Value<String?> defaultServingId;
   final Value<bool> isVerified;
   final Value<String?> dietClass;
@@ -8621,6 +8684,7 @@ class FoodItemsCompanion extends UpdateCompanion<FoodItem> {
     this.catalogVersion = const Value.absent(),
     this.densityGPerMl = const Value.absent(),
     this.yieldFactor = const Value.absent(),
+    this.forkedFromFoodId = const Value.absent(),
     this.defaultServingId = const Value.absent(),
     this.isVerified = const Value.absent(),
     this.dietClass = const Value.absent(),
@@ -8641,6 +8705,7 @@ class FoodItemsCompanion extends UpdateCompanion<FoodItem> {
     this.catalogVersion = const Value.absent(),
     this.densityGPerMl = const Value.absent(),
     this.yieldFactor = const Value.absent(),
+    this.forkedFromFoodId = const Value.absent(),
     this.defaultServingId = const Value.absent(),
     this.isVerified = const Value.absent(),
     this.dietClass = const Value.absent(),
@@ -8665,6 +8730,7 @@ class FoodItemsCompanion extends UpdateCompanion<FoodItem> {
     Expression<int>? catalogVersion,
     Expression<double>? densityGPerMl,
     Expression<double>? yieldFactor,
+    Expression<String>? forkedFromFoodId,
     Expression<String>? defaultServingId,
     Expression<bool>? isVerified,
     Expression<String>? dietClass,
@@ -8685,6 +8751,7 @@ class FoodItemsCompanion extends UpdateCompanion<FoodItem> {
       if (catalogVersion != null) 'catalog_version': catalogVersion,
       if (densityGPerMl != null) 'density_g_per_ml': densityGPerMl,
       if (yieldFactor != null) 'yield_factor': yieldFactor,
+      if (forkedFromFoodId != null) 'forked_from_food_id': forkedFromFoodId,
       if (defaultServingId != null) 'default_serving_id': defaultServingId,
       if (isVerified != null) 'is_verified': isVerified,
       if (dietClass != null) 'diet_class': dietClass,
@@ -8707,6 +8774,7 @@ class FoodItemsCompanion extends UpdateCompanion<FoodItem> {
     Value<int?>? catalogVersion,
     Value<double?>? densityGPerMl,
     Value<double?>? yieldFactor,
+    Value<String?>? forkedFromFoodId,
     Value<String?>? defaultServingId,
     Value<bool>? isVerified,
     Value<String?>? dietClass,
@@ -8727,6 +8795,7 @@ class FoodItemsCompanion extends UpdateCompanion<FoodItem> {
       catalogVersion: catalogVersion ?? this.catalogVersion,
       densityGPerMl: densityGPerMl ?? this.densityGPerMl,
       yieldFactor: yieldFactor ?? this.yieldFactor,
+      forkedFromFoodId: forkedFromFoodId ?? this.forkedFromFoodId,
       defaultServingId: defaultServingId ?? this.defaultServingId,
       isVerified: isVerified ?? this.isVerified,
       dietClass: dietClass ?? this.dietClass,
@@ -8779,6 +8848,9 @@ class FoodItemsCompanion extends UpdateCompanion<FoodItem> {
     if (yieldFactor.present) {
       map['yield_factor'] = Variable<double>(yieldFactor.value);
     }
+    if (forkedFromFoodId.present) {
+      map['forked_from_food_id'] = Variable<String>(forkedFromFoodId.value);
+    }
     if (defaultServingId.present) {
       map['default_serving_id'] = Variable<String>(defaultServingId.value);
     }
@@ -8811,6 +8883,7 @@ class FoodItemsCompanion extends UpdateCompanion<FoodItem> {
           ..write('catalogVersion: $catalogVersion, ')
           ..write('densityGPerMl: $densityGPerMl, ')
           ..write('yieldFactor: $yieldFactor, ')
+          ..write('forkedFromFoodId: $forkedFromFoodId, ')
           ..write('defaultServingId: $defaultServingId, ')
           ..write('isVerified: $isVerified, ')
           ..write('dietClass: $dietClass, ')
@@ -23518,6 +23591,7 @@ typedef $$FoodItemsTableCreateCompanionBuilder = FoodItemsCompanion Function({
   Value<int?> catalogVersion,
   Value<double?> densityGPerMl,
   Value<double?> yieldFactor,
+  Value<String?> forkedFromFoodId,
   Value<String?> defaultServingId,
   Value<bool> isVerified,
   Value<String?> dietClass,
@@ -23538,6 +23612,7 @@ typedef $$FoodItemsTableUpdateCompanionBuilder = FoodItemsCompanion Function({
   Value<int?> catalogVersion,
   Value<double?> densityGPerMl,
   Value<double?> yieldFactor,
+  Value<String?> forkedFromFoodId,
   Value<String?> defaultServingId,
   Value<bool> isVerified,
   Value<String?> dietClass,
@@ -23561,6 +23636,24 @@ final class $$FoodItemsTableReferences
       $_db.catalogVersions,
     ).filter((f) => f.version.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_catalogVersionTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $FoodItemsTable _forkedFromFoodIdTable(_$NourishlyDatabase db) => db
+      .foodItems
+      .createAlias('food_items__forked_from_food_id__food_items__id');
+
+  $$FoodItemsTableProcessedTableManager? get forkedFromFoodId {
+    final $_column = $_itemColumn<String>('forked_from_food_id');
+    if ($_column == null) return null;
+    final manager = $$FoodItemsTableTableManager(
+      $_db,
+      $_db.foodItems,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_forkedFromFoodIdTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: [item]),
@@ -23764,6 +23857,29 @@ class $$FoodItemsTableFilterComposer
           }) => $$CatalogVersionsTableFilterComposer(
             $db: $db,
             $table: $db.catalogVersions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$FoodItemsTableFilterComposer get forkedFromFoodId {
+    final $$FoodItemsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.forkedFromFoodId,
+      referencedTable: $db.foodItems,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FoodItemsTableFilterComposer(
+            $db: $db,
+            $table: $db.foodItems,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -24004,6 +24120,29 @@ class $$FoodItemsTableOrderingComposer
     return composer;
   }
 
+  $$FoodItemsTableOrderingComposer get forkedFromFoodId {
+    final $$FoodItemsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.forkedFromFoodId,
+      referencedTable: $db.foodItems,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FoodItemsTableOrderingComposer(
+            $db: $db,
+            $table: $db.foodItems,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
   $$ServingSizesTableOrderingComposer get defaultServingId {
     final $$ServingSizesTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -24112,6 +24251,29 @@ class $$FoodItemsTableAnnotationComposer
           }) => $$CatalogVersionsTableAnnotationComposer(
             $db: $db,
             $table: $db.catalogVersions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$FoodItemsTableAnnotationComposer get forkedFromFoodId {
+    final $$FoodItemsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.forkedFromFoodId,
+      referencedTable: $db.foodItems,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FoodItemsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.foodItems,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -24261,6 +24423,7 @@ class $$FoodItemsTableTableManager
           FoodItem,
           PrefetchHooks Function({
             bool catalogVersion,
+            bool forkedFromFoodId,
             bool defaultServingId,
             bool servingSizesRefs,
             bool foodNutrientValuesRefs,
@@ -24295,6 +24458,7 @@ class $$FoodItemsTableTableManager
                 Value<int?> catalogVersion = const Value.absent(),
                 Value<double?> densityGPerMl = const Value.absent(),
                 Value<double?> yieldFactor = const Value.absent(),
+                Value<String?> forkedFromFoodId = const Value.absent(),
                 Value<String?> defaultServingId = const Value.absent(),
                 Value<bool> isVerified = const Value.absent(),
                 Value<String?> dietClass = const Value.absent(),
@@ -24314,6 +24478,7 @@ class $$FoodItemsTableTableManager
                 catalogVersion: catalogVersion,
                 densityGPerMl: densityGPerMl,
                 yieldFactor: yieldFactor,
+                forkedFromFoodId: forkedFromFoodId,
                 defaultServingId: defaultServingId,
                 isVerified: isVerified,
                 dietClass: dietClass,
@@ -24335,6 +24500,7 @@ class $$FoodItemsTableTableManager
                 Value<int?> catalogVersion = const Value.absent(),
                 Value<double?> densityGPerMl = const Value.absent(),
                 Value<double?> yieldFactor = const Value.absent(),
+                Value<String?> forkedFromFoodId = const Value.absent(),
                 Value<String?> defaultServingId = const Value.absent(),
                 Value<bool> isVerified = const Value.absent(),
                 Value<String?> dietClass = const Value.absent(),
@@ -24354,6 +24520,7 @@ class $$FoodItemsTableTableManager
                 catalogVersion: catalogVersion,
                 densityGPerMl: densityGPerMl,
                 yieldFactor: yieldFactor,
+                forkedFromFoodId: forkedFromFoodId,
                 defaultServingId: defaultServingId,
                 isVerified: isVerified,
                 dietClass: dietClass,
@@ -24370,6 +24537,7 @@ class $$FoodItemsTableTableManager
           prefetchHooksCallback:
               ({
                 catalogVersion = false,
+                forkedFromFoodId = false,
                 defaultServingId = false,
                 servingSizesRefs = false,
                 foodNutrientValuesRefs = false,
@@ -24409,6 +24577,17 @@ class $$FoodItemsTableTableManager
                             referencedColumn: $$FoodItemsTableReferences
                                 ._catalogVersionTable(db)
                                 .version,
+                          ) as T;
+                        }
+                        if (forkedFromFoodId) {
+                          state = state.withJoin(
+                            currentTable: table,
+                            currentColumn: table.forkedFromFoodId,
+                            referencedTable: $$FoodItemsTableReferences
+                                ._forkedFromFoodIdTable(db),
+                            referencedColumn: $$FoodItemsTableReferences
+                                ._forkedFromFoodIdTable(db)
+                                .id,
                           ) as T;
                         }
                         if (defaultServingId) {
@@ -24533,6 +24712,7 @@ typedef $$FoodItemsTableProcessedTableManager =
       FoodItem,
       PrefetchHooks Function({
         bool catalogVersion,
+        bool forkedFromFoodId,
         bool defaultServingId,
         bool servingSizesRefs,
         bool foodNutrientValuesRefs,

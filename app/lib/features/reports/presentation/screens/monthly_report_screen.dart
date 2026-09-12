@@ -10,6 +10,7 @@ import '../../../../app/providers.dart';
 import '../../../../shared/formatting.dart';
 import '../../../profile/data/profile_providers.dart';
 import '../../data/report_providers.dart';
+import '../widgets/household_cards.dart';
 import '../widgets/period_widgets.dart';
 
 /// The monthly report (prototype screen 11, option A — trend line).
@@ -110,6 +111,8 @@ class _MonthBody extends ConsumerWidget {
         ],
         const NourishlySectionHeader(label: 'Days logged'),
         _MonthConsistencyCard(summary: summary),
+        OilSavedCard(summary: summary),
+        CuisineMixCard(summary: summary),
       ],
     );
   }

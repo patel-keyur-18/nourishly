@@ -190,6 +190,9 @@ class _RecipeBuilderScreenState extends ConsumerState<RecipeBuilderScreen> {
           .saveRecipe(
             ownerId: ownerId,
             foodId: widget.foodId,
+            // Only on creation: editing a recipe later changes the
+            // recipe, not where it came from.
+            forkedFromFoodId: widget.forkFromId,
             name: _name.text.trim(),
             ingredients: _ingredients,
             servingGrams: _number(_servingGrams)!,
