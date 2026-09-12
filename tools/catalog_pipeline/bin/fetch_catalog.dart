@@ -1,10 +1,20 @@
 // Resolves every direct-USDA-lookup entry in docs/catalog/*.md against
 // FoodData Central and writes a draft catalog seed as JSON.
 //
-// Run locally (this needs live network access FDC's servers, which the
-// sandboxed session that built this pipeline does not have):
+// Run locally (fetching needs live network access to FDC's servers, which
+// the sandboxed session that built this pipeline does not have):
 //
 //   FDC_API_KEY=your-key-here dart run tools/catalog_pipeline/bin/fetch_catalog.dart
+//
+// Three cache modes (fdc_cache.dart), because every response is cached in
+// the committed `tools/catalog_pipeline/fdc_cache/`:
+//
+//   --refresh-missing  (default) fetch only what the cache has not got
+//   --cache-only       never touch the network; a miss is a reported
+//                      failure, not a guess. Needs no API key, so this is
+//                      how CI and an offline editor validate the catalog
+//   --refresh-all      re-fetch everything and overwrite the cache; a
+//                      deliberate USDA data refresh, reviewed as a diff
 //
 // Never put the key on the command line where it lands in shell history
 // on a shared machine — prefix the command with a space (most shells
@@ -65,7 +75,7 @@ List<String> _queryCandidates(CatalogSourceEntry entry, UsdaLookup lookup) {
 /// [FdcClient.preferredDataTypes] (measured Foundation/SR Legacy data,
 /// §19.11's preferred quality tier) before falling back to any data type
 /// — catches items like jaggery that simply aren't in the restricted set.
-Future<FdcFood?> _searchFdc(FdcClient client, List<String> queries) async {
+Future<FdcFood?> _searchFdc(FdcSource client, List<String> queries) async {
   for (final dataType in [FdcClient.preferredDataTypes, null]) {
     for (final query in queries) {
       final candidates = await client.search(
@@ -124,7 +134,7 @@ class _IngredientResolver {
     required this.index,
   });
 
-  final FdcClient client;
+  final FdcSource client;
   final FdcNormalizer normalizer;
   final CatalogIndex index;
 
@@ -216,11 +226,35 @@ class _IngredientResolver {
   };
 }
 
-Future<void> main() async {
-  final apiKey = Platform.environment['FDC_API_KEY'];
-  if (apiKey == null || apiKey.isEmpty) {
+Future<void> main(List<String> args) async {
+  final unknown = args.where(
+    (a) => !const [
+      '--cache-only',
+      '--refresh-missing',
+      '--refresh-all',
+    ].contains(a),
+  );
+  if (unknown.isNotEmpty) {
+    stderr.writeln('Unknown argument(s): ${unknown.join(', ')}');
     stderr.writeln(
-      'Set FDC_API_KEY in your environment first. See this file\'s header comment.',
+      'Usage: fetch_catalog.dart [--cache-only|--refresh-missing|--refresh-all]',
+    );
+    exit(64);
+  }
+
+  final mode = args.contains('--cache-only')
+      ? FdcCacheMode.cacheOnly
+      : args.contains('--refresh-all')
+      ? FdcCacheMode.refreshAll
+      : FdcCacheMode.refreshMissing;
+
+  // Only a mode that may fetch needs a key. --cache-only deliberately
+  // runs without one, which is what makes offline validation possible.
+  final apiKey = Platform.environment['FDC_API_KEY'];
+  if (mode != FdcCacheMode.cacheOnly && (apiKey == null || apiKey.isEmpty)) {
+    stderr.writeln(
+      'Set FDC_API_KEY in your environment first, or pass --cache-only to '
+      "run from the committed cache. See this file's header comment.",
     );
     exit(1);
   }
@@ -235,7 +269,11 @@ Future<void> main() async {
 
   final sourceParser = CatalogSourceParser();
   final compositionParser = CompositionParser();
-  final client = FdcClient(apiKey: apiKey);
+  final client = CachingFdcSource(
+    cache: FdcCache.defaultLocation(),
+    mode: mode,
+    live: mode == FdcCacheMode.cacheOnly ? null : FdcClient(apiKey: apiKey!),
+  );
   final normalizer = FdcNormalizer();
 
   // Every parsed row, including the NeedsManualReview ones — they still
@@ -243,8 +281,17 @@ Future<void> main() async {
   // sibling ("Muthiya, fried" vs "Muthiya, steamed") rather than shadowing
   // it.
   final rows = <CatalogRow>[];
-  for (final file in catalogDir.listSync().whereType<File>()) {
-    if (!file.path.endsWith('.md') || file.path.endsWith('README.md')) continue;
+  // Sorted, because `listSync` order is filesystem-defined: leaving it
+  // unsorted makes the draft's row order — and so the seed's — differ
+  // between machines for no reason.
+  final catalogFiles =
+      catalogDir
+          .listSync()
+          .whereType<File>()
+          .where((f) => f.path.endsWith('.md') && !f.path.endsWith('README.md'))
+          .toList()
+        ..sort((a, b) => a.path.compareTo(b.path));
+  for (final file in catalogFiles) {
     for (final entry in sourceParser.parseFile(file)) {
       rows.add(
         CatalogRow(entry, compositionParser.parse(entry.rawComposition)),
@@ -313,6 +360,8 @@ Future<void> main() async {
       failures.add(
         '${entry.foodName}: FDC request failed (HTTP ${e.statusCode})',
       );
+    } on FdcCacheMiss catch (e) {
+      failures.add('${entry.foodName}: ${e.what} is not in the FDC cache');
     }
 
     // A light pause between requests — polite to a free government API,
@@ -342,6 +391,13 @@ Future<void> main() async {
         failures.add(
           '${entry.foodName}: FDC request failed for ingredient '
           '"${ingredient.name}" (HTTP ${e.statusCode})',
+        );
+        missingIngredient = true;
+        break;
+      } on FdcCacheMiss catch (e) {
+        failures.add(
+          '${entry.foodName}: ingredient "${ingredient.name}" needs '
+          '${e.what}, which is not in the FDC cache',
         );
         missingIngredient = true;
         break;
@@ -409,7 +465,16 @@ Future<void> main() async {
     });
   }
 
+  // A --cache-only run adds nothing to the cache, so rewriting the index
+  // from it can only lose entries whose rows happened to fail this time.
+  // Only a run that may fetch gets to rewrite it.
+  if (mode != FdcCacheMode.cacheOnly) client.writeIndex();
   client.close();
+
+  stdout.writeln(
+    '\nFDC cache: ${client.hits} served from disk, ${client.fetches} fetched '
+    '(${mode.name}).',
+  );
 
   final outDir = Directory('build');
   outDir.createSync(recursive: true);

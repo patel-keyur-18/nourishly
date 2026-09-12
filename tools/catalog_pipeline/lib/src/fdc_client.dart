@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import 'fdc_cache.dart';
 import 'fdc_models.dart';
+import 'fdc_source.dart';
 
 /// Thrown for a non-2xx FDC response. [message] never includes the
 /// request URL — that would leak the API key into logs.
@@ -24,7 +26,7 @@ class FdcApiException implements Exception {
 /// environment variable and passed in here; it is never hardcoded,
 /// written to a file, or included in any exception/log message this
 /// client produces.
-class FdcClient {
+class FdcClient implements FdcSource {
   FdcClient({required String apiKey, http.Client? httpClient})
     : _apiKey = apiKey,
       _http = httpClient ?? http.Client();
@@ -37,10 +39,11 @@ class FdcClient {
   /// Measured/lab-analysed data (not survey estimates or branded
   /// products) — the `dataType` filter matching the catalog's preferred
   /// `quality_tier` (§19.11).
-  static const preferredDataTypes = 'Foundation,SR Legacy';
+  static const preferredDataTypes = FdcClientDataTypes.preferred;
 
   /// Searches FDC for [query]. Pass `dataType: null` to search all FDC
   /// data types, for items (e.g. jaggery) absent from [preferredDataTypes].
+  @override
   Future<List<FdcFood>> search(
     String query, {
     int pageSize = 5,
@@ -65,6 +68,7 @@ class FdcClient {
   }
 
   /// Fetches full nutrient detail for a specific food by its FDC id.
+  @override
   Future<FdcFood> getDetails(int fdcId) async {
     final uri = _base.replace(
       path: '${_base.path}/food/$fdcId',
@@ -86,5 +90,6 @@ class FdcClient {
     }
   }
 
+  @override
   void close() => _http.close();
 }
