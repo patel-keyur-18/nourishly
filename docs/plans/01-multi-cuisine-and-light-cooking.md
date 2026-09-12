@@ -1,7 +1,9 @@
 # Plan — Multi-cuisine catalog, a safe way to keep adding to it, and "our kitchen" light-cooking versions
 
-*Draft 0.4 · 2026-09-12 · awaiting approval · [Catalog spec](../catalog/README.md) · [Food & nutrition](../architecture/05-food-and-nutrition.md) · [Scope](../architecture/00-scope.md)*
+*Draft 0.5 · 2026-09-12 · awaiting approval · [Catalog spec](../catalog/README.md) · [Food & nutrition](../architecture/05-food-and-nutrition.md) · [Scope](../architecture/00-scope.md)*
 
+> **0.4 → 0.5** — adds §11, a pre-approval readiness review: what is verified against the code, one thing rev 0.3 got wrong (meal templates are not built), seven ranked open risks, and a re-ordering that makes the risky refactor provable.
+>
 > **0.3 → 0.4** — the four blocking answers folded in: overnight oats and plain dal written out ingredient by ingredient (§6.7), the missing-ingredient list corrected from six to nine (the seeds), wave 1 now ~39 rows. WP3 is unblocked.
 >
 > **0.2 → 0.3** — Part A (§6) rewritten against the ~30 dishes you named: nine are already in the app, only six ingredients are missing, and the Punjabi and Indo-Chinese files are cut. Work packages resized.
@@ -279,7 +281,9 @@ There is a **`Gujarati dal`** (sweet, with jaggery) and a `Dal dhokli`, but **no
 
 ### 6.4 "X daal and rice" are meal templates, not foods
 
-Four of your entries — moong dal + rice, palak dal + rice, normal dal + rice — are plates, not dishes. The catalog already has "Meal templates worth defining" sections and the app already has `MealTemplates` / `MealTemplateItems` tables. So each becomes **one dal row plus one template**, and logging the plate is one tap rather than two.
+Four of your entries — moong dal + rice, palak dal + rice, normal dal + rice — are plates, not dishes. The catalog already has "Meal templates worth defining" sections and the app already has `MealTemplates` / `MealTemplateItems` tables. So each becomes **one dal row plus one documented template**.
+
+**But the template feature is not built yet** — the tables exist and nothing reads them (`food_logging_screen.dart:120` says templates arrive in a later phase), and the catalog's existing template sections are two-column tables the parser skips. So these four are the spec for a feature that does not exist: worth writing, zero cost, and until templates ship, logging moong dal with rice stays two entries. Full detail in §10.2.
 
 ### 6.5 Revised wave 1 — about 39 rows, not 310
 
@@ -381,7 +385,9 @@ Guardrail: warn (never block — §19.8 says offer, never impose) if a fork drop
 | **WP7** | Oil-saved insight + cuisine mix in reports | §5.4, §7 | ~half day |
 | **WP8** | Wave 2, scoped from a month of real search failures | Deliberately unscheduled | — |
 
-**Order: WP0 → WP1 → WP2 → WP3 → WP4 → WP6 → WP5 → WP7.**
+**Order: WP1 → your one full fetch → baseline lock → WP0 → WP2 → WP3 → WP4 → WP6 → WP5 → WP7.**
+
+WP1 moved ahead of WP0 — see §10.4. A lockfile taken from today's pipeline is what makes WP0's refactor provable rather than merely reviewed.
 
 WP0 and WP1 come first because every later package is a seed rebuild, and until they land each rebuild is an unreviewable 2.3 MB diff produced by ~600 live network calls. WP3 is now small enough that it is a single afternoon and one fetch run.
 
@@ -418,7 +424,74 @@ WP6 (light cooking) moved ahead of WP5 (browse) because §6 shrank: at ~420 food
 
 ---
 
-## 10. Explicitly not in this plan
+## 10. Readiness — what is verified, what is assumed, what could still bite
+
+Written before approval, so the risks are on the record rather than discovered halfway.
+
+### 10.1 Verified against the code
+
+Each of these was checked by reading the file, not inferred:
+
+| Claim | Evidence |
+|---|---|
+| The pipeline globs `docs/catalog/*.md` — new files need no code change | `fetch_catalog.dart:246`, `parse_catalog.dart:24` |
+| Forking a catalog recipe is feasible: `computeFor` needs only `food_nutrient_values` per ingredient id — **no serving size** | `recipe_dao.dart:216-243`. Component-only rows have nutrient values, so they work as fork ingredients |
+| A catalog dish has the `recipe_components` + `serving_sizes` rows a fork needs to pre-fill | 711 and 383 rows in `seed_v1.json` |
+| Editing a recipe cannot rewrite logged history | `LogEntryNutrients` snapshot + `revision` bump, `recipe_dao.dart:145-153` |
+| `uuid: ^4.6.0` in both pubspecs supports v5 | `pubspec.yaml` — needed for stable ids |
+| A row's own yield comes from `servingGrams ÷ ingredient grams`, so a cold assembly lands at ≈1.0 with no special case | `recipe_yield.dart:104-125` — overnight oats needs nothing new |
+| 52 index keys already dropped; 4 pantry rows silently retarget 63 references | §4, reproducible from the repo |
+| Nine of the thirty dishes already exist; nine ingredients are missing | §6.1, §6.2, direct search of `docs/catalog/` |
+
+### 10.2 Corrected — I had this wrong in rev 0.3
+
+**Meal templates are not built.** The `MealTemplates` / `MealTemplateItems` tables exist, but nothing in the app reads or writes them — `food_logging_screen.dart:120` says in so many words that "recents, favourites and meal templates arrive in a later phase". The existing "Meal templates worth defining" sections in the catalog are **two-column tables the parser skips entirely**, so they are prose, not data.
+
+So §6.4's "logging the plate is one tap rather than two" is **not true today**. The four dal-and-rice template rows are documentation for a feature that does not exist yet. They cost nothing to write and they will be the spec when templates get built — but they are not a wave-1 deliverable, and logging moong dal with rice will be two entries until then. Wave 1 is therefore **~35 food rows plus 4 documented templates**, not 39 working things.
+
+### 10.3 Open risks, ranked
+
+| | Risk | Mitigation |
+|---|---|---|
+| **1** | **WP0 refactors working code.** All 249 existing recipes must resolve identically after `ingredientTargets` replaces tier inference | §10.4 — generate the lockfile *first*, then the refactor's pass condition is "lock unchanged". Turns the riskiest piece into a verifiable one |
+| **2** | **The cache only helps after it is populated.** Your first `fetch_catalog` run after WP1 is still the full ~600 calls | Unavoidable and one-time. Every run after it is ~10 |
+| **3** | **I cannot reach FDC from here**, so whether *watermelon seed kernels*, *rolled oats* and *mushroom* return good Foundation/SR Legacy matches is unknown until you run it | The pipeline reports a miss per row rather than guessing (§0.3b). A gap is visible, never silent |
+| **4** | **Millet pasta is a judgement call.** 100% millet pasta ≈ its flour; I would write it as millet flour at ≈1.0 yield | Stated as an assumption in the row's own note. One number to correct later (§0.3) |
+| **5** | **A forked recipe shows a *weaker* quality badge** than the catalog dish it came from — `qualityTier: 'user'` vs `derived`, and the badge is displayed (`food_portion_screen.dart:174`) | Needs your call: is her measured version "your entry" or should a fork inherit the parent's tier? I lean toward inheriting, with the fork marked as yours by the *Yours* badge instead |
+| **6** | **The upsert import needs stable ids for child rows too** — nutrient values, serving sizes, alt names, components — or re-import duplicates the children while the foods dedupe correctly | Derive each from `(food key + nutrient id)` etc. Named here so it is designed, not discovered |
+| **7** | `valueSource: 'calculated'` written by `recipe_dao.dart:203` is not in the schema's documented set (`measured / label / derived / estimated`) | Pre-existing, and nothing reads it for display. A one-line fix to make while nearby, not a blocker |
+
+### 10.4 The one change I would make to the order
+
+**Run WP1 before WP0, and take a lockfile snapshot in between.**
+
+```
+WP1 (cache)  →  your one full fetch  →  baseline lock committed
+                                          ↓
+                              WP0 (refactor) must reproduce it exactly
+                                          ↓
+                              WP2 (spec)  →  WP3 (the rows)
+```
+
+Three reasons this is better than rev 0.3's order:
+
+1. **It makes the risky refactor provable.** A baseline lock taken from today's pipeline turns "did the `ingredientTargets` migration change any of the 249 dishes?" from a judgement call into a diff that is either empty or not.
+2. **It gets me off the network.** Once the cache is populated I can run the full resolution offline, so I can iterate on rows and mappings without spending your API key or your time.
+3. **It costs you one extra fetch run, and only one.** The full run happens once either way.
+
+### 10.5 Honest overall read
+
+The **catalog work (WP2, WP3)** is low risk and well specified: ~35 rows, nine of them plain USDA lookups, two flagged assumptions, in a format the parser already reads, against a list you gave me rather than one I guessed.
+
+The **pipeline work (WP0, WP1)** is where the real engineering is, and it touches code that currently works. It is worth doing anyway — §4 shows the current design silently produces wrong numbers when the catalog grows, and the catalog is about to grow — but it should be sequenced so it is verifiable rather than trusted, which is what §10.4 does.
+
+The **light-cooking work (WP6)** is confirmed feasible against the actual DAO, with one design question (risk 5) to settle first.
+
+Nothing in this plan rests on an unstated assumption I am aware of. Where an assumption exists — the millet rows, the oats quantities, the dal yield — it is written down as one, in the row it affects, with the single number that corrects it.
+
+---
+
+## 11. Explicitly not in this plan
 
 - **The 115 Punjabi and Indo-Chinese rows from rev 0.2** — §6.6. Cut against your own list, not deferred on a guess.
 - **Nutrient retention factors** (vitamin C loss on boiling) — still a §9.2 should-have, still not attempted.
