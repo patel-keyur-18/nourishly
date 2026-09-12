@@ -13,7 +13,13 @@ import '../widgets/food_search_result_tile.dart';
 /// (prototype screens 4 and 5 — full screen, search first; results grouped
 /// by source so provenance stays visible, §19.11).
 class FoodLoggingScreen extends ConsumerStatefulWidget {
-  const FoodLoggingScreen({super.key});
+  const FoodLoggingScreen({super.key, this.mealSlotId});
+
+  /// The slot the user came in through, when they came in through one —
+  /// "Add breakfast" on the dashboard rather than the nav bar's centre
+  /// action. Passed down to the portion screen so the meal is already
+  /// chosen there.
+  final String? mealSlotId;
 
   @override
   ConsumerState<FoodLoggingScreen> createState() => _FoodLoggingScreenState();
@@ -50,7 +56,13 @@ class _FoodLoggingScreenState extends ConsumerState<FoodLoggingScreen> {
         title: const Text('Add food'),
         leading: IconButton(
           icon: const Icon(Icons.close_rounded),
-          onPressed: () => context.pop(),
+          tooltip: 'Close',
+          // Never a dead end: if this screen was somehow opened without
+          // anything under it, closing still goes home rather than doing
+          // nothing. That state used to be reachable from the dashboard's
+          // meal rows, and the app could not be navigated afterwards.
+          onPressed: () =>
+              context.canPop() ? context.pop() : context.go('/today'),
         ),
       ),
       body: Column(
@@ -74,6 +86,7 @@ class _FoodLoggingScreenState extends ConsumerState<FoodLoggingScreen> {
                     ? null
                     : IconButton(
                         icon: const Icon(Icons.close_rounded, size: 18),
+                        tooltip: 'Clear search',
                         onPressed: () {
                           _controller.clear();
                           _onChanged('');
@@ -108,7 +121,11 @@ class _FoodLoggingScreenState extends ConsumerState<FoodLoggingScreen> {
                         'later phase.',
                   );
                 }
-                return _Results(query: query, results: results);
+                return _Results(
+                  query: query,
+                  results: results,
+                  mealSlotId: widget.mealSlotId,
+                );
               },
             ),
           ),
@@ -122,10 +139,15 @@ class _FoodLoggingScreenState extends ConsumerState<FoodLoggingScreen> {
 /// the bundled catalog is one group today; user-created foods and recents
 /// become their own groups once those features exist.
 class _Results extends StatelessWidget {
-  const _Results({required this.query, required this.results});
+  const _Results({
+    required this.query,
+    required this.results,
+    required this.mealSlotId,
+  });
 
   final String query;
   final List<FoodItem> results;
+  final String? mealSlotId;
 
   @override
   Widget build(BuildContext context) {
@@ -150,7 +172,10 @@ class _Results extends StatelessWidget {
                     Divider(height: 1, thickness: 1, color: colors.line),
                   FoodSearchResultTile(
                     food: results[i],
-                    onTap: () => context.push('/log/food/${results[i].id}'),
+                    onTap: () => context.push(
+                      '/log/food/${results[i].id}'
+                      '${mealSlotId == null ? '' : '?meal=$mealSlotId'}',
+                    ),
                   ),
                 ],
               ],

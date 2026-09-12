@@ -87,7 +87,7 @@ class OnboardingScreen extends ConsumerWidget {
                 ),
               const Spacer(),
               FilledButton(
-                onPressed: () => _dismiss(ref, '/profile/setup'),
+                onPressed: () => _dismiss(ref, '/profile/setup?from=welcome'),
                 child: const Text('Set up my profile'),
               ),
               const SizedBox(height: NourishlySpace.s2),

@@ -13,9 +13,17 @@ import '../../../food_catalog/data/food_catalog_providers.dart';
 /// `/log/food/:foodId`. Saves a real `FoodLogEntry`, the write path §14.9
 /// calls the highest-value thing to get right.
 class FoodPortionScreen extends ConsumerStatefulWidget {
-  const FoodPortionScreen({super.key, required this.foodId});
+  const FoodPortionScreen({
+    super.key,
+    required this.foodId,
+    this.initialMealSlotId,
+  });
 
   final String foodId;
+
+  /// Preselected when the flow started from a meal row on the dashboard,
+  /// so "Add breakfast" does not ask which meal at the end of it.
+  final String? initialMealSlotId;
 
   @override
   ConsumerState<FoodPortionScreen> createState() => _FoodPortionScreenState();
@@ -27,6 +35,12 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen> {
   String? _servingId;
   String? _mealSlotId;
   bool _saving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _mealSlotId = widget.initialMealSlotId;
+  }
 
   Future<(FoodItem, List<ServingSize>)> _load() async {
     final db = ref.read(nourishlyDatabaseProvider);
@@ -58,11 +72,16 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen> {
         );
 
     if (!mounted) return;
+    final messenger = ScaffoldMessenger.of(context);
     // Pop back through the portion screen and the /log modal to wherever
-    // the user was (§28.4: logging is a task, not a place).
+    // the user was (§28.4: logging is a task, not a place). The loop stops
+    // at the shell, which is the one route with nothing under it — which is
+    // also why the flow has to be *pushed* over the shell rather than
+    // replacing it.
     while (context.canPop()) {
       context.pop();
     }
+    showNourishlySnackOn(messenger, 'Added to your log.');
   }
 
   @override

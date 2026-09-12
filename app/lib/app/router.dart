@@ -8,6 +8,7 @@ import '../features/food_logging/presentation/screens/food_logging_screen.dart';
 import '../features/food_logging/presentation/screens/food_portion_screen.dart';
 import '../features/goals/presentation/screens/goals_screen.dart';
 import '../features/onboarding/presentation/screens/onboarding_screen.dart';
+import '../features/profile/presentation/screens/profile_screen.dart';
 import '../features/profile/presentation/screens/profile_setup_screen.dart';
 import '../features/reports/presentation/screens/daily_report_screen.dart';
 import '../features/reports/presentation/screens/monthly_report_screen.dart';
@@ -45,19 +46,26 @@ final GoRouter appRouter = GoRouter(
       path: '/onboarding',
       builder: (context, state) => const OnboardingScreen(),
     ),
+    // `?meal=<slotId>` carries the slot the user came in through, so
+    // "Add breakfast" on the dashboard lands on a screen that already
+    // knows it is breakfast rather than asking again at the end.
     GoRoute(
       path: '/log',
       parentNavigatorKey: rootNavigatorKey,
-      pageBuilder: (context, state) => const MaterialPage(
+      pageBuilder: (context, state) => MaterialPage(
         fullscreenDialog: true,
-        child: FoodLoggingScreen(),
+        child: FoodLoggingScreen(
+          mealSlotId: state.uri.queryParameters['meal'],
+        ),
       ),
       routes: [
         GoRoute(
           path: 'food/:foodId',
           parentNavigatorKey: rootNavigatorKey,
-          builder: (context, state) =>
-              FoodPortionScreen(foodId: state.pathParameters['foodId']!),
+          builder: (context, state) => FoodPortionScreen(
+            foodId: state.pathParameters['foodId']!,
+            initialMealSlotId: state.uri.queryParameters['meal'],
+          ),
         ),
         GoRoute(
           path: 'new',
@@ -159,10 +167,29 @@ final GoRouter appRouter = GoRouter(
                   parentNavigatorKey: rootNavigatorKey,
                   builder: (context, state) => const GoalsScreen(),
                 ),
+                // Item 5 of the 2026-09-12 UX revision: the profile is
+                // its own screen, reached from Settings. Settings keeps
+                // what is genuinely a setting; who you are, what your body
+                // is doing, how you eat and what you are aiming at belong
+                // together on one screen of their own.
+                GoRoute(
+                  path: 'me',
+                  parentNavigatorKey: rootNavigatorKey,
+                  builder: (context, state) => const ProfileScreen(),
+                ),
+                // First-run setup only. Every later change to one of these
+                // fields is edited in place on `/profile/me`, so nobody is
+                // walked through six steps to correct their weight.
                 GoRoute(
                   path: 'setup',
                   parentNavigatorKey: rootNavigatorKey,
-                  builder: (context, state) => const ProfileSetupScreen(),
+                  builder: (context, state) => ProfileSetupScreen(
+                    // `?from=welcome` means first run: finishing goes to the
+                    // dashboard rather than back to whatever the welcome
+                    // happened to replace.
+                    fromWelcome:
+                        state.uri.queryParameters['from'] == 'welcome',
+                  ),
                 ),
                 // §28.5's route table, completed by Phase 5. Both are
                 // jobs you finish and come back from, so both cover the
