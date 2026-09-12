@@ -70,10 +70,7 @@ class LogEntryNutrients extends Table {
 
 /// Immutable and additive by design (§17.6 → still true with no sync: an
 /// edit is a delete-and-recreate, never an in-place amount change).
-@TableIndex(
-  name: 'water_log_entries_owner_date',
-  columns: {#ownerId, #logDate},
-)
+@TableIndex(name: 'water_log_entries_owner_date', columns: {#ownerId, #logDate})
 class WaterLogEntries extends Table with Identifiable, Owned, SoftDeletable {
   DateTimeColumn get logDate => dateTime()();
   DateTimeColumn get loggedAt => dateTime()();

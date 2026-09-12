@@ -14,6 +14,7 @@ import '../../../../shared/formatting.dart';
 import '../../../food_catalog/data/food_catalog_providers.dart';
 import '../../../profile/data/profile_providers.dart';
 import '../../data/backup_providers.dart';
+import '../../data/export_file_type.dart';
 import '../../../reminders/data/reminder_providers.dart';
 import '../../data/export_service.dart';
 
@@ -227,11 +228,22 @@ class _DataBackupScreenState extends ConsumerState<DataBackupScreen> {
 
   Future<void> _import() async {
     final messenger = ScaffoldMessenger.of(context);
-    final file = await openFile(
-      acceptedTypeGroups: const [
-        XTypeGroup(label: 'Nourishly export', extensions: ['json']),
-      ],
-    );
+
+    // Inside the try, deliberately. This call used to sit outside it, so
+    // when the picker threw there was no snackbar, no dialog and no
+    // spinner — the button simply did nothing, which is the one failure
+    // mode a user cannot report usefully or work around.
+    final XFile? file;
+    try {
+      file = await openFile(
+        acceptedTypeGroups: const [nourishlyExportFileType],
+      );
+    } on Object catch (error) {
+      messenger.showSnackBar(
+        SnackBar(content: Text('Could not open the file picker: $error')),
+      );
+      return;
+    }
     if (file == null) return;
 
     setState(() {
@@ -282,8 +294,7 @@ class _DataBackupScreenState extends ConsumerState<DataBackupScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: () =>
-                Navigator.of(context).pop(_DeleteChoice.cancel),
+            onPressed: () => Navigator.of(context).pop(_DeleteChoice.cancel),
             child: const Text('Cancel'),
           ),
           TextButton(
@@ -328,9 +339,9 @@ class _DataBackupScreenState extends ConsumerState<DataBackupScreen> {
             style: FilledButton.styleFrom(
               backgroundColor: context.nourishlyColors.danger,
             ),
-            onPressed: () => Navigator.of(
-              context,
-            ).pop(controller.text.trim().toUpperCase() == 'DELETE'),
+            onPressed: () =>
+                Navigator.of(context)
+                    .pop(controller.text.trim().toUpperCase() == 'DELETE'),
             child: const Text('Delete everything'),
           ),
         ],
@@ -546,11 +557,7 @@ class _ActionRow extends StatelessWidget {
                 ),
               ),
               if (!destructive)
-                Icon(
-                  Icons.chevron_right_rounded,
-                  size: 20,
-                  color: colors.ink3,
-                ),
+                Icon(Icons.chevron_right_rounded, size: 20, color: colors.ink3),
             ],
           ),
         ),

@@ -329,9 +329,7 @@ void main() {
       // The catalog and reference rows come from the bundled asset on a
       // real device; here they are seeded so the foreign keys resolve.
       await seed(fresh, await ensureDefaultOwner(fresh));
-      await fresh.customUpdate(
-        'DELETE FROM food_log_entries',
-      );
+      await fresh.customUpdate('DELETE FROM food_log_entries');
       await fresh.customUpdate('DELETE FROM water_log_entries');
       await fresh.customUpdate("DELETE FROM food_items WHERE id = 'food-mine'");
     });
@@ -342,9 +340,8 @@ void main() {
       final archive = await DataExporter(db).export(ownerId: ownerId);
       final freshOwner = await ensureDefaultOwner(fresh);
 
-      final report = await DataImporter(
-        fresh,
-      ).import(archive, asOwner: freshOwner);
+      final report = await DataImporter(fresh)
+          .import(archive, asOwner: freshOwner);
 
       expect(
         report.succeeded,
@@ -359,9 +356,9 @@ void main() {
         );
       }
 
-      final entries = await fresh.customSelect(
-        'SELECT * FROM food_log_entries',
-      ).get();
+      final entries = await fresh
+          .customSelect('SELECT * FROM food_log_entries')
+          .get();
       expect(entries, hasLength(1));
       expect(entries.single.data['grams_consumed'], 180.0);
       expect(entries.single.data['owner_id'], freshOwner);
@@ -371,14 +368,12 @@ void main() {
       final archive = await DataExporter(db).export(ownerId: ownerId);
       final freshOwner = await ensureDefaultOwner(fresh);
 
-      final first = await DataImporter(
-        fresh,
-      ).import(archive, asOwner: freshOwner);
+      final first = await DataImporter(fresh)
+          .import(archive, asOwner: freshOwner);
       final countAfterFirst = await _countAll(fresh);
 
-      final second = await DataImporter(
-        fresh,
-      ).import(archive, asOwner: freshOwner);
+      final second = await DataImporter(fresh)
+          .import(archive, asOwner: freshOwner);
 
       expect(second.succeeded, isTrue);
       expect(await _countAll(fresh), countAfterFirst);
@@ -399,9 +394,7 @@ void main() {
         'UPDATE food_log_entries SET grams_consumed = 240, updated_at = ? '
         "WHERE id = 'entry-1'",
         variables: [
-          Variable<int>(
-            DateTime(2026, 9, 10).millisecondsSinceEpoch ~/ 1000,
-          ),
+          Variable<int>(DateTime(2026, 9, 10).millisecondsSinceEpoch ~/ 1000),
         ],
       );
 
@@ -426,9 +419,7 @@ void main() {
         'UPDATE food_log_entries SET grams_consumed = 300, updated_at = ? '
         "WHERE id = 'entry-1'",
         variables: [
-          Variable<int>(
-            DateTime(2026, 9, 20).millisecondsSinceEpoch ~/ 1000,
-          ),
+          Variable<int>(DateTime(2026, 9, 20).millisecondsSinceEpoch ~/ 1000),
         ],
       );
       await db.customUpdate(
@@ -450,9 +441,7 @@ void main() {
         'UPDATE food_log_entries SET grams_consumed = 180, updated_at = ? '
         "WHERE id = 'entry-1'",
         variables: [
-          Variable<int>(
-            DateTime(2026, 9, 9).millisecondsSinceEpoch ~/ 1000,
-          ),
+          Variable<int>(DateTime(2026, 9, 9).millisecondsSinceEpoch ~/ 1000),
         ],
       );
       await db.customUpdate(
@@ -490,12 +479,8 @@ void main() {
         'UPDATE food_log_entries SET deleted_at = ?, updated_at = ? '
         "WHERE id = 'entry-1'",
         variables: [
-          Variable<int>(
-            DateTime(2026, 9, 15).millisecondsSinceEpoch ~/ 1000,
-          ),
-          Variable<int>(
-            DateTime(2026, 9, 15).millisecondsSinceEpoch ~/ 1000,
-          ),
+          Variable<int>(DateTime(2026, 9, 15).millisecondsSinceEpoch ~/ 1000),
+          Variable<int>(DateTime(2026, 9, 15).millisecondsSinceEpoch ~/ 1000),
         ],
       );
       final archive = await DataExporter(db).export(ownerId: ownerId);
@@ -564,7 +549,9 @@ void main() {
 
       await DataImporter(db).import(archive);
       final ghost = await db
-          .customSelect("SELECT * FROM daily_summaries WHERE id = 'ghost-summary'")
+          .customSelect(
+            "SELECT * FROM daily_summaries WHERE id = 'ghost-summary'",
+          )
           .get();
       expect(
         ghost,
@@ -575,31 +562,34 @@ void main() {
   });
 
   group('files this build cannot read', () {
-    test('a newer schema version is refused with a reason, not a crash', () async {
-      final archive = await DataExporter(db).export(ownerId: ownerId);
-      final future = DataImporter(db).import(
-        ExportArchive(
-          manifest: ExportManifest(
-            schemaVersion: db.schemaVersion + 5,
-            exportedAt: DateTime(2026, 9, 9),
-            profileId: ownerId,
-            profileName: 'You',
-            counts: const {},
+    test(
+      'a newer schema version is refused with a reason, not a crash',
+      () async {
+        final archive = await DataExporter(db).export(ownerId: ownerId);
+        final future = DataImporter(db).import(
+          ExportArchive(
+            manifest: ExportManifest(
+              schemaVersion: db.schemaVersion + 5,
+              exportedAt: DateTime(2026, 9, 9),
+              profileId: ownerId,
+              profileName: 'You',
+              counts: const {},
+            ),
+            tables: archive.tables,
           ),
-          tables: archive.tables,
-        ),
-      );
-      await expectLater(
-        future,
-        throwsA(
-          isA<ExportFormatException>().having(
-            (e) => e.message,
-            'message',
-            contains('newer version'),
+        );
+        await expectLater(
+          future,
+          throwsA(
+            isA<ExportFormatException>().having(
+              (e) => e.message,
+              'message',
+              contains('newer version'),
+            ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
 
     test('a file that is not an export is refused', () {
       expect(
@@ -615,20 +605,23 @@ void main() {
       );
     });
 
-    test('an unknown column is dropped rather than failing the import', () async {
-      final archive = await DataExporter(db).export(ownerId: ownerId);
-      for (final row in archive.tables['water_log_entries']!) {
-        row['a_column_from_the_future'] = 'ignored';
-      }
-      await db.customUpdate('DELETE FROM water_log_entries');
+    test(
+      'an unknown column is dropped rather than failing the import',
+      () async {
+        final archive = await DataExporter(db).export(ownerId: ownerId);
+        for (final row in archive.tables['water_log_entries']!) {
+          row['a_column_from_the_future'] = 'ignored';
+        }
+        await db.customUpdate('DELETE FROM water_log_entries');
 
-      final report = await DataImporter(db).import(archive);
-      expect(report.succeeded, isTrue);
-      final water = await db
-          .customSelect('SELECT * FROM water_log_entries')
-          .get();
-      expect(water, hasLength(1));
-    });
+        final report = await DataImporter(db).import(archive);
+        expect(report.succeeded, isTrue);
+        final water = await db
+            .customSelect('SELECT * FROM water_log_entries')
+            .get();
+        expect(water, hasLength(1));
+      },
+    );
   });
 }
 

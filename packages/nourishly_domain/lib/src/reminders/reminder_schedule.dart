@@ -38,9 +38,8 @@ sealed class ReminderSchedule {
 /// A clock time on a chosen set of weekdays.
 class DailySchedule extends ReminderSchedule {
   DailySchedule({required this.time, Set<int>? weekdays})
-    : weekdays = {...weekdays ?? _everyDay}..removeWhere(
-        (day) => day < DateTime.monday || day > DateTime.sunday,
-      );
+    : weekdays = {...weekdays ?? _everyDay}
+        ..removeWhere((day) => day < DateTime.monday || day > DateTime.sunday);
 
   static const _everyDay = {1, 2, 3, 4, 5, 6, 7};
 
@@ -93,7 +92,8 @@ class InactivitySchedule extends ReminderSchedule {
       gap: Duration(minutes: (hours * 60).round()),
       windowStart:
           LocalTime.tryParse(map['from'] as String?) ?? LocalTime.of(8, 0),
-      windowEnd: LocalTime.tryParse(map['to'] as String?) ?? LocalTime.of(21, 0),
+      windowEnd:
+          LocalTime.tryParse(map['to'] as String?) ?? LocalTime.of(21, 0),
     );
   }
 

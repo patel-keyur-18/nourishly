@@ -117,6 +117,5 @@ class ScheduledReminder {
   final String route;
 
   @override
-  String toString() =>
-      'ScheduledReminder(${type.id} @ $when → $route)';
+  String toString() => 'ScheduledReminder(${type.id} @ $when → $route)';
 }

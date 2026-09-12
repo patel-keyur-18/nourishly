@@ -152,9 +152,9 @@ double contrastRatio(Color a, Color b) {
 }
 
 double _relativeLuminance(Color color) {
-  double channel(double value) =>
-      value <= 0.03928 ? value / 12.92 : math.pow((value + 0.055) / 1.055, 2.4)
-          as double;
+  double channel(double value) => value <= 0.03928
+      ? value / 12.92
+      : math.pow((value + 0.055) / 1.055, 2.4) as double;
   return 0.2126 * channel(color.r) +
       0.7152 * channel(color.g) +
       0.0722 * channel(color.b);

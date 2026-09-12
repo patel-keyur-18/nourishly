@@ -80,9 +80,7 @@ void main() {
     );
   });
 
-  testWidgets('a first week of logging is not prompted either', (
-    tester,
-  ) async {
+  testWidgets('a first week of logging is not prompted either', (tester) async {
     await logOn(today.subtract(const Duration(days: 5)));
     await logOn(today);
     await pump(tester);
@@ -121,10 +119,9 @@ void main() {
   testWidgets('a recent export silences it', (tester) async {
     await logOn(today.subtract(const Duration(days: 400)));
     await logOn(today);
-    await PreferencesDao(db).update(
-      ownerId,
-      lastExportedAt: today.subtract(const Duration(days: 3)),
-    );
+    await PreferencesDao(
+      db,
+    ).update(ownerId, lastExportedAt: today.subtract(const Duration(days: 3)));
     await pump(tester);
     expect(prompt, findsNothing);
   });
@@ -193,10 +190,7 @@ void main() {
     test('what it deletes and what an export saves are the same list', () {
       // Not a behaviour test — a structural one. The eraser walks
       // `exportedTables`, so this asserts the two can never diverge.
-      expect(
-        exportedTables.map((t) => t.name).toSet(),
-        isNotEmpty,
-      );
+      expect(exportedTables.map((t) => t.name).toSet(), isNotEmpty);
       expect(exportedTables.first.name, 'users');
     });
   });

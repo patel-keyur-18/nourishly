@@ -66,9 +66,7 @@ class DataExporter {
           variables: [Variable<String>(ownerId)],
         )
         .get();
-    return [
-      for (final row in rows) _rowToJson(row.data, dateColumns),
-    ];
+    return [for (final row in rows) _rowToJson(row.data, dateColumns)];
   }
 
   /// SQLite hands back what it stores. Two conversions make the archive
@@ -83,9 +81,8 @@ class DataExporter {
       for (final entry in data.entries)
         entry.key: switch (typedColumns[entry.key]) {
           DriftSqlType.dateTime when entry.value is int =>
-            DateTime.fromMillisecondsSinceEpoch(
-              (entry.value! as int) * 1000,
-            ).toIso8601String(),
+            DateTime.fromMillisecondsSinceEpoch((entry.value! as int) * 1000)
+                .toIso8601String(),
           DriftSqlType.bool when entry.value is int => entry.value == 1,
           _ => entry.value,
         },

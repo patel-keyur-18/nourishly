@@ -47,31 +47,32 @@ class ReminderDao {
   }
 
   Stream<List<ReminderRule>> watch(String ownerId) {
-    return (_db.select(
-      _db.reminderRules,
-    )..where((r) => r.ownerId.equals(ownerId))).watch().map(
-      (rows) => rows.map(_toDomain).toList()..sort(_byTypeThenSlot),
-    );
+    return (_db.select(_db.reminderRules)
+          ..where((r) => r.ownerId.equals(ownerId)))
+        .watch()
+        .map((rows) => rows.map(_toDomain).toList()..sort(_byTypeThenSlot));
   }
 
   Future<void> setEnabled(String ruleId, {required bool enabled}) {
-    return (_db.update(_db.reminderRules)..where((r) => r.id.equals(ruleId)))
-        .write(
-          ReminderRulesCompanion(
-            enabled: Value(enabled),
-            updatedAt: Value(DateTime.now()),
-          ),
-        );
+    return (_db.update(
+      _db.reminderRules,
+    )..where((r) => r.id.equals(ruleId))).write(
+      ReminderRulesCompanion(
+        enabled: Value(enabled),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
   }
 
   Future<void> setSchedule(String ruleId, ReminderSchedule schedule) {
-    return (_db.update(_db.reminderRules)..where((r) => r.id.equals(ruleId)))
-        .write(
-          ReminderRulesCompanion(
-            schedule: Value(schedule.encode()),
-            updatedAt: Value(DateTime.now()),
-          ),
-        );
+    return (_db.update(
+      _db.reminderRules,
+    )..where((r) => r.id.equals(ruleId))).write(
+      ReminderRulesCompanion(
+        schedule: Value(schedule.encode()),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
   }
 
   /// Quiet hours are stored per rule by the schema but edited for the
@@ -90,13 +91,14 @@ class ReminderDao {
   }
 
   Future<void> setConditions(String ruleId, ReminderConditions conditions) {
-    return (_db.update(_db.reminderRules)..where((r) => r.id.equals(ruleId)))
-        .write(
-          ReminderRulesCompanion(
-            conditions: Value(conditions.encode()),
-            updatedAt: Value(DateTime.now()),
-          ),
-        );
+    return (_db.update(
+      _db.reminderRules,
+    )..where((r) => r.id.equals(ruleId))).write(
+      ReminderRulesCompanion(
+        conditions: Value(conditions.encode()),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
   }
 
   /// How many rules are on, for Settings' "3 on" summary row.

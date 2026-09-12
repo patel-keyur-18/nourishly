@@ -8,6 +8,7 @@ import '../features/food_catalog/data/food_catalog_providers.dart';
 import '../features/profile/data/profile_providers.dart';
 import '../features/reminders/data/local_notification_scheduler.dart';
 import '../features/reminders/data/reminder_providers.dart';
+import '../features/settings/presentation/appearance.dart';
 import 'router.dart';
 
 /// The Nourishly application shell: theme + routing, nothing else. Actual
@@ -117,8 +118,9 @@ class _NourishlyAppState extends ConsumerState<NourishlyApp>
       // Light by default (the palette was drawn light-first and the
       // prototype was approved in it), but dark stays first-class
       // (§27.14): `UserPreferences.theme` decides, and `system` is
-      // honoured in full for anyone who asks for it.
-      themeMode: _themeModeOf(preferences?.theme),
+      // honoured in full for anyone who asks for it — which, since
+      // Settings grew an Appearance row, someone finally can.
+      themeMode: Appearance.fromId(preferences?.theme).themeMode,
       routerConfig: appRouter,
       builder: (context, child) {
         return catalogReady.when(
@@ -130,17 +132,6 @@ class _NourishlyAppState extends ConsumerState<NourishlyApp>
     );
   }
 }
-
-/// `UserPreferences.theme` as a [ThemeMode].
-///
-/// An unreadable or not-yet-loaded preference falls back to light rather
-/// than to the system setting, so the very first frame does not flash the
-/// wrong palette on a phone set to dark.
-ThemeMode _themeModeOf(String? stored) => switch (stored) {
-  'dark' => ThemeMode.dark,
-  'system' => ThemeMode.system,
-  _ => ThemeMode.light,
-};
 
 class _LoadingScreen extends StatelessWidget {
   const _LoadingScreen({this.error});

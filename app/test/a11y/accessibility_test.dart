@@ -145,12 +145,7 @@ void main() {
     ) async {
       // A 320-wide screen at double type is the worst realistic case, and
       // the one that catches a Row that should have been a Wrap.
-      await pump(
-        tester,
-        '/today',
-        textScale: 2,
-        size: const Size(320, 640),
-      );
+      await pump(tester, '/today', textScale: 2, size: const Size(320, 640));
       expect(tester.takeException(), isNull);
     });
   });
@@ -193,9 +188,7 @@ void main() {
       // pumpAndSettle to have waited on. The assertion that matters is
       // that the screen settled at all — an unreduced vessel would still
       // be rippling.
-      final vessel = tester.state<WaterVesselState>(
-        find.byType(WaterVessel),
-      );
+      final vessel = tester.state<WaterVesselState>(find.byType(WaterVessel));
       expect(vessel.mounted, isTrue);
       expect(tester.takeException(), isNull);
     });
@@ -311,11 +304,7 @@ class _NoFilesExportService extends ExportService {
   Future<void> clearGenerated() async {}
 }
 
-Future<void> _seed(
-  NourishlyDatabase db,
-  String ownerId,
-  DateTime today,
-) async {
+Future<void> _seed(NourishlyDatabase db, String ownerId, DateTime today) async {
   const uuid = Uuid();
   await db
       .into(db.nutrientGroups)
@@ -451,9 +440,6 @@ Future<void> _seed(
     mealSlotId: 'slot-lunch',
     logDate: today,
   );
-  await WaterLogDao(db).logWater(
-    ownerId: ownerId,
-    volumeMl: 1200,
-    logDate: today,
-  );
+  await WaterLogDao(db)
+      .logWater(ownerId: ownerId, volumeMl: 1200, logDate: today);
 }

@@ -49,7 +49,9 @@ class LocalNotificationScheduler implements ReminderScheduler {
 
     tz_data.initializeTimeZones();
     try {
-      tz.setLocalLocation(tz.getLocation(await FlutterTimezone.getLocalTimezone()));
+      tz.setLocalLocation(
+        tz.getLocation(await FlutterTimezone.getLocalTimezone()),
+      );
     } on Object catch (error) {
       // A device whose zone name the database does not recognise falls
       // back to UTC rather than failing to schedule anything. Reminders

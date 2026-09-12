@@ -42,11 +42,7 @@ class ExportPromptBanner extends ConsumerWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(
-                  Icons.archive_outlined,
-                  size: 20,
-                  color: colors.accent,
-                ),
+                Icon(Icons.archive_outlined, size: 20, color: colors.accent),
                 const SizedBox(width: NourishlySpace.s3),
                 Expanded(
                   child: Text(

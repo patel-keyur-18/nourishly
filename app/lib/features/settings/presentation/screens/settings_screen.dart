@@ -6,6 +6,7 @@ import 'package:nourishly_ui/nourishly_ui.dart';
 
 import '../../../../app/providers.dart';
 import '../../../../shared/app_version.dart';
+import '../appearance.dart';
 import '../../../data_backup/data/backup_providers.dart';
 import '../../../food_catalog/data/food_catalog_providers.dart';
 import '../../../profile/data/profile_providers.dart';
@@ -23,12 +24,16 @@ import '../../../reminders/data/reminder_providers.dart';
 /// export, backup and deletion (§0.5, §30.6, §30.7), which §27.13 requires
 /// to be "discoverable, not buried".
 ///
-/// One deliberate departure from prototype 13A: there is no "Profiles on
-/// this phone" group and no profile switcher. The household runs one
-/// profile per phone (§0.4's typical case), so the switcher would add a
-/// second concept to every screen in service of a case that does not
-/// arise. `owner_id` stays on every owned row, so this forecloses
-/// nothing — see `docs/design/decisions.md`.
+/// Two deliberate departures from prototype 13A, both recorded with their
+/// reasoning in `docs/design/decisions.md`:
+///
+/// - **No profile switcher.** The household runs one profile per phone
+///   (§0.4's typical case), so a switcher would add a second concept to
+///   every screen in service of a case that does not arise. `owner_id`
+///   stays on every owned row, so this forecloses nothing.
+/// - **An Appearance row the prototype does not draw.** Dark mode was
+///   built and honoured from Phase 1 but had no control, so FR-S-09 was
+///   unreachable and every profile sat on light forever.
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
@@ -138,6 +143,17 @@ class SettingsScreen extends ConsumerWidget {
                       value: _focusSummary(ref),
                       onTap: () => _editFocusNutrients(context, ref),
                     ),
+                    // FR-S-09 and §27.13's accessibility options. Dark
+                    // mode has been first-class since Phase 1 — full
+                    // palette, full theme — but nothing could reach it,
+                    // so every profile sat on light whether that suited
+                    // them or not. A display preference belongs in this
+                    // group, beside the other two.
+                    _NavRow(
+                      title: 'Appearance',
+                      value: Appearance.fromId(preferences.theme).label,
+                      onTap: () => _editAppearance(context, ref, preferences),
+                    ),
                   ],
                 ),
               ),
@@ -227,6 +243,7 @@ class SettingsScreen extends ConsumerWidget {
     int? dayRolloverTime,
     String? unitSystem,
     List<String>? focusNutrientIds,
+    String? theme,
   }) async {
     final ownerId = await ref.read(defaultOwnerProvider.future);
     await ref
@@ -239,6 +256,7 @@ class SettingsScreen extends ConsumerWidget {
           dayRolloverTime: dayRolloverTime,
           unitSystem: unitSystem,
           focusNutrientIds: focusNutrientIds,
+          theme: theme,
         );
     ref.read(summaryRevisionProvider.notifier).bump();
   }
@@ -293,6 +311,41 @@ class SettingsScreen extends ConsumerWidget {
     );
     if (picked == null) return;
     _update(ref, dayRolloverTime: picked.hour * 60 + picked.minute);
+  }
+
+  /// Same sheet pattern as the diet picker below — a plain list that
+  /// closes on the tap, with a tick against the current value.
+  Future<void> _editAppearance(
+    BuildContext context,
+    WidgetRef ref,
+    UserPreference preferences,
+  ) async {
+    final current = Appearance.fromId(preferences.theme);
+    final choice = await showModalBottomSheet<Appearance>(
+      context: context,
+      showDragHandle: true,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (final appearance in Appearance.values)
+              ListTile(
+                title: Text(appearance.label),
+                trailing: appearance == current
+                    ? Icon(
+                        Icons.check_rounded,
+                        color: context.nourishlyColors.accent,
+                      )
+                    : null,
+                onTap: () => Navigator.of(context).pop(appearance),
+              ),
+            const SizedBox(height: NourishlySpace.s3),
+          ],
+        ),
+      ),
+    );
+    if (choice == null) return;
+    _update(ref, theme: choice.id);
   }
 
   Future<void> _editDiet(

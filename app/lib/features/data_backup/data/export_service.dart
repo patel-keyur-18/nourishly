@@ -32,8 +32,7 @@ class ExportResult {
   final int rowCount;
   final DateTime exportedAt;
 
-  int get bytes =>
-      files.fold(0, (sum, file) => sum + file.lengthSync());
+  int get bytes => files.fold(0, (sum, file) => sum + file.lengthSync());
 }
 
 /// Writes a complete archive to a file the user can keep (§0.5, §30.6).
@@ -129,8 +128,7 @@ class ExportService {
     return DataImporter(_db).import(
       decoded,
       asOwner: ownerId,
-      onProgress: (done, total) =>
-          onProgress?.call(0.3 + done / total * 0.7),
+      onProgress: (done, total) => onProgress?.call(0.3 + done / total * 0.7),
     );
   }
 

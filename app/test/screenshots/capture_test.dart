@@ -86,9 +86,7 @@ void main() {
           // No notification plugin answers a widget test, and a screen
           // that needs one is a screen that cannot be tested (§29.3's
           // port exists for exactly this).
-          reminderSchedulerProvider.overrideWithValue(
-            NoopReminderScheduler(),
-          ),
+          reminderSchedulerProvider.overrideWithValue(NoopReminderScheduler()),
         ],
         child: RepaintBoundary(key: captureKey, child: const NourishlyApp()),
       ),
@@ -215,6 +213,18 @@ void main() {
   testWidgets('your data', (tester) async {
     await pump(tester, '/profile/data');
     await shoot(tester, '14-your-data');
+  });
+
+  testWidgets('settings in dark mode', (tester) async {
+    await PreferencesDao(db).update(ownerId, theme: 'dark');
+    await pump(tester, '/profile');
+    await shoot(tester, '15-settings-dark');
+  });
+
+  testWidgets('dashboard in dark mode', (tester) async {
+    await PreferencesDao(db).update(ownerId, theme: 'dark');
+    await pump(tester, '/today');
+    await shoot(tester, '16-dashboard-dark');
   });
 
   testWidgets('water, mid-pour', (tester) async {

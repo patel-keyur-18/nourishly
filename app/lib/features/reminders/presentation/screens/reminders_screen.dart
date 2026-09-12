@@ -120,10 +120,7 @@ class _MasterSwitch extends ConsumerWidget {
                   enabled
                       ? 'On. Turn this off to silence all of them at once.'
                       : 'Off. Nothing is scheduled.',
-                  style: text.caption.copyWith(
-                    color: colors.ink3,
-                    height: 1.4,
-                  ),
+                  style: text.caption.copyWith(color: colors.ink3, height: 1.4),
                 ),
               ],
             ),
