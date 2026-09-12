@@ -99,11 +99,24 @@ Future<FdcFood?> _searchFdc(FdcSource client, List<String> queries) async {
 /// recipe (in which case [catalogRow] names it and the values are already
 /// on a cooked basis).
 class _IngredientSource {
-  const _IngredientSource(this.nutrientsPer100g, {this.food, this.catalogRow});
+  const _IngredientSource(
+    this.nutrientsPer100g, {
+    this.food,
+    this.catalogRow,
+    this.catalogRowName,
+  });
 
   final Map<String, double> nutrientsPer100g;
   final FdcFood? food;
+
+  /// The stable row key (`catalog_row_key.dart`) of the catalog dish this
+  /// ingredient resolved to — a key rather than a name, because two files
+  /// legitimately carry the same dish name and `build_seed` has to point
+  /// at exactly one of them.
   final String? catalogRow;
+
+  /// That row's display name, carried only so the draft reads.
+  final String? catalogRowName;
 }
 
 /// Resolves a recipe ingredient name to per-100g nutrients.
@@ -216,7 +229,8 @@ class _IngredientResolver {
     );
     return _IngredientSource(
       yieldResult.nutrientsPer100g,
-      catalogRow: row.entry.foodName,
+      catalogRow: row.entry.key,
+      catalogRowName: row.entry.foodName,
     );
   }
 
@@ -342,6 +356,7 @@ Future<void> main(List<String> args) async {
 
       resolved.add({
         'kind': 'ingredient',
+        'key': entry.key,
         'sourceFile': entry.sourceFile,
         'foodName': entry.foodName,
         'isTier1': entry.isTier1,
@@ -422,6 +437,7 @@ Future<void> main(List<String> args) async {
         'quantityGrams': gramsForIngredient(ingredient),
         'source': source.catalogRow != null ? 'catalog' : 'fdc',
         'catalogRow': source.catalogRow,
+        'catalogRowName': source.catalogRowName,
         'fdcId': source.food?.fdcId,
         'fdcDescription': source.food?.description,
         'fdcDataType': source.food?.dataType,
@@ -440,6 +456,7 @@ Future<void> main(List<String> args) async {
 
     resolved.add({
       'kind': 'recipe',
+      'key': entry.key,
       'sourceFile': entry.sourceFile,
       'foodName': entry.foodName,
       'isTier1': entry.isTier1,

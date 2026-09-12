@@ -19,7 +19,27 @@ import 'dart:io';
 import 'package:catalog_pipeline/catalog_pipeline.dart';
 import 'package:uuid/uuid.dart';
 
-final _uuid = const Uuid();
+const _uuid = Uuid();
+
+/// A fixed namespace for this catalog's derived ids. Any constant would
+/// do; it is written out rather than imported so that changing it is an
+/// obvious, deliberate act — every id in the seed depends on it.
+const _idNamespace = '6f1a2c30-0b1d-5e4a-9c8b-2f7d4e1a5b60';
+
+/// The seed id for [name], derived rather than random.
+///
+/// `build_seed` used to mint a fresh `uuid.v7()` for every row on every
+/// run, which had two costs. Regenerating the seed rewrote all 2.3 MB, so
+/// `git diff` showed everything changed and nothing readable — there was
+/// no way to see what a new row actually did. And because the app's
+/// catalog import is keyed on ids, shipping a second seed to a device that
+/// already had one would have imported a duplicate of the entire catalog
+/// rather than an update.
+///
+/// A v5 id fixes both: same input, same id, forever. Child rows derive
+/// from their parent's key plus what they are, so a re-import updates a
+/// serving size or an alt name in place instead of adding a second one.
+String _idFor(String name) => _uuid.v5(_idNamespace, 'nourishly:catalog:$name');
 
 /// `Foundation`/`SR Legacy` are USDA's measured, lab-analysed data;
 /// anything else (here: `Branded`, for jaggery) is manufacturer-reported
@@ -28,6 +48,23 @@ final _uuid = const Uuid();
   return fdcDataType == 'Foundation' || fdcDataType == 'SR Legacy'
       ? ('verified', 'measured')
       : ('derived', 'label');
+}
+
+/// The draft's row key, written by `fetch_catalog.dart`.
+///
+/// Required rather than re-derived: a draft without it was produced by an
+/// older fetch, and silently deriving the key here would let a stale
+/// draft build a seed whose ids do not match the one the current
+/// pipeline would produce.
+String _keyOf(Map<String, dynamic> food) {
+  final key = food['key'] as String?;
+  if (key == null || key.isEmpty) {
+    throw StateError(
+      'Draft entry "${food['foodName']}" has no row key. It was produced by '
+      'an older fetch_catalog.dart — rerun it before building the seed.',
+    );
+  }
+  return key;
 }
 
 void main() {
@@ -66,23 +103,16 @@ void main() {
   // than minting a duplicate. Keyed by entry identity, not by name — a name
   // can repeat across state files (Idli, Puri, Coconut rice), and those are
   // separate rows with separate ids.
-  final foodIdByEntry = {for (final food in resolvedFoods) food: _uuid.v7()};
+  final foodIdByEntry = {
+    for (final food in resolvedFoods) food: _idFor(_keyOf(food)),
+  };
 
-  // Name -> id for resolving an ingredient's `catalogRow`. A name several
-  // rows share is left out rather than pointing at an arbitrary one; no
-  // ingredient currently resolves to such a name, and the component loop
-  // throws with the name if that ever changes.
-  final foodIdByName = <String, String>{};
-  final ambiguousNames = <String>{};
-  for (final food in resolvedFoods) {
-    final name = food['foodName'] as String;
-    if (!foodIdByName.containsKey(name)) {
-      foodIdByName[name] = foodIdByEntry[food]!;
-    } else {
-      ambiguousNames.add(name);
-    }
-  }
-  foodIdByName.removeWhere((name, _) => ambiguousNames.contains(name));
+  // Row key -> id, for resolving an ingredient's `catalogRow`. Keys are
+  // unique by construction, so unlike the name map this replaced there is
+  // no ambiguity to drop: "Coconut rice" is three rows and three keys.
+  final foodIdByKey = {
+    for (final food in resolvedFoods) _keyOf(food): foodIdByEntry[food]!,
+  };
 
   void addNutrientValues(
     String foodId,
@@ -91,7 +121,7 @@ void main() {
   ) {
     for (final entry in nutrientsPer100g.entries) {
       nutrientValues.add({
-        'id': _uuid.v7(),
+        'id': _idFor('$foodId/nutrient/${entry.key}'),
         'foodId': foodId,
         'nutrientId': entry.key,
         'amountPer100g': entry.value,
@@ -124,7 +154,7 @@ void main() {
     );
 
     servingSizes.add({
-      'id': _uuid.v7(),
+      'id': _idFor('$foodId/serving'),
       'foodId': foodId,
       'label': food['servingLabel'],
       'grams': food['servingAmount'],
@@ -135,7 +165,7 @@ void main() {
 
     for (final alsoName in (food['alsoNames'] as List).cast<String>()) {
       altNames.add({
-        'id': _uuid.v7(),
+        'id': _idFor('$foodId/alt/$alsoName'),
         'foodId': foodId,
         'name': alsoName,
         'nameNormalized': alsoName.toLowerCase(),
@@ -172,7 +202,7 @@ void main() {
     );
 
     servingSizes.add({
-      'id': _uuid.v7(),
+      'id': _idFor('$foodId/serving'),
       'foodId': foodId,
       'label': food['servingLabel'],
       'grams': food['servingAmount'],
@@ -183,7 +213,7 @@ void main() {
 
     for (final alsoName in (food['alsoNames'] as List).cast<String>()) {
       altNames.add({
-        'id': _uuid.v7(),
+        'id': _idFor('$foodId/alt/$alsoName'),
         'foodId': foodId,
         'name': alsoName,
         'nameNormalized': alsoName.toLowerCase(),
@@ -204,12 +234,11 @@ void main() {
         // duplicate, which is what makes the component chain traceable
         // (Bhel -> Sev, thin -> besan + oil).
         ingredientFoodId =
-            foodIdByName[catalogRow] ??
+            foodIdByKey[catalogRow] ??
             (throw StateError(
               '${food['foodName']} lists "${ingredient['name']}", resolved to '
-              'catalog row "$catalogRow", which is not in the draft under a '
-              'unique name. Rename the duplicate rows, or rerun '
-              'fetch_catalog.dart.',
+              'catalog row key "$catalogRow", which is not in the draft. '
+              'Rerun fetch_catalog.dart.',
             ));
       } else if (fdcId != null) {
         // Reuse the ingredient's FoodItems row if this exact FDC food is
@@ -217,7 +246,10 @@ void main() {
         // recipe's ingredient); otherwise mint one so the ingredient is
         // traceable even if it isn't its own Tier-1/2/3 catalog entry.
         ingredientFoodId = ingredientFoodIdByFdcId.putIfAbsent(fdcId, () {
-          final newId = _uuid.v7();
+          // Keyed on the FDC id, not on which recipe reached it first —
+          // the same component row has to come out with the same id
+          // whatever order the draft happens to be in.
+          final newId = _idFor('fdc/$fdcId');
           final (qualityTier, valueSource) = _tierFor(
             ingredient['fdcDataType'] as String,
           );
@@ -258,7 +290,7 @@ void main() {
       }
 
       recipeComponents.add({
-        'id': _uuid.v7(),
+        'id': _idFor('$foodId/component/$ingredientFoodId/$i'),
         'recipeFoodItemId': foodId,
         'ingredientFoodItemId': ingredientFoodId,
         'quantityGrams': ingredient['quantityGrams'],
@@ -302,25 +334,25 @@ void main() {
     ],
     'mealSlots': [
       {
-        'id': _uuid.v7(),
+        'id': _idFor('meal-slot/breakfast'),
         'key': 'breakfast',
         'displayName': 'Breakfast',
         'sortOrder': 0,
       },
       {
-        'id': _uuid.v7(),
+        'id': _idFor('meal-slot/lunch'),
         'key': 'lunch',
         'displayName': 'Lunch',
         'sortOrder': 1,
       },
       {
-        'id': _uuid.v7(),
+        'id': _idFor('meal-slot/dinner'),
         'key': 'dinner',
         'displayName': 'Dinner',
         'sortOrder': 2,
       },
       {
-        'id': _uuid.v7(),
+        'id': _idFor('meal-slot/snack'),
         'key': 'snack',
         'displayName': 'Snack',
         'sortOrder': 3,

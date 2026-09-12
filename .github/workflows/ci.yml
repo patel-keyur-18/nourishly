@@ -37,6 +37,30 @@ jobs:
       - name: Check nutrition_core / nourishly_domain stay pure Dart
         run: dart run tools/import_lint/check_domain_imports.dart
 
+  catalog-check:
+    name: Catalog resolution check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+
+      # Offline by design: no network, no FDC_API_KEY. It reads the
+      # markdown, the target table and the committed lock, and fails on a
+      # duplicate row key, an ingredient nobody mapped, a target pointing
+      # at no row, an implausible yield, or any change to what an existing
+      # row's ingredients resolve to. That last one is the reason this job
+      # exists — adding a row used to be able to silently recompute a dish
+      # from a different food, with no error anywhere.
+      - name: Install dependencies
+        working-directory: tools/catalog_pipeline
+        run: dart pub get
+
+      - name: parse_catalog --check
+        run: dart run tools/catalog_pipeline/bin/parse_catalog.dart --check
+
   analyze-and-test:
     name: Analyze & test (${{ matrix.package.path }})
     runs-on: ubuntu-latest
