@@ -1,7 +1,9 @@
 # Plan — Multi-cuisine catalog, a safe way to keep adding to it, and "our kitchen" light-cooking versions
 
-*Draft 0.5 · 2026-09-12 · awaiting approval · [Catalog spec](../catalog/README.md) · [Food & nutrition](../architecture/05-food-and-nutrition.md) · [Scope](../architecture/00-scope.md)*
+*Draft 0.6 · 2026-09-12 · approved; WP0–WP4 and WP6 built · [Catalog spec](../catalog/README.md) · [Food & nutrition](../architecture/05-food-and-nutrition.md) · [Scope](../architecture/00-scope.md)*
 
+> **0.5 → 0.6** — approved and implemented. §0 records what was built, what changed while building it, and what is still open.
+>
 > **0.4 → 0.5** — adds §11, a pre-approval readiness review: what is verified against the code, one thing rev 0.3 got wrong (meal templates are not built), seven ranked open risks, and a re-ordering that makes the risky refactor provable.
 >
 > **0.3 → 0.4** — the four blocking answers folded in: overnight oats and plain dal written out ingredient by ingredient (§6.7), the missing-ingredient list corrected from six to nine (the seeds), wave 1 now ~39 rows. WP3 is unblocked.
@@ -10,9 +12,55 @@
 >
 > **0.1 → 0.2** — adds the agreed division of labour (§2), the FDC cache design (§3), a root-cause fix for name collisions with measurements from the committed catalog (§4), and what `cuisineTags` should actually do (§5). Part A and Part B are unchanged in substance and condensed here.
 
-Still nothing implemented. This is the plan to approve or change.
+---
+
+## 0. Implementation status (2026-09-12)
+
+Approved and built, in this order. Every figure below was produced by running the thing, not estimated.
+
+| | Package | State |
+|---|---|---|
+| **WP1** | FDC response cache | ✅ Built. Three modes; `--cache-only` needs no key and no network |
+| **WP0** | Safe-to-extend pipeline | ✅ Built. Row keys, explicit ingredient targets, `catalog.lock.json`, `--check` in CI, deterministic seed ids |
+| **WP2** | Catalog spec additions | ✅ Built. §0.7 (keys, the add-a-row loop), §0.8 (tags), plate/bowl, the absorbed-oil convention |
+| **WP3** | Wave 1 rows | ✅ Built. 33 rows; catalog 408 → 441 |
+| **WP4** | `cuisineTags` populated and surfaced | ✅ Built. Cuisine shows in search results |
+| **WP6** | Light cooking — fork a catalog recipe | ✅ Built. "Make this our version" + "Use less oil" |
+| **WP5** | Cuisine ranking and browse chips | Not built |
+| **WP7** | Oil-saved insight, cuisine mix in reports | Not built |
+
+**Tests: 587 passing** — 128 catalog_pipeline, 164 nourishly_data, 118 app, 112 nutrition_core, 41 nourishly_ui, 28 nourishly_domain. `analyze --fatal-infos` clean in all six. `parse_catalog --check` passes: **33 rows added, zero retargets** — nothing that was already in the catalog changed meaning.
+
+### What changed from the plan while building it
+
+- **§10.4's ordering worked, by a better route than expected.** The baseline lock was meant to come from a live fetch. It turned out the whole resolution map is computable offline, so the lock was taken from the current pipeline *before* the refactor and the migration's pass condition became "lock unchanged" with no fetch needed at all.
+- **The retarget guard proved almost unnecessary, which is the point.** Adding a row literally named `Besan` — the exact case that silently moved 63 references in §4 — is now simply harmless: resolution no longer depends on what other rows exist. The guard still catches a bad edit to the target table itself, verified by making one (20 retargets reported by dish name, exit 1).
+- **Tags are prefixed** — `cuisine:gujarati`, not `gujarati`. The first version matched bare tags against a list of known cuisines, and a widget test caught what that costs: an unfamiliar cuisine read as a course. A tag that says what it is cannot be misread.
+- **The lighter-oil preset asks per ingredient instead of halving everything.** §7 wanted it to skip absorbed oil automatically. It cannot: `absorbed oil 6 g` and `oil 6 g` both resolve to the Groundnut oil row, so by the time a recipe is stored the two are indistinguishable. Halving both would claim a reduction that never happened, so each fat is shown for the cook to accept or skip. Teaching `recipe_components` to carry each ingredient's original wording would let it filter properly — that is the follow-up.
+- **One pre-existing bug fixed because a new test found it.** `_GramsField` built its controller once, so a value changed from outside the field never reached the screen: the recipe would have been computed from 4 g while the box still read 8. It also rendered 4.5 g as "5".
+
+### Still open
+
+| | |
+|---|---|
+| **Which millet** the pasta and vermicelli are | `Jowar flour` is the placeholder and both rows say so. One ingredient name to change |
+| **A forked recipe's quality badge** | It reads "You" (`qualityTier: 'user'`), weaker than the catalog row's "Calc", though her measured version is the more accurate one for this kitchen. Left as it was rather than changed unasked — §10.3 risk 5 |
+| **The upsert import** | Not needed until the app is on a phone. Stable ids are the half that had to land first; §10.3 risk 6 names the rest |
+| **6 files fail `dart format`** | Pre-existing on `develop`, none of them touched here. Two of the original eight are now clean because this work edited them anyway |
+
+### Running it
+
+```
+dart run tools/catalog_pipeline/bin/parse_catalog.dart --check   # offline, no key
+FDC_API_KEY=... dart run tools/catalog_pipeline/bin/fetch_catalog.dart
+dart run tools/catalog_pipeline/bin/build_seed.dart
+dart run tools/catalog_pipeline/bin/parse_catalog.dart --write-lock
+```
+
+The first fetch is the expensive one and fills the cache; every run after it is a handful of calls. Nothing here has run a fetch — `app/assets/catalog/seed_v1.json` is untouched and still holds the 383-food build.
 
 ---
+
 
 ## 1. The division of labour
 
@@ -504,4 +552,4 @@ Nothing in this plan rests on an unstated assumption I am aware of. Where an ass
 
 ### Appendix — how the §4 numbers were obtained
 
-`CatalogIndex`'s three-tier resolution, `CompositionParser`'s ingredient extraction and `ingredientAliases` were re-implemented against the committed `docs/catalog/*.md` and the current alias map, then re-run with candidate new rows appended. The §6 audit is a direct search of the same files. The Dart toolchain is not available in this environment; WP0 turns the same analysis into `parse_catalog --check`, where it belongs. Every figure above is reproducible from the repository as committed.
+`CatalogIndex`'s three-tier resolution, `CompositionParser`'s ingredient extraction and `ingredientAliases` were re-implemented against the committed `docs/catalog/*.md` and the current alias map, then re-run with candidate new rows appended. The §6 audit is a direct search of the same files. WP0 has since turned the same analysis into `parse_catalog --check`, where it belongs, and it runs in CI. Every figure above is reproducible from the repository as committed.
