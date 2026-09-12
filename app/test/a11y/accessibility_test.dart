@@ -65,9 +65,21 @@ void main() {
             (ref) => _NoFilesExportService(db),
           ),
         ],
-        child: MediaQuery(
-          data: MediaQueryData(textScaler: TextScaler.linear(textScale)),
-          child: const NourishlyApp(),
+        // Built from the view, not from a bare `MediaQueryData`.
+        //
+        // `WidgetsApp` only inserts its own `MediaQuery.fromView` when
+        // there is not one above it, so a bare `MediaQueryData(textScaler:
+        // …)` here was the one every screen saw — and its `size` is
+        // `Size.zero`. Anything laid out from `MediaQuery.sizeOf` was
+        // therefore measuring nothing, and "survives 200% type" was a
+        // weaker promise than it looked.
+        child: Builder(
+          builder: (context) => MediaQuery(
+            data: MediaQueryData.fromView(
+              View.of(context),
+            ).copyWith(textScaler: TextScaler.linear(textScale)),
+            child: const NourishlyApp(),
+          ),
         ),
       ),
     );
@@ -130,6 +142,9 @@ void main() {
       '/profile/me',
       '/profile/reminders',
       '/profile/data',
+      // The recipe builder puts a name, a weight field and a remove button
+      // on one row, which is the shape that breaks first at large type.
+      '/recipes/new',
     ]) {
       testWidgets('$route survives 200% type', (tester) async {
         await pump(tester, route, textScale: 2);
