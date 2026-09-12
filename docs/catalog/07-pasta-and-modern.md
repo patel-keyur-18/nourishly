@@ -13,10 +13,12 @@ The part of this household's cooking that belongs to no regional tradition: past
 | Food | Also | Serving | g | Composition |
 |---|---|---|---|---|
 | Pasta, dry | penne, spaghetti, macaroni, fusilli | 100 g | 100 | USDA pasta dry enriched |
-| Millet pasta, dry | — | 100 g | 100 | Jowar flour 100 g — 100% millet, no wheat |
-| Millet vermicelli, raw | millet semiya, millet shavige | 50 g | 50 | Jowar flour 50 g — 100% millet, no wheat |
+| Millet pasta, dry | jowar pasta, sorghum pasta | 100 g | 100 | Jowar flour 100 g — 100% jowar, no wheat |
+| Millet vermicelli, raw | jowar semiya, millet semiya, millet shavige | 50 g | 50 | Jowar flour 50 g — 100% jowar, no wheat |
 
-> **⚠️ The two millet rows carry an assumption, and it is the only one in this wave.** FoodData Central has no "millet pasta" or "millet vermicelli", so rather than match them to durum wheat — which would be wrong in exactly the quiet way [§0.2](./README.md#02-how-dishes-get-their-nutrients-recipes-not-tables) exists to prevent — they are composed from a millet flour the catalog already carries, which is what the recipe mechanism is for. **Which** millet is a packet-label question nobody has answered yet; `Jowar flour` is the placeholder. When the packet is read, change the one ingredient name in these two rows to `Ragi flour` or `Bajra flour` and everything downstream recomputes. Both are 100% millet, which is confirmed.
+> **The two millet rows are composed, not matched.** FoodData Central has no "millet pasta" or "millet vermicelli". Matching them to durum wheat would be wrong in exactly the quiet way [§0.2](./README.md#02-how-dishes-get-their-nutrients-recipes-not-tables) exists to prevent — same shape, different grain, no warning anywhere — so instead they are built from a flour the catalog already carries, which is what the recipe mechanism is for.
+>
+> **The millet is jowar, confirmed by the household, and both products are 100% millet with no wheat.** So `Jowar flour` here is the real ingredient, not a placeholder. If a different packet ever comes home, changing that one ingredient name is the whole edit and everything downstream recomputes.
 
 ---
 

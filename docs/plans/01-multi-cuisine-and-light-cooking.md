@@ -43,7 +43,6 @@ Approved and built, in this order. Every figure below was produced by running th
 
 | | |
 |---|---|
-| **Which millet** the pasta and vermicelli are | `Jowar flour` is the placeholder and both rows say so. One ingredient name to change |
 | **A forked recipe's quality badge** | It reads "You" (`qualityTier: 'user'`), weaker than the catalog row's "Calc", though her measured version is the more accurate one for this kitchen. Left as it was rather than changed unasked — §10.3 risk 5 |
 | **The upsert import** | Not needed until the app is on a phone. Stable ids are the half that had to land first; §10.3 risk 6 names the rest |
 | **6 files fail `dart format`** | Pre-existing on `develop`, none of them touched here. Two of the original eight are now clean because this work edited them anyway |
@@ -316,12 +315,10 @@ The pantry is far better stocked than rev 0.2 assumed. Everything these dishes n
 | **Watermelon seeds** | overnight oats | USDA *seeds, watermelon seed kernels, dried* — magaz |
 | **Sunflower seeds** | overnight oats | plain USDA lookup. The catalog has sunflower **oil**, not the seed |
 | **Pasta, dry (durum)** | white sauce pasta, pumpkin sauce pasta | plain USDA lookup |
-| **Millet pasta** | millet pasta | ⚠️ no such FDC food — composition row |
-| **Millet vermicelli** | millet vermicelli | ⚠️ same |
+| **Millet pasta** | millet pasta | No such FDC food — a composition row over `Jowar flour` |
+| **Millet vermicelli** | millet vermicelli | Same |
 
-You confirmed the millet products are **100% millet**, so the two flagged rows become composition rows over the millet flour already in the catalog (`Ragi flour`, `Jowar flour`, `Bajra flour`) rather than a guess at a blend. That is traceable and it is exactly what §0.2's recipe mechanism is for.
-
-**One packet-label check, not a blocker:** which millet. The row ships with whichever you name and is corrected later by changing one ingredient name — the §0.3 pattern.
+You confirmed the millet products are **100% millet** and that the millet is **jowar**, so both rows are composition rows over `Jowar flour` — traceable, and exactly what §0.2's recipe mechanism is for, rather than a guess at a blend or a match to durum wheat.
 
 ### 6.3 One real gap the list exposed
 
@@ -456,14 +453,13 @@ WP6 (light cooking) moved ahead of WP5 (browse) because §6 shrank: at ~420 food
 |---|---|---|
 | Overnight oats | 21 g oats, milk, honey, 1 date, 1 small banana, chia + pumpkin + watermelon + sunflower seeds | §6.7 |
 | Normal dal | Toor dal, tempered in **oil** — not ghee, no jaggery | §6.7 |
-| Millet products | **100% millet** → composition rows, not a blended guess | §6.2 |
+| Millet products | **100% jowar**, no wheat → composition rows over `Jowar flour` | §6.2 |
 | Dosas | All nine existing rows stand as they are | §6.1 |
 
 **Still open — none of them blocks writing the rows:**
 
 | # | Question | Why it is not a blocker |
 |---|---|---|
-| 1 | **Which millet** is the pasta and vermicelli? Ragi, jowar, bajra — the packet will say | The row ships with whichever you name; correcting it later is one ingredient name (§0.3) |
 | 2 | **Chinese and Punjabi** — eaten out, or just not on the list? | Decides whether wave 2 is recipes or restaurant portions. Wave 1 does not touch it |
 | 3 | **Does she measure the oil, or estimate it?** | If she measures even roughly, Part B's forked numbers stop being estimates. A tablespoon and one week (§0.3) |
 | 4 | Commit the FDC cache (≈1 MB)? | Public domain, and it is what makes the seed reproducible (§3) |
