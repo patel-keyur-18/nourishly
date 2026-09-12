@@ -1,188 +1,317 @@
-# Plan — Multi-cuisine catalog expansion, and "our kitchen" light-cooking versions
+# Plan — Multi-cuisine catalog, a safe way to keep adding to it, and "our kitchen" light-cooking versions
 
-*Draft 0.1 · 2026-09-12 · awaiting approval · [Catalog spec](../catalog/README.md) · [Food & nutrition](../architecture/05-food-and-nutrition.md) · [Scope](../architecture/00-scope.md)*
+*Draft 0.2 · 2026-09-12 · awaiting approval · [Catalog spec](../catalog/README.md) · [Food & nutrition](../architecture/05-food-and-nutrition.md) · [Scope](../architecture/00-scope.md)*
 
-Two requests, planned together because they meet in the same place — `recipe_components`:
+> **0.1 → 0.2** — adds the agreed division of labour (§2), the FDC cache design (§3), a root-cause fix for name collisions with measurements from the committed catalog (§4), and what `cuisineTags` should actually do (§5). Part A and Part B are unchanged in substance and condensed here.
 
-1. **Widen the catalog** beyond Gujarat / Tamil Nadu / Karnataka — Punjabi, Kathiyawadi, Italian, Chinese, and the everyday dishes that don't belong to any of the four current files (tawa pulav, veg biryani, paneer biryani).
-2. **Record how this household actually cooks** — the same dish with 1 tbsp of oil where the standard recipe says 2.
-
-Nothing here is implemented. This document is the plan to approve or change.
+Still nothing implemented. This is the plan to approve or change.
 
 ---
 
-## 1. Where the code actually stands
+## 1. The division of labour
 
-Established by reading the repo, not assumed:
+Agreed workflow, and the whole of §2–§4 exists to make it safe:
+
+| Step | Who | Needs network? |
+|---|---|---|
+| Write new ingredient and dish rows in `docs/catalog/*.md`, plus their ingredient mappings | **Me** | No |
+| `parse_catalog --check` — prove the new rows break nothing | **Me** | **No** ← the point of §3 and §4 |
+| `fetch_catalog` — resolve against FoodData Central | **You** | Only for genuinely new lookups |
+| `build_seed` — regenerate `seed_v1.json` | **You** | No |
+| Review the seed diff, commit | **You** | No |
+
+The problem to solve is in the phrase *"without breaking existing ones."* Today the pipeline cannot tell you whether a new row broke an old dish, and in one case it cannot tell you at all — see §4.
+
+---
+
+## 2. Where the code stands, measured
 
 | Fact | Where |
 |---|---|
-| 383 foods in the bundled seed — 134 USDA ingredients, **249 recipes** | `app/assets/catalog/seed_v1.json` |
+| 408 source rows → 383 foods in the seed: 134 USDA ingredients, **249 recipes**, 25 held for manual review | `app/assets/catalog/seed_v1.json` |
 | Every regional dish is already a recipe with a component list | `recipe_components`, 711 rows |
-| The pipeline discovers catalog files by globbing, not a hardcoded list | `fetch_catalog.dart:246` |
-| `FoodItems.cuisineTags` exists in the schema and **nothing writes it or reads it** | `catalog_tables.dart:20` |
+| The pipeline globs `docs/catalog/*.md` — a new file needs no code change | `fetch_catalog.dart:246` |
+| **150 distinct ingredient names** are referenced by those recipes; all 150 resolve today | measured |
+| **71 of the 150 resolve only via `ingredientAliases`** — the curated map already carries half the load | measured |
+| `FoodItems.cuisineTags` exists and **nothing writes it or reads it** | `catalog_tables.dart:20` |
 | A user recipe is computed by the same maths as a catalog recipe | `RecipeDao.saveRecipe` |
 | A log entry snapshots its nutrients, so edits never rewrite history | `LogEntryNutrients`, §20.5 |
 
-That last pair is the good news for request 2: **the machinery for "her version of the dish" is already built and shipped.** What is missing is a way to start from a catalog dish instead of an empty form.
+Three properties of the current build that matter for your workflow:
+
+- **`build_seed` mints a fresh random `uuid.v7()` per food on every run.** Regenerating seed v1 therefore rewrites all 2.3 MB — `git diff` shows the whole file changed and you cannot see what actually moved.
+- **`fetch_catalog` reads the catalog directory in `listSync()` order**, which is not sorted (`parse_catalog` does sort). Row order in the draft, and so in the seed, can differ between machines.
+- **Nothing is cached.** Every run re-fetches ~600 FDC responses over the network.
 
 ---
 
-## 2. Four things that break before a single new food is written
+## 3. The FDC response cache
 
-These are not hypotheticals; they are properties of the current pipeline that only bite once the catalog grows or ships a second time.
+Agreed — and it is worth more than the time it saves.
 
-### P1 — A second seed version duplicates the whole catalog on an existing phone
+### 3.1 What it buys
 
-`build_seed.dart` mints a fresh `uuid.v7()` for every entry on every run, and `CatalogImporter.importIfNeeded` is version-gated: a device that already has v1 sees v2, inserts all ~700 rows, and **keeps the 383 old ones**. Search then shows "Gujarati dal" twice, with different ids.
+| | Without | With |
+|---|---|---|
+| Adding 30 Punjabi dishes | ~600 live lookups | ~35 — only the genuinely new ones |
+| A run with no API key or no network | impossible | full run from cache |
+| Rebuilding the seed a year from now | FDC search ranking has moved; **different foods, silently** | byte-identical |
+| CI checking the pipeline | can't | can |
 
-**Fix:** derive each food id deterministically (uuid v5 over `sourceFile + section + foodName`), then make the import an upsert-by-id plus a tombstone pass for rows the new seed dropped. Diffs between seed versions become readable, which they currently are not.
+The third row is the real prize. Right now the seed is not reproducible from the repository — it is reproducible from the repository *plus whatever USDA's search returns that day*. A cached search result freezes "Toor dal → FDC 172421" as a reviewed decision instead of a query re-run on faith.
 
-### P2 — Every rebuild needs ~600 live FDC lookups and an API key
+### 3.2 Design
 
-There is no response cache. Rebuilding the seed today means re-fetching everything from `api.nal.usda.gov`, which makes the build slow, non-reproducible, and impossible in any environment without network (including CI and most of my sessions).
+```
+tools/catalog_pipeline/fdc_cache/
+  index.json                  query + dataType -> fdcId, with fetchedAt
+  search/<sha1>.json          the id list one search returned
+  food/<fdcId>.json           the detail response, TRIMMED
+```
 
-**Fix:** an on-disk FDC response cache. Worth **committing** it — it is public-domain USDA data, which §0.7 of the scope doc already says is safe to redistribute, and it makes the seed reproducible byte-for-byte from the repo alone.
+- **Committed to the repository.** USDA FDC is US-Government public domain — the same basis §0.7 of the scope doc already relies on to make this repo public. No licence problem.
+- **Trimmed detail responses.** Full FDC records carry portions, input foods and lab methods the normalizer never reads. Keep `fdcId`, `description`, `dataType`, and the `foodNutrients` triples. ~2–5 KB each; ~250 foods ≈ 1 MB.
+- **`index.json` is the human-reviewable layer** — one line per query showing what it resolved to, so a reviewer never opens the per-food files.
+- **The cache key is the query parameters with `api_key` removed.** The key must never reach the cache, the filenames, or a commit.
+- **A `CachingFdcClient` decorator** wrapping the existing `FdcClient` — the client itself does not change, and its API-key hygiene (never in an exception message) is untouched.
 
-### P3 — New cuisines collide with existing names, and the collision is silent
+### 3.3 Three modes
 
-`CatalogIndex` drops any name that two rows claim, rather than guessing. That is the right rule, but "puri", "pulav", "biryani", "paratha", "noodles" are about to become multi-claimant names, and each collision quietly demotes an ingredient to a plain FDC search — the exact failure §0.3b was written to stop.
+| Flag | Behaviour | Who uses it |
+|---|---|---|
+| `--cache-only` *(default in CI)* | Never touches the network. A miss is a reported failure naming the exact query to fetch. | Me, CI |
+| `--refresh-missing` *(your normal run)* | Network only for misses. New rows only. | You |
+| `--refresh-all` | Re-fetch everything — a deliberate USDA data refresh | Rare, reviewed |
 
-**Fix:** make `parse_catalog` fail the build on a newly ambiguous name, an unresolved ingredient, or a yield factor outside 0.5×–15×, and wire it into CI. Cheap, and it turns a silent wrong number into a red check.
-
-### P4 — At ~700 rows, search-only browsing stops working
-
-383 foods is small enough that you already know what's in there. 700 across seven cuisines is not. `cuisineTags` is the column for this and it has never been populated.
-
-**Fix:** the pipeline emits tags from the source file and section; the importer writes them; the log screen gets cuisine filter chips.
+A refreshed entry that changes an existing food's nutrients shows up as a diff in `index.json` and as a `--check` failure (§4.4), so a USDA-side change is something you decide to accept rather than something that happens to you.
 
 ---
 
-## 3. Part A — the catalog expansion
+## 4. Name collisions — the proper fix
 
-### 3.1 File layout
+### 4.1 What is actually wrong
 
-One file per cuisine, same five-column table format, so the existing parser needs no change:
+`CatalogIndex` resolves an ingredient string like `besan` by inference over three tiers: the row's own **name**, then any `Also` **alias**, then the **prefix** before a comma. A key claimed by two rows is dropped rather than guessed.
+
+That rule is sound. The flaw is one level up: **what a name resolves to depends on which other rows exist.** So adding a row anywhere in the catalog can change the meaning of a row you did not touch.
+
+Measured against the committed catalog:
+
+**52 keys are already dropped for ambiguity** — 12 names (`idli`, `upma`, `coconut rice` ×3, `bhakhri`…), 18 aliases (`phulka`, `thayir sadam`, `uppuma`…), 22 prefixes (`dosa` ×5, `rasam` ×4, `rice` ×4, `milk` ×3…). Nothing breaks today only because `ingredientAliases` already names the right row for every ingredient that matters.
+
+**Adding 45 plausible new-cuisine rows** (Punjabi, Kathiyawadi, biryani, Indo-Chinese, Italian, street, pantry) breaks 3 existing ingredient references:
+
+```
+'butter'      x4 uses   was -> Butter [01-common]   now ambiguous
+'butter oil'  x1        was -> Butter [01-common]   now ambiguous
+'2 puri'      x1        was -> Puri   [01-common]   now ambiguous
+```
+
+An ingredient that stops resolving makes `fetch_catalog` **drop the entire dish from the seed** and report it in `failures`; `build_seed` prints a warning and builds anyway. So an Italian butter row quietly removes four Gujarati and Kannadiga dishes from your catalog, behind a stderr line.
+
+That one is loud enough to catch. The next one is not:
+
+**Adding four innocuous pantry rows — `Besan`, `Wheat flour`, `Peanuts`, `Toor dal` — silently retargets 63 ingredient references:**
+
+```
+'besan'       x20 uses  Besan, gram flour [01]  ->  Besan [11-pantry]
+'wheat flour' x18       Wheat flour, atta [01]  ->  Wheat flour [11-pantry]
+'peanuts'     x14       Peanuts, raw [01]       ->  Peanuts [11-pantry]
+'toor dal'    x11       Toor dal, raw [01]      ->  Toor dal [11-pantry]
+```
+
+No failure. No warning. Dozens of dishes recomputed from a different USDA food, shipped under the same `verified` badge. **This is exactly the failure mode §0.3b was written to eliminate** when it deleted the blind FDC search — a name resolving to whatever the machinery happened to pick, rather than to a row someone chose. The tier inference is the same guess, one level up, and it is still in place.
+
+There is a second, visible face of the same cause. **12 display names are duplicated in the shipped seed right now** — search "coconut rice" in the app today and you get three identical rows with nothing to tell them apart (`Coconut rice` ×3, `Idli` ×2, `Upma` ×2, `Bhakhri` ×2, `Curd rice`, `Ghee rice`, `Lemon rice`, `Tomato rice`, `Ragi mudde`, `Ragi rotti`, `Rava idli`, `Akki rotti`). The 45 new rows take that from 12 names to 22.
+
+### 4.2 The fix, in one sentence
+
+**Stop using prose names as identity: give every row a derived stable key, and make every ingredient reference point at a key that a human chose.**
+
+Four layers, in order.
+
+#### Layer 1 — Every row gets a stable key, with no markdown edits
+
+```
+key = <file number>:<slug of Food name>        e.g.  01:besan-gram-flour
+                                                     03:coconut-rice
+                                                     04:coconut-rice
+```
+
+I checked: **no file contains two rows with the same name**, so this is globally unique across all 408 rows today with zero edits to any table. The rule CI enforces is the natural one — *names are unique within a file* — and duplicate names **across** files stay legal, because "Coconut rice" genuinely is a Tamil dish and a Kannadiga dish (§0.6 already says regional variants are separate foods).
+
+This key is then:
+- the seed's `FoodItems.id`, via `uuid.v5(namespace, key)` — deterministic, so regenerating seed v1 produces a diff you can read instead of 2.3 MB of churn;
+- the join key for the lockfile in Layer 3;
+- what `build_seed`'s name-based `foodIdByName` map is replaced by, ambiguity handling and all.
+
+#### Layer 2 — Ingredient references resolve through an explicit map only
+
+Rename `ingredientAliases` → `ingredientTargets` and require an entry for **every** distinct ingredient string, pointing at a Layer-1 key:
+
+```dart
+'besan':       '01:besan-gram-flour',
+'wheat flour': '01:wheat-flour-atta',
+'oil':         '01:groundnut-oil',
+```
+
+The three-tier inference is **not deleted — it is demoted to a suggestion generator.** `parse_catalog --suggest` prints ready-to-paste lines for every unmapped ingredient, flagging the ambiguous ones for a human decision. Inference helps write the map; it never resolves anything at build time.
+
+The consequence is the one worth having: **adding a row anywhere can no longer change what an existing ingredient means**, because resolution stops depending on what else exists. The coupling is removed, not merely detected.
+
+Cost: the map grows from 72 entries to ~150 now, plus ~60 for the new cuisines. Generated mechanically, reviewed once. 71 of the 150 already go through it, so this is finishing a job that is half done.
+
+#### Layer 3 — A committed resolution lockfile
+
+`docs/catalog/catalog.lock.json`, written by `fetch_catalog`, one entry per row:
+
+```json
+"02:gujarati-dal": {
+  "name": "Gujarati dal",
+  "kind": "recipe",
+  "ingredients": { "toor dal": "01:toor-dal-raw", "jaggery": "01:jaggery", "...": "..." },
+  "yieldFactor": 1.83,
+  "kcalPer100g": 92.4
+}
+```
+
+This is a golden-file test for food data — the same instinct as the golden nutrient vectors already in Phase 1. `--check` diffs current source against the lock and classifies every change:
+
+| Change | Verdict |
+|---|---|
+| New key | fine, expected |
+| Removed key | must be intentional |
+| Same key, **different ingredient target** | ❌ fail — this is the silent retarget |
+| Same key, energy moved > 2% | ⚠️ explain it |
+| Ingredient mapped to nothing | ❌ fail |
+
+#### Layer 4 — The gate in CI, offline
+
+`parse_catalog --check` runs with **no API key and no network** (it reads the lock and the cache) and fails on: a duplicate name within a file, an unmapped ingredient, a lock retarget, an unexplained nutrient move, or a yield factor outside 0.5×–15×.
+
+That is the mechanism that makes the §1 workflow honest: **I can prove my rows break nothing before you ever run `fetch_catalog`.**
+
+### 4.3 And the duplicate names in search
+
+Not a rename. `Coconut rice` from Tamil Nadu and `Coconut rice` from Karnataka are different dishes and both should appear — the user just needs to tell them apart. That is a display problem, and it is what `cuisineTags` is for (§5.1). Keys stay unique; names need not be.
+
+---
+
+## 5. What `cuisineTags` should actually do
+
+The column exists and is empty. The pipeline has the data for **two** independent axes and has been throwing both away:
+
+- **Cuisine**, from the source file: `gujarati`, `kathiyawadi`, `tamil`, `kannadiga`, `punjabi`, `indo-chinese`, `italian`, `pan-indian`.
+- **Course**, from the `## N.` section heading the row sits under: `tiffin`, `farsan`, `sweet`, `bread`, `rice`, `gravy`, `snack`, `beverage`, `pickle`.
+
+Both are free. Ranked by what they are worth:
+
+### 5.1 ★ Disambiguate search results — fixes a bug shipping today
+`Coconut rice · Tamil` / `Coconut rice · Kannadiga`. One subtitle line, and the twelve indistinguishable pairs in today's catalog become choosable. This alone justifies populating the column, before any new cuisine lands.
+
+### 5.2 ★ Rank search by what this household actually eats
+A Gujarati household typing "dal" should get Gujarati dal first, not dal makhani. Boost by the cuisine mix of the profile's own recent log entries — no configuration, no preference screen, and it gets better the more you use it. Cheap, and it is what keeps a 690-food catalog feeling like a 90-food one.
+
+### 5.3 Browse when search fails
+Cuisine chips on the log screen, drilling into course sections. At 383 foods you remember what is in there; at 690 across seven cuisines you do not. UX-6's "custom food is one tap from a failed search" was designed for a small catalog — browse is the other half of that.
+
+### 5.4 Cuisine mix in the monthly report
+*"September: 61% Gujarati, 14% Punjabi, 11% Indo-Chinese, 8% Italian, 6% Tamil."* Zero new data — log entries already point at food items. It is the most interesting thing a household tracker can tell you that a public app cannot, because it knows your kitchen rather than a population.
+
+### 5.5 Cuisine against the score — honestly gated
+*"Your daily score averages 74 on Gujarati days and 61 on Indo-Chinese days."* Genuinely useful and entirely descriptive of your own logs. Gate it like every other derived claim in this design: no cuisine gets a number until it has enough days behind it, and the card says how many.
+
+### 5.6 Aim the light-cooking feature (§7)
+Sort the "make this our version" suggestions by *oil per serving × how often you log it*. Punjabi gravies and Indo-Chinese have the most to give back; a rotli has none.
+
+### 5.7 What not to do
+Do not let a tag infer nutrition — "Italian ⇒ high fat" is exactly the invented number this architecture refuses. Tags describe where a dish is from, never what is in it.
+
+---
+
+## 6. Part A — the catalog expansion *(unchanged from 0.1, condensed)*
 
 | File | Contents | Rows |
 |---|---|---|
+| `11-pantry-non-indian.md` | **Ships first** — pasta, olive oil, mozzarella, parmesan, passata, soy sauce, noodles, tofu, sesame oil, vinegar, cornflour, pizza base, sweet corn, baby corn, mushroom | ~45 |
 | `05-punjabi.md` | Dal makhani, rajma, chole, the paneer gravies, sarson da saag, naan/kulcha/bhature, lassi, tandoori | ~75 |
-| `06-kathiyawadi.md` | Lasaniya bataka, khichu, masala rotlo, sev tameta (Kathiyawadi cut), dungri methi, gud-ghee, chaas | ~45 |
+| `06-kathiyawadi.md` | Lasaniya bataka, khichu, masala rotlo, sev tameta, dungri methi, gud-ghee, chaas | ~45 |
 | `07-rice-and-biryani.md` | **Tawa pulav, veg biryani, paneer biryani**, jeera rice, ghee rice, veg pulav, tehri | ~25 |
-| `08-indo-chinese.md` | Hakka/schezwan noodles, fried rice, manchurian, chilli paneer, momos, the soups, honey chilli potato | ~40 |
+| `08-indo-chinese.md` | Hakka/schezwan noodles, fried rice, manchurian, chilli paneer, momos, soups, honey chilli potato | ~40 |
 | `09-italian.md` | Pasta in four sauces, baked pasta, pizza, risotto, minestrone, garlic bread, tiramisu | ~40 |
 | `10-street-and-maharashtrian.md` | Pav bhaji, misal, vada pav, dabeli, sabudana khichdi, thalipeeth, puran poli | ~40 |
-| `11-pantry-non-indian.md` | The **ingredients** the four above need: pasta, olive oil, mozzarella, parmesan, passata, soy sauce, noodles, tofu, sesame oil, vinegar, cornflour, pizza base, sweet corn, baby corn, mushroom | ~45 |
-| | **Added** | **~310** |
-| | **Catalog total** | **~690** |
+| | **Catalog 383 → ~690** | **~310** |
 
-`11-pantry-non-indian.md` **ships first and alone**. Every dish in the four new cuisine files resolves its ingredients through it; without it, `fetch_catalog` reports failures for the whole wave.
+Spec additions needed first: new serving units (plate, slice, bowl, piece); Indo-Chinese labelled honestly as Indo-Chinese; **deep-fried rows state absorbed oil separately from cooking oil**, because Part B must not let absorbed oil be halved — a puri fried in less oil absorbs about the same.
 
-### 3.2 Conventions that need adding to the catalog spec
-
-The current spec (§0.3) only defines Indian household measures. Four additions:
-
-- **New serving units** — plate (pasta, noodles, fried rice), slice (pizza, 1/8 of a 10-inch), bowl (soup, 200 ml), piece (momo, spring roll, vada pav).
-- **Indo-Chinese is labelled as such, honestly.** Gobi manchurian is not a Chinese dish and the file should say so in its header. A row for a genuinely Chinese preparation (steamed rice, stir-fried tofu) goes in as its own row, not as a "more authentic" version of an Indian one.
-- **Deep-fried rows state absorbed oil separately from cooking oil.** This matters for Part B: absorbed oil in a puri or a manchurian ball is physics, not a dial the cook turns. The light-cooking feature must not let it be halved.
-- **Every dish row keeps declaring its fat explicitly** (already the convention, §0.6) — Part B has nothing to edit otherwise.
-
-### 3.3 Curation order — and the one rule that governs it
-
-Catalog spec §0.5 and risk R-1 both say the same thing: **curate against what the household actually eats, not against the list's length.** ~310 rows written speculatively is exactly the failure mode that document warns about.
-
-So the waves are sized by what gets cooked, not by what is on the list:
-
-| Wave | What | Rows | Gate |
-|---|---|---|---|
-| **1** | `11-pantry` + `07-rice-and-biryani` + the ~30 Punjabi dishes actually cooked | ~90 | You name the dishes |
-| **2** | Kathiyawadi + the rest of Punjabi | ~90 | After wave 1 is in daily use |
-| **3** | Indo-Chinese + Italian | ~80 | ditto |
-| **4** | Street/Maharashtrian + whatever search failures have queued up | ~50 | Let the app tell you |
-
-Wave 1 is the only one worth committing to now. Waves 2–4 should be re-scoped from a month of real logging — the search-failure queue (§31.6) writes them better than either of us can.
+**Curation waves.** §0.5 and risk R-1 both say to curate against what the household eats, not against the list's length. Only **wave 1 (~90 rows: pantry + rice/biryani + the ~30 Punjabi dishes you name)** is worth committing to now. Waves 2–4 should be re-scoped after a month of real logging, from the search-failure queue (§31.6).
 
 ---
 
-## 4. Part B — "our kitchen" light-cooking versions
+## 7. Part B — "our kitchen" light-cooking versions *(unchanged from 0.1, condensed)*
 
-### 4.1 The design question
+Rejected: a second catalog row per dish (doubles the catalog, and "light" is still a guess about someone else's kitchen); a global oil multiplier (silently rewrites every dish including deep-fried ones, and breaks the rule that a dish's nutrients equal its components).
 
-A dish cooked with 1 tbsp of oil instead of 2 is ~110 kcal and ~12 g of fat lighter per batch. Where does that fact live?
+**Recommended: fork the catalog recipe into one you own.** One action on a catalog dish — *"Make this our version"* — opens the existing recipe builder pre-filled from that dish's `recipe_components`. Change `Groundnut oil 8 g` to `4 g`, save. From there it is an ordinary user recipe: same computation, same coverage gating, same honesty guarantees, just her pot.
 
-| | Option | Verdict |
-|---|---|---|
-| **A** | A second catalog row per dish — "Bataka nu shaak, light oil" | ✗ Doubles the catalog, puts a choice in front of you at every log, and the "light" figure is still a guess about somebody else's kitchen, not a measurement of hers |
-| **B** | A global preference — "our kitchen uses 60% of the catalog's oil" | ✗ One number silently rewrites every dish in the app, including deep-fried ones where absorbed oil isn't a choice — and it breaks the rule the whole design rests on, that a dish's nutrients equal the sum of its listed components |
-| **C** | **Fork the catalog recipe into one you own** | ★ **Recommended** |
-| **D** | A per-entry modifier at log time (Standard / Ours / Extra) | ~ Good ergonomics, but it needs a new per-entry concept and re-poses B's problem unless it resolves to a C fork underneath. Build it as sugar over C, later |
+Plus: a **"lighter oil" preset** (halves cooking fats, leaves *absorbed* oil alone, always shown before saving); **search prefers your version** with a *Yours* badge, the standard row still reachable; a **household default** so dish twenty takes one tap.
 
-### 4.2 The recommended mechanism
-
-**One new action on a catalog dish: "Make this our version".**
-
-It opens the existing recipe builder pre-filled with that dish's `recipe_components` — every ingredient, every gram. She changes `Groundnut oil 8 g` to `4 g` and saves. From there it is an ordinary user recipe: `RecipeDao.saveRecipe` recomputes from ingredients, applies the yield factor, gates on component coverage, and writes a `FoodItems` row you own.
-
-Nothing about the honesty guarantees changes, because nothing about the computation changes. The number is still the sum of what went in the pot — it is just her pot.
-
-Three pieces on top of that:
-
-- **A "lighter oil" preset.** One tap halves every fat ingredient in the pre-filled form (and leaves *absorbed* oil alone, per §3.2). She still sees and confirms the numbers before saving — the preset is a starting point, not an assertion.
-- **Search prefers your version.** Both rows are in the index; the one you own sorts first with a *Yours* badge. The standard row stays reachable, because sometimes you eat the dish somebody else cooked.
-- **A household default.** "When I fork a recipe, halve the fat" — so dish twenty takes one tap instead of three.
-
-### 4.3 The feature that makes it worth doing
-
-Because both rows exist and both are computed from components, the app can say something no nutrition app can:
+The payoff, computable from data that already exists:
 
 > **Your paneer butter masala** — 118 kcal and 11 g of fat less per katori than the standard recipe.
 > **This week:** 84 g of oil not eaten, across 11 meals. ≈ 740 kcal.
 
-That is a join over two `FoodItems` rows and the log — no new data, no new maths, and it is the reason the cooking is worth recording rather than merely tolerated. It belongs in the weekly report next to the existing insights.
-
-### 4.4 The guardrail
-
-If a fork drops a *fried* dish's fat below ~30% of the catalog value, warn: deep-fry absorption is not a dial, and a puri made with less oil in the pan absorbs about the same. Warn, do not block — §19.8's rule is offer, never impose.
+Guardrail: warn (never block — §19.8 says offer, never impose) if a fork drops a fried dish's fat below ~30% of the catalog value.
 
 ---
 
-## 5. Work packages
+## 8. Work packages
 
-Each one is independently shippable and leaves the app better than it found it.
-
-| # | Package | Why here | Size |
+| # | Package | Contents | Size |
 |---|---|---|---|
-| **WP0** | Stable ids · upsert import · FDC cache · `parse_catalog` CI gate | **Blocks everything.** §2's four problems | ~1 day |
-| **WP1** | Catalog spec §0.3/§0.6 additions (§3.2) | New units before rows use them | ~2 h |
-| **WP2** | `11-pantry-non-indian.md` + `07-rice-and-biryani.md` | Tawa pulav, veg biryani, paneer biryani — named, and the pantry every later wave needs | ~4 h |
-| **WP3** | `cuisineTags` populated + browse chips on the log screen | Needed at ~500 rows, not 700 | ~half day |
-| **WP4** | Punjabi wave 1 (~30 dishes you name) | First real cuisine, on a proven path | ~4 h |
-| **WP5** | Light cooking: fork action + preset + *Yours* ranking | Part B | ~1 day |
-| **WP6** | Oil-saved insight in the weekly report | §4.3 — the payoff | ~half day |
-| **WP7** | Waves 2–4, re-scoped from real search failures | Deliberately unscheduled | — |
+| **WP0** | **Safe-to-extend pipeline** | Stable keys + `uuid.v5` ids (§4.1) · explicit `ingredientTargets` + `--suggest` (§4.2) · `catalog.lock.json` + `--check` (§4.3) · sort the catalog file list · CI gate (§4.4) | ~1.5 days |
+| **WP1** | **FDC cache** | `CachingFdcClient`, trimmed records, `index.json`, three modes (§3) | ~half day |
+| **WP2** | Catalog spec additions | New units, absorbed-oil convention, the key and uniqueness rules | ~2 h |
+| **WP3** | `cuisineTags` populated + search subtitles | §5.1 — fixes the duplicate-name bug shipping today | ~half day |
+| **WP4** | `11-pantry` + `07-rice-and-biryani` | Tawa pulav, veg biryani, paneer biryani — the dishes you named | ~4 h |
+| **WP5** | Punjabi wave 1 (~30 dishes you name) | First full cuisine on a proven path | ~4 h |
+| **WP6** | Cuisine ranking + browse chips | §5.2, §5.3 | ~1 day |
+| **WP7** | Light cooking: fork + preset + *Yours* ranking | §7 | ~1 day |
+| **WP8** | Oil-saved insight + cuisine mix in reports | §5.4, §7 | ~half day |
+| **WP9** | Waves 2–4, re-scoped from real search failures | Deliberately unscheduled | — |
 
-**Order:** WP0 → WP1 → WP2 → WP4 → WP3 → WP5 → WP6 → WP7.
-WP5 can move ahead of WP2 if the light-cooking feature matters more to you than the new dishes — it only depends on WP0.
+**Order: WP0 → WP1 → WP2 → WP3 → WP4 → WP5 → WP6 → WP7 → WP8.**
+
+WP0 and WP1 come first because every later package is a rebuild of the seed, and until they land each rebuild is an unreviewable 2.3 MB diff produced by 600 live network calls. WP7 depends only on WP0 and can move up if the light-cooking feature matters more to you than the new dishes.
+
+**On seed versioning:** regenerating `seed_v1.json` in place is correct *today*, because the app is not on anyone's phone yet (Phase 6). The moment it is, a rebuild with today's random ids would import a second copy of the entire catalog on an existing device. Stable keys cost nothing now and are the only thing that makes a later v2 a reviewable delta instead of a duplicate-everything event — which is the main reason WP0 is first.
 
 ---
 
-## 6. What I need from you
+## 9. What I need from you
 
 | # | Question | My recommendation |
 |---|---|---|
-| 1 | **Name 30–40 dishes** you two actually cook across Punjabi / Kathiyawadi / Italian / Chinese | These become Tier 1 and wave 1; the rest waits for real search failures |
+| 1 | **Name 30–40 dishes** you two actually cook across Punjabi / Kathiyawadi / Italian / Chinese | They become Tier 1 and wave 1; the rest waits for real search failures |
 | 2 | Chinese — Indo-Chinese, or authentic? | Indo-Chinese, labelled honestly, plus 3–4 genuinely Chinese rows |
-| 3 | Kathiyawadi — own file, or a section in `02-gujarat.md`? | Own file. §0.6 says regional variants of a dish are separate foods, and Kathiyawadi genuinely runs hotter on oil and garlic |
-| 4 | Non-veg in the new cuisines (butter chicken, chilli chicken)? | Include; `DietClassifier` already handles it from components |
-| 5 | Commit the FDC response cache to the repo? | Yes — public-domain, and it makes the build reproducible offline |
-| 6 | **Does she measure the oil, or estimate it?** | If she measures even roughly, the forked numbers stop being estimates and the whole feature gets sharply better. A tablespoon and one week is all it takes (§0.3) |
-| 7 | Light version replaces the standard in search, or sits beside it? | Beside, ranked first. You still eat other people's cooking |
+| 3 | Kathiyawadi — own file, or a section in `02-gujarat.md`? | Own file; §0.6 already treats regional variants as separate foods |
+| 4 | Non-veg in the new cuisines? | Include — `DietClassifier` already derives it from components |
+| 5 | Commit the FDC cache (≈1 MB)? | Yes — public domain, and it is what makes the seed reproducible |
+| 6 | **Does she measure the oil, or estimate it?** | If she measures even roughly, the forked numbers stop being estimates. A tablespoon and one week (§0.3) |
+| 7 | Light version replaces the standard in search, or sits beside it? | Beside, ranked first — you still eat other people's cooking |
 
 ---
 
-## 7. Explicitly not in this plan
+## 10. Explicitly not in this plan
 
-- **Nutrient retention factors** (vitamin C loss on boiling). Still a §9.2 should-have, still not attempted — yield is the effect that matters and it is handled.
-- **Per-entry cooking modifiers** (option D). Revisit once forking is in daily use and the shape of the need is known.
-- **Re-curating the existing 383 rows.** They work. Leave them.
-- **Any implementation.** Nothing in this document has been built.
+- **Nutrient retention factors** (vitamin C loss on boiling) — still a §9.2 should-have, still not attempted.
+- **Per-entry cooking modifiers** — revisit once forking is in daily use.
+- **Re-curating the existing 383 rows** — they work; leave them.
+- **Renaming the 12 duplicate display names** — §4.3 makes it unnecessary.
+- **Any implementation.** Nothing here has been built.
+
+---
+
+### Appendix — how the §4 numbers were obtained
+
+`CatalogIndex`'s three-tier resolution, `CompositionParser`'s ingredient extraction and `ingredientAliases` were re-implemented against the committed `docs/catalog/*.md` and the current alias map, then re-run with candidate new rows appended. The Dart toolchain is not available in this environment; WP0 turns the same analysis into `parse_catalog --check`, where it belongs. Every figure above is reproducible from the repository as committed.
