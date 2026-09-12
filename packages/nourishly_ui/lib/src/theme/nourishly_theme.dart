@@ -164,18 +164,62 @@ abstract final class NourishlyTheme {
       ),
       dialogTheme: DialogThemeData(
         backgroundColor: colors.surface,
+        surfaceTintColor: Colors.transparent,
+        barrierColor: colors.scrim,
+        elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(NourishlyRadius.xl),
+          side: BorderSide(color: colors.line, width: NourishlyStroke.hairline),
+        ),
+        titleTextStyle: textTheme.titleMedium,
+        contentTextStyle: textTheme.bodyMedium?.copyWith(color: colors.ink2),
+      ),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: colors.surface,
+        surfaceTintColor: Colors.transparent,
+        modalBarrierColor: colors.scrim,
+        dragHandleColor: colors.lineStrong,
+        elevation: 0,
+        showDragHandle: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(NourishlyRadius.xl),
+          ),
         ),
       ),
       snackBarTheme: SnackBarThemeData(
         backgroundColor: colors.ink,
+        // The bar is painted in `ink`, so its text is `surface` — which is
+        // white in the light theme and near-black in the dark one, where
+        // `ink` is itself a light colour.
         contentTextStyle: textTheme.bodyMedium?.copyWith(color: colors.surface),
         actionTextColor: colors.accentSoft,
+        closeIconColor: colors.surface,
         behavior: SnackBarBehavior.floating,
+        insetPadding: const EdgeInsets.all(NourishlySpace.s4),
+        elevation: 2,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(NourishlyRadius.md),
         ),
+      ),
+      // Swipe back, on both platforms.
+      //
+      // Android's default (`ZoomPageTransitionsBuilder`) animates well but
+      // carries no gesture: the only way back from a pushed screen was the
+      // app bar's arrow or the system back button. Cupertino's builder
+      // brings `_CupertinoBackGestureDetector` with it, so dragging from
+      // the left edge pops the route and dragging back cancels it — the
+      // gesture people already use on every other app on the phone.
+      //
+      // Routes presented as `fullscreenDialog` deliberately opt out of it
+      // (they animate up, and are dismissed by their own close button),
+      // which is why `/log` keeps an explicit X.
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
+        },
       ),
       dividerTheme: DividerThemeData(
         color: colors.line,
