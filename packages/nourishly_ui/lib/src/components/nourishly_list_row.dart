@@ -169,7 +169,7 @@ class NourishlyListRow extends StatelessWidget {
       toggled: toggled,
       label: title,
       value: [
-        if (subtitle != null) subtitle!,
+        ?subtitle,
         if (value != null && value!.isNotEmpty) value!,
       ].join('. '),
       onTap: onTap,

@@ -130,7 +130,7 @@ class NourishlyDialog extends StatelessWidget {
                     ),
                   if (message != null && content != null)
                     const SizedBox(height: NourishlySpace.s4),
-                  if (content != null) content!,
+                  ?content,
                 ],
               ),
             ),

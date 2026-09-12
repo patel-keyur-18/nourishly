@@ -114,15 +114,20 @@ ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showNourishlySnackOn(
     ),
   );
 
-  var closed = false;
-  controller.closed.then((_) => closed = true);
   // The watchdog. `removeCurrentSnackBar` is a no-op when there is nothing
   // up, and the counter makes sure this only ever removes *this* message —
   // never a newer one that replaced it.
   _watchdog = Timer(duration + const Duration(milliseconds: 250), () {
     _watchdog = null;
-    if (closed || _shown != mine) return;
+    if (_shown != mine) return;
     messenger.removeCurrentSnackBar();
+  });
+  // A message dismissed by hand, by swipe, or by its own action should not
+  // leave a timer ticking behind it.
+  controller.closed.then((_) {
+    if (_shown != mine) return;
+    _watchdog?.cancel();
+    _watchdog = null;
   });
 
   return controller;

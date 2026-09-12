@@ -30,9 +30,13 @@ void main() {
         ),
       );
 
+      // Only the chart's own boxes: the page transition contributes a
+      // `DecoratedBox` of its own (an edge shadow, not a `BoxDecoration`),
+      // so this filters by type rather than casting everything it finds.
       final boxes = tester
           .widgetList<DecoratedBox>(find.byType(DecoratedBox))
-          .map((w) => w.decoration as BoxDecoration)
+          .map((w) => w.decoration)
+          .whereType<BoxDecoration>()
           .toList();
       expect(
         boxes.where((d) => d.color == NourishlyLightColors.accent),
