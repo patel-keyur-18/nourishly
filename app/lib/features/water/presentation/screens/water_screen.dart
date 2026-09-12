@@ -154,9 +154,7 @@ class WaterScreen extends ConsumerWidget {
           volumeMl: ml,
           logDate: ref.read(todayProvider),
         );
-    messenger.showSnackBar(
-      SnackBar(content: Text('Logged ${ml.toStringAsFixed(0)} ml')),
-    );
+    showNourishlySnackOn(messenger, 'Logged ${ml.toStringAsFixed(0)} ml');
   }
 }
 
@@ -219,76 +217,31 @@ class _WaterRow extends ConsumerWidget {
     final messenger = ScaffoldMessenger.of(context);
     final dao = ref.read(waterLogDaoProvider);
     await dao.undo(entry.id);
-    messenger.showSnackBar(
-      SnackBar(
-        content: Text('Removed ${entry.volumeMl.toStringAsFixed(0)} ml'),
-        action: SnackBarAction(
-          label: 'Undo',
-          onPressed: () => dao.restore(entry.id),
-        ),
-      ),
+    showNourishlySnackOn(
+      messenger,
+      'Removed ${entry.volumeMl.toStringAsFixed(0)} ml',
+      actionLabel: 'Undo',
+      onAction: () => dao.restore(entry.id),
     );
   }
 
   Future<void> _edit(BuildContext context, WidgetRef ref) async {
-    final newVolume = await showDialog<double>(
+    final entered = await showNourishlyPrompt(
       context: context,
-      builder: (context) => _EditVolumeDialog(initialMl: entry.volumeMl),
+      title: 'Edit amount',
+      initialValue: entry.volumeMl.toStringAsFixed(0),
+      label: 'Amount',
+      suffix: 'ml',
+      numeric: true,
+      validator: (value) {
+        final ml = double.tryParse(value);
+        return ml != null && ml > 0;
+      },
     );
+    final newVolume = double.tryParse(entered ?? '');
     if (newVolume == null) return;
     await ref
         .read(waterLogDaoProvider)
         .edit(entryId: entry.id, volumeMl: newVolume);
-  }
-}
-
-class _EditVolumeDialog extends StatefulWidget {
-  const _EditVolumeDialog({required this.initialMl});
-
-  final double initialMl;
-
-  @override
-  State<_EditVolumeDialog> createState() => _EditVolumeDialogState();
-}
-
-class _EditVolumeDialogState extends State<_EditVolumeDialog> {
-  late final _controller = TextEditingController(
-    text: widget.initialMl.toStringAsFixed(0),
-  );
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  void _submit() {
-    final value = double.tryParse(_controller.text.trim());
-    if (value == null || value <= 0) return;
-    Navigator.of(context).pop(value);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('Edit amount'),
-      content: TextField(
-        controller: _controller,
-        autofocus: true,
-        keyboardType: const TextInputType.numberWithOptions(decimal: true),
-        onSubmitted: (_) => _submit(),
-        decoration: const InputDecoration(
-          labelText: 'Millilitres',
-          suffixText: 'ml',
-        ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
-        ),
-        FilledButton(onPressed: _submit, child: const Text('Save')),
-      ],
-    );
   }
 }
