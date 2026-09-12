@@ -19,9 +19,19 @@
   year. Excluding it would mean splitting the catalog into its own SQLite
   file, which is real work and real risk, to save nothing that is scarce.
 
-  So the whole database is backed up, and the test enforces the
-  assumption: if the catalog ever grows past a third of the quota, it
-  fails and says to come back to this file.
+  **Decided 2026-09-12: back up everything, catalog included.** §0.5's
+  exclusion is superseded — it was an optimisation for a size problem that
+  turned out not to exist. The whole `nourishly.sqlite` file is backed up,
+  so a restored phone comes back with the catalog already in place rather
+  than rebuilding it on first launch.
+
+  `backup_footprint_test.dart` guards what that rests on: if the catalog
+  ever grows past a third of the quota, it fails and sends the reader
+  back here.
+
+  Nothing excluded below is user data. The two `exports` entries are
+  copies the user has already saved wherever they chose; the two caches
+  are rebuilt from the APK.
 -->
 <full-backup-content>
     <!--

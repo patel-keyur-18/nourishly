@@ -22,6 +22,13 @@ import '../../../reminders/data/reminder_providers.dart';
 /// **Reminders** row in Preferences (§29), and the **Your data** group —
 /// export, backup and deletion (§0.5, §30.6, §30.7), which §27.13 requires
 /// to be "discoverable, not buried".
+///
+/// One deliberate departure from prototype 13A: there is no "Profiles on
+/// this phone" group and no profile switcher. The household runs one
+/// profile per phone (§0.4's typical case), so the switcher would add a
+/// second concept to every screen in service of a case that does not
+/// arise. `owner_id` stays on every owned row, so this forecloses
+/// nothing — see `docs/design/decisions.md`.
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
