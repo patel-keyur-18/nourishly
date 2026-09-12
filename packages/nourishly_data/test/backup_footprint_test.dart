@@ -48,13 +48,9 @@ void main() {
   });
 
   test('the catalog replica fits well inside Auto Backup s quota', () async {
-    final seed =
-        jsonDecode(
-              File(
-                '../../app/assets/catalog/seed_v1.json',
-              ).readAsStringSync(),
-            )
-            as Map<String, dynamic>;
+    final seed = jsonDecode(
+      File('../../app/assets/catalog/seed_v1.json').readAsStringSync(),
+    ) as Map<String, dynamic>;
     await CatalogImporter(db).importIfNeeded(seed);
     // Fold the write-ahead log back in, so the measurement is of the
     // database rather than of a checkpoint that happens not to have run.
@@ -78,28 +74,24 @@ void main() {
     // Printed rather than only asserted: the number is the justification
     // for the backup rules, and a reviewer should be able to see it.
     // ignore: avoid_print
-    print('Catalog replica on disk: $megabytes MB '
-        '(${(bytes / androidAutoBackupQuotaBytes * 100).round()}% of the '
-        'Android Auto Backup quota).');
+    print(
+      'Catalog replica on disk: $megabytes MB '
+      '(${(bytes / androidAutoBackupQuotaBytes * 100).round()}% of the '
+      'Android Auto Backup quota).',
+    );
   });
 
   test('a household year of logging is small next to the catalog', () async {
     final ownerId = await ensureDefaultOwner(db);
-    final seed =
-        jsonDecode(
-              File(
-                '../../app/assets/catalog/seed_v1.json',
-              ).readAsStringSync(),
-            )
-            as Map<String, dynamic>;
+    final seed = jsonDecode(
+      File('../../app/assets/catalog/seed_v1.json').readAsStringSync(),
+    ) as Map<String, dynamic>;
     await CatalogImporter(db).importIfNeeded(seed);
     await db.customStatement('PRAGMA wal_checkpoint(TRUNCATE)');
     final catalogOnly = file.lengthSync();
 
     final slot = await db.select(db.mealSlots).get().then((s) => s.first);
-    final food = await (db.select(
-      db.foodItems,
-    )..limit(1)).getSingle();
+    final food = await (db.select(db.foodItems)..limit(1)).getSingle();
 
     // 365 days at 8 entries a day — a generous year for one person.
     await db.batch((batch) {

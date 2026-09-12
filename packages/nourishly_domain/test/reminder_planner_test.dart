@@ -17,9 +17,7 @@ void main() {
     type: ReminderType.water,
     enabled: enabled,
     conditions: ReminderConditions(skipIfTargetMet: skipIfMet),
-    schedule:
-        schedule ??
-        DailySchedule(time: LocalTime.of(15, 0)),
+    schedule: schedule ?? DailySchedule(time: LocalTime.of(15, 0)),
   );
 
   ReminderRule meal(String slot, int hour) => ReminderRule(
@@ -171,7 +169,10 @@ void main() {
           meal('snack', 17),
           meal('dinner', 20),
           // 23:00 is quiet, so this one lands tomorrow morning.
-          water(skipIfMet: false, schedule: DailySchedule(time: LocalTime.of(23, 0))),
+          water(
+            skipIfMet: false,
+            schedule: DailySchedule(time: LocalTime.of(23, 0)),
+          ),
         ],
         state: ReminderDayState(now: now),
         masterEnabled: true,
@@ -211,10 +212,12 @@ void main() {
         state: ReminderDayState(now: now, dayHasEntries: true),
         masterEnabled: true,
       );
-      expect(
-        plan.map((r) => r.route).toSet(),
-        {'/water', '/log', '/today/report', '/insights/week'},
-      );
+      expect(plan.map((r) => r.route).toSet(), {
+        '/water',
+        '/log',
+        '/today/report',
+        '/insights/week',
+      });
     });
   });
 
@@ -247,7 +250,10 @@ void main() {
             type: ReminderType.water,
             enabled: true,
             conditions: ReminderConditions.unconditional,
-            schedule: DailySchedule(time: LocalTime.of(9, 0), weekdays: const {}),
+            schedule: DailySchedule(
+              time: LocalTime.of(9, 0),
+              weekdays: const {},
+            ),
           ),
         ],
         state: ReminderDayState(now: now),

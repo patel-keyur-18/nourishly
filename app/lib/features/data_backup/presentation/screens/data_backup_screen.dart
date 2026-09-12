@@ -282,8 +282,7 @@ class _DataBackupScreenState extends ConsumerState<DataBackupScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: () =>
-                Navigator.of(context).pop(_DeleteChoice.cancel),
+            onPressed: () => Navigator.of(context).pop(_DeleteChoice.cancel),
             child: const Text('Cancel'),
           ),
           TextButton(
@@ -328,9 +327,9 @@ class _DataBackupScreenState extends ConsumerState<DataBackupScreen> {
             style: FilledButton.styleFrom(
               backgroundColor: context.nourishlyColors.danger,
             ),
-            onPressed: () => Navigator.of(
-              context,
-            ).pop(controller.text.trim().toUpperCase() == 'DELETE'),
+            onPressed: () =>
+                Navigator.of(context)
+                    .pop(controller.text.trim().toUpperCase() == 'DELETE'),
             child: const Text('Delete everything'),
           ),
         ],
@@ -546,11 +545,7 @@ class _ActionRow extends StatelessWidget {
                 ),
               ),
               if (!destructive)
-                Icon(
-                  Icons.chevron_right_rounded,
-                  size: 20,
-                  color: colors.ink3,
-                ),
+                Icon(Icons.chevron_right_rounded, size: 20, color: colors.ink3),
             ],
           ),
         ),

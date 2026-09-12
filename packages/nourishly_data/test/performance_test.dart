@@ -44,11 +44,9 @@ void main() {
     );
     ownerId = await ensureDefaultOwner(db);
 
-    final seed =
-        jsonDecode(
-              File('../../app/assets/catalog/seed_v1.json').readAsStringSync(),
-            )
-            as Map<String, dynamic>;
+    final seed = jsonDecode(
+      File('../../app/assets/catalog/seed_v1.json').readAsStringSync(),
+    ) as Map<String, dynamic>;
     await CatalogImporter(db).importIfNeeded(seed);
     await RdaImporter(db).importFromString(
       File('../../app/assets/reference/rda_icmr_nin_2020.json')
@@ -84,68 +82,87 @@ void main() {
     return result;
   }
 
-  test('NFR-P-03 — food search, keystroke to results (budget 120 ms)', () async {
-    final dao = FoodSearchDao(db);
-    // Character by character, as a user actually types: the budget is per
-    // keystroke, and a prefix of two letters matches far more rows than
-    // the finished word does.
-    final elapsed = await median('search "paneer" (6 keystrokes)', () async {
-      for (final prefix in const ['p', 'pa', 'pan', 'pane', 'panee', 'paneer']) {
-        await dao.search(prefix);
-      }
-    });
-    expect(
-      elapsed.inMilliseconds,
-      lessThan(120 * ciHeadroom),
-      reason:
-          'Search is typed character by character; above ~150 ms it feels '
-          'laggy and users stop trusting the results. This is the '
-          'requirement that forces the local FTS index (§19.5).',
-    );
-  });
-
-  test('NFR-P-05 — daily summary recompute after an edit (budget 100 ms)', () async {
-    final dao = DailySummaryDao(db);
-    final elapsed = await median('recompute one day', () async {
-      await dao.markStale(ownerId: ownerId, logDate: today);
-      await dao.summaryFor(ownerId: ownerId, logDate: today);
-    });
-    expect(elapsed.inMilliseconds, lessThan(100 * ciHeadroom));
-  });
-
-  test('NFR-P-04 — a logged entry is visible in the summary (budget 200 ms)', () async {
-    final logging = FoodLoggingDao(db);
-    final summaries = DailySummaryDao(db);
-    final food = await (db.select(db.servingSizes)..limit(1)).getSingle();
-
-    final elapsed = await median('log an entry, then read the day', () async {
-      await logging.logFood(
-        ownerId: ownerId,
-        foodId: food.foodId,
-        servingId: food.id,
-        quantity: 1,
-        mealSlotId: (await db.select(db.mealSlots).get()).first.id,
-        logDate: today,
+  test(
+    'NFR-P-03 — food search, keystroke to results (budget 120 ms)',
+    () async {
+      final dao = FoodSearchDao(db);
+      // Character by character, as a user actually types: the budget is per
+      // keystroke, and a prefix of two letters matches far more rows than
+      // the finished word does.
+      final elapsed = await median('search "paneer" (6 keystrokes)', () async {
+        for (final prefix in const [
+          'p',
+          'pa',
+          'pan',
+          'pane',
+          'panee',
+          'paneer',
+        ]) {
+          await dao.search(prefix);
+        }
+      });
+      expect(
+        elapsed.inMilliseconds,
+        lessThan(120 * ciHeadroom),
+        reason:
+            'Search is typed character by character; above ~150 ms it feels '
+            'laggy and users stop trusting the results. This is the '
+            'requirement that forces the local FTS index (§19.5).',
       );
-      await summaries.summaryFor(ownerId: ownerId, logDate: today);
-    });
-    expect(elapsed.inMilliseconds, lessThan(200 * ciHeadroom));
-  });
+    },
+  );
 
-  test('NFR-P-06 — weekly report from materialised dailies (budget 400 ms)', () async {
-    final dao = PeriodSummaryDao(db);
-    final elapsed = await median('weekly report', () async {
-      await dao.week(ownerId: ownerId, containing: today, now: today);
-    });
-    expect(
-      elapsed.inMilliseconds,
-      lessThan(400 * ciHeadroom),
-      reason:
-          'The whole point of materialising daily summaries (§25.4) is '
-          'that a period report is a range scan rather than a '
-          're-aggregation.',
-    );
-  });
+  test(
+    'NFR-P-05 — daily summary recompute after an edit (budget 100 ms)',
+    () async {
+      final dao = DailySummaryDao(db);
+      final elapsed = await median('recompute one day', () async {
+        await dao.markStale(ownerId: ownerId, logDate: today);
+        await dao.summaryFor(ownerId: ownerId, logDate: today);
+      });
+      expect(elapsed.inMilliseconds, lessThan(100 * ciHeadroom));
+    },
+  );
+
+  test(
+    'NFR-P-04 — a logged entry is visible in the summary (budget 200 ms)',
+    () async {
+      final logging = FoodLoggingDao(db);
+      final summaries = DailySummaryDao(db);
+      final food = await (db.select(db.servingSizes)..limit(1)).getSingle();
+
+      final elapsed = await median('log an entry, then read the day', () async {
+        await logging.logFood(
+          ownerId: ownerId,
+          foodId: food.foodId,
+          servingId: food.id,
+          quantity: 1,
+          mealSlotId: (await db.select(db.mealSlots).get()).first.id,
+          logDate: today,
+        );
+        await summaries.summaryFor(ownerId: ownerId, logDate: today);
+      });
+      expect(elapsed.inMilliseconds, lessThan(200 * ciHeadroom));
+    },
+  );
+
+  test(
+    'NFR-P-06 — weekly report from materialised dailies (budget 400 ms)',
+    () async {
+      final dao = PeriodSummaryDao(db);
+      final elapsed = await median('weekly report', () async {
+        await dao.week(ownerId: ownerId, containing: today, now: today);
+      });
+      expect(
+        elapsed.inMilliseconds,
+        lessThan(400 * ciHeadroom),
+        reason:
+            'The whole point of materialising daily summaries (§25.4) is '
+            'that a period report is a range scan rather than a '
+            're-aggregation.',
+      );
+    },
+  );
 
   test('NFR-P-07 — monthly report (budget 800 ms)', () async {
     final dao = PeriodSummaryDao(db);

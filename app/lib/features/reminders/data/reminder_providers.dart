@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nourishly_data/nourishly_data.dart' hide NutrientTarget, ReminderRule;
+import 'package:nourishly_data/nourishly_data.dart'
+    hide NutrientTarget, ReminderRule;
 import 'package:nourishly_domain/nourishly_domain.dart';
 
 import '../../../app/providers.dart';
@@ -83,9 +84,7 @@ final reminderDayStateProvider = FutureProvider<ReminderDayState>((ref) async {
         protein?.pctOfTarget != null && protein!.pctOfTarget! >= 100,
     lastWaterLoggedAt: water.isEmpty
         ? null
-        : water
-              .map((e) => e.loggedAt)
-              .reduce((a, b) => a.isAfter(b) ? a : b),
+        : water.map((e) => e.loggedAt).reduce((a, b) => a.isAfter(b) ? a : b),
     loggedMealSlotKeys: {
       for (final meal in summary.meals)
         if (!meal.isEmpty) meal.slotKey,

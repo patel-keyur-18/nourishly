@@ -63,13 +63,10 @@ class ImportReport {
   /// reconciles.
   bool get succeeded => entities.every((e) => e.reconciled);
 
-  int get totalInserted =>
-      entities.fold(0, (sum, e) => sum + e.inserted);
+  int get totalInserted => entities.fold(0, (sum, e) => sum + e.inserted);
   int get totalUpdated => entities.fold(0, (sum, e) => sum + e.updated);
-  int get totalUnchanged =>
-      entities.fold(0, (sum, e) => sum + e.unchanged);
-  int get totalSkipped =>
-      entities.fold(0, (sum, e) => sum + e.skippedOlder);
+  int get totalUnchanged => entities.fold(0, (sum, e) => sum + e.unchanged);
+  int get totalSkipped => entities.fold(0, (sum, e) => sum + e.skippedOlder);
 
   List<EntityImportResult> get unreconciled =>
       entities.where((e) => !e.reconciled).toList();
@@ -149,10 +146,7 @@ class DataImporter {
       await _markDaysStale(targetOwner, touchedDays);
     });
 
-    return ImportReport(
-      entities: results,
-      daysAffected: touchedDays.length,
-    );
+    return ImportReport(entities: results, daysAffected: touchedDays.length);
   }
 
   /// Rewrites the archive's owner id to the local profile's, in every
@@ -294,8 +288,7 @@ class DataImporter {
         .customSelect(
           'SELECT * FROM ${table.name} WHERE $where LIMIT 1',
           variables: [
-            for (final column in table.primaryKey)
-              _variable(values[column]),
+            for (final column in table.primaryKey) _variable(values[column]),
           ],
         )
         .get();

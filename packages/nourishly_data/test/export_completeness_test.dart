@@ -40,9 +40,9 @@ void main() {
     final exported = {for (final table in exportedTables) table.name};
     final live = {for (final table in db.allTables) table.actualTableName};
 
-    final unaccounted = live.difference(exported).difference(
-      notExported.keys.toSet(),
-    );
+    final unaccounted = live
+        .difference(exported)
+        .difference(notExported.keys.toSet());
     expect(
       unaccounted,
       isEmpty,

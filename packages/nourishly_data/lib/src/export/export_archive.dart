@@ -16,8 +16,7 @@ class ExportArchive {
   /// already an ISO-8601 string.
   final Map<String, List<Map<String, Object?>>> tables;
 
-  int get rowCount =>
-      tables.values.fold(0, (sum, rows) => sum + rows.length);
+  int get rowCount => tables.values.fold(0, (sum, rows) => sum + rows.length);
 
   Map<String, Object?> toJson() => {
     'manifest': manifest.toJson(),
@@ -105,9 +104,7 @@ class ExportManifest {
 
   static ExportManifest fromJson(Map<String, Object?> json) {
     if (json['format'] != format) {
-      throw const ExportFormatException(
-        'This is not a Nourishly export file.',
-      );
+      throw const ExportFormatException('This is not a Nourishly export file.');
     }
     final profile = json['profile'];
     final exportedAt = DateTime.tryParse('${json['exportedAt']}');

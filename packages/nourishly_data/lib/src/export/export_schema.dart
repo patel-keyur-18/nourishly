@@ -91,11 +91,7 @@ const exportedTables = <ExportedTable>[
   // the bundled asset on launch, so exporting them would multiply the
   // archive size by a hundred for nothing (§0.5's same argument as the
   // backup exclusion).
-  ExportedTable(
-    name: 'food_items',
-    scope: 'owner_id = ?',
-    primaryKey: ['id'],
-  ),
+  ExportedTable(name: 'food_items', scope: 'owner_id = ?', primaryKey: ['id']),
   ExportedTable(
     name: 'serving_sizes',
     scope: 'food_id IN (SELECT id FROM food_items WHERE owner_id = ?)',
@@ -133,8 +129,7 @@ const exportedTables = <ExportedTable>[
   ),
   ExportedTable(
     name: 'log_entry_nutrients',
-    scope:
-        'entry_id IN (SELECT id FROM food_log_entries WHERE owner_id = ?)',
+    scope: 'entry_id IN (SELECT id FROM food_log_entries WHERE owner_id = ?)',
     primaryKey: ['entry_id', 'nutrient_id'],
     childOf: ('food_log_entries', 'entry_id'),
   ),
@@ -150,8 +145,7 @@ const exportedTables = <ExportedTable>[
   ),
   ExportedTable(
     name: 'meal_template_items',
-    scope:
-        'template_id IN (SELECT id FROM meal_templates WHERE owner_id = ?)',
+    scope: 'template_id IN (SELECT id FROM meal_templates WHERE owner_id = ?)',
     primaryKey: ['id'],
     childOf: ('meal_templates', 'template_id'),
   ),

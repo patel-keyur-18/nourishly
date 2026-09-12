@@ -54,9 +54,9 @@ class NourishlyBottomNav extends StatelessWidget {
   /// The bar's height at the current text setting, so the destinations
   /// have somewhere to grow into rather than overflowing a fixed box.
   static double heightFor(BuildContext context) {
-    final scale = MediaQuery.textScalerOf(
-      context,
-    ).scale(1).clamp(1.0, maxLabelScale);
+    final scale = MediaQuery.textScalerOf(context)
+        .scale(1)
+        .clamp(1.0, maxLabelScale);
     return barHeight + (scale - 1) * 20;
   }
 

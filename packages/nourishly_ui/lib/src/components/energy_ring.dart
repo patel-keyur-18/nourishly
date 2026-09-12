@@ -60,9 +60,7 @@ class EnergyRing extends StatelessWidget {
     // doubles takes the whole card and pushes the macros off the fold —
     // §27.11's "charts reflow rather than truncate", applied to the one
     // chart whose content is a number rather than a series.
-    final scale = MediaQuery.textScalerOf(
-      context,
-    ).scale(1).clamp(1.0, 1.6);
+    final scale = MediaQuery.textScalerOf(context).scale(1).clamp(1.0, 1.6);
     final scaled = size * scale;
     return SizedBox(
       width: scaled,

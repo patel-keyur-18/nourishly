@@ -86,9 +86,7 @@ void main() {
           // No notification plugin answers a widget test, and a screen
           // that needs one is a screen that cannot be tested (§29.3's
           // port exists for exactly this).
-          reminderSchedulerProvider.overrideWithValue(
-            NoopReminderScheduler(),
-          ),
+          reminderSchedulerProvider.overrideWithValue(NoopReminderScheduler()),
         ],
         child: RepaintBoundary(key: captureKey, child: const NourishlyApp()),
       ),

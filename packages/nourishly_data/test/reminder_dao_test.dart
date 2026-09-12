@@ -29,7 +29,11 @@ void main() {
     );
 
     final second = await dao.rulesFor(ownerId);
-    expect(second.length, first.length, reason: 'seeding is once, not once per read');
+    expect(
+      second.length,
+      first.length,
+      reason: 'seeding is once, not once per read',
+    );
     expect(second.map((r) => r.id), first.map((r) => r.id));
   });
 
@@ -60,9 +64,8 @@ void main() {
     await dao.setEnabled(dinner.id, enabled: true);
     await dao.setSchedule(dinner.id, DailySchedule(time: LocalTime.of(19, 45)));
 
-    final reread = (await dao.rulesFor(
-      ownerId,
-    )).firstWhere((r) => r.id == dinner.id);
+    final reread = (await dao.rulesFor(ownerId))
+        .firstWhere((r) => r.id == dinner.id);
     expect(reread.enabled, isTrue);
     expect((reread.schedule! as DailySchedule).time, LocalTime.of(19, 45));
     expect(await dao.enabledCount(ownerId), 2);

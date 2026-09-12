@@ -88,10 +88,7 @@ void main() {
 
     await pump(tester);
 
-    expect(
-      scheduler.applied.map((r) => r.title),
-      contains('Log lunch'),
-    );
+    expect(scheduler.applied.map((r) => r.title), contains('Log lunch'));
     // The plan card is below the fold in a lazy ListView, so scroll to
     // it rather than asserting on a widget that was never built.
     await tester.drag(find.byType(ListView), const Offset(0, -600));
