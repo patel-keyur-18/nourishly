@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nourishly_data/nourishly_data.dart';
 
+import '../../../../app/providers.dart';
 import '../../../food_catalog/data/food_catalog_providers.dart';
 import '../../../profile/data/profile_providers.dart';
 
@@ -35,6 +36,69 @@ final foodSearchResultsProvider = FutureProvider.autoDispose<List<FoodItem>>((
   if (query.isEmpty) return const [];
 
   final dao = ref.watch(foodSearchDaoProvider);
-  // FR-U-16: the stated preference reorders results, never filters them.
-  return dao.search(query, preference: ref.watch(dietaryPreferenceProvider));
+  // Both of these reorder and neither filters: FR-U-16 for the stated
+  // preference, and §27.4's rule that a search must never silently omit
+  // what you typed.
+  // Awaited rather than read optimistically: resolving it later would
+  // reorder results under the reader's finger, and it is one cheap query
+  // that Riverpod then caches.
+  final preferredCuisines = await ref.watch(preferredCuisinesProvider.future);
+  return dao.search(
+    query,
+    preference: ref.watch(dietaryPreferenceProvider),
+    preferredCuisines: preferredCuisines,
+  );
+});
+
+/// The cuisines this profile eats often enough for the app to believe it
+/// (§0.8 of the catalog spec, `CuisineDao.frequentCuisines`).
+///
+/// Read from the log rather than asked for: a household that eats Gujarati
+/// food and types "dal" means Gujarati dal, and it should not have to say
+/// so in a setting. Empty until there is real evidence — a new profile, or
+/// a catalog whose seed predates cuisine tags — and empty leaves search
+/// ordered exactly as it was.
+final preferredCuisinesProvider = FutureProvider.autoDispose<Set<String>>((
+  ref,
+) async {
+  await ref.watch(catalogReadyProvider.future);
+  final ownerId = await ref.watch(defaultOwnerProvider.future);
+  final cuisines = await CuisineDao(ref.watch(nourishlyDatabaseProvider))
+      .frequentCuisines(ownerId, now: ref.watch(clockProvider).now());
+  return cuisines.toSet();
+});
+
+/// Every cuisine the catalog can offer, biggest first — the browse shelf
+/// shown when nobody has typed anything.
+///
+/// At 441 foods across seven cuisines, "search for a food" assumes you
+/// remember what is in there. This is the other half of UX-6: an empty
+/// search box should be a way in, not a blank.
+final catalogCuisinesProvider = FutureProvider<List<CuisineCount>>((ref) async {
+  await ref.watch(catalogReadyProvider.future);
+  return CuisineDao(ref.watch(nourishlyDatabaseProvider)).cuisinesInCatalog();
+});
+
+/// The cuisine being browsed, or null while searching normally.
+class BrowsedCuisineNotifier extends Notifier<String?> {
+  @override
+  String? build() => null;
+
+  void select(String? cuisine) => state = cuisine;
+}
+
+final browsedCuisineProvider =
+    NotifierProvider.autoDispose<BrowsedCuisineNotifier, String?>(
+      BrowsedCuisineNotifier.new,
+    );
+
+/// The foods in the cuisine being browsed.
+final browsedFoodsProvider = FutureProvider.autoDispose<List<FoodItem>>((
+  ref,
+) async {
+  final cuisine = ref.watch(browsedCuisineProvider);
+  if (cuisine == null) return const [];
+  await ref.watch(catalogReadyProvider.future);
+  return CuisineDao(ref.watch(nourishlyDatabaseProvider))
+      .foodsInCuisine(cuisine);
 });

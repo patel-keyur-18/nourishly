@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:drift/extensions/fts5.dart';
 import 'package:meta/meta.dart';
 
+import '../cuisine_tags.dart';
 import '../database.dart';
 import '../diet_classifier.dart';
 
@@ -156,10 +157,27 @@ class FoodSearchDao {
   /// order below them. Hiding a food would be the wrong call twice over —
   /// a household cooks for guests, and a search that silently omits what
   /// you typed is the dead end §27.4 rules out.
+  ///
+  /// [preferredCuisines] does the same for what this household actually
+  /// eats: typing "dal" in a Gujarati kitchen should reach Gujarati dal
+  /// before dal makhani. It comes from the log itself
+  /// ([CuisineDao.frequentCuisines]), so it needs no settings screen and
+  /// gets better with use. Empty — a new profile, or a seed built before
+  /// cuisine tags existed — leaves the order exactly as it was.
+  ///
+  /// A food this profile owns outranks both. If she has recorded her own
+  /// version of a dish, that is the one she cooks, and making her scroll
+  /// past the catalog's estimate of it every time would be the app
+  /// ignoring what it already knows.
+  ///
+  /// All three are **stable partitions, applied weakest first**, never
+  /// sorts: relevance stays the ordering underneath, and two foods a rule
+  /// treats alike must not swap places because of it.
   Future<List<FoodItem>> search(
     String query, {
     int limit = 20,
     DietaryPreference? preference,
+    Set<String> preferredCuisines = const {},
   }) async {
     final ids = await matchingFoodIds(query, limit: limit);
     if (ids.isEmpty) return const [];
@@ -169,25 +187,42 @@ class FoodSearchDao {
     )..where((f) => f.id.isIn(ids) & f.deletedAt.isNull())).get();
 
     final byId = {for (final row in rows) row.id: row};
-    final ordered = [for (final id in ids) ?byId[id]];
+    var ordered = [for (final id in ids) ?byId[id]];
 
-    if (preference == null || preference == DietaryPreference.none) {
-      return ordered;
+    if (preferredCuisines.isNotEmpty) {
+      ordered = _promote(
+        ordered,
+        (food) => preferredCuisines.contains(food.cuisine),
+      );
     }
 
-    // A stable partition rather than a sort: relevance is still the
-    // primary order, and two foods the preference treats alike must not
-    // swap places.
-    final suits = <FoodItem>[];
-    final rest = <FoodItem>[];
-    for (final food in ordered) {
-      if (suitsPreference(preference, DietClass.fromId(food.dietClass))) {
-        suits.add(food);
-      } else {
-        rest.add(food);
-      }
+    ordered = _promote(ordered, (food) => food.ownerId != null);
+
+    if (preference != null && preference != DietaryPreference.none) {
+      ordered = _promote(
+        ordered,
+        (food) => suitsPreference(preference, DietClass.fromId(food.dietClass)),
+      );
     }
-    return [...suits, ...rest];
+
+    return ordered;
+  }
+
+  /// Moves everything [wanted] accepts to the front, keeping the relative
+  /// order of both groups.
+  ///
+  /// Applying several of these weakest-first leaves the strongest rule
+  /// outermost, so diet preference still decides before cuisine does.
+  static List<FoodItem> _promote(
+    List<FoodItem> foods,
+    bool Function(FoodItem) wanted,
+  ) {
+    final yes = <FoodItem>[];
+    final no = <FoodItem>[];
+    for (final food in foods) {
+      (wanted(food) ? yes : no).add(food);
+    }
+    return [...yes, ...no];
   }
 }
 
