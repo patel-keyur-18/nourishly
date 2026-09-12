@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../theme/nourishly_colors.dart';
 import '../theme/nourishly_theme.dart';
+import '../theme/nourishly_typography.dart';
 import '../tokens.g.dart';
 
 /// One `.brow` from the prototype: a named nutrient, a track with the fill
@@ -34,6 +36,32 @@ class NutrientBar extends StatelessWidget {
         : (value / target / NourishlyChart.trackToTargetRatio).clamp(0.0, 1.0);
     const tickFraction = 1 / NourishlyChart.trackToTargetRatio;
 
+    // NFR-A-02's worked example, almost word for word: "Protein: 82 g of
+    // 95 g target, 86%" — not "bar at 86%". The percentage is the
+    // conclusion a sighted reader draws from where the fill sits relative
+    // to the tick, so it is stated rather than left to be inferred from a
+    // shape nobody can see.
+    final percent = target <= 0 ? null : (value / target * 100).round();
+    return Semantics(
+      label: percent == null
+          ? '$name: ${_round(value)} $unit, no target set'
+          : '$name: ${_round(value)} $unit of ${_round(target)} $unit '
+                'target, $percent per cent',
+      excludeSemantics: true,
+      child: _bar(context, colors, text, fraction, tickFraction),
+    );
+  }
+
+  static String _round(double value) =>
+      value >= 10 ? value.round().toString() : value.toStringAsFixed(1);
+
+  Widget _bar(
+    BuildContext context,
+    NourishlyColors colors,
+    NourishlyTypography text,
+    double fraction,
+    double tickFraction,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: NourishlySpace.s2),
       child: Row(

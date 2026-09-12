@@ -6,6 +6,11 @@ import 'common.dart';
 /// reproducible from entries + targets + ruleset (I-7); `isStale` and
 /// `rulesetVersion` drive lazy recomputation (§25.7). A corrupted or stale
 /// aggregate is a recompute, never a data-recovery incident (AP-3).
+/// The weekly and monthly reports read a *range* of these rows and
+/// nothing else (§25.4) — materialising the dailies is what keeps
+/// NFR-P-06 and NFR-P-07 in reach, and an index is what keeps reading
+/// them back cheap.
+@TableIndex(name: 'daily_summaries_owner_date', columns: {#ownerId, #logDate})
 class DailySummaries extends Table with Identifiable, Owned {
   DateTimeColumn get logDate => dateTime()();
   RealColumn get totalEnergyKcal => real()();
@@ -21,6 +26,7 @@ class DailySummaries extends Table with Identifiable, Owned {
   BoolColumn get isStale => boolean().withDefault(const Constant(false))();
 }
 
+@TableIndex(name: 'daily_summary_nutrients_summary', columns: {#summaryId})
 class DailySummaryNutrients extends Table {
   TextColumn get summaryId =>
       text().customConstraint('NOT NULL REFERENCES daily_summaries (id)')();
@@ -69,6 +75,7 @@ class ScoreComponents extends Table {
 
 /// Persisted so the daily report is stable rather than regenerating
 /// differently on each view (§22.5).
+@TableIndex(name: 'daily_insights_summary', columns: {#summaryId})
 class DailyInsights extends Table with Identifiable {
   TextColumn get summaryId =>
       text().customConstraint('NOT NULL REFERENCES daily_summaries (id)')();

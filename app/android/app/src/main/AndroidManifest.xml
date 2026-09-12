@@ -1,8 +1,35 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--
+        Reminders are local notifications only (§29.3) — there is no push
+        entitlement, no token, and nothing leaves the device.
+
+        POST_NOTIFICATIONS is asked for at runtime on API 33+, and §29.1 is
+        explicit about when: at the moment the user turns on their first
+        reminder, never at launch.
+
+        RECEIVE_BOOT_COMPLETED exists for the case §29.4 calls out as
+        commonly missed — Android drops every scheduled alarm on reboot, so
+        without this a user who restarts their phone quietly stops getting
+        reminders and has no way to know.
+
+        Note what is *not* here: SCHEDULE_EXACT_ALARM. Exact alarms are
+        gated behind a user grant on API 31+ and reserved for alarm-clock
+        apps on Play. A water reminder that lands within a few minutes of
+        its time is a water reminder; asking for a restricted permission to
+        make it land to the second would be taking something from the user
+        in exchange for nothing they would notice.
+    -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
     <application
         android:label="nourishly"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:allowBackup="true"
+        android:fullBackupContent="@xml/backup_rules"
+        android:dataExtractionRules="@xml/data_extraction_rules">
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -25,6 +52,26 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <!--
+            Reschedules pending reminders after a reboot, and after the app
+            is updated or restored from backup. All three clear Android's
+            alarm table; none of them tells the app, so without these
+            receivers reminders stop silently.
+        -->
+        <receiver
+            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver"
+            android:exported="false" />
+
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data

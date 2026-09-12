@@ -48,6 +48,34 @@ A card per target reads well for the six headline targets. Applied to all 24 tra
 
 **Applied.** Cards for the six headline targets — energy, protein, carbs, fat, fibre, water — under a *The six you look at* heading, then the remaining 18 micronutrients as a compact list that opens as a card when tapped. B's clarity where targets are actually adjusted, without a screen that scrolls forever.
 
+## One deliberate departure from the prototype
+
+### Screen 13 — one profile per phone ✅
+
+*Decided 2026-09-12, during Phase 5.*
+
+Prototype 13A opens with a **Profiles on this phone** group: two avatars,
+an Active marker, and **+ Add a profile**. The built screen has no such
+group, and will not get one.
+
+The household runs one profile per phone, which is also what §0.4 calls
+the typical case. With that settled, a switcher is not a simplification
+of anything — it is a second concept ("whose data am I looking at?")
+threaded through every screen, every query and every export, in service
+of a case that does not arise. The schema keeps `owner_id` on every owned
+row regardless, so nothing here forecloses adding profiles later; it is
+the *UI* that is not built.
+
+Everything else on screen 13 follows the prototype: the grouped-list
+treatment, Preferences with its **Reminders** row, the **Your data**
+group with export, backup and the destructive row in red, and the centred
+version footer.
+
+**This is the one place the implementation deliberately diverges from an
+approved screen.** It is recorded here rather than in a code comment so
+that the next person to compare the app against `prototype.html` finds
+the answer where they will look for it.
+
 ## What happens next
 
 These decisions become the implementation targets, one feature module per screen under the structure in §12.3 of the architecture. The prototype is the reference for layout and hierarchy; `tokens/nourishly-indigo.json` is the reference for every value.

@@ -82,9 +82,33 @@ class WaterVesselState extends State<WaterVessel>
       end: widget.totalMl,
     ).animate(CurvedAnimation(parent: _rise, curve: Curves.easeOutCubic));
     _shownMl = widget.totalMl;
+
+    // NFR-A-06: "reduced-motion setting respected", which §27.11 spells
+    // out for charts as "animations become instant transitions".
+    //
+    // Jumping to the end value rather than skipping the animation: the
+    // vessel still shows the right level, it simply arrives there without
+    // the pour. And no ripple at all — a moving water surface is the part
+    // of this that a person with vestibular sensitivity would actually
+    // feel.
+    if (_reduceMotion) {
+      _rise.value = 1;
+      _ripple.value = 1;
+      return;
+    }
     _rise.forward(from: 0);
     _ripple.forward(from: 0);
   }
+
+  /// Read from the platform rather than from `MediaQuery`, because
+  /// [_animateTo] runs from `initState` — where depending on an inherited
+  /// widget is not allowed. It is the same signal `MediaQuery` itself is
+  /// built from.
+  bool get _reduceMotion => WidgetsBinding
+      .instance
+      .platformDispatcher
+      .accessibilityFeatures
+      .disableAnimations;
 
   @override
   void dispose() {
@@ -92,6 +116,9 @@ class WaterVesselState extends State<WaterVessel>
     _ripple.dispose();
     super.dispose();
   }
+
+  static double _typeScale(BuildContext context) =>
+      MediaQuery.textScalerOf(context).scale(1).clamp(1.0, 1.6);
 
   @override
   Widget build(BuildContext context) {
@@ -104,9 +131,13 @@ class WaterVesselState extends State<WaterVessel>
           '${widget.totalMl.toStringAsFixed(0)} millilitres of '
           '${widget.goalMl.toStringAsFixed(0)}',
       child: ExcludeSemantics(
+        // NFR-A-03: the tumbler is drawn around the volume printed inside
+        // it, so it grows with the OS text setting rather than clipping
+        // the number it exists to show. Capped for the same reason as the
+        // energy ring.
         child: SizedBox(
-          width: 106,
-          height: 132,
+          width: 106 * _typeScale(context),
+          height: 132 * _typeScale(context),
           child: DecoratedBox(
             decoration: BoxDecoration(
               color: colors.surface2,

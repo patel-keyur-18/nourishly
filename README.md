@@ -2,7 +2,9 @@
 
 A cross-platform nutrition and hydration tracking app that helps users monitor daily food and water intake, track nutrients, and gain meaningful daily, weekly, and monthly health insights.
 
-> **Status: design phase, revision 0.3.** No implementation exists yet. Implementation begins only once the design is finalised.
+> **Status: implementation, through Phase 5 of 6** ([§0.9](./docs/architecture/00-scope.md#09-revised-effort-estimate)). Design revision 0.3 is final and is the specification the code is built against.
+>
+> Built so far: the schema and design system (1), the catalog pipeline and food/water logging (2), profiles, targets, scoring and the dashboard (3), the daily/weekly/monthly reports and recipes (4), and export/import, backup rules, reminders, accessibility and performance (5). Phase 6 is the keystore, device setup, and installing on family phones.
 >
 > **Scope: a private tracker for one household — 2–3 family members, self-built and sideloaded. No servers, no accounts, no public distribution.**
 >

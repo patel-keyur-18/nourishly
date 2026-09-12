@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../features/dashboard/presentation/screens/dashboard_screen.dart';
+import '../features/data_backup/presentation/screens/data_backup_screen.dart';
 import '../features/food_logging/presentation/screens/custom_food_screen.dart';
 import '../features/food_logging/presentation/screens/food_logging_screen.dart';
 import '../features/food_logging/presentation/screens/food_portion_screen.dart';
@@ -10,6 +11,7 @@ import '../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../features/profile/presentation/screens/profile_setup_screen.dart';
 import '../features/reports/presentation/screens/daily_report_screen.dart';
 import '../features/reports/presentation/screens/monthly_report_screen.dart';
+import '../features/reminders/presentation/screens/reminders_screen.dart';
 import '../features/reports/presentation/screens/reports_screen.dart';
 import '../features/recipes/presentation/screens/recipe_builder_screen.dart';
 import '../features/recipes/presentation/screens/recipes_screen.dart';
@@ -161,6 +163,19 @@ final GoRouter appRouter = GoRouter(
                   path: 'setup',
                   parentNavigatorKey: rootNavigatorKey,
                   builder: (context, state) => const ProfileSetupScreen(),
+                ),
+                // §28.5's route table, completed by Phase 5. Both are
+                // jobs you finish and come back from, so both cover the
+                // shell like the other detail screens.
+                GoRoute(
+                  path: 'reminders',
+                  parentNavigatorKey: rootNavigatorKey,
+                  builder: (context, state) => const RemindersScreen(),
+                ),
+                GoRoute(
+                  path: 'data',
+                  parentNavigatorKey: rootNavigatorKey,
+                  builder: (context, state) => const DataBackupScreen(),
                 ),
               ],
             ),

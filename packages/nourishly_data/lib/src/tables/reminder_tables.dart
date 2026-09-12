@@ -22,4 +22,13 @@ class ReminderRules extends Table with Identifiable, Owned, Timestamped {
   /// `HH:mm`, local time.
   TextColumn get quietHoursStart => text().nullable()();
   TextColumn get quietHoursEnd => text().nullable()();
+
+  /// For `type == 'meal'` only: which [MealSlots.key] this rule is about,
+  /// so the notification can say "Log lunch" rather than "Log a meal" and
+  /// the rule can stand down once that slot has an entry (§29.4).
+  ///
+  /// A slot *key* rather than a slot id: the key is stable across a
+  /// reinstall and across an import from another device, and a reminder
+  /// pointing at a row id that no longer exists is a silent failure.
+  TextColumn get mealSlotKey => text().nullable()();
 }

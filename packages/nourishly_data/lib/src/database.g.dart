@@ -3725,6 +3725,44 @@ class $UserPreferencesTable extends UserPreferences
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _remindersEnabledMeta = const VerificationMeta(
+    'remindersEnabled',
+  );
+  @override
+  late final GeneratedColumn<bool> remindersEnabled = GeneratedColumn<bool>(
+    'reminders_enabled',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("reminders_enabled" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _lastExportedAtMeta = const VerificationMeta(
+    'lastExportedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> lastExportedAt =
+      GeneratedColumn<DateTime>(
+        'last_exported_at',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _exportPromptSnoozedUntilMeta =
+      const VerificationMeta('exportPromptSnoozedUntil');
+  @override
+  late final GeneratedColumn<DateTime> exportPromptSnoozedUntil =
+      GeneratedColumn<DateTime>(
+        'export_prompt_snoozed_until',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
   @override
   List<GeneratedColumn> get $columns => [
     ownerId,
@@ -3745,6 +3783,9 @@ class $UserPreferencesTable extends UserPreferences
     locale,
     dietaryPreference,
     onboardingSeen,
+    remindersEnabled,
+    lastExportedAt,
+    exportPromptSnoozedUntil,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3904,6 +3945,33 @@ class $UserPreferencesTable extends UserPreferences
         ),
       );
     }
+    if (data.containsKey('reminders_enabled')) {
+      context.handle(
+        _remindersEnabledMeta,
+        remindersEnabled.isAcceptableOrUnknown(
+          data['reminders_enabled']!,
+          _remindersEnabledMeta,
+        ),
+      );
+    }
+    if (data.containsKey('last_exported_at')) {
+      context.handle(
+        _lastExportedAtMeta,
+        lastExportedAt.isAcceptableOrUnknown(
+          data['last_exported_at']!,
+          _lastExportedAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('export_prompt_snoozed_until')) {
+      context.handle(
+        _exportPromptSnoozedUntilMeta,
+        exportPromptSnoozedUntil.isAcceptableOrUnknown(
+          data['export_prompt_snoozed_until']!,
+          _exportPromptSnoozedUntilMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -3985,6 +4053,18 @@ class $UserPreferencesTable extends UserPreferences
         DriftSqlType.bool,
         data['${effectivePrefix}onboarding_seen'],
       )!,
+      remindersEnabled: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}reminders_enabled'],
+      )!,
+      lastExportedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}last_exported_at'],
+      ),
+      exportPromptSnoozedUntil: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}export_prompt_snoozed_until'],
+      ),
     );
   }
 
@@ -4048,6 +4128,26 @@ class UserPreference extends DataClass implements Insertable<UserPreference> {
   /// profile", so skipping setup does not mean seeing the welcome again on
   /// every launch.
   final bool onboardingSeen;
+
+  /// §29.4's single switch: "a single switch disables everything, and the
+  /// app remains fully functional."
+  ///
+  /// Separate from the per-rule `enabled` flags so that turning reminders
+  /// off and on again restores the set the user had configured, rather
+  /// than clearing it. Off by default — §29.1 makes reminders opt-in, and
+  /// the notification permission is not asked for until this is turned on.
+  final bool remindersEnabled;
+
+  /// When a complete export was last written (§0.5).
+  ///
+  /// With no server, this is the entire disaster-recovery clock: the
+  /// monthly export prompt reads it, and Settings shows it so "when did I
+  /// last have a copy of this?" is answerable without guessing.
+  final DateTime? lastExportedAt;
+
+  /// When the user last dismissed the periodic export prompt (§0.5's
+  /// "monthly, dismissible, never nagging"). Null means never dismissed.
+  final DateTime? exportPromptSnoozedUntil;
   const UserPreference({
     required this.ownerId,
     required this.createdAt,
@@ -4067,6 +4167,9 @@ class UserPreference extends DataClass implements Insertable<UserPreference> {
     required this.locale,
     this.dietaryPreference,
     required this.onboardingSeen,
+    required this.remindersEnabled,
+    this.lastExportedAt,
+    this.exportPromptSnoozedUntil,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -4091,6 +4194,15 @@ class UserPreference extends DataClass implements Insertable<UserPreference> {
       map['dietary_preference'] = Variable<String>(dietaryPreference);
     }
     map['onboarding_seen'] = Variable<bool>(onboardingSeen);
+    map['reminders_enabled'] = Variable<bool>(remindersEnabled);
+    if (!nullToAbsent || lastExportedAt != null) {
+      map['last_exported_at'] = Variable<DateTime>(lastExportedAt);
+    }
+    if (!nullToAbsent || exportPromptSnoozedUntil != null) {
+      map['export_prompt_snoozed_until'] = Variable<DateTime>(
+        exportPromptSnoozedUntil,
+      );
+    }
     return map;
   }
 
@@ -4116,6 +4228,13 @@ class UserPreference extends DataClass implements Insertable<UserPreference> {
           ? const Value.absent()
           : Value(dietaryPreference),
       onboardingSeen: Value(onboardingSeen),
+      remindersEnabled: Value(remindersEnabled),
+      lastExportedAt: lastExportedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastExportedAt),
+      exportPromptSnoozedUntil: exportPromptSnoozedUntil == null && nullToAbsent
+          ? const Value.absent()
+          : Value(exportPromptSnoozedUntil),
     );
   }
 
@@ -4147,6 +4266,11 @@ class UserPreference extends DataClass implements Insertable<UserPreference> {
         json['dietaryPreference'],
       ),
       onboardingSeen: serializer.fromJson<bool>(json['onboardingSeen']),
+      remindersEnabled: serializer.fromJson<bool>(json['remindersEnabled']),
+      lastExportedAt: serializer.fromJson<DateTime?>(json['lastExportedAt']),
+      exportPromptSnoozedUntil: serializer.fromJson<DateTime?>(
+        json['exportPromptSnoozedUntil'],
+      ),
     );
   }
   @override
@@ -4171,6 +4295,11 @@ class UserPreference extends DataClass implements Insertable<UserPreference> {
       'locale': serializer.toJson<String>(locale),
       'dietaryPreference': serializer.toJson<String?>(dietaryPreference),
       'onboardingSeen': serializer.toJson<bool>(onboardingSeen),
+      'remindersEnabled': serializer.toJson<bool>(remindersEnabled),
+      'lastExportedAt': serializer.toJson<DateTime?>(lastExportedAt),
+      'exportPromptSnoozedUntil': serializer.toJson<DateTime?>(
+        exportPromptSnoozedUntil,
+      ),
     };
   }
 
@@ -4193,6 +4322,9 @@ class UserPreference extends DataClass implements Insertable<UserPreference> {
     String? locale,
     Value<String?> dietaryPreference = const Value.absent(),
     bool? onboardingSeen,
+    bool? remindersEnabled,
+    Value<DateTime?> lastExportedAt = const Value.absent(),
+    Value<DateTime?> exportPromptSnoozedUntil = const Value.absent(),
   }) => UserPreference(
     ownerId: ownerId ?? this.ownerId,
     createdAt: createdAt ?? this.createdAt,
@@ -4214,6 +4346,13 @@ class UserPreference extends DataClass implements Insertable<UserPreference> {
         ? dietaryPreference.value
         : this.dietaryPreference,
     onboardingSeen: onboardingSeen ?? this.onboardingSeen,
+    remindersEnabled: remindersEnabled ?? this.remindersEnabled,
+    lastExportedAt: lastExportedAt.present
+        ? lastExportedAt.value
+        : this.lastExportedAt,
+    exportPromptSnoozedUntil: exportPromptSnoozedUntil.present
+        ? exportPromptSnoozedUntil.value
+        : this.exportPromptSnoozedUntil,
   );
   UserPreference copyWithCompanion(UserPreferencesCompanion data) {
     return UserPreference(
@@ -4257,6 +4396,15 @@ class UserPreference extends DataClass implements Insertable<UserPreference> {
       onboardingSeen: data.onboardingSeen.present
           ? data.onboardingSeen.value
           : this.onboardingSeen,
+      remindersEnabled: data.remindersEnabled.present
+          ? data.remindersEnabled.value
+          : this.remindersEnabled,
+      lastExportedAt: data.lastExportedAt.present
+          ? data.lastExportedAt.value
+          : this.lastExportedAt,
+      exportPromptSnoozedUntil: data.exportPromptSnoozedUntil.present
+          ? data.exportPromptSnoozedUntil.value
+          : this.exportPromptSnoozedUntil,
     );
   }
 
@@ -4280,13 +4428,16 @@ class UserPreference extends DataClass implements Insertable<UserPreference> {
           ..write('theme: $theme, ')
           ..write('locale: $locale, ')
           ..write('dietaryPreference: $dietaryPreference, ')
-          ..write('onboardingSeen: $onboardingSeen')
+          ..write('onboardingSeen: $onboardingSeen, ')
+          ..write('remindersEnabled: $remindersEnabled, ')
+          ..write('lastExportedAt: $lastExportedAt, ')
+          ..write('exportPromptSnoozedUntil: $exportPromptSnoozedUntil')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     ownerId,
     createdAt,
     updatedAt,
@@ -4305,7 +4456,10 @@ class UserPreference extends DataClass implements Insertable<UserPreference> {
     locale,
     dietaryPreference,
     onboardingSeen,
-  );
+    remindersEnabled,
+    lastExportedAt,
+    exportPromptSnoozedUntil,
+  ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -4327,7 +4481,10 @@ class UserPreference extends DataClass implements Insertable<UserPreference> {
           other.theme == this.theme &&
           other.locale == this.locale &&
           other.dietaryPreference == this.dietaryPreference &&
-          other.onboardingSeen == this.onboardingSeen);
+          other.onboardingSeen == this.onboardingSeen &&
+          other.remindersEnabled == this.remindersEnabled &&
+          other.lastExportedAt == this.lastExportedAt &&
+          other.exportPromptSnoozedUntil == this.exportPromptSnoozedUntil);
 }
 
 class UserPreferencesCompanion extends UpdateCompanion<UserPreference> {
@@ -4349,6 +4506,9 @@ class UserPreferencesCompanion extends UpdateCompanion<UserPreference> {
   final Value<String> locale;
   final Value<String?> dietaryPreference;
   final Value<bool> onboardingSeen;
+  final Value<bool> remindersEnabled;
+  final Value<DateTime?> lastExportedAt;
+  final Value<DateTime?> exportPromptSnoozedUntil;
   final Value<int> rowid;
   const UserPreferencesCompanion({
     this.ownerId = const Value.absent(),
@@ -4369,6 +4529,9 @@ class UserPreferencesCompanion extends UpdateCompanion<UserPreference> {
     this.locale = const Value.absent(),
     this.dietaryPreference = const Value.absent(),
     this.onboardingSeen = const Value.absent(),
+    this.remindersEnabled = const Value.absent(),
+    this.lastExportedAt = const Value.absent(),
+    this.exportPromptSnoozedUntil = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   UserPreferencesCompanion.insert({
@@ -4390,6 +4553,9 @@ class UserPreferencesCompanion extends UpdateCompanion<UserPreference> {
     this.locale = const Value.absent(),
     this.dietaryPreference = const Value.absent(),
     this.onboardingSeen = const Value.absent(),
+    this.remindersEnabled = const Value.absent(),
+    this.lastExportedAt = const Value.absent(),
+    this.exportPromptSnoozedUntil = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : ownerId = Value(ownerId),
        unitSystem = Value(unitSystem),
@@ -4420,6 +4586,9 @@ class UserPreferencesCompanion extends UpdateCompanion<UserPreference> {
     Expression<String>? locale,
     Expression<String>? dietaryPreference,
     Expression<bool>? onboardingSeen,
+    Expression<bool>? remindersEnabled,
+    Expression<DateTime>? lastExportedAt,
+    Expression<DateTime>? exportPromptSnoozedUntil,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -4442,6 +4611,10 @@ class UserPreferencesCompanion extends UpdateCompanion<UserPreference> {
       if (locale != null) 'locale': locale,
       if (dietaryPreference != null) 'dietary_preference': dietaryPreference,
       if (onboardingSeen != null) 'onboarding_seen': onboardingSeen,
+      if (remindersEnabled != null) 'reminders_enabled': remindersEnabled,
+      if (lastExportedAt != null) 'last_exported_at': lastExportedAt,
+      if (exportPromptSnoozedUntil != null)
+        'export_prompt_snoozed_until': exportPromptSnoozedUntil,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -4465,6 +4638,9 @@ class UserPreferencesCompanion extends UpdateCompanion<UserPreference> {
     Value<String>? locale,
     Value<String?>? dietaryPreference,
     Value<bool>? onboardingSeen,
+    Value<bool>? remindersEnabled,
+    Value<DateTime?>? lastExportedAt,
+    Value<DateTime?>? exportPromptSnoozedUntil,
     Value<int>? rowid,
   }) {
     return UserPreferencesCompanion(
@@ -4486,6 +4662,10 @@ class UserPreferencesCompanion extends UpdateCompanion<UserPreference> {
       locale: locale ?? this.locale,
       dietaryPreference: dietaryPreference ?? this.dietaryPreference,
       onboardingSeen: onboardingSeen ?? this.onboardingSeen,
+      remindersEnabled: remindersEnabled ?? this.remindersEnabled,
+      lastExportedAt: lastExportedAt ?? this.lastExportedAt,
+      exportPromptSnoozedUntil:
+          exportPromptSnoozedUntil ?? this.exportPromptSnoozedUntil,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -4549,6 +4729,17 @@ class UserPreferencesCompanion extends UpdateCompanion<UserPreference> {
     if (onboardingSeen.present) {
       map['onboarding_seen'] = Variable<bool>(onboardingSeen.value);
     }
+    if (remindersEnabled.present) {
+      map['reminders_enabled'] = Variable<bool>(remindersEnabled.value);
+    }
+    if (lastExportedAt.present) {
+      map['last_exported_at'] = Variable<DateTime>(lastExportedAt.value);
+    }
+    if (exportPromptSnoozedUntil.present) {
+      map['export_prompt_snoozed_until'] = Variable<DateTime>(
+        exportPromptSnoozedUntil.value,
+      );
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -4576,6 +4767,9 @@ class UserPreferencesCompanion extends UpdateCompanion<UserPreference> {
           ..write('locale: $locale, ')
           ..write('dietaryPreference: $dietaryPreference, ')
           ..write('onboardingSeen: $onboardingSeen, ')
+          ..write('remindersEnabled: $remindersEnabled, ')
+          ..write('lastExportedAt: $lastExportedAt, ')
+          ..write('exportPromptSnoozedUntil: $exportPromptSnoozedUntil, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -16370,6 +16564,17 @@ class $ReminderRulesTable extends ReminderRules
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _mealSlotKeyMeta = const VerificationMeta(
+    'mealSlotKey',
+  );
+  @override
+  late final GeneratedColumn<String> mealSlotKey = GeneratedColumn<String>(
+    'meal_slot_key',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -16382,6 +16587,7 @@ class $ReminderRulesTable extends ReminderRules
     conditions,
     quietHoursStart,
     quietHoursEnd,
+    mealSlotKey,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -16466,6 +16672,15 @@ class $ReminderRulesTable extends ReminderRules
         ),
       );
     }
+    if (data.containsKey('meal_slot_key')) {
+      context.handle(
+        _mealSlotKeyMeta,
+        mealSlotKey.isAcceptableOrUnknown(
+          data['meal_slot_key']!,
+          _mealSlotKeyMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -16515,6 +16730,10 @@ class $ReminderRulesTable extends ReminderRules
         DriftSqlType.string,
         data['${effectivePrefix}quiet_hours_end'],
       ),
+      mealSlotKey: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}meal_slot_key'],
+      ),
     );
   }
 
@@ -16544,6 +16763,15 @@ class ReminderRule extends DataClass implements Insertable<ReminderRule> {
   /// `HH:mm`, local time.
   final String? quietHoursStart;
   final String? quietHoursEnd;
+
+  /// For `type == 'meal'` only: which [MealSlots.key] this rule is about,
+  /// so the notification can say "Log lunch" rather than "Log a meal" and
+  /// the rule can stand down once that slot has an entry (§29.4).
+  ///
+  /// A slot *key* rather than a slot id: the key is stable across a
+  /// reinstall and across an import from another device, and a reminder
+  /// pointing at a row id that no longer exists is a silent failure.
+  final String? mealSlotKey;
   const ReminderRule({
     required this.id,
     required this.ownerId,
@@ -16555,6 +16783,7 @@ class ReminderRule extends DataClass implements Insertable<ReminderRule> {
     this.conditions,
     this.quietHoursStart,
     this.quietHoursEnd,
+    this.mealSlotKey,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -16574,6 +16803,9 @@ class ReminderRule extends DataClass implements Insertable<ReminderRule> {
     }
     if (!nullToAbsent || quietHoursEnd != null) {
       map['quiet_hours_end'] = Variable<String>(quietHoursEnd);
+    }
+    if (!nullToAbsent || mealSlotKey != null) {
+      map['meal_slot_key'] = Variable<String>(mealSlotKey);
     }
     return map;
   }
@@ -16596,6 +16828,9 @@ class ReminderRule extends DataClass implements Insertable<ReminderRule> {
       quietHoursEnd: quietHoursEnd == null && nullToAbsent
           ? const Value.absent()
           : Value(quietHoursEnd),
+      mealSlotKey: mealSlotKey == null && nullToAbsent
+          ? const Value.absent()
+          : Value(mealSlotKey),
     );
   }
 
@@ -16615,6 +16850,7 @@ class ReminderRule extends DataClass implements Insertable<ReminderRule> {
       conditions: serializer.fromJson<String?>(json['conditions']),
       quietHoursStart: serializer.fromJson<String?>(json['quietHoursStart']),
       quietHoursEnd: serializer.fromJson<String?>(json['quietHoursEnd']),
+      mealSlotKey: serializer.fromJson<String?>(json['mealSlotKey']),
     );
   }
   @override
@@ -16631,6 +16867,7 @@ class ReminderRule extends DataClass implements Insertable<ReminderRule> {
       'conditions': serializer.toJson<String?>(conditions),
       'quietHoursStart': serializer.toJson<String?>(quietHoursStart),
       'quietHoursEnd': serializer.toJson<String?>(quietHoursEnd),
+      'mealSlotKey': serializer.toJson<String?>(mealSlotKey),
     };
   }
 
@@ -16645,6 +16882,7 @@ class ReminderRule extends DataClass implements Insertable<ReminderRule> {
     Value<String?> conditions = const Value.absent(),
     Value<String?> quietHoursStart = const Value.absent(),
     Value<String?> quietHoursEnd = const Value.absent(),
+    Value<String?> mealSlotKey = const Value.absent(),
   }) => ReminderRule(
     id: id ?? this.id,
     ownerId: ownerId ?? this.ownerId,
@@ -16660,6 +16898,7 @@ class ReminderRule extends DataClass implements Insertable<ReminderRule> {
     quietHoursEnd: quietHoursEnd.present
         ? quietHoursEnd.value
         : this.quietHoursEnd,
+    mealSlotKey: mealSlotKey.present ? mealSlotKey.value : this.mealSlotKey,
   );
   ReminderRule copyWithCompanion(ReminderRulesCompanion data) {
     return ReminderRule(
@@ -16679,6 +16918,9 @@ class ReminderRule extends DataClass implements Insertable<ReminderRule> {
       quietHoursEnd: data.quietHoursEnd.present
           ? data.quietHoursEnd.value
           : this.quietHoursEnd,
+      mealSlotKey: data.mealSlotKey.present
+          ? data.mealSlotKey.value
+          : this.mealSlotKey,
     );
   }
 
@@ -16694,7 +16936,8 @@ class ReminderRule extends DataClass implements Insertable<ReminderRule> {
           ..write('enabled: $enabled, ')
           ..write('conditions: $conditions, ')
           ..write('quietHoursStart: $quietHoursStart, ')
-          ..write('quietHoursEnd: $quietHoursEnd')
+          ..write('quietHoursEnd: $quietHoursEnd, ')
+          ..write('mealSlotKey: $mealSlotKey')
           ..write(')'))
         .toString();
   }
@@ -16711,6 +16954,7 @@ class ReminderRule extends DataClass implements Insertable<ReminderRule> {
     conditions,
     quietHoursStart,
     quietHoursEnd,
+    mealSlotKey,
   );
   @override
   bool operator ==(Object other) =>
@@ -16725,7 +16969,8 @@ class ReminderRule extends DataClass implements Insertable<ReminderRule> {
           other.enabled == this.enabled &&
           other.conditions == this.conditions &&
           other.quietHoursStart == this.quietHoursStart &&
-          other.quietHoursEnd == this.quietHoursEnd);
+          other.quietHoursEnd == this.quietHoursEnd &&
+          other.mealSlotKey == this.mealSlotKey);
 }
 
 class ReminderRulesCompanion extends UpdateCompanion<ReminderRule> {
@@ -16739,6 +16984,7 @@ class ReminderRulesCompanion extends UpdateCompanion<ReminderRule> {
   final Value<String?> conditions;
   final Value<String?> quietHoursStart;
   final Value<String?> quietHoursEnd;
+  final Value<String?> mealSlotKey;
   final Value<int> rowid;
   const ReminderRulesCompanion({
     this.id = const Value.absent(),
@@ -16751,6 +16997,7 @@ class ReminderRulesCompanion extends UpdateCompanion<ReminderRule> {
     this.conditions = const Value.absent(),
     this.quietHoursStart = const Value.absent(),
     this.quietHoursEnd = const Value.absent(),
+    this.mealSlotKey = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ReminderRulesCompanion.insert({
@@ -16764,6 +17011,7 @@ class ReminderRulesCompanion extends UpdateCompanion<ReminderRule> {
     this.conditions = const Value.absent(),
     this.quietHoursStart = const Value.absent(),
     this.quietHoursEnd = const Value.absent(),
+    this.mealSlotKey = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        ownerId = Value(ownerId),
@@ -16780,6 +17028,7 @@ class ReminderRulesCompanion extends UpdateCompanion<ReminderRule> {
     Expression<String>? conditions,
     Expression<String>? quietHoursStart,
     Expression<String>? quietHoursEnd,
+    Expression<String>? mealSlotKey,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -16793,6 +17042,7 @@ class ReminderRulesCompanion extends UpdateCompanion<ReminderRule> {
       if (conditions != null) 'conditions': conditions,
       if (quietHoursStart != null) 'quiet_hours_start': quietHoursStart,
       if (quietHoursEnd != null) 'quiet_hours_end': quietHoursEnd,
+      if (mealSlotKey != null) 'meal_slot_key': mealSlotKey,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -16808,6 +17058,7 @@ class ReminderRulesCompanion extends UpdateCompanion<ReminderRule> {
     Value<String?>? conditions,
     Value<String?>? quietHoursStart,
     Value<String?>? quietHoursEnd,
+    Value<String?>? mealSlotKey,
     Value<int>? rowid,
   }) {
     return ReminderRulesCompanion(
@@ -16821,6 +17072,7 @@ class ReminderRulesCompanion extends UpdateCompanion<ReminderRule> {
       conditions: conditions ?? this.conditions,
       quietHoursStart: quietHoursStart ?? this.quietHoursStart,
       quietHoursEnd: quietHoursEnd ?? this.quietHoursEnd,
+      mealSlotKey: mealSlotKey ?? this.mealSlotKey,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -16858,6 +17110,9 @@ class ReminderRulesCompanion extends UpdateCompanion<ReminderRule> {
     if (quietHoursEnd.present) {
       map['quiet_hours_end'] = Variable<String>(quietHoursEnd.value);
     }
+    if (mealSlotKey.present) {
+      map['meal_slot_key'] = Variable<String>(mealSlotKey.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -16877,6 +17132,7 @@ class ReminderRulesCompanion extends UpdateCompanion<ReminderRule> {
           ..write('conditions: $conditions, ')
           ..write('quietHoursStart: $quietHoursStart, ')
           ..write('quietHoursEnd: $quietHoursEnd, ')
+          ..write('mealSlotKey: $mealSlotKey, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -16937,6 +17193,54 @@ abstract class _$NourishlyDatabase extends GeneratedDatabase {
   );
   late final $DailyInsightsTable dailyInsights = $DailyInsightsTable(this);
   late final $ReminderRulesTable reminderRules = $ReminderRulesTable(this);
+  late final Index targetSetsOwnerFrom = Index(
+    'target_sets_owner_from',
+    'CREATE INDEX target_sets_owner_from ON target_sets (owner_id, effective_from)',
+  );
+  late final Index nutrientTargetsSet = Index(
+    'nutrient_targets_set',
+    'CREATE INDEX nutrient_targets_set ON nutrient_targets (target_set_id)',
+  );
+  late final Index foodNutrientValuesFood = Index(
+    'food_nutrient_values_food',
+    'CREATE INDEX food_nutrient_values_food ON food_nutrient_values (food_id)',
+  );
+  late final Index servingSizesFood = Index(
+    'serving_sizes_food',
+    'CREATE INDEX serving_sizes_food ON serving_sizes (food_id)',
+  );
+  late final Index foodAltNamesFood = Index(
+    'food_alt_names_food',
+    'CREATE INDEX food_alt_names_food ON food_alt_names (food_id)',
+  );
+  late final Index recipeComponentsRecipe = Index(
+    'recipe_components_recipe',
+    'CREATE INDEX recipe_components_recipe ON recipe_components (recipe_food_item_id)',
+  );
+  late final Index foodLogEntriesOwnerDate = Index(
+    'food_log_entries_owner_date',
+    'CREATE INDEX food_log_entries_owner_date ON food_log_entries (owner_id, log_date)',
+  );
+  late final Index waterLogEntriesOwnerDate = Index(
+    'water_log_entries_owner_date',
+    'CREATE INDEX water_log_entries_owner_date ON water_log_entries (owner_id, log_date)',
+  );
+  late final Index mealTemplateItemsTemplate = Index(
+    'meal_template_items_template',
+    'CREATE INDEX meal_template_items_template ON meal_template_items (template_id)',
+  );
+  late final Index dailySummariesOwnerDate = Index(
+    'daily_summaries_owner_date',
+    'CREATE INDEX daily_summaries_owner_date ON daily_summaries (owner_id, log_date)',
+  );
+  late final Index dailySummaryNutrientsSummary = Index(
+    'daily_summary_nutrients_summary',
+    'CREATE INDEX daily_summary_nutrients_summary ON daily_summary_nutrients (summary_id)',
+  );
+  late final Index dailyInsightsSummary = Index(
+    'daily_insights_summary',
+    'CREATE INDEX daily_insights_summary ON daily_insights (summary_id)',
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -16973,6 +17277,18 @@ abstract class _$NourishlyDatabase extends GeneratedDatabase {
     scoreComponents,
     dailyInsights,
     reminderRules,
+    targetSetsOwnerFrom,
+    nutrientTargetsSet,
+    foodNutrientValuesFood,
+    servingSizesFood,
+    foodAltNamesFood,
+    recipeComponentsRecipe,
+    foodLogEntriesOwnerDate,
+    waterLogEntriesOwnerDate,
+    mealTemplateItemsTemplate,
+    dailySummariesOwnerDate,
+    dailySummaryNutrientsSummary,
+    dailyInsightsSummary,
   ];
 }
 
@@ -20135,6 +20451,9 @@ typedef $$UserPreferencesTableCreateCompanionBuilder =
       Value<String> locale,
       Value<String?> dietaryPreference,
       Value<bool> onboardingSeen,
+      Value<bool> remindersEnabled,
+      Value<DateTime?> lastExportedAt,
+      Value<DateTime?> exportPromptSnoozedUntil,
       Value<int> rowid,
     });
 typedef $$UserPreferencesTableUpdateCompanionBuilder =
@@ -20157,6 +20476,9 @@ typedef $$UserPreferencesTableUpdateCompanionBuilder =
       Value<String> locale,
       Value<String?> dietaryPreference,
       Value<bool> onboardingSeen,
+      Value<bool> remindersEnabled,
+      Value<DateTime?> lastExportedAt,
+      Value<DateTime?> exportPromptSnoozedUntil,
       Value<int> rowid,
     });
 
@@ -20285,6 +20607,21 @@ class $$UserPreferencesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<bool> get remindersEnabled => $composableBuilder(
+    column: $table.remindersEnabled,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get lastExportedAt => $composableBuilder(
+    column: $table.lastExportedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get exportPromptSnoozedUntil => $composableBuilder(
+    column: $table.exportPromptSnoozedUntil,
+    builder: (column) => ColumnFilters(column),
+  );
+
   $$UsersTableFilterComposer get ownerId {
     final $$UsersTableFilterComposer composer = $composerBuilder(
       composer: this,
@@ -20403,6 +20740,21 @@ class $$UserPreferencesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<bool> get remindersEnabled => $composableBuilder(
+    column: $table.remindersEnabled,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get lastExportedAt => $composableBuilder(
+    column: $table.lastExportedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get exportPromptSnoozedUntil => $composableBuilder(
+    column: $table.exportPromptSnoozedUntil,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$UsersTableOrderingComposer get ownerId {
     final $$UsersTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -20509,6 +20861,21 @@ class $$UserPreferencesTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<bool> get remindersEnabled => $composableBuilder(
+    column: $table.remindersEnabled,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get lastExportedAt => $composableBuilder(
+    column: $table.lastExportedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get exportPromptSnoozedUntil => $composableBuilder(
+    column: $table.exportPromptSnoozedUntil,
+    builder: (column) => column,
+  );
+
   $$UsersTableAnnotationComposer get ownerId {
     final $$UsersTableAnnotationComposer composer = $composerBuilder(
       composer: this,
@@ -20581,6 +20948,10 @@ class $$UserPreferencesTableTableManager
                 Value<String> locale = const Value.absent(),
                 Value<String?> dietaryPreference = const Value.absent(),
                 Value<bool> onboardingSeen = const Value.absent(),
+                Value<bool> remindersEnabled = const Value.absent(),
+                Value<DateTime?> lastExportedAt = const Value.absent(),
+                Value<DateTime?> exportPromptSnoozedUntil =
+                    const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => UserPreferencesCompanion(
                 ownerId: ownerId,
@@ -20601,6 +20972,9 @@ class $$UserPreferencesTableTableManager
                 locale: locale,
                 dietaryPreference: dietaryPreference,
                 onboardingSeen: onboardingSeen,
+                remindersEnabled: remindersEnabled,
+                lastExportedAt: lastExportedAt,
+                exportPromptSnoozedUntil: exportPromptSnoozedUntil,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -20623,6 +20997,10 @@ class $$UserPreferencesTableTableManager
                 Value<String> locale = const Value.absent(),
                 Value<String?> dietaryPreference = const Value.absent(),
                 Value<bool> onboardingSeen = const Value.absent(),
+                Value<bool> remindersEnabled = const Value.absent(),
+                Value<DateTime?> lastExportedAt = const Value.absent(),
+                Value<DateTime?> exportPromptSnoozedUntil =
+                    const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => UserPreferencesCompanion.insert(
                 ownerId: ownerId,
@@ -20643,6 +21021,9 @@ class $$UserPreferencesTableTableManager
                 locale: locale,
                 dietaryPreference: dietaryPreference,
                 onboardingSeen: onboardingSeen,
+                remindersEnabled: remindersEnabled,
+                lastExportedAt: lastExportedAt,
+                exportPromptSnoozedUntil: exportPromptSnoozedUntil,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -30710,6 +31091,7 @@ typedef $$ReminderRulesTableCreateCompanionBuilder =
       Value<String?> conditions,
       Value<String?> quietHoursStart,
       Value<String?> quietHoursEnd,
+      Value<String?> mealSlotKey,
       Value<int> rowid,
     });
 typedef $$ReminderRulesTableUpdateCompanionBuilder =
@@ -30724,6 +31106,7 @@ typedef $$ReminderRulesTableUpdateCompanionBuilder =
       Value<String?> conditions,
       Value<String?> quietHoursStart,
       Value<String?> quietHoursEnd,
+      Value<String?> mealSlotKey,
       Value<int> rowid,
     });
 
@@ -30783,6 +31166,11 @@ class $$ReminderRulesTableFilterComposer
 
   ColumnFilters<String> get quietHoursEnd => $composableBuilder(
     column: $table.quietHoursEnd,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get mealSlotKey => $composableBuilder(
+    column: $table.mealSlotKey,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -30845,6 +31233,11 @@ class $$ReminderRulesTableOrderingComposer
     column: $table.quietHoursEnd,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get mealSlotKey => $composableBuilder(
+    column: $table.mealSlotKey,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$ReminderRulesTableAnnotationComposer
@@ -30889,6 +31282,11 @@ class $$ReminderRulesTableAnnotationComposer
 
   GeneratedColumn<String> get quietHoursEnd => $composableBuilder(
     column: $table.quietHoursEnd,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get mealSlotKey => $composableBuilder(
+    column: $table.mealSlotKey,
     builder: (column) => column,
   );
 }
@@ -30940,6 +31338,7 @@ class $$ReminderRulesTableTableManager
                 Value<String?> conditions = const Value.absent(),
                 Value<String?> quietHoursStart = const Value.absent(),
                 Value<String?> quietHoursEnd = const Value.absent(),
+                Value<String?> mealSlotKey = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ReminderRulesCompanion(
                 id: id,
@@ -30952,6 +31351,7 @@ class $$ReminderRulesTableTableManager
                 conditions: conditions,
                 quietHoursStart: quietHoursStart,
                 quietHoursEnd: quietHoursEnd,
+                mealSlotKey: mealSlotKey,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -30966,6 +31366,7 @@ class $$ReminderRulesTableTableManager
                 Value<String?> conditions = const Value.absent(),
                 Value<String?> quietHoursStart = const Value.absent(),
                 Value<String?> quietHoursEnd = const Value.absent(),
+                Value<String?> mealSlotKey = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ReminderRulesCompanion.insert(
                 id: id,
@@ -30978,6 +31379,7 @@ class $$ReminderRulesTableTableManager
                 conditions: conditions,
                 quietHoursStart: quietHoursStart,
                 quietHoursEnd: quietHoursEnd,
+                mealSlotKey: mealSlotKey,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

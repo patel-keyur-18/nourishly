@@ -23,6 +23,13 @@ class MealSlots extends Table with Identifiable {
 /// on a date (§22.1, §22.5). `gramsConsumed` and `logDate` are stored
 /// explicitly even though derivable — servings can change, and back-dating
 /// plus the configurable rollover time both break naive derivation.
+///
+/// `(owner_id, log_date)` is the only shape anything reads this table in:
+/// the dashboard asks for one day, the reports ask for a range, and both
+/// scope by profile. Without the index every one of those is a full scan
+/// over the largest table in the app — fine at a week of logging, and the
+/// thing that makes NFR-P-05 and NFR-P-06 unreachable at a year of it.
+@TableIndex(name: 'food_log_entries_owner_date', columns: {#ownerId, #logDate})
 class FoodLogEntries extends Table with Identifiable, Owned, SoftDeletable {
   DateTimeColumn get logDate => dateTime()();
   TextColumn get mealSlotId =>
@@ -63,6 +70,10 @@ class LogEntryNutrients extends Table {
 
 /// Immutable and additive by design (§17.6 → still true with no sync: an
 /// edit is a delete-and-recreate, never an in-place amount change).
+@TableIndex(
+  name: 'water_log_entries_owner_date',
+  columns: {#ownerId, #logDate},
+)
 class WaterLogEntries extends Table with Identifiable, Owned, SoftDeletable {
   DateTimeColumn get logDate => dateTime()();
   DateTimeColumn get loggedAt => dateTime()();
@@ -91,6 +102,7 @@ class MealTemplates extends Table
 /// Applying a template creates independent [FoodLogEntries] rows with
 /// fresh snapshots — entries never reference the template back, so editing
 /// one never alters past logs (§22.5).
+@TableIndex(name: 'meal_template_items_template', columns: {#templateId})
 class MealTemplateItems extends Table with Identifiable {
   TextColumn get templateId =>
       text().customConstraint('NOT NULL REFERENCES meal_templates (id)')();

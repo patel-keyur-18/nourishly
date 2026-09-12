@@ -43,3 +43,16 @@ final catalogReadyProvider = FutureProvider<void>((ref) async {
   );
   await RdaImporter(db).importFromString(rda);
 });
+
+/// The version of the food catalog on the device, for Settings' footer and
+/// for the export manifest (§30.6) — an archive without it cannot be
+/// re-interpreted later, and a screen that claims "catalog 2026.09" should
+/// be reading the number rather than printing one.
+final catalogVersionProvider = FutureProvider<int?>((ref) async {
+  await ref.watch(catalogReadyProvider.future);
+  final db = ref.watch(nourishlyDatabaseProvider);
+  final row = await db
+      .customSelect('SELECT MAX(version) AS v FROM catalog_versions')
+      .getSingle();
+  return row.data['v'] as int?;
+});

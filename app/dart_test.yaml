@@ -1,0 +1,6 @@
+tags:
+  screenshots:
+    # Writes PNGs to build/screenshots for holding next to
+    # docs/design/prototype.html. A review artefact rather than an
+    # assertion, so it is excluded from the default run.
+    description: Renders each screen and writes a PNG.
