@@ -726,12 +726,18 @@ class _IngredientPickerState extends ConsumerState<_IngredientPicker> {
 
     // Sized from the space that is actually left, not from the screen.
     //
-    // This sheet used to be a flat `0.7 × screenHeight` box with the
-    // keyboard inset added underneath it. With the search field autofocused
-    // the keyboard is always up, so on a 780-pt phone it asked for 546 pt
-    // of sheet plus ~340 pt of keyboard inside 780 pt of screen, and
-    // overflowed by the difference — which is what the bottom of the
-    // ingredient picker looked like on a real phone.
+    // This sheet used to ask for a flat `0.7 × screenHeight` and then add
+    // the keyboard inset underneath it — a height that takes no account of
+    // what is left to put it in. Its search field is autofocused, so the
+    // keyboard is always up, and on a short phone the two together come to
+    // more than the screen: what survives is then whatever the parent's
+    // constraints clamp it to, which is not a decision anyone made.
+    //
+    // Reported as the picker "overflowing in mobile screen". The exact
+    // overflow has not been reproduced in a widget test — the layout is
+    // covered at 360 × 640 with a keyboard and at 200% type, and neither
+    // throws — so this is the sizing being made deliberate rather than a
+    // confirmed fix for that report.
     final media = MediaQuery.of(context);
     final keyboard = media.viewInsets.bottom;
     final available =

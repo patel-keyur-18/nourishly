@@ -13,7 +13,7 @@ message bar and its own row.
 |---|---|---|---|
 | 1 | Add food will not close; app becomes unnavigable | `MealsCard` opens the logging flow with `context.go('/log')` (`dashboard_cards.dart`). `go` **replaces** the stack, so `/log` sits alone over an empty history: `context.pop()` has nothing to pop, the shell and its nav bar are gone, and the only way out is to kill the app | `push`, everywhere a detail screen is opened; a `canPop()` fallback on every close affordance so no screen can ever become a trap |
 | 2 | No swipe back | Android's default `ZoomPageTransitionsBuilder` carries no back-gesture detector | `pageTransitionsTheme` → `CupertinoPageTransitionsBuilder` on both platforms, which brings `_CupertinoBackGestureDetector` with it |
-| 3 | New recipe → add ingredients overflows | `_IngredientPicker` is a fixed `0.7 × screenHeight` box **plus** the keyboard inset; with the field autofocused, 0.7 H + ~340 px keyboard exceeds the screen | Size the sheet from the space actually available, scroll the rest |
+| 3 | New recipe → add ingredients overflows | `_IngredientPicker` asks for a fixed `0.7 × screenHeight` **plus** the keyboard inset — a height that takes no account of what is left, and its field is autofocused so the keyboard is always up | Size the sheet from the space actually available, scroll the rest. **Not reproduced in a test** — see the note below |
 | 4 | Settings is not the approved design | The screen grew feature-first: five ad-hoc groups, an inline title instead of the prototype's app bar, body-weight history sitting in the middle of it | Redraw as prototype 13A — grouped list, three groups, value-plus-chevron rows, centred fine print |
 | 5 | Profile and Settings are one screen | Everything landed on the Profile tab's root | Split: a real Profile screen (details, body, activity, diet, goal) pushed from Settings. Recipes stay in Settings |
 | 6 | Editing one field throws me into onboarding | "Body and activity" routes to `/profile/setup` — the six-step wizard, which also starts from hardcoded defaults (1992 / 174 cm / 71 kg) rather than the saved profile, so it can silently overwrite real values | Per-field editors that write one field and return. The wizard stays for first run only, and prefills from the saved profile when there is one |
@@ -43,9 +43,31 @@ message bar and its own row.
 
 **H. Tests and docs.** Widget tests for: the meal row pushing and popping back; a message bar that is gone after five seconds; editing weight without leaving Profile; Settings' structure. `decisions.md` updated.
 
-## Known constraint
+## What item 3 is and is not
 
-This session has no Flutter or Dart toolchain, so `flutter analyze` and
-`flutter test` cannot be run here. The work is kept to the idioms already
-in the codebase and the tests are written alongside it, but the suite must
-be run on a machine that has the SDK before this is merged.
+The sheet's sizing was genuinely wrong — a fixed fraction of the screen
+plus the keyboard, which is a height nobody chose once the two are added
+together — and it is now derived from the space that is actually left.
+Alongside it: a drag handle, a safe area, ellipsised long names, and the
+grams step on the shared dialog, whose content scrolls rather than clips.
+
+But the reported overflow itself was **not reproduced** in a widget test.
+The picker was exercised at 360 × 640 with a 336 pt keyboard and at 200%
+type on a small screen; neither throws, with the new sizing or the old.
+So item 3 is a defensible correction rather than a confirmed fix, and it
+wants a look on the device it was seen on — with the phone's text-size
+setting, which is the variable the tests can only approximate.
+
+## Verification
+
+Flutter 3.47.4 / Dart 3.13.3 — the version the app pins — was installed to
+run this, so none of it rests on reading. `flutter analyze` is clean across
+all five packages, and every suite passes: 110 app tests (including the
+screenshot renders), 41 `nourishly_ui`, 151 `nourishly_data`, 112
+`nutrition_core`, 28 `nourishly_domain`.
+
+Worth saying plainly: the toolchain paid for itself immediately. The
+swipe-back transition did not compile at all, the dark theme would have
+shown white text on a light message bar, the tap-target check caught a
+36 dp nav bar, and a same-day profile edit turned out to read back the old
+version. None of those were visible by inspection.
