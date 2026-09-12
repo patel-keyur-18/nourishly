@@ -87,11 +87,15 @@ const ingredientTargets = <String, String>{
   'butter oil': '01:butter', // Butter
   'buttermilk': '01:buttermilk', // Buttermilk
   'cabbage': '01:cabbage', // Cabbage
+  'capsicum': '01:capsicum', // Capsicum
   'carrot': '01:carrot', // Carrot
   'cashew': '01:cashew', // Cashew
   'cauliflower': '01:cauliflower', // Cauliflower
   'chana dal': '01:chana-dal-raw', // Chana dal, raw
   'chana dal-jaggery filling': '01:chana-dal-raw', // Chana dal, raw
+  'chawli': '01:chawli-lobia', // Chawli / Lobia
+  'cheese': '01:cheese-processed', // Cheese, processed
+  'chia seeds': '01:chia-seeds', // Chia seeds
   'chicken': '01:chicken-curry-cut-raw', // Chicken, curry cut, raw
   'chickpeas': '01:chana-whole-kabuli', // Chana, whole (kabuli)
   'chutney': '01:green-chutney', // Green chutney
@@ -108,6 +112,7 @@ const ingredientTargets = <String, String>{
   'cucumber onion': '01:cucumber', // Cucumber
   'curd': '01:curd-plain', // Curd, plain
   'dal filling': '01:chana-dal-raw', // Chana dal, raw
+  'dates': '01:dates', // Dates
   'decoction': '01:coffee-decoction', // Coffee decoction
   'dosa': '03:dosa-plain', // Dosa, plain
   'dosa batter': '01:idli-rice-urad-batter', // Idli rice + urad batter
@@ -124,7 +129,9 @@ const ingredientTargets = <String, String>{
   'garlic': '01:garlic', // Garlic
   'ghee': '01:ghee', // Ghee
   'ghee oil': '01:ghee', // Ghee
+  'green peas': '01:green-peas', // Green peas
   'groundnut oil': '01:groundnut-oil', // Groundnut oil
+  'honey': '01:honey', // Honey
   'huli podi': '01:garam-masala', // Garam masala
   'hung curd': '01:hung-curd', // Hung curd
   'idli batter': '01:idli-rice-urad-batter', // Idli rice + urad batter
@@ -132,6 +139,7 @@ const ingredientTargets = <String, String>{
   'jaggery': '01:jaggery', // Jaggery
   'jalebi': '02:jalebi', // Jalebi
   'jowar flour': '01:jowar-flour', // Jowar flour
+  'kabuli chana': '01:chana-whole-kabuli', // Chana, whole (kabuli) — the white chickpea, not the brown `kala` row beside it
   'kesari bath': '04:kesari-bath', // Kesari bath
   'khara bath': '04:khara-bath', // Khara bath
   'khoya': '01:khoya-mawa', // Khoya / Mawa
@@ -144,6 +152,9 @@ const ingredientTargets = <String, String>{
   'methi greens': '01:fenugreek-leaves', // Fenugreek leaves
   'milk': '01:milk-cow-whole', // Milk, cow, whole
   'milk reduced': '01:milk-cow-whole', // Milk, cow, whole
+  'millet pasta': '07:millet-pasta-dry', // Millet pasta, dry — a dish's ingredient list means the dry pasta that goes in the pot, never the cooked dish of the same name
+  'millet vermicelli': '07:millet-vermicelli-raw', // Millet vermicelli, raw
+  'mint leaves': '01:mint-leaves', // Mint leaves
   'mixed dal': '01:toor-dal-raw', // Toor dal, raw
   'mixed sprouts': '01:sprouted-moong', // Sprouted moong
   'mixed veg': '01:mixed-vegetables', // Mixed vegetables
@@ -151,15 +162,19 @@ const ingredientTargets = <String, String>{
   'moong chana dal': '01:moong-dal-raw', // Moong dal, raw
   'moong dal': '01:moong-dal-raw', // Moong dal, raw
   'moong dal soaked': '01:moong-dal-raw', // Moong dal, raw
+  'mushroom': '01:mushroom', // Mushroom
   'muthiya': '02:muthiya-steamed', // Muthiya, steamed
   'neer dose': '04:neer-dose', // Neer dose
   'nuts': '01:cashew', // Cashew
+  'oats': '01:oats-rolled', // Oats, rolled
   'oil': '01:groundnut-oil', // Groundnut oil
   'oil ghee': '01:groundnut-oil', // Groundnut oil
   'okra': '01:okra', // Okra
   'onion': '01:onion', // Onion
   'onion tomato': '01:onion', // Onion
+  'paneer': '01:paneer', // Paneer
   'parotta': '03:parotta', // Parotta
+  'pasta': '07:pasta-dry', // Pasta, dry
   'patra': '02:patra', // Patra
   'pav': '01:pav', // Pav
   'peanut-coconut masala': '01:peanut-chutney', // Peanut chutney
@@ -174,9 +189,12 @@ const ingredientTargets = <String, String>{
   'potato vada': '04:palya-potato', // Palya, potato
   'puffed rice': '01:puffed-rice', // Puffed rice
   'puliyogare paste': '01:tamarind', // Tamarind
+  'pumpkin': '01:pumpkin', // Pumpkin
+  'pumpkin seeds': '01:pumpkin-seeds', // Pumpkin seeds
   'ragi flour': '01:ragi-flour', // Ragi flour
   'rasam podi': '01:garam-masala', // Garam masala
   'rava': '01:semolina-rava', // Semolina, rava
+  'raw banana': '01:raw-banana', // Raw banana
   'raw poha': '01:poha-raw', // Poha, raw
   'red chutney spread': '01:green-chutney', // Green chutney
   'refined flour': '01:refined-flour-maida', // Refined flour, maida
@@ -198,7 +216,9 @@ const ingredientTargets = <String, String>{
   'sugar': '01:sugar', // Sugar
   'sugar syrup': '01:sugar', // Sugar
   'sundried vathal': '01:mixed-vegetables', // Mixed vegetables
+  'sunflower seeds': '01:sunflower-seeds', // Sunflower seeds
   'surti papdi': '01:field-beans', // Field beans
+  'sweet potato': '01:sweet-potato', // Sweet potato
   'tamarind': '01:tamarind', // Tamarind
   'tamarind paste': '01:tamarind', // Tamarind
   'tempering': '01:groundnut-oil', // Groundnut oil
@@ -214,6 +234,7 @@ const ingredientTargets = <String, String>{
   'vegetable tamarind': '01:mixed-vegetables', // Mixed vegetables
   'vegetables': '01:mixed-vegetables', // Mixed vegetables
   'vermicelli': '01:vermicelli-raw', // Vermicelli, raw
+  'watermelon seeds': '01:watermelon-seeds', // Watermelon seeds
   'wheat extract': '01:wheat-flour-atta', // Wheat flour, atta
   'wheat flour': '01:wheat-flour-atta', // Wheat flour, atta
   'yam': '01:yam', // Yam
