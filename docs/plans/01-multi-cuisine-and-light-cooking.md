@@ -1,7 +1,9 @@
 # Plan — Multi-cuisine catalog, a safe way to keep adding to it, and "our kitchen" light-cooking versions
 
-*Draft 0.3 · 2026-09-12 · awaiting approval · [Catalog spec](../catalog/README.md) · [Food & nutrition](../architecture/05-food-and-nutrition.md) · [Scope](../architecture/00-scope.md)*
+*Draft 0.4 · 2026-09-12 · awaiting approval · [Catalog spec](../catalog/README.md) · [Food & nutrition](../architecture/05-food-and-nutrition.md) · [Scope](../architecture/00-scope.md)*
 
+> **0.3 → 0.4** — the four blocking answers folded in: overnight oats and plain dal written out ingredient by ingredient (§6.7), the missing-ingredient list corrected from six to nine (the seeds), wave 1 now ~39 rows. WP3 is unblocked.
+>
 > **0.2 → 0.3** — Part A (§6) rewritten against the ~30 dishes you named: nine are already in the app, only six ingredients are missing, and the Punjabi and Indo-Chinese files are cut. Work packages resized.
 >
 > **0.1 → 0.2** — adds the agreed division of labour (§2), the FDC cache design (§3), a root-cause fix for name collisions with measurements from the committed catalog (§4), and what `cuisineTags` should actually do (§5). Part A and Part B are unchanged in substance and condensed here.
@@ -251,20 +253,25 @@ Loggable today, nothing to add:
 | Poha | **①** `Poha` [02] · `Aval upma` [03] · `Avalakki` [04] |
 | Vermicelli, plain | `Semiya upma` [03] · `Shavige bath` [04] |
 
-### 6.2 Only six ingredients are actually missing
+### 6.2 Nine ingredients are missing — all but two are plain USDA lookups
 
-The pantry is far better stocked than rev 0.2 assumed. Everything these dishes need already has a row — `Sweet potato`, `Raw banana`, `Spinach`, `Paneer`, `Egg`, `Chana, whole (kabuli)`, `Chawli / Lobia`, `Mint leaves`, `Pumpkin`, `Pav`, `Capsicum`, `Green peas`, `Honey`, `Almonds`, `Cashew`, `Cheese, processed`, `Butter`, `Refined flour, maida`, `Milk`, `Curd` — except these:
+The pantry is far better stocked than rev 0.2 assumed. Everything these dishes need already has a row — `Sweet potato`, `Raw banana`, `Spinach`, `Paneer`, `Egg`, `Chana, whole (kabuli)`, `Chawli / Lobia`, `Mint leaves`, `Pumpkin`, `Pav`, `Capsicum`, `Green peas`, `Honey`, `Dates`, `Banana`, `Almonds`, `Cashew`, `Cheese, processed`, `Butter`, `Refined flour, maida`, `Milk`, `Curd`, `Flaxseed`, `Sesame seeds` — except these:
 
 | Missing ingredient | Needed by | Note |
 |---|---|---|
-| **Mushroom** | mushroom subji, mushroom biryani | straightforward USDA lookup |
-| **Oats, rolled** | overnight oats | straightforward |
-| **Pasta, dry (durum)** | white sauce, pumpkin sauce pasta | straightforward |
-| **Millet pasta** | millet pasta | ⚠️ FDC has no such food — needs a composition row (millet flour + water) or your decision on the closest match |
-| **Millet vermicelli** | millet vermicelli | ⚠️ same problem |
-| **Chia seeds** | overnight oats — *if yours uses them* | pending your answer |
+| **Mushroom** | mushroom subji, mushroom biryani | plain USDA lookup |
+| **Oats, rolled** | overnight oats | plain USDA lookup |
+| **Chia seeds** | overnight oats | plain USDA lookup |
+| **Pumpkin seeds** | overnight oats | USDA *seeds, pumpkin and squash seed kernels* |
+| **Watermelon seeds** | overnight oats | USDA *seeds, watermelon seed kernels, dried* — magaz |
+| **Sunflower seeds** | overnight oats | plain USDA lookup. The catalog has sunflower **oil**, not the seed |
+| **Pasta, dry (durum)** | white sauce pasta, pumpkin sauce pasta | plain USDA lookup |
+| **Millet pasta** | millet pasta | ⚠️ no such FDC food — composition row |
+| **Millet vermicelli** | millet vermicelli | ⚠️ same |
 
-The two flagged rows are the only genuine data problem in your whole list. §0.2 forbids inventing a number, and the honest options are a composition row built from the millet flour that is already in the catalog, or logging them against durum pasta and accepting a known small error. **My recommendation: composition row from millet flour** — it is traceable, and it is what the pipeline is for.
+You confirmed the millet products are **100% millet**, so the two flagged rows become composition rows over the millet flour already in the catalog (`Ragi flour`, `Jowar flour`, `Bajra flour`) rather than a guess at a blend. That is traceable and it is exactly what §0.2's recipe mechanism is for.
+
+**One packet-label check, not a blocker:** which millet. The row ships with whichever you name and is corrected later by changing one ingredient name — the §0.3 pattern.
 
 ### 6.3 One real gap the list exposed
 
@@ -274,16 +281,16 @@ There is a **`Gujarati dal`** (sweet, with jaggery) and a `Dal dhokli`, but **no
 
 Four of your entries — moong dal + rice, palak dal + rice, normal dal + rice — are plates, not dishes. The catalog already has "Meal templates worth defining" sections and the app already has `MealTemplates` / `MealTemplateItems` tables. So each becomes **one dal row plus one template**, and logging the plate is one tap rather than two.
 
-### 6.5 Revised wave 1 — about 34 rows, not 310
+### 6.5 Revised wave 1 — about 39 rows, not 310
 
 | File | Rows | Contents |
 |---|---|---|
-| `01-common.md` *(additions)* | 3 | Mushroom · Oats, rolled · Chia seeds |
+| `01-common.md` *(additions)* | 6 | Mushroom · Oats, rolled · Chia · Pumpkin seeds · Watermelon seeds · Sunflower seeds |
 | `05-everyday-north.md` *(new)* | ~14 | **①** Dal tadka, plain · **①** Moong dal · Palak dal · Chhole · Kabuli chana subji · Cowpea subji · Tomato subji · Mushroom subji · Raw banana fry · Sweet potato paratha · Palak paneer paratha · Egg bhurji |
 | `06-rice-and-biryani.md` *(new)* | ~6 | Paneer biryani · Egg biryani · Mushroom biryani · Pudina pulav · Tawa pulav |
 | `07-pasta-and-modern.md` *(new)* | ~9 | Pasta, dry · Millet pasta · Millet vermicelli · White sauce pasta · Pumpkin sauce pasta · Millet pasta (dish) · Overnight oats · Lemon vermicelli · Millet vermicelli upma |
 | `05`/`06` template sections | 4 | The three dal-and-rice plates, plus pav bhaji |
-| **Total** | **~34** | Covers **100%** of what you told me you cook |
+| **Total** | **~39** | Covers **100%** of what you told me you cook |
 
 `Pav bhaji` goes in `05-everyday-north.md` for now rather than earning a street-food file of its own; one dish does not need a file.
 
@@ -300,7 +307,40 @@ This is exactly what risk **R-1** and catalog spec **§0.5** warn about: curatin
 
 **Recommendation:** build the ~34 rows above, use the app for a month, and let the search-failure queue (§31.6) name the next wave. If Chinese and Punjabi are food you eat *out* rather than cook, they are worth adding later and at a much smaller size — restaurant portions, not recipes.
 
-### 6.7 Spec additions still needed
+### 6.7 The two rows you specified, written out
+
+Both are now fully determined. Numbers you gave are marked **measured**; the rest are §0.3 starting estimates for you to correct against a scale once — and correcting them is one number each, not a rebuild.
+
+**Overnight oats** — `07-pasta-and-modern.md`, serving *1 bowl ≈ 250 g*
+
+| Ingredient | g | Basis |
+|---|---|---|
+| Oats, rolled | **21** | **measured — your number** |
+| Milk, cow, whole | 120 | estimate: the usual 1 : 1.5 soak by volume |
+| Banana | 80 | estimate: 1 small; the catalog's 1 medium is 100 g |
+| Seeds — chia · pumpkin · watermelon · sunflower | 2.5 each, **10** total | estimate |
+| Honey | 7 | 1 tsp, matching the catalog's own serving |
+| Dates | 8 | 1 piece; the catalog's 2 pieces are 16 g |
+
+246 g of ingredients into a 250 g bowl — a cold assembly, yield ≈ 1.0, no cooking loss to model.
+
+**The four seeds go in as four ingredients, not one "mixed seeds" line.** Their energy is similar but their micronutrients are not — chia is fibre and omega-3, pumpkin is zinc and magnesium, sunflower is vitamin E. Collapsing them to one line would throw away exactly the detail this app exists to track, and it costs nothing to keep them apart.
+
+**Dal tadka, plain** — `05-everyday-north.md`, serving *1 katori 150 g*, marked **①**
+
+| Ingredient | g | Basis |
+|---|---|---|
+| Toor dal, raw | 30 | estimate |
+| Groundnut oil | 5 | estimate — **oil, not ghee**, as you said |
+| Turmeric, cumin, salt, chilli | — | negligible mass (§0.2) |
+
+35 g of ingredients into a 150 g katori is a yield of 4.3×, against the sweet `Gujarati dal`'s 2.4×. That is the honest arithmetic for a plain dal with no jaggery, tamarind, tomato or peanuts in it — but it also means **this is the single row most worth weighing**, because a thicker or thinner dal moves it a lot and you eat it several times a week.
+
+This row then becomes the base that `Moong dal` and `Palak dal` are written against, so getting it right pays three times.
+
+---
+
+### 6.8 Spec additions still needed
 
 Small, and unchanged in intent from rev 0.2:
 
@@ -334,7 +374,7 @@ Guardrail: warn (never block — §19.8 says offer, never impose) if a fork drop
 | **WP0** | **Safe-to-extend pipeline** | Stable keys + `uuid.v5` ids (§4.1) · explicit `ingredientTargets` + `--suggest` (§4.2) · `catalog.lock.json` + `--check` (§4.3) · sort the catalog file list · CI gate (§4.4) | ~1.5 days |
 | **WP1** | **FDC cache** | `CachingFdcClient`, trimmed records, `index.json`, three modes (§3) | ~half day |
 | **WP2** | Catalog spec additions | Serving units, absorbed-oil convention, key/uniqueness rules, section-level cuisine override (§6.7) | ~2 h |
-| **WP3** | **Wave 1 rows** | The ~34 rows of §6.5 — every dish you named. One `fetch_catalog` run, one `build_seed`, one reviewable seed diff | ~5 h |
+| **WP3** | **Wave 1 rows** | The ~39 rows of §6.5 — every dish you named. One `fetch_catalog` run, one `build_seed`, one reviewable seed diff | ~5 h |
 | **WP4** | `cuisineTags` populated + search subtitles | §5.1 — fixes the duplicate-name bug shipping today | ~half day |
 | **WP5** | Cuisine ranking + browse chips | §5.2, §5.3 | ~1 day |
 | **WP6** | Light cooking: fork + preset + *Yours* ranking | §7 | ~1 day |
@@ -353,19 +393,28 @@ WP6 (light cooking) moved ahead of WP5 (browse) because §6 shrank: at ~420 food
 
 ---
 
-## 9. What I need from you
+## 9. Questions
 
-Seven questions from rev 0.2 are resolved by your list. These are what is left, and only #1–#4 block WP3:
 
-| # | Question | Why it matters |
+**Answered, and WP3 is now unblocked:**
+
+| | Answer | Written up in |
 |---|---|---|
-| 1 | **Overnight oats — what goes in yours?** Milk or curd, how much oats, fruit, chia, nuts, honey? | It is the one dish on your list I cannot infer. Everything else has a standard shape |
-| 2 | **"Normal daal"** — toor only, or a mix? Tempered in oil or ghee, and roughly how much? | Decides the plain-dal row every other dal row is built from |
-| 3 | **Millet pasta and millet vermicelli** — which millet (ragi, jowar, foxtail), and is it 100% millet or a blend? | §6.2 — composition row versus closest match |
-| 4 | **Which dosas** do you actually make? | Nine rows exist; I want to mark the right ones **①** rather than all nine |
-| 5 | **Chinese and Punjabi** — eaten out, or just not on the list? | §6.6 — decides whether wave 2 is recipes or restaurant portions |
-| 6 | **Does she measure the oil, or estimate it?** | If she measures even roughly, the forked numbers in Part B stop being estimates. A tablespoon and one week (§0.3) |
-| 7 | Commit the FDC cache (≈1 MB)? | Public domain, and it is what makes the seed reproducible |
+| Overnight oats | 21 g oats, milk, honey, 1 date, 1 small banana, chia + pumpkin + watermelon + sunflower seeds | §6.7 |
+| Normal dal | Toor dal, tempered in **oil** — not ghee, no jaggery | §6.7 |
+| Millet products | **100% millet** → composition rows, not a blended guess | §6.2 |
+| Dosas | All nine existing rows stand as they are | §6.1 |
+
+**Still open — none of them blocks writing the rows:**
+
+| # | Question | Why it is not a blocker |
+|---|---|---|
+| 1 | **Which millet** is the pasta and vermicelli? Ragi, jowar, bajra — the packet will say | The row ships with whichever you name; correcting it later is one ingredient name (§0.3) |
+| 2 | **Chinese and Punjabi** — eaten out, or just not on the list? | Decides whether wave 2 is recipes or restaurant portions. Wave 1 does not touch it |
+| 3 | **Does she measure the oil, or estimate it?** | If she measures even roughly, Part B's forked numbers stop being estimates. A tablespoon and one week (§0.3) |
+| 4 | Commit the FDC cache (≈1 MB)? | Public domain, and it is what makes the seed reproducible (§3) |
+
+**And one thing worth doing with a scale, once:** the plain dal row (§6.7). It is eaten several times a week, two more dal rows are written against it, and its yield factor is the least certain number in wave 1.
 
 ---
 
