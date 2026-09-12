@@ -5,6 +5,7 @@ import 'package:nourishly_data/nourishly_data.dart';
 import 'package:nourishly_ui/nourishly_ui.dart';
 
 import '../../../../app/providers.dart';
+import '../../../data_backup/presentation/widgets/export_prompt_banner.dart';
 import '../../../profile/data/profile_providers.dart';
 import '../widgets/day_header.dart';
 import '../widgets/dashboard_cards.dart';
@@ -59,6 +60,10 @@ class DashboardScreen extends ConsumerWidget {
                       : null,
                 ),
                 const SizedBox(height: NourishlySpace.s4),
+                // §0.5's monthly export prompt. Above the cards so it is
+                // seen, below the day header so it never displaces what
+                // the user opened the app for.
+                const ExportPromptBanner(),
                 if (!hideEnergy) ...[
                   EnergyCard(summary: summary),
                   const SizedBox(height: NourishlySpace.s3),

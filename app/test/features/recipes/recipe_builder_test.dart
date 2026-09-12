@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nourishly/app/app.dart';
 import 'package:nourishly/app/router.dart';
+import 'package:nourishly/features/reminders/data/local_notification_scheduler.dart';
+import 'package:nourishly/features/reminders/data/reminder_providers.dart';
 import 'package:nourishly/features/food_catalog/data/food_catalog_providers.dart';
 import 'package:nourishly_data/nourishly_data.dart';
 import 'package:nourishly_ui/nourishly_ui.dart';
@@ -104,6 +106,12 @@ void main() {
         overrides: [
           nourishlyDatabaseProvider.overrideWithValue(db),
           catalogReadyProvider.overrideWith((ref) async {}),
+          // No notification plugin answers a widget test, and a screen
+          // that needs one is a screen that cannot be tested (§29.3's
+          // port exists for exactly this).
+          reminderSchedulerProvider.overrideWithValue(
+            NoopReminderScheduler(),
+          ),
         ],
         child: const NourishlyApp(),
       ),

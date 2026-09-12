@@ -15,6 +15,21 @@ dependencies:
   go_router: ^18.0.1
   drift: ^2.35.0
 
+  # Phase 5. Reminders are local notifications behind the
+  # `ReminderScheduler` port (§11, §29.3); `timezone` is what lets a
+  # reminder set for 21:30 stay at 21:30 across a DST change, which
+  # scheduling on a raw Duration does not.
+  flutter_local_notifications: ^19.4.2
+  timezone: ^0.10.0
+  flutter_timezone: ^4.1.1
+
+  # Export and import (§0.5, §30.6): somewhere to write the archive, a way
+  # to hand it to wherever the user keeps their backups, and a way to pick
+  # one back up again.
+  path_provider: ^2.1.5
+  share_plus: ^12.0.0
+  file_selector: ^1.0.3
+
   nourishly_ui:
     path: ../packages/nourishly_ui
   nourishly_domain:

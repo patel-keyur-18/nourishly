@@ -401,11 +401,23 @@ class _KeyValue extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: text.caption.copyWith(color: colors.ink3)),
+          // Both sides flex. At 200% type on a narrow phone a fixed label
+          // and a flexible value still overflow, because the label alone
+          // is wider than the row (NFR-A-03).
+          Flexible(
+            child: Text(
+              label,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: text.caption.copyWith(color: colors.ink3),
+            ),
+          ),
+          const SizedBox(width: NourishlySpace.s2),
           Flexible(
             child: Text(
               value,
               maxLines: 1,
+              textAlign: TextAlign.right,
               overflow: TextOverflow.ellipsis,
               style: text.body.copyWith(fontWeight: FontWeight.w700),
             ),

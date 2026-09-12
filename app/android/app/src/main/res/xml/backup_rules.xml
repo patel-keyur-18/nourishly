@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Android Auto Backup, API 30 and below (§0.5's mechanism 1).
+
+  Exclusion rules only, deliberately. Auto Backup includes everything it
+  is not told to exclude, so a rule set written as exclusions cannot fail
+  by omitting user data — the worst outcome is that something harmless
+  gets backed up. An include-list with one wrong path fails the other way:
+  silently, and only discovered on the day somebody restores a phone. For
+  a design whose entire disaster-recovery story is this file plus a manual
+  export, that asymmetry decides the shape.
+
+  On the catalog. §0.5 says to exclude the food catalog replica, on the
+  reasoning that a 20-40 MB replica would blow Auto Backup's 25 MB
+  per-app quota. The catalog that shipped is 383 foods rather than the
+  30,000 that estimate assumed, and `backup_footprint_test.dart` measures
+  the database at 1.9 MB with a person-year of logging adding 428 KB — 8%
+  of the quota, against user data that grows by under half a megabyte a
+  year. Excluding it would mean splitting the catalog into its own SQLite
+  file, which is real work and real risk, to save nothing that is scarce.
+
+  So the whole database is backed up, and the test enforces the
+  assumption: if the catalog ever grows past a third of the quota, it
+  fails and says to come back to this file.
+-->
+<full-backup-content>
+    <!--
+      Generated export files. They are written on demand, the user has
+      already been handed a copy wherever they chose to put it, and a
+      complete JSON archive is the one file here that could rival the
+      database for size.
+    -->
+    <exclude domain="file" path="exports" />
+    <exclude domain="external" path="exports" />
+
+    <!--
+      Flutter's own asset and engine caches under the data dir. Rebuilt
+      from the APK on first launch, so backing them up stores a copy of
+      something the app already ships with.
+    -->
+    <exclude domain="root" path="cache" />
+    <exclude domain="root" path="code_cache" />
+</full-backup-content>

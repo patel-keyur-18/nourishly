@@ -148,6 +148,27 @@ class UserPreferences extends Table with Owned, Timestamped {
   /// every launch.
   BoolColumn get onboardingSeen =>
       boolean().withDefault(const Constant(false))();
+
+  /// §29.4's single switch: "a single switch disables everything, and the
+  /// app remains fully functional."
+  ///
+  /// Separate from the per-rule `enabled` flags so that turning reminders
+  /// off and on again restores the set the user had configured, rather
+  /// than clearing it. Off by default — §29.1 makes reminders opt-in, and
+  /// the notification permission is not asked for until this is turned on.
+  BoolColumn get remindersEnabled =>
+      boolean().withDefault(const Constant(false))();
+
+  /// When a complete export was last written (§0.5).
+  ///
+  /// With no server, this is the entire disaster-recovery clock: the
+  /// monthly export prompt reads it, and Settings shows it so "when did I
+  /// last have a copy of this?" is answerable without guessing.
+  DateTimeColumn get lastExportedAt => dateTime().nullable()();
+
+  /// When the user last dismissed the periodic export prompt (§0.5's
+  /// "monthly, dismissible, never nagging"). Null means never dismissed.
+  DateTimeColumn get exportPromptSnoozedUntil => dateTime().nullable()();
 }
 
 class BodyWeightEntries extends Table

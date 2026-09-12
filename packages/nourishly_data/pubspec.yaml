@@ -19,6 +19,8 @@ dependencies:
   meta: ^1.16.0
   nutrition_core:
     path: ../nutrition_core
+  nourishly_domain:
+    path: ../nourishly_domain
 
 dev_dependencies:
   flutter_test:

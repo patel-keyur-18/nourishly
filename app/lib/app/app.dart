@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nourishly_ui/nourishly_ui.dart';
 
 import '../features/food_catalog/data/food_catalog_providers.dart';
 import '../features/profile/data/profile_providers.dart';
+import '../features/reminders/data/local_notification_scheduler.dart';
+import '../features/reminders/data/reminder_providers.dart';
 import 'router.dart';
 
 /// The Nourishly application shell: theme + routing, nothing else. Actual
@@ -21,11 +25,67 @@ class NourishlyApp extends ConsumerStatefulWidget {
   ConsumerState<NourishlyApp> createState() => _NourishlyAppState();
 }
 
-class _NourishlyAppState extends ConsumerState<NourishlyApp> {
+class _NourishlyAppState extends ConsumerState<NourishlyApp>
+    with WidgetsBindingObserver {
   /// Guards against sending the user to the welcome twice in one run —
   /// preferences can rebuild for reasons that have nothing to do with
   /// onboarding.
   bool _checkedOnboarding = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _startReminders());
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  /// §29.4: "rescheduling happens on app resume, on rule change, and after
+  /// device reboot."
+  ///
+  /// Resume is this. Rule changes are handled where the rule changes, and
+  /// reboot by the manifest's boot receiver. Resume matters most of the
+  /// three, because it is the one that re-evaluates *conditions*: a water
+  /// reminder scheduled this morning should stand down once the goal is
+  /// met this afternoon, and nothing else would notice.
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      unawaited(_resyncReminders());
+    }
+  }
+
+  Future<void> _startReminders() async {
+    final scheduler = ref.read(reminderSchedulerProvider);
+    if (scheduler is LocalNotificationScheduler) {
+      // Registers the channel and picks up a notification tap that
+      // launched the app. Explicitly *not* a permission prompt — §29.1
+      // puts that at the moment the first reminder is turned on.
+      await scheduler.initialise(onTap: appRouter.go);
+    }
+    final launchRoute = await scheduler.takeLaunchRoute();
+    // §28.5: a tap lands on the right screen, not on whatever the app
+    // happened to be showing last.
+    if (launchRoute != null) appRouter.go(launchRoute);
+    await _resyncReminders();
+  }
+
+  Future<void> _resyncReminders() async {
+    try {
+      await ref.read(reminderSyncProvider).resync();
+    } on Object catch (error) {
+      // A scheduler that cannot reach the platform must not stop the app
+      // from starting. Reminders are an addition to Nourishly, never a
+      // precondition for using it (§29.4's "the app remains fully
+      // functional").
+      debugPrint('Nourishly: could not reschedule reminders ($error).');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

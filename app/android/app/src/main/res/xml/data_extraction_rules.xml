@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Android 12 (API 31) and above replaced `fullBackupContent` with this
+  file, which splits the two things the old one conflated: backup to the
+  user's own Google Drive, and a direct device-to-device transfer when
+  they set up a new phone. Both are wanted here — see backup_rules.xml for
+  the reasoning behind the exclusion-only shape and the decision to back
+  up the catalog along with everything else.
+
+  `disableIfNoEncryptionCapabilities` is deliberately not set on
+  cloud-backup: it would refuse to back up at all on a device without
+  end-to-end encryption capability, and for a household tracker whose only
+  other recovery path is remembering to export, no backup is worse than a
+  backup with the platform's ordinary guarantees. The data is a food
+  diary, and §30.3 already treats the device as the trust boundary.
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="file" path="exports" />
+        <exclude domain="external" path="exports" />
+        <exclude domain="root" path="cache" />
+        <exclude domain="root" path="code_cache" />
+    </cloud-backup>
+
+    <device-transfer>
+        <!--
+          A direct transfer has no quota worth worrying about, but a
+          half-written export file is still not worth moving.
+        -->
+        <exclude domain="file" path="exports" />
+        <exclude domain="external" path="exports" />
+        <exclude domain="root" path="cache" />
+        <exclude domain="root" path="code_cache" />
+    </device-transfer>
+</data-extraction-rules>

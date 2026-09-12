@@ -63,6 +63,10 @@ class PreferencesDao {
     String? dietaryPreference,
     bool clearDietaryPreference = false,
     bool? onboardingSeen,
+    String? theme,
+    bool? remindersEnabled,
+    DateTime? lastExportedAt,
+    DateTime? exportPromptSnoozedUntil,
   }) async {
     await forOwner(ownerId);
     await (_db.update(
@@ -99,6 +103,16 @@ class PreferencesDao {
         onboardingSeen: onboardingSeen == null
             ? const Value.absent()
             : Value(onboardingSeen),
+        theme: theme == null ? const Value.absent() : Value(theme),
+        remindersEnabled: remindersEnabled == null
+            ? const Value.absent()
+            : Value(remindersEnabled),
+        lastExportedAt: lastExportedAt == null
+            ? const Value.absent()
+            : Value(lastExportedAt),
+        exportPromptSnoozedUntil: exportPromptSnoozedUntil == null
+            ? const Value.absent()
+            : Value(exportPromptSnoozedUntil),
         updatedAt: Value(DateTime.now()),
       ),
     );

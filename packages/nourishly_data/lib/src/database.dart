@@ -83,7 +83,7 @@ class NourishlyDatabase extends _$NourishlyDatabase {
       );
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   /// v1 -> v2 adds FR-U-16's dietary preference (plus the one-time
   /// onboarding flag) and the diet class the catalog importer computes.
@@ -97,6 +97,12 @@ class NourishlyDatabase extends _$NourishlyDatabase {
   /// is an untouched default and no one's choice is being overwritten.
   /// Once §27.13's appearance setting exists, a stored `system` will mean
   /// somebody asked for it and this migration will be long past.
+  ///
+  /// v3 -> v4 is Phase 5: the reminders master switch (§29.4), the export
+  /// bookkeeping the monthly prompt reads (§0.5), and the meal-slot key a
+  /// meal reminder needs to name itself. Additive columns only — every
+  /// one has a default or is nullable, so existing rows need no backfill
+  /// and reminders start off, which is what §29.1 asks for anyway.
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (m) => m.createAll(),
@@ -109,6 +115,15 @@ class NourishlyDatabase extends _$NourishlyDatabase {
       if (from < 3) {
         await (update(userPreferences)..where((p) => p.theme.equals('system')))
             .write(const UserPreferencesCompanion(theme: Value('light')));
+      }
+      if (from < 4) {
+        await m.addColumn(userPreferences, userPreferences.remindersEnabled);
+        await m.addColumn(userPreferences, userPreferences.lastExportedAt);
+        await m.addColumn(
+          userPreferences,
+          userPreferences.exportPromptSnoozedUntil,
+        );
+        await m.addColumn(reminderRules, reminderRules.mealSlotKey);
       }
     },
   );

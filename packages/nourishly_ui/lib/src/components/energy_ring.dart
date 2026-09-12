@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../theme/nourishly_colors.dart';
+import '../theme/nourishly_typography.dart';
 import '../theme/nourishly_theme.dart';
 import '../tokens.g.dart';
 
@@ -30,14 +31,47 @@ class EnergyRing extends StatelessWidget {
     final text = context.nourishlyText;
     final remaining = (target - consumed).round();
 
+    return Semantics(
+      // NFR-A-02: a text alternative that conveys the *conclusion*, not
+      // the coordinates. A screen reader should hear what a sighted user
+      // takes from the ring in one glance — how much is left — not "arc
+      // at 80 per cent".
+      label: target <= 0
+          ? '${consumed.round()} kilocalories, no target set'
+          : '${consumed.round()} of ${target.round()} kilocalories. '
+                '${remaining.abs()} '
+                '${remaining >= 0 ? 'left' : 'over'}.',
+      // The number in the middle is a rendering of the same fact, so
+      // reading both would say it twice.
+      excludeSemantics: true,
+      child: _ring(context, colors, text, remaining),
+    );
+  }
+
+  Widget _ring(
+    BuildContext context,
+    NourishlyColors colors,
+    NourishlyTypography text,
+    int remaining,
+  ) {
+    // NFR-A-03: the ring is a box sized around the numeral inside it, so
+    // when the numeral grows with the OS text setting the box has to grow
+    // with it or the number is clipped. Capped, because a ring that
+    // doubles takes the whole card and pushes the macros off the fold —
+    // §27.11's "charts reflow rather than truncate", applied to the one
+    // chart whose content is a number rather than a series.
+    final scale = MediaQuery.textScalerOf(
+      context,
+    ).scale(1).clamp(1.0, 1.6);
+    final scaled = size * scale;
     return SizedBox(
-      width: size,
-      height: size,
+      width: scaled,
+      height: scaled,
       child: Stack(
         alignment: Alignment.center,
         children: [
           CustomPaint(
-            size: Size.square(size),
+            size: Size.square(scaled),
             painter: _RingPainter(
               progress: target <= 0 ? 0 : consumed / target,
               colors: colors,

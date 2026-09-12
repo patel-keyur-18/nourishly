@@ -5,7 +5,11 @@ import 'package:nourishly_data/nourishly_data.dart' hide NutrientTarget;
 import 'package:nourishly_ui/nourishly_ui.dart';
 
 import '../../../../app/providers.dart';
+import '../../../../shared/app_version.dart';
+import '../../../data_backup/data/backup_providers.dart';
+import '../../../food_catalog/data/food_catalog_providers.dart';
 import '../../../profile/data/profile_providers.dart';
+import '../../../reminders/data/reminder_providers.dart';
 
 /// Settings (prototype screen 13) — the Profile tab's root.
 ///
@@ -14,9 +18,10 @@ import '../../../profile/data/profile_providers.dart';
 /// a series (FR-U-14), and §21.8's two safety toggles — the score is
 /// dismissible, and energy can be hidden.
 ///
-/// Export, deletion and reminders are Phase 5 and are deliberately absent
-/// rather than stubbed: a settings row that does nothing is worse than one
-/// that is not there.
+/// Phase 5 completes the prototype's two remaining pieces: the
+/// **Reminders** row in Preferences (§29), and the **Your data** group —
+/// export, backup and deletion (§0.5, §30.6, §30.7), which §27.13 requires
+/// to be "discoverable, not buried".
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
@@ -168,17 +173,37 @@ class SettingsScreen extends ConsumerWidget {
                           'to the calendar.',
                       onTap: () => _editRollover(context, ref, preferences),
                     ),
+                    // Prototype 13A puts reminders in Preferences, with
+                    // the count as its value. §29.1 keeps them opt-in, so
+                    // the resting state of this row is "Off".
+                    _NavRow(
+                      title: 'Reminders',
+                      value: _reminderSummary(ref),
+                      onTap: () => context.push('/profile/reminders'),
+                    ),
                   ],
                 ),
               ),
 
+              // Prototype 13A's third group. §27.13: export and deletion
+              // are discoverable, not buried.
+              const NourishlySectionHeader(label: 'Your data'),
+              const _YourDataCard(),
+
               const NourishlySectionHeader(label: 'About'),
               const _AboutCard(),
+              const _VersionFooter(),
             ],
           ),
         ),
       ),
     );
+  }
+
+  String _reminderSummary(WidgetRef ref) {
+    if (!ref.watch(remindersEnabledProvider)) return 'Off';
+    final count = ref.watch(enabledReminderCountProvider);
+    return count == 0 ? 'None on' : '$count on';
   }
 
   String _focusSummary(WidgetRef ref) {
@@ -510,6 +535,107 @@ class _WeightCard extends ConsumerWidget {
               : 'Recorded ${weight.toStringAsFixed(1)} kg. Your targets '
                     'follow it from today; past days keep theirs.',
         ),
+      ),
+    );
+  }
+}
+
+/// Prototype 13A's "Your data": export, backup, and the destructive row.
+///
+/// The backup row is not a button — there is nothing to press. Android and
+/// iOS back the app up on their own schedule (§0.5's mechanism 1), and the
+/// honest thing to show is what that means, plus the one number the user
+/// can actually act on: when they last took a copy of their own.
+class _YourDataCard extends ConsumerWidget {
+  const _YourDataCard();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colors = context.nourishlyColors;
+    final text = context.nourishlyText;
+    final lastExport = ref.watch(lastExportedAtProvider);
+
+    return NourishlyCard(
+      padding: EdgeInsets.zero,
+      child: Column(
+        children: [
+          _NavRow(
+            title: 'Export everything',
+            value: '',
+            subtitle: 'JSON and CSV',
+            onTap: () => context.push('/profile/data'),
+          ),
+          _NavRow(
+            title: 'Backup',
+            value: '',
+            // The prototype's "Last backed up 2 days ago" — one short
+            // line, because option A was chosen for being scannable with
+            // nothing to read. The longer explanation lives on the screen
+            // this row opens.
+            subtitle: lastExport == null
+                ? 'Automatic. No export of your own yet'
+                : 'Automatic. You last exported '
+                      '${_relativeDays(ref, lastExport)}',
+            onTap: () => context.push('/profile/data'),
+          ),
+          // §30.7: deletion is two-step, offers export first, and says
+          // plainly that it cannot be undone. Red is reserved for exactly
+          // this (§21.8) — it is the one destructive action in the app.
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () => context.push('/profile/data'),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: NourishlySpace.s4,
+                  vertical: NourishlySpace.s3,
+                ),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Delete everything on this phone',
+                    style: text.body.copyWith(
+                      color: colors.danger,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _relativeDays(WidgetRef ref, DateTime at) {
+    final days = ref.read(clockProvider).now().difference(at).inDays;
+    return switch (days) {
+      <= 0 => 'today',
+      1 => 'yesterday',
+      _ => '$days days ago',
+    };
+  }
+}
+
+/// The prototype's centred fine print: "Nourishly v1.0 · catalog 2026.09 ·
+/// all data stays on this phone."
+class _VersionFooter extends ConsumerWidget {
+  const _VersionFooter();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colors = context.nourishlyColors;
+    final text = context.nourishlyText;
+    final catalog = ref.watch(catalogVersionProvider).value;
+    return Padding(
+      padding: const EdgeInsets.only(top: NourishlySpace.s5),
+      child: Text(
+        'Nourishly $appVersion'
+        '${catalog == null ? '' : ' · catalog $catalog'}'
+        ' · all data stays on this phone',
+        textAlign: TextAlign.center,
+        style: text.caption.copyWith(color: colors.ink3),
       ),
     );
   }
