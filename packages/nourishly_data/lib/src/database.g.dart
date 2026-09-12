@@ -17193,6 +17193,54 @@ abstract class _$NourishlyDatabase extends GeneratedDatabase {
   );
   late final $DailyInsightsTable dailyInsights = $DailyInsightsTable(this);
   late final $ReminderRulesTable reminderRules = $ReminderRulesTable(this);
+  late final Index targetSetsOwnerFrom = Index(
+    'target_sets_owner_from',
+    'CREATE INDEX target_sets_owner_from ON target_sets (owner_id, effective_from)',
+  );
+  late final Index nutrientTargetsSet = Index(
+    'nutrient_targets_set',
+    'CREATE INDEX nutrient_targets_set ON nutrient_targets (target_set_id)',
+  );
+  late final Index foodNutrientValuesFood = Index(
+    'food_nutrient_values_food',
+    'CREATE INDEX food_nutrient_values_food ON food_nutrient_values (food_id)',
+  );
+  late final Index servingSizesFood = Index(
+    'serving_sizes_food',
+    'CREATE INDEX serving_sizes_food ON serving_sizes (food_id)',
+  );
+  late final Index foodAltNamesFood = Index(
+    'food_alt_names_food',
+    'CREATE INDEX food_alt_names_food ON food_alt_names (food_id)',
+  );
+  late final Index recipeComponentsRecipe = Index(
+    'recipe_components_recipe',
+    'CREATE INDEX recipe_components_recipe ON recipe_components (recipe_food_item_id)',
+  );
+  late final Index foodLogEntriesOwnerDate = Index(
+    'food_log_entries_owner_date',
+    'CREATE INDEX food_log_entries_owner_date ON food_log_entries (owner_id, log_date)',
+  );
+  late final Index waterLogEntriesOwnerDate = Index(
+    'water_log_entries_owner_date',
+    'CREATE INDEX water_log_entries_owner_date ON water_log_entries (owner_id, log_date)',
+  );
+  late final Index mealTemplateItemsTemplate = Index(
+    'meal_template_items_template',
+    'CREATE INDEX meal_template_items_template ON meal_template_items (template_id)',
+  );
+  late final Index dailySummariesOwnerDate = Index(
+    'daily_summaries_owner_date',
+    'CREATE INDEX daily_summaries_owner_date ON daily_summaries (owner_id, log_date)',
+  );
+  late final Index dailySummaryNutrientsSummary = Index(
+    'daily_summary_nutrients_summary',
+    'CREATE INDEX daily_summary_nutrients_summary ON daily_summary_nutrients (summary_id)',
+  );
+  late final Index dailyInsightsSummary = Index(
+    'daily_insights_summary',
+    'CREATE INDEX daily_insights_summary ON daily_insights (summary_id)',
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -17229,6 +17277,18 @@ abstract class _$NourishlyDatabase extends GeneratedDatabase {
     scoreComponents,
     dailyInsights,
     reminderRules,
+    targetSetsOwnerFrom,
+    nutrientTargetsSet,
+    foodNutrientValuesFood,
+    servingSizesFood,
+    foodAltNamesFood,
+    recipeComponentsRecipe,
+    foodLogEntriesOwnerDate,
+    waterLogEntriesOwnerDate,
+    mealTemplateItemsTemplate,
+    dailySummariesOwnerDate,
+    dailySummaryNutrientsSummary,
+    dailyInsightsSummary,
   ];
 }
 

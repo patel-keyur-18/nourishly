@@ -83,7 +83,7 @@ class NourishlyDatabase extends _$NourishlyDatabase {
       );
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   /// v1 -> v2 adds FR-U-16's dietary preference (plus the one-time
   /// onboarding flag) and the diet class the catalog importer computes.
@@ -124,6 +124,16 @@ class NourishlyDatabase extends _$NourishlyDatabase {
           userPreferences.exportPromptSnoozedUntil,
         );
         await m.addColumn(reminderRules, reminderRules.mealSlotKey);
+      }
+      // v4 -> v5 adds indexes only. No data moves, and a device that
+      // upgrades gets the same query plans as a fresh install — which is
+      // the point: the performance budgets in §7.4 were being met on a
+      // week of logging and a table scan, and that stops being true
+      // somewhere in the first year.
+      if (from < 5) {
+        for (final index in allSchemaEntities.whereType<Index>()) {
+          await m.create(index);
+        }
       }
     },
   );

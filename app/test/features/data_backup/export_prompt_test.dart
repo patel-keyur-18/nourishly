@@ -1,11 +1,9 @@
 import 'package:drift/drift.dart' show Value;
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nourishly/app/app.dart';
 import 'package:nourishly/app/providers.dart';
 import 'package:nourishly/app/router.dart';
-import 'package:nourishly/features/data_backup/data/backup_providers.dart';
 import 'package:nourishly/features/food_catalog/data/food_catalog_providers.dart';
 import 'package:nourishly/features/reminders/data/local_notification_scheduler.dart';
 import 'package:nourishly/features/reminders/data/reminder_providers.dart';

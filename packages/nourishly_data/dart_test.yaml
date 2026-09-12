@@ -1,0 +1,12 @@
+# Declares the tags used in this package's tests, so `flutter test` does
+# not warn about them and so they can be selected or skipped by name.
+tags:
+  perf:
+    # Timing measurements against a year of seeded logging. They run in
+    # CI — the assertions are deliberately loose (see performance_test.dart)
+    # so they catch order-of-magnitude regressions rather than machine
+    # noise — and the printed numbers are the useful output.
+    description: Performance budgets (§7.4, NFR-P-03..07).
+  slow:
+    description: >-
+      Builds a real on-disk database. Seconds rather than milliseconds.

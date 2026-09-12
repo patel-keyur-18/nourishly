@@ -38,7 +38,7 @@ sealed class ReminderSchedule {
 /// A clock time on a chosen set of weekdays.
 class DailySchedule extends ReminderSchedule {
   DailySchedule({required this.time, Set<int>? weekdays})
-    : weekdays = {...?weekdays ?? _everyDay}..removeWhere(
+    : weekdays = {...weekdays ?? _everyDay}..removeWhere(
         (day) => day < DateTime.monday || day > DateTime.sunday,
       );
 

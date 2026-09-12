@@ -24,7 +24,6 @@ import 'package:uuid/uuid.dart';
 /// alternative, a layout that breaks at large type, a tap target that
 /// shrinks below the minimum when somebody tidies a padding value.
 void main() {
-  const uuid = Uuid();
   late NourishlyDatabase db;
   late String ownerId;
   final today = DateTime(2026, 9, 9);
@@ -158,7 +157,7 @@ void main() {
 
   group('NFR-A-05 — primary touch targets are at least 48 dp', () {
     for (final route in const ['/profile/reminders', '/profile/data']) {
-      testWidgets('$route', (tester) async {
+      testWidgets(route, (tester) async {
         final handle = tester.ensureSemantics();
         await pump(tester, route);
         await expectLater(tester, meetsGuideline(androidTapTargetGuideline));

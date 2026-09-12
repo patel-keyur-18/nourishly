@@ -56,6 +56,7 @@ class Goals extends Table with Identifiable, Owned, Timestamped, SoftDeletable {
 /// An immutable, effective-dated collection of nutrient targets in force
 /// from a date (§22.5). Never mutated — any change creates a new set, the
 /// anchor of historical comparability (I-3, I-4).
+@TableIndex(name: 'target_sets_owner_from', columns: {#ownerId, #effectiveFrom})
 class TargetSets extends Table
     with Identifiable, Owned, Timestamped, SoftDeletable {
   DateTimeColumn get effectiveFrom => dateTime()();
@@ -72,6 +73,7 @@ class TargetSets extends Table
 }
 
 /// One nutrient's target within a [TargetSets] row (§22.5).
+@TableIndex(name: 'nutrient_targets_set', columns: {#targetSetId})
 class NutrientTargets extends Table with Identifiable {
   TextColumn get targetSetId =>
       text().customConstraint('NOT NULL REFERENCES target_sets (id)')();

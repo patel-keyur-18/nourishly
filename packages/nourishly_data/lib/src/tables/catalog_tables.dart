@@ -58,6 +58,7 @@ class FoodItems extends Table with Identifiable, SoftDeletable {
 
 /// Absence of a row means unknown — there is no null-amount row and no
 /// zero-filling (AP-4, §22.5).
+@TableIndex(name: 'food_nutrient_values_food', columns: {#foodId})
 class FoodNutrientValues extends Table with Identifiable {
   TextColumn get foodId =>
       text().customConstraint('NOT NULL REFERENCES food_items (id)')();
@@ -72,6 +73,7 @@ class FoodNutrientValues extends Table with Identifiable {
 
 /// Every serving resolves to grams; that is the only contract downstream
 /// code depends on (§22.5).
+@TableIndex(name: 'serving_sizes_food', columns: {#foodId})
 class ServingSizes extends Table with Identifiable {
   TextColumn get foodId =>
       text().customConstraint('NOT NULL REFERENCES food_items (id)')();
@@ -86,6 +88,7 @@ class ServingSizes extends Table with Identifiable {
 
 /// Regional and transliteration variants, feeding the FTS index — this is
 /// how "panir", "paneer" and "पनीर" all find the same food (§22.5).
+@TableIndex(name: 'food_alt_names_food', columns: {#foodId})
 class FoodAltNames extends Table with Identifiable {
   TextColumn get foodId =>
       text().customConstraint('NOT NULL REFERENCES food_items (id)')();
@@ -124,6 +127,7 @@ class CatalogVersions extends Table {
 /// §22.5). The recipe's own nutrient values are derived from this once by
 /// the catalog pipeline and stored as ordinary [FoodNutrientValues] rows,
 /// so logging a recipe needs no special path.
+@TableIndex(name: 'recipe_components_recipe', columns: {#recipeFoodItemId})
 class RecipeComponents extends Table with Identifiable {
   TextColumn get recipeFoodItemId =>
       text().customConstraint('NOT NULL REFERENCES food_items (id)')();

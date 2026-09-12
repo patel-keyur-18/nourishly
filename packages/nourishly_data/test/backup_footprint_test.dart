@@ -4,7 +4,6 @@ library;
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nourishly_data/nourishly_data.dart' hide ReminderRule;
