@@ -240,20 +240,24 @@ class CachingFdcSource implements FdcSource {
       pageSize: pageSize,
       dataType: dataType,
     );
-    // Search results carry an abbreviated nutrient panel, so the cached
-    // record for each id comes from the details endpoint instead — the
-    // same food the caller would have fetched anyway.
-    final detailed = <FdcFood>[];
-    for (final food in foods) {
-      detailed.add(await getDetails(food.fdcId));
+    if (foods.isEmpty) {
+      // A search that found nothing is still an answer, and caching it is
+      // what stops every later run re-asking FDC the same dead question.
+      cache.writeSearch(key, label: label, fdcIds: const []);
+      return const [];
     }
-    cache.writeSearch(
-      key,
-      label: label,
-      fdcIds: [for (final food in detailed) food.fdcId],
-    );
-    _record(label, detailed);
-    return detailed;
+
+    // Only the best match is materialised.
+    //
+    // Search results carry an abbreviated nutrient panel, so a usable
+    // record has to come from the details endpoint — but detailing all
+    // three hits would treble the cost of the one cold run that populates
+    // this cache, to store two foods nothing reads. `fetch_catalog` takes
+    // `candidates.first` and discards the rest, so that is what is kept.
+    final best = await getDetails(foods.first.fdcId);
+    cache.writeSearch(key, label: label, fdcIds: [best.fdcId]);
+    _record(label, [best]);
+    return [best];
   }
 
   @override

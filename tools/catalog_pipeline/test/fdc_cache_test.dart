@@ -123,6 +123,43 @@ void main() {
   });
 
   group('CachingFdcSource', () {
+    test('only the best match is detailed, not every candidate', () async {
+      // Detailing all three hits would treble the cost of the cold run
+      // that populates the cache, to store foods nothing ever reads.
+      final live = _FakeLive({
+        1001: _food(1001, 'Toor dal'),
+        1002: _food(1002, 'Toor dal, other'),
+        1003: _food(1003, 'Toor dal, third'),
+      });
+      final source = CachingFdcSource(
+        cache: cache,
+        mode: FdcCacheMode.refreshMissing,
+        live: live,
+      );
+      final foods = await source.search('toor dal', pageSize: 3);
+      expect(live.details, [1001]);
+      expect(foods.single.fdcId, 1001);
+      expect(cache.readFood(1002), isNull);
+    });
+
+    test('an empty search is cached too, so it is asked only once', () async {
+      final live = _FakeLive(const {});
+      await CachingFdcSource(
+        cache: cache,
+        mode: FdcCacheMode.refreshMissing,
+        live: live,
+      ).search('unobtanium', pageSize: 3);
+
+      final live2 = _FakeLive(const {});
+      final second = CachingFdcSource(
+        cache: cache,
+        mode: FdcCacheMode.refreshMissing,
+        live: live2,
+      );
+      expect(await second.search('unobtanium', pageSize: 3), isEmpty);
+      expect(live2.searches, isEmpty, reason: 'the dead end was remembered');
+    });
+
     test(
       'refreshMissing fetches once, then serves from disk forever',
       () async {
