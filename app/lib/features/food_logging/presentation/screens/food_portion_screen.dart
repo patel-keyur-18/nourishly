@@ -84,6 +84,15 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen> {
     showNourishlySnackOn(messenger, 'Added to your log.');
   }
 
+  /// A catalog recipe can be forked into one of your own; your own
+  /// recipes and plain ingredients cannot.
+  ///
+  /// `ownerId == null` is what makes a food the bundled catalog's rather
+  /// than this profile's (§22.5), and `kind == 'recipe'` is what gives it
+  /// the ingredient list there is any point editing.
+  static bool _canFork(FoodItem food) =>
+      food.kind == 'recipe' && food.ownerId == null;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -132,6 +141,10 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen> {
                       onSelected: (id) => setState(() => _mealSlotId = id),
                       onDefault: (id) => _mealSlotId ??= id,
                     ),
+                    if (_canFork(food)) ...[
+                      const SizedBox(height: NourishlySpace.s5),
+                      _ForkPrompt(food: food),
+                    ],
                   ],
                 ),
               ),
@@ -184,6 +197,58 @@ class _FoodHeader extends StatelessWidget {
           style: text.caption.copyWith(color: colors.ink3),
         ),
       ],
+    );
+  }
+}
+
+/// The offer to record how this kitchen actually cooks the dish.
+///
+/// A catalog row is a reasonable estimate of how a dish is generally made
+/// (catalog spec §0.3). This household cooks most things in about half the
+/// oil, and that difference is real — a katori of sabzi with 4 g of oil
+/// instead of 8 is some 36 kcal lighter, three or four times a week.
+///
+/// Forking is the honest way to record it: the copy is recomputed from its
+/// own ingredients by the same arithmetic as the original, so nothing is
+/// asserted that was not summed. Editing the catalog row in place would be
+/// the alternative, and it would quietly restate how everyone cooks the
+/// dish on the strength of one kitchen.
+class _ForkPrompt extends StatelessWidget {
+  const _ForkPrompt({required this.food});
+
+  final FoodItem food;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.nourishlyColors;
+    final text = context.nourishlyText;
+
+    return NourishlyCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Cook it differently?',
+            style: text.body.copyWith(fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: NourishlySpace.s2),
+          Text(
+            'Make your own version of this recipe — less oil, or whatever '
+            'else your kitchen does — and it becomes a food you can log '
+            'like any other. Meals you have already logged do not change.',
+            style: text.caption.copyWith(color: colors.ink3, height: 1.5),
+          ),
+          const SizedBox(height: NourishlySpace.s3),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: OutlinedButton.icon(
+              onPressed: () => context.push('/recipes/new?from=${food.id}'),
+              icon: const Icon(Icons.edit_note_rounded, size: 18),
+              label: const Text('Make this our version'),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

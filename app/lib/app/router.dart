@@ -54,9 +54,7 @@ final GoRouter appRouter = GoRouter(
       parentNavigatorKey: rootNavigatorKey,
       pageBuilder: (context, state) => MaterialPage(
         fullscreenDialog: true,
-        child: FoodLoggingScreen(
-          mealSlotId: state.uri.queryParameters['meal'],
-        ),
+        child: FoodLoggingScreen(mealSlotId: state.uri.queryParameters['meal']),
       ),
       routes: [
         GoRoute(
@@ -85,7 +83,13 @@ final GoRouter appRouter = GoRouter(
         GoRoute(
           path: 'new',
           parentNavigatorKey: rootNavigatorKey,
-          builder: (context, state) => const RecipeBuilderScreen(),
+          // `?from=<foodId>` starts the form from an existing recipe's
+          // ingredients instead of empty — "make this our version". It
+          // stays a *new* recipe: the catalog row it came from is never
+          // touched.
+          builder: (context, state) => RecipeBuilderScreen(
+            forkFromId: state.uri.queryParameters['from'],
+          ),
         ),
         GoRoute(
           path: ':foodId',
@@ -187,8 +191,7 @@ final GoRouter appRouter = GoRouter(
                     // `?from=welcome` means first run: finishing goes to the
                     // dashboard rather than back to whatever the welcome
                     // happened to replace.
-                    fromWelcome:
-                        state.uri.queryParameters['from'] == 'welcome',
+                    fromWelcome: state.uri.queryParameters['from'] == 'welcome',
                   ),
                 ),
                 // §28.5's route table, completed by Phase 5. Both are

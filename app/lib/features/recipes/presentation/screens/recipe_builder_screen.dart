@@ -22,10 +22,20 @@ import '../../data/recipe_providers.dart';
 ///
 /// No prototype screen exists for this; see [RecipesScreen] for why.
 class RecipeBuilderScreen extends ConsumerStatefulWidget {
-  const RecipeBuilderScreen({super.key, this.foodId});
+  const RecipeBuilderScreen({super.key, this.foodId, this.forkFromId});
 
   /// Null to build a new one.
   final String? foodId;
+
+  /// Start a **new** recipe from an existing one's ingredients — "make
+  /// this our version" on a catalog dish.
+  ///
+  /// Deliberately separate from [foodId]: the two look alike and mean
+  /// opposite things. Editing changes the recipe you opened; forking
+  /// leaves it untouched and creates your own, so the catalog's estimate
+  /// of how a dish is generally made stays put while your kitchen's
+  /// version stands beside it.
+  final String? forkFromId;
 
   @override
   ConsumerState<RecipeBuilderScreen> createState() =>
@@ -86,10 +96,15 @@ class _RecipeBuilderScreenState extends ConsumerState<RecipeBuilderScreen> {
   }
 
   /// Fills the form from a saved recipe, once.
-  void _loadOnce(SavedRecipe recipe) {
+  ///
+  /// [asFork] starts a new recipe from this one's ingredients rather than
+  /// editing it. Only the name differs — everything else is copied exactly,
+  /// because the point of a fork is to change one or two numbers, not to
+  /// start again.
+  void _loadOnce(SavedRecipe recipe, {bool asFork = false}) {
     if (_loaded) return;
     _loaded = true;
-    _name.text = recipe.name;
+    _name.text = asFork ? '${recipe.name} (our version)' : recipe.name;
     _servingLabel.text = recipe.servingLabel;
     _servingGrams.text = recipe.servingGrams.toStringAsFixed(0);
     _cookedGrams.text = recipe.cookedGrams.toStringAsFixed(0);
@@ -97,6 +112,46 @@ class _RecipeBuilderScreenState extends ConsumerState<RecipeBuilderScreen> {
       ..clear()
       ..addAll(recipe.ingredients);
     WidgetsBinding.instance.addPostFrameCallback((_) => _recompute());
+  }
+
+  /// Offers a halved amount for each cooking fat, one line at a time.
+  ///
+  /// Every suggestion is shown against the original and accepted or
+  /// skipped individually, which is not politeness — it is the only
+  /// correct behaviour available. Catalog spec §0.6 separates pan oil from
+  /// the oil a fried food absorbs, and that distinction does not survive
+  /// into a stored recipe: both are the same ingredient row by then. A
+  /// puri fried in half the oil absorbs about the same, so halving
+  /// everything would claim a reduction that never happened. Asking is the
+  /// honest substitute for knowing (see `cooking_fat.dart`).
+  Future<void> _cookLighter() async {
+    final suggestions = fatSuggestions(_ingredients);
+    if (suggestions.isEmpty) {
+      showNourishlySnack(context, 'No cooking fat in this recipe to reduce.');
+      return;
+    }
+
+    final accepted = await showModalBottomSheet<Set<int>>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      showDragHandle: true,
+      builder: (context) => _LighterFatSheet(suggestions: suggestions),
+    );
+    if (accepted == null || accepted.isEmpty) return;
+
+    setState(() {
+      for (final suggestion in suggestions) {
+        if (!accepted.contains(suggestion.index)) continue;
+        final original = _ingredients[suggestion.index];
+        _ingredients[suggestion.index] = RecipeIngredient(
+          foodId: original.foodId,
+          name: original.name,
+          grams: suggestion.suggestedGrams,
+        );
+      }
+    });
+    await _recompute();
   }
 
   Future<void> _addIngredient() async {
@@ -185,18 +240,25 @@ class _RecipeBuilderScreenState extends ConsumerState<RecipeBuilderScreen> {
     final colors = context.nourishlyColors;
     final text = context.nourishlyText;
     final isEditing = widget.foodId != null;
+    final sourceId = widget.foodId ?? widget.forkFromId;
 
-    if (isEditing) {
-      final existing = ref.watch(recipeProvider(widget.foodId!)).value;
+    if (sourceId != null) {
+      final existing = ref.watch(recipeProvider(sourceId)).value;
       if (existing == null && !_loaded) {
         return const Scaffold(body: Center(child: CircularProgressIndicator()));
       }
-      if (existing != null) _loadOnce(existing);
+      if (existing != null) _loadOnce(existing, asFork: !isEditing);
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(isEditing ? 'Edit recipe' : 'New recipe'),
+        title: Text(
+          isEditing
+              ? 'Edit recipe'
+              : widget.forkFromId != null
+              ? 'Your version'
+              : 'New recipe',
+        ),
         actions: [
           if (isEditing)
             IconButton(
@@ -233,6 +295,15 @@ class _RecipeBuilderScreenState extends ConsumerState<RecipeBuilderScreen> {
                     actionLabel: 'Add',
                     onActionPressed: _addIngredient,
                   ),
+                  if (_ingredients.isNotEmpty)
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: TextButton.icon(
+                        onPressed: _cookLighter,
+                        icon: const Icon(Icons.water_drop_outlined, size: 18),
+                        label: const Text('Use less oil'),
+                      ),
+                    ),
                   _IngredientList(
                     ingredients: _ingredients,
                     onRemove: (index) {
@@ -423,9 +494,30 @@ class _GramsField extends StatefulWidget {
 }
 
 class _GramsFieldState extends State<_GramsField> {
-  late final _controller = TextEditingController(
-    text: widget.grams.toStringAsFixed(0),
-  );
+  late final _controller = TextEditingController(text: _format(widget.grams));
+
+  /// Whole grams read as whole grams; a half gram keeps its half.
+  ///
+  /// This used to be `toStringAsFixed(0)`, which showed 4.5 g as "5" — a
+  /// number the recipe did not contain. It matters now that something
+  /// other than typing can set the value: halving 9 g of oil gives 4.5.
+  static String _format(double grams) =>
+      grams == grams.roundToDouble() ? grams.toStringAsFixed(0) : '$grams';
+
+  /// Follows a change made from outside the field — "use less oil" edits
+  /// the ingredient list directly, and without this the number on screen
+  /// would still read 8 while the recipe was built from 4.
+  ///
+  /// Guarded twice so it never fights the person typing: only when the
+  /// incoming value actually changed, and only when it disagrees with
+  /// what is in the box.
+  @override
+  void didUpdateWidget(covariant _GramsField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.grams == oldWidget.grams) return;
+    if (double.tryParse(_controller.text.trim()) == widget.grams) return;
+    _controller.text = _format(widget.grams);
+  }
 
   @override
   void dispose() {
@@ -794,9 +886,7 @@ class _IngredientPickerState extends ConsumerState<_IngredientPicker> {
                   : ListView.builder(
                       // Padded for the keyboard-free case too: the last row
                       // of a long list should not sit against the edge.
-                      padding: const EdgeInsets.only(
-                        bottom: NourishlySpace.s4,
-                      ),
+                      padding: const EdgeInsets.only(bottom: NourishlySpace.s4),
                       itemCount: _results.length,
                       itemBuilder: (context, index) => ListTile(
                         title: Text(
@@ -867,4 +957,105 @@ class _Field extends StatelessWidget {
       ),
     );
   }
+}
+
+/// One line per cooking fat, each accepted or skipped on its own.
+///
+/// The per-line choice is the whole design. A single "halve everything"
+/// button would be quicker and would sometimes be wrong in a way nobody
+/// could see: the oil a puri absorbs is not a dial the cook turns, and
+/// once a recipe is stored, absorbed oil and pan oil are the same
+/// ingredient row (catalog spec §0.6, `cooking_fat.dart`). Showing each
+/// line lets the person who cooked it say which is which.
+class _LighterFatSheet extends StatefulWidget {
+  const _LighterFatSheet({required this.suggestions});
+
+  final List<FatSuggestion> suggestions;
+
+  @override
+  State<_LighterFatSheet> createState() => _LighterFatSheetState();
+}
+
+class _LighterFatSheetState extends State<_LighterFatSheet> {
+  late final Set<int> _accepted = {
+    for (final suggestion in widget.suggestions) suggestion.index,
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.nourishlyColors;
+    final text = context.nourishlyText;
+    final saved = widget.suggestions
+        .where((s) => _accepted.contains(s.index))
+        .fold<double>(0, (a, s) => a + s.gramsSaved);
+
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(
+          NourishlySpace.s4,
+          0,
+          NourishlySpace.s4,
+          NourishlySpace.s4,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Use less oil', style: text.title),
+            const SizedBox(height: NourishlySpace.s2),
+            Text(
+              'Half of what the recipe says, for each cooking fat. Untick '
+              'anything that is deep-frying — a puri fried in less oil '
+              'soaks up about the same.',
+              style: text.caption.copyWith(color: colors.ink3, height: 1.5),
+            ),
+            const SizedBox(height: NourishlySpace.s3),
+            Flexible(
+              child: ListView(
+                shrinkWrap: true,
+                children: [
+                  for (final suggestion in widget.suggestions)
+                    CheckboxListTile(
+                      value: _accepted.contains(suggestion.index),
+                      onChanged: (on) => setState(() {
+                        if (on ?? false) {
+                          _accepted.add(suggestion.index);
+                        } else {
+                          _accepted.remove(suggestion.index);
+                        }
+                      }),
+                      contentPadding: EdgeInsets.zero,
+                      title: Text(suggestion.name, style: text.body),
+                      subtitle: Text(
+                        '${_grams(suggestion.grams)} g  →  '
+                        '${_grams(suggestion.suggestedGrams)} g',
+                        style: text.caption.copyWith(color: colors.ink3),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            const SizedBox(height: NourishlySpace.s2),
+            Text(
+              saved <= 0
+                  ? 'Nothing selected.'
+                  : '${_grams(saved)} g less fat in the pot.',
+              style: text.caption.copyWith(color: colors.ink2),
+            ),
+            const SizedBox(height: NourishlySpace.s3),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: () => Navigator.of(context).pop(_accepted),
+                child: const Text('Apply'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  static String _grams(double v) =>
+      v == v.roundToDouble() ? v.toStringAsFixed(0) : v.toStringAsFixed(1);
 }
