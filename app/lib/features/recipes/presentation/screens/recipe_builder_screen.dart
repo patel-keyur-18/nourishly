@@ -103,6 +103,8 @@ class _RecipeBuilderScreenState extends ConsumerState<RecipeBuilderScreen> {
     final added = await showModalBottomSheet<RecipeIngredient>(
       context: context,
       isScrollControlled: true,
+      useSafeArea: true,
+      showDragHandle: true,
       builder: (context) => const _IngredientPicker(),
     );
     if (added == null) return;
@@ -113,10 +115,9 @@ class _RecipeBuilderScreenState extends ConsumerState<RecipeBuilderScreen> {
   Future<void> _save() async {
     if (!(_formKey.currentState?.validate() ?? false) || _saving) return;
     if (_ingredients.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Add at least one ingredient — that is the recipe.'),
-        ),
+      showNourishlySnack(
+        context,
+        'Add at least one ingredient — that is the recipe.',
       );
       return;
     }
@@ -124,6 +125,9 @@ class _RecipeBuilderScreenState extends ConsumerState<RecipeBuilderScreen> {
 
     final messenger = ScaffoldMessenger.of(context);
     final router = GoRouter.of(context);
+    // Captured before the write: an error message is styled from the theme,
+    // and reaching for a BuildContext after an await is how that goes wrong.
+    final colors = context.nourishlyColors;
     try {
       final ownerId = await ref.read(defaultOwnerProvider.future);
       await ref
@@ -143,37 +147,31 @@ class _RecipeBuilderScreenState extends ConsumerState<RecipeBuilderScreen> {
       ref.read(recipeRevisionProvider.notifier).bump();
       if (!mounted) return;
       router.pop();
+      showNourishlySnackOn(messenger, 'Recipe saved.');
     } on Object catch (error) {
       if (!mounted) return;
       setState(() => _saving = false);
-      messenger.showSnackBar(
-        SnackBar(content: Text('Could not save that recipe: $error')),
+      showNourishlySnackOn(
+        messenger,
+        'Could not save that recipe: $error',
+        isError: true,
+        colors: colors,
       );
     }
   }
 
   Future<void> _delete() async {
-    final confirmed = await showDialog<bool>(
+    final confirmed = await showNourishlyConfirm(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Delete this recipe?'),
-        content: const Text(
+      title: 'Delete this recipe?',
+      message:
           'Meals you have already logged from it are not affected — they '
           'keep their own numbers.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Delete'),
-          ),
-        ],
-      ),
+      confirmLabel: 'Delete',
+      icon: Icons.delete_outline_rounded,
+      danger: true,
     );
-    if (confirmed != true || !mounted) return;
+    if (!confirmed || !mounted) return;
 
     final router = GoRouter.of(context);
     await ref.read(recipeDaoProvider).deleteRecipe(widget.foodId!);
@@ -701,10 +699,20 @@ class _IngredientPickerState extends ConsumerState<_IngredientPicker> {
   }
 
   Future<void> _pick(FoodItem food) async {
-    final grams = await showDialog<double>(
+    final entered = await showNourishlyPrompt(
       context: context,
-      builder: (context) => _GramsDialog(name: food.canonicalName),
+      title: 'How much ${food.canonicalName}?',
+      label: 'Raw weight',
+      suffix: 'g',
+      helper: 'What goes in the pot, before cooking.',
+      confirmLabel: 'Add',
+      numeric: true,
+      validator: (value) {
+        final grams = double.tryParse(value);
+        return grams != null && grams > 0;
+      },
     );
+    final grams = double.tryParse(entered ?? '');
     if (grams == null || !mounted) return;
     Navigator.of(context).pop(
       RecipeIngredient(foodId: food.id, name: food.canonicalName, grams: grams),
@@ -716,14 +724,38 @@ class _IngredientPickerState extends ConsumerState<_IngredientPicker> {
     final colors = context.nourishlyColors;
     final text = context.nourishlyText;
 
+    // Sized from the space that is actually left, not from the screen.
+    //
+    // This sheet used to be a flat `0.7 × screenHeight` box with the
+    // keyboard inset added underneath it. With the search field autofocused
+    // the keyboard is always up, so on a 780-pt phone it asked for 546 pt
+    // of sheet plus ~340 pt of keyboard inside 780 pt of screen, and
+    // overflowed by the difference — which is what the bottom of the
+    // ingredient picker looked like on a real phone.
+    final media = MediaQuery.of(context);
+    final keyboard = media.viewInsets.bottom;
+    final available =
+        media.size.height - media.padding.top - keyboard - NourishlySpace.s8;
+    final cap = media.size.height * 0.7;
+    // Written out rather than clamped: `clamp` asserts when the lower limit
+    // is above the upper one, which is reachable on a short screen with a
+    // tall keyboard — the exact case this is here to survive.
+    var height = available < cap ? available : cap;
+    if (height < 160) height = 160;
+
     return Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
+      padding: EdgeInsets.only(bottom: keyboard),
       child: SizedBox(
-        height: MediaQuery.sizeOf(context).height * 0.7,
+        height: height,
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(NourishlySpace.s4),
+              padding: const EdgeInsets.fromLTRB(
+                NourishlySpace.s4,
+                0,
+                NourishlySpace.s4,
+                NourishlySpace.s3,
+              ),
               child: TextField(
                 // Keyed so a test can reach this box rather than the
                 // builder's own fields behind the sheet.
@@ -754,12 +786,25 @@ class _IngredientPickerState extends ConsumerState<_IngredientPicker> {
                       ),
                     )
                   : ListView.builder(
+                      // Padded for the keyboard-free case too: the last row
+                      // of a long list should not sit against the edge.
+                      padding: const EdgeInsets.only(
+                        bottom: NourishlySpace.s4,
+                      ),
                       itemCount: _results.length,
                       itemBuilder: (context, index) => ListTile(
-                        title: Text(_results[index].canonicalName),
+                        title: Text(
+                          _results[index].canonicalName,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                         subtitle: _results[index].brand == null
                             ? null
-                            : Text(_results[index].brand!),
+                            : Text(
+                                _results[index].brand!,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                         onTap: () => _pick(_results[index]),
                       ),
                     ),
@@ -767,56 +812,6 @@ class _IngredientPickerState extends ConsumerState<_IngredientPicker> {
           ],
         ),
       ),
-    );
-  }
-}
-
-class _GramsDialog extends StatefulWidget {
-  const _GramsDialog({required this.name});
-
-  final String name;
-
-  @override
-  State<_GramsDialog> createState() => _GramsDialogState();
-}
-
-class _GramsDialogState extends State<_GramsDialog> {
-  final _controller = TextEditingController();
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  void _submit() {
-    final grams = double.tryParse(_controller.text.trim());
-    if (grams == null || grams <= 0) return;
-    Navigator.of(context).pop(grams);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text('How much ${widget.name}?'),
-      content: TextField(
-        controller: _controller,
-        autofocus: true,
-        keyboardType: const TextInputType.numberWithOptions(decimal: true),
-        onSubmitted: (_) => _submit(),
-        decoration: const InputDecoration(
-          labelText: 'Raw weight',
-          suffixText: 'g',
-          helperText: 'What goes in the pot, before cooking.',
-        ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
-        ),
-        FilledButton(onPressed: _submit, child: const Text('Add')),
-      ],
     );
   }
 }

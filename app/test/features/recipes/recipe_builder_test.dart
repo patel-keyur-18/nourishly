@@ -177,6 +177,10 @@ void main() {
 
     await tester.tap(find.text('Save recipe'));
     await tester.pumpAndSettle();
+    // The confirmation message is a real timer; pump past it so the test
+    // does not end with one pending.
+    await tester.pump(nourishlySnackDuration + const Duration(seconds: 1));
+    await tester.pumpAndSettle();
 
     final saved = (await RecipeDao(db).recipesFor(ownerId)).single;
     expect(saved.name, 'Everyday dal');
@@ -203,5 +207,8 @@ void main() {
 
     expect(find.textContaining('Add at least one ingredient'), findsOneWidget);
     expect(await RecipeDao(db).recipesFor(ownerId), isEmpty);
+
+    await tester.pump(nourishlySnackDuration + const Duration(seconds: 1));
+    await tester.pumpAndSettle();
   });
 }
