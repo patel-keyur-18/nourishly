@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:http/retry.dart';
 
 import 'fdc_cache.dart';
 import 'fdc_models.dart';
@@ -27,9 +28,19 @@ class FdcApiException implements Exception {
 /// written to a file, or included in any exception/log message this
 /// client produces.
 class FdcClient implements FdcSource {
+  /// FDC returns 503 and 429 under load often enough that a single
+  /// blip should not fail a whole catalog run, so the default client
+  /// retries those with exponential backoff. An injected [httpClient]
+  /// is used as given — tests supply their own and count requests.
   FdcClient({required String apiKey, http.Client? httpClient})
     : _apiKey = apiKey,
-      _http = httpClient ?? http.Client();
+      _http = httpClient ?? _retrying();
+
+  static http.Client _retrying() => RetryClient(
+    http.Client(),
+    retries: 4,
+    when: (r) => const {429, 500, 502, 503, 504}.contains(r.statusCode),
+  );
 
   final String _apiKey;
   final http.Client _http;
