@@ -84,6 +84,11 @@ class RecipeDao {
   /// Pass [foodId] to edit an existing one. [cookedGrams] is the weighed
   /// finished dish and is what §19.10 wants whenever the cook has a scale;
   /// without it [method]'s fallback factor applies.
+  ///
+  /// [forkedFromFoodId] records the catalog recipe this one was made from
+  /// — "make this our version". It is what makes the two comparable
+  /// afterwards, and it is only ever set when the recipe is created: a
+  /// later edit changes the recipe, not where it came from.
   Future<String> saveRecipe({
     required String ownerId,
     required String name,
@@ -93,6 +98,7 @@ class RecipeDao {
     double? cookedGrams,
     CookingMethod method = CookingMethod.none,
     String? foodId,
+    String? forkedFromFoodId,
   }) async {
     if (ingredients.isEmpty) {
       throw ArgumentError.value(
@@ -136,6 +142,7 @@ class RecipeDao {
                 qualityTier: 'user',
                 provenanceSource: 'user',
                 yieldFactor: Value(nutrition.yieldFactor),
+                forkedFromFoodId: Value(forkedFromFoodId),
                 defaultServingId: Value(servingId),
                 dietClass: Value(dietClass?.id),
               ),

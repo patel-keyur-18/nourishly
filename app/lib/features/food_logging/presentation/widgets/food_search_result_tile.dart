@@ -4,10 +4,16 @@ import 'package:nourishly_ui/nourishly_ui.dart';
 
 /// One row in the search results list (§27.4).
 ///
-/// Only name, kind, and quality tier are shown — default serving and
+/// Name, cuisine, kind and quality tier. Default serving and
 /// energy-for-that-serving belong here too per §27.4, but need
 /// `nutrition_core`'s aggregation (empty in Phase 1, §0.6) to compute.
 /// Wiring that in is a follow-up once scoring is no longer provisional.
+///
+/// **The cuisine is not decoration.** Twelve display names in the catalog
+/// are carried by two or three rows each — "Coconut rice" is a Tamil dish
+/// and a Kannadiga dish and a pan-Indian one — and without it they render
+/// as identical lines nobody can choose between. Catalog spec §0.6 keeps
+/// them as separate foods deliberately; this is what tells them apart.
 class FoodSearchResultTile extends StatelessWidget {
   const FoodSearchResultTile({
     super.key,
@@ -27,12 +33,34 @@ class FoodSearchResultTile extends StatelessWidget {
       onTap: onTap,
       title: Text(food.canonicalName, style: text.body),
       subtitle: Text(
-        [?food.brand, _kindLabel(food.kind)].join(' · '),
+        [
+          ?food.brand,
+          ?cuisineLabel(food.cuisine),
+          _kindLabel(food.kind),
+        ].join(' · '),
         style: text.caption.copyWith(color: colors.ink3),
       ),
       trailing: _QualityBadge(tier: food.qualityTier),
     );
   }
+
+  /// How a cuisine tag reads to a person. Null stays null — a food with
+  /// no cuisine shows no cuisine rather than "Other", which would be a
+  /// label pretending to be information.
+  static String? cuisineLabel(String? cuisine) => switch (cuisine) {
+    null => null,
+    'pan-indian' => 'Pan-Indian',
+    'gujarati' => 'Gujarati',
+    'tamil' => 'Tamil',
+    'kannadiga' => 'Kannadiga',
+    'north-indian' => 'North Indian',
+    'italian' => 'Italian',
+    'modern' => 'Modern',
+    // An unrecognised tag is shown as written rather than swallowed: it
+    // means the pipeline learned a cuisine this screen has not, and
+    // seeing it is how that gets noticed.
+    _ => cuisine,
+  };
 
   String _kindLabel(String kind) => switch (kind) {
     'ingredient' => 'Ingredient',

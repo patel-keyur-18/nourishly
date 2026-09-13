@@ -111,7 +111,10 @@ class ProfileEditor {
     await dao.saveProfileAndDeriveTargets(
       ownerId: ownerId,
       inputs: ProfileInputs(
-        ageYears: ageFromDateOfBirth(birth, now: _ref.read(clockProvider).now()),
+        ageYears: ageFromDateOfBirth(
+          birth,
+          now: _ref.read(clockProvider).now(),
+        ),
         heightCm: heightCm ?? profile.heightCm,
         weightKg: weightKg ?? profile.weightKg,
         activityLevel:

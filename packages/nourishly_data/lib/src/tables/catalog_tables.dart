@@ -16,7 +16,11 @@ class FoodItems extends Table with Identifiable, SoftDeletable {
   TextColumn get canonicalName => text()();
   TextColumn get brand => text().nullable()();
 
-  /// JSON-encoded list, e.g. `["gujarati", "tiffin"]`.
+  /// JSON-encoded list of prefixed tags, e.g.
+  /// `["cuisine:gujarati", "course:tiffin"]` — read through the
+  /// `FoodItemCuisineTags` extension, written by the catalog pipeline.
+  /// Empty for a food nobody has classified, and for the component-only
+  /// rows that exist purely as a provenance trail.
   TextColumn get cuisineTags => text().withDefault(const Constant('[]'))();
 
   /// `verified` | `derived` | `label` | `community` | `user`.
@@ -41,6 +45,20 @@ class FoodItems extends Table with Identifiable, SoftDeletable {
   /// For `kind == 'recipe'` only — cooking yield applied when the pipeline
   /// sums ingredient nutrients (catalog spec §0.2).
   RealColumn get yieldFactor => real().nullable()();
+
+  /// The recipe this one was forked from — "make this our version" on a
+  /// catalog dish — or null for a recipe written from scratch.
+  ///
+  /// It is the only thing that makes a household's lighter version
+  /// *comparable* to the standard one. Without it the fork is just
+  /// another food, and "36 kcal less than the usual recipe, eleven times
+  /// this month" cannot be computed at all. Matching on a name would be
+  /// the alternative, and a name is not an identity.
+  ///
+  /// Never cascades: the parent is a catalog row that the fork does not
+  /// own and must not affect.
+  TextColumn get forkedFromFoodId =>
+      text().nullable().customConstraint('REFERENCES food_items (id)')();
   TextColumn get defaultServingId =>
       text().nullable().customConstraint('REFERENCES serving_sizes (id)')();
   BoolColumn get isVerified => boolean().withDefault(const Constant(false))();

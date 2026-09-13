@@ -113,13 +113,7 @@ class _FoodLoggingScreenState extends ConsumerState<FoodLoggingScreen> {
               ),
               data: (results) {
                 if (query.trim().isEmpty) {
-                  return const _Message(
-                    icon: Icons.search_rounded,
-                    title: 'Search for a food to log',
-                    subtitle:
-                        'Recents, favourites and meal templates arrive in a '
-                        'later phase.',
-                  );
+                  return _BrowseByCuisine(mealSlotId: widget.mealSlotId);
                 }
                 return _Results(
                   query: query,
@@ -131,6 +125,87 @@ class _FoodLoggingScreenState extends ConsumerState<FoodLoggingScreen> {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// What an empty search box offers instead of nothing: the cuisines in the
+/// catalog, and the foods inside whichever one is picked.
+///
+/// UX-6 made custom-food creation one tap from a failed search, which was
+/// the right answer for a catalog small enough to hold in your head. At
+/// 441 foods across seven cuisines it no longer is — "search for a food"
+/// now assumes knowledge the person does not have. Browsing is the other
+/// half of that.
+///
+/// It shows nothing at all when the catalog carries no cuisine tags, which
+/// is what a seed built before §0.8 looks like. An empty shelf would be
+/// worse than no shelf.
+class _BrowseByCuisine extends ConsumerWidget {
+  const _BrowseByCuisine({required this.mealSlotId});
+
+  final String? mealSlotId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colors = context.nourishlyColors;
+    final text = context.nourishlyText;
+    final cuisines = ref.watch(catalogCuisinesProvider).value ?? const [];
+    final selected = ref.watch(browsedCuisineProvider);
+
+    if (cuisines.isEmpty) {
+      return const _Message(
+        icon: Icons.search_rounded,
+        title: 'Search for a food to log',
+        subtitle:
+            'Recents, favourites and meal templates arrive in a later phase.',
+      );
+    }
+
+    final foods = ref.watch(browsedFoodsProvider).value ?? const <FoodItem>[];
+
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(
+        NourishlySpace.s4,
+        0,
+        NourishlySpace.s4,
+        NourishlySpace.s9,
+      ),
+      children: [
+        Text(
+          'Or browse by cuisine',
+          style: text.caption.copyWith(color: colors.ink3),
+        ),
+        const SizedBox(height: NourishlySpace.s2),
+        Wrap(
+          spacing: NourishlySpace.s2,
+          runSpacing: NourishlySpace.s2,
+          children: [
+            for (final cuisine in cuisines)
+              ChoiceChip(
+                selected: selected == cuisine.cuisine,
+                label: Text(
+                  '${FoodSearchResultTile.cuisineLabel(cuisine.cuisine)} '
+                  '· ${cuisine.count}',
+                ),
+                onSelected: (on) => ref
+                    .read(browsedCuisineProvider.notifier)
+                    .select(on ? cuisine.cuisine : null),
+              ),
+          ],
+        ),
+        if (selected != null) ...[
+          const SizedBox(height: NourishlySpace.s3),
+          for (final food in foods)
+            FoodSearchResultTile(
+              food: food,
+              onTap: () => context.push(
+                '/log/food/${food.id}'
+                '${mealSlotId == null ? '' : '?meal=$mealSlotId'}',
+              ),
+            ),
+        ],
+      ],
     );
   }
 }

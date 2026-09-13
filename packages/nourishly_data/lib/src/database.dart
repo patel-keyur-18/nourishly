@@ -83,7 +83,7 @@ class NourishlyDatabase extends _$NourishlyDatabase {
       );
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   /// v1 -> v2 adds FR-U-16's dietary preference (plus the one-time
   /// onboarding flag) and the diet class the catalog importer computes.
@@ -103,6 +103,11 @@ class NourishlyDatabase extends _$NourishlyDatabase {
   /// meal reminder needs to name itself. Additive columns only — every
   /// one has a default or is nullable, so existing rows need no backfill
   /// and reminders start off, which is what §29.1 asks for anyway.
+  ///
+  /// v5 -> v6 records which catalog recipe a household's own version was
+  /// forked from, so the two can be compared. One nullable column, no
+  /// backfill: a recipe written before this simply has no parent, which is
+  /// the truth about it.
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (m) => m.createAll(),
@@ -134,6 +139,9 @@ class NourishlyDatabase extends _$NourishlyDatabase {
         for (final index in allSchemaEntities.whereType<Index>()) {
           await m.create(index);
         }
+      }
+      if (from < 6) {
+        await m.addColumn(foodItems, foodItems.forkedFromFoodId);
       }
     },
   );

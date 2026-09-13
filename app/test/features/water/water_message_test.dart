@@ -49,11 +49,9 @@ void main() {
   }
 
   testWidgets('removing water says so, then stops saying so', (tester) async {
-    await WaterLogDao(db).logWater(
-      ownerId: ownerId,
-      volumeMl: 200,
-      logDate: DateTime(2026, 9, 12),
-    );
+    await WaterLogDao(
+      db,
+    ).logWater(ownerId: ownerId, volumeMl: 200, logDate: DateTime(2026, 9, 12));
     await pumpWater(tester);
 
     await tester.tap(find.text('Remove').first);
@@ -70,11 +68,9 @@ void main() {
   testWidgets('the message can be dismissed by hand before that', (
     tester,
   ) async {
-    await WaterLogDao(db).logWater(
-      ownerId: ownerId,
-      volumeMl: 250,
-      logDate: DateTime(2026, 9, 12),
-    );
+    await WaterLogDao(
+      db,
+    ).logWater(ownerId: ownerId, volumeMl: 250, logDate: DateTime(2026, 9, 12));
     await pumpWater(tester);
 
     await tester.tap(find.text('Remove').first);

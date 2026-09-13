@@ -10,6 +10,7 @@ import '../../../../app/providers.dart';
 import '../../../../shared/formatting.dart';
 import '../../../profile/data/profile_providers.dart';
 import '../../data/report_providers.dart';
+import '../widgets/household_cards.dart';
 import '../widgets/period_widgets.dart';
 
 /// The weekly report (prototype screen 10, option A — charts first).
@@ -112,6 +113,8 @@ class _WeekBody extends ConsumerWidget {
         ),
         const NourishlySectionHeader(label: 'Days logged'),
         _ConsistencyCard(summary: summary),
+        OilSavedCard(summary: summary),
+        CuisineMixCard(summary: summary),
       ],
     );
   }

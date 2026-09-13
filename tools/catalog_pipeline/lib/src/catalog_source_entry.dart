@@ -1,5 +1,7 @@
 import 'package:meta/meta.dart';
 
+import 'catalog_row_key.dart';
+
 /// One row parsed from a `docs/catalog/*.md` table — the curated,
 /// human-authored source the pipeline works from. Nothing here is a
 /// nutrient value; that only ever comes from resolving [rawComposition]
@@ -20,6 +22,12 @@ class CatalogSourceEntry {
 
   /// e.g. `01-common.md`.
   final String sourceFile;
+
+  /// This row's stable identity, `<file number>:<slug>` — see
+  /// [catalogRowKey]. Derived rather than stored, so no table needed a new
+  /// column; unique as long as no file repeats a name, which `--check`
+  /// enforces.
+  String get key => catalogRowKey(sourceFile, foodName);
 
   /// The `## N. Title` heading this row appeared under, e.g. `Dals and pulses`.
   final String section;

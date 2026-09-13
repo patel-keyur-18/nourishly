@@ -2,15 +2,19 @@
 
 *Revision 0.1 · 2026-09-09 · [Architecture index](../architecture/README.md) · [Personal-Use Scope](../architecture/00-scope.md)*
 
-The curated food list for the household catalog, covering **Gujarat, Tamil Nadu and Karnataka** plus the pan-Indian staples all three share.
+The curated food list for the household catalog, covering **Gujarat, Tamil Nadu and Karnataka** plus the pan-Indian staples all three share, and the everyday North Indian, rice and non-regional cooking this household actually does.
 
 | File | Contents | Items |
 |---|---|---|
-| [`01-common.md`](./01-common.md) | Pan-Indian staples: grains, dals, dairy, vegetables, fruit, oils, beverages, non-veg, snacks | ~130 |
-| [`02-gujarat.md`](./02-gujarat.md) | Gujarati dishes, farsan, sweets | ~85 |
-| [`03-tamil-nadu.md`](./03-tamil-nadu.md) | Tamil dishes, tiffin, kuzhambu, sweets | ~80 |
-| [`04-karnataka.md`](./04-karnataka.md) | Kannadiga dishes, North Karnataka and coastal | ~70 |
-| | **Total** | **~365** |
+| [`01-common.md`](./01-common.md) | Pan-Indian staples: grains, dals, dairy, vegetables, fruit, oils, beverages, non-veg, snacks | ~190 |
+| [`02-gujarat.md`](./02-gujarat.md) | Gujarati dishes, farsan, sweets | ~77 |
+| [`03-tamil-nadu.md`](./03-tamil-nadu.md) | Tamil dishes, tiffin, kuzhambu, sweets | ~79 |
+| [`04-karnataka.md`](./04-karnataka.md) | Kannadiga dishes, North Karnataka and coastal | ~68 |
+| [`05-everyday-north.md`](./05-everyday-north.md) | Plain dals, chana and bean sabzis, stuffed parathas, egg bhurji, pav bhaji | ~13 |
+| [`06-rice-and-biryani.md`](./06-rice-and-biryani.md) | Paneer, egg and mushroom biryani; pudina and tawa pulav | ~5 |
+| [`07-pasta-and-modern.md`](./07-pasta-and-modern.md) | Pasta and its sauces, millet pasta and vermicelli, overnight oats | ~9 |
+| [`catalog.lock.json`](./catalog.lock.json) | Generated. What every row's ingredients resolve to — see [§0.7](#07-row-keys-and-why-adding-a-row-is-now-safe) | 441 |
+| | **Total** | **441** |
 
 ---
 
@@ -64,6 +68,8 @@ Standard measures used throughout:
 | Tumbler (S. Indian coffee) | 100 ml | Coffee is served small and strong |
 | Tbsp / tsp | 15 ml / 5 ml | Volume→mass via per-food density |
 | Piece | Per food | Roti, idli, vada, dosa each have their own weight |
+| Plate | Per food | Pasta, noodles, fried rice — a main-course portion, not a katori |
+| Bowl | 250 ml | Larger than a katori: overnight oats, soup, a cereal bowl |
 
 ## 0.3a Cooking yield factor (resolved 2026-09-10)
 
@@ -108,13 +114,15 @@ The constants still apply where a caller has no serving weight, or where a row's
 
 ## 0.3b Where a recipe ingredient's nutrients come from (resolved 2026-09-10)
 
-An ingredient string in a Composition cell resolves to a catalog row: on its own name, an `Also` synonym, the leading segment before a `,` or `/`, or a line in `ingredientAliases` (`tools/catalog_pipeline/lib/src/ingredient_aliases.dart`). If none of those matches, the pipeline reports the dish and the ingredient and leaves the dish out — it does not guess.
+An ingredient string in a Composition cell resolves to a catalog row through **one** mechanism: a line in `ingredientTargets` (`tools/catalog_pipeline/lib/src/ingredient_targets.dart`) naming that row's key. If there is no line, the pipeline reports the dish and the ingredient and leaves the dish out — it does not guess.
+
+> **Revised 2026-09-12.** This used to try four things in order — the row's own name, an `Also` synonym, the leading segment before a `,` or `/`, and only then the curated map. Those first three are inference, and inference made an existing dish's meaning depend on which *other* rows existed: adding a row named `Besan` silently moved twenty dishes onto a different food, no error anywhere. They now live in `parse_catalog.dart --suggest`, which proposes lines for a human to paste, and resolve nothing at build time. See §0.7.
 
 There used to be one more step: search FoodData Central for the raw ingredient string. It is gone. FDC has never heard of `sev`, `khoya` or `idli batter`, but its search returns whatever shares a word — `batter` matched *APPLEBEE'S, fish, hand battered*, `rice` matched *Rice noodles, cooked*, `milk` matched *Crackers, milk*. Every one of those matched, so the pipeline reported **zero failures** while computing 55 dishes — idli, every dosa, curd rice, every rice dish — from the wrong food, under a `verified` badge. That is the failure §0.2 exists to prevent, and it is worse than a gap because it is invisible.
 
-Everything else is settled in `ingredientAliases` with the closest sensible row, because this is a household tracker: `oil/ghee` means oil, a 3 g tempering is mostly oil, a coconut filling is mostly coconut, and a sambar podi is a spice blend. Being a little off on 5 g of powder changes nothing anyone would do about it. The rule that stays is the narrow one — a name maps to a row **someone chose**, never to whatever a text search returned.
+Everything else is settled in `ingredientTargets` with the closest sensible row, because this is a household tracker: `oil/ghee` means oil, a 3 g tempering is mostly oil, a coconut filling is mostly coconut, and a sambar podi is a spice blend. Being a little off on 5 g of powder changes nothing anyone would do about it. The rule that stays is the narrow one — a name maps to a row **someone chose**, never to whatever a text search returned.
 
-All 249 recipe rows currently resolve every ingredient. When a new row does not, add an alias line saying which row and why; give it a row of its own only if it is a genuinely distinct food (that is where `Pav`, `Broken wheat`, `Hung curd` and `Colocasia leaves` came from).
+All recipe rows resolve every ingredient, and a test asserts it. When a new row does not, run `--suggest` and paste the line it prints, saying which row and why; give the ingredient a row of its own only if it is a genuinely distinct food (that is where `Pav`, `Broken wheat`, `Hung curd` and `Colocasia leaves` came from).
 
 ## 0.4 Column meanings
 
@@ -151,3 +159,42 @@ Curate in this order. Tier 1 alone makes the app usable.
 - **A dish's stated weight is as served**, including absorbed water and cooking fat.
 - **Fat matters more than people expect.** A paratha, a benne dose, or a puri carries 5–15 g of added fat that its plain counterpart does not. These are separate foods for that reason alone.
 - **Sweetness matters in Gujarati cooking** — jaggery and sugar appear in dal, kadhi and shaak where other cuisines use none. The recipes below reflect this.
+- **Absorbed oil is named separately from cooking oil.** A row that deep-fries writes `absorbed oil 6 g`, never folding it into the pan oil. The two are different things: pan oil is a choice the cook makes, absorbed oil is what the food takes up, and a puri fried in half the oil absorbs about the same. Keeping them apart is what lets a household record cooking lighter (`docs/plans/01-multi-cuisine-and-light-cooking.md` §7) without claiming a fried dish got lighter too.
+- **Names are unique within a file; they may repeat across files.** "Coconut rice" is a Tamil dish and a Kannadiga dish and both belong here — the app tells them apart by cuisine, not by renaming one. What must never repeat is a row's **key**.
+
+## 0.7 Row keys, and why adding a row is now safe
+
+Every row has a stable identity derived from its file and its name:
+
+```
+key = <file number>:<slug of the Food cell>      01:besan-gram-flour
+                                                 03:coconut-rice
+                                                 04:coconut-rice
+```
+
+Nothing in the tables changed to get this — the key is computed, not written down. It is unique as long as no single file repeats a name, which is the rule above and which `--check` enforces.
+
+**What the key is for.** An ingredient in a `Composition` cell resolves to a row through `ingredientTargets` (`tools/catalog_pipeline/lib/src/ingredient_targets.dart`), which maps each ingredient string to exactly one key. It used to be inferred from names instead, and that made the meaning of an existing dish depend on which *other* rows existed: adding a pantry row literally named `Besan` silently moved twenty dishes onto a different USDA food, with no error anywhere. Pointing at keys removes the coupling rather than detecting it.
+
+### Adding rows: the loop
+
+```
+1. write the rows                    docs/catalog/*.md
+2. dart run .../parse_catalog.dart --suggest      ← lines to paste for new ingredients
+3. paste them into ingredient_targets.dart        ← one decision per line, by hand
+4. dart run .../parse_catalog.dart --check        ← offline. No key, no network.
+5. dart run .../fetch_catalog.dart                ← fetches only what the cache lacks
+6. dart run .../build_seed.dart
+7. dart run .../parse_catalog.dart --write-lock   ← record the new resolution
+```
+
+Steps 1–4 need no API key and no network, which is the point: **a new row can be proved harmless before anyone spends a fetch on it.** `--check` fails on a duplicate key, an ingredient nobody mapped, a target pointing at no row, a yield outside 0.5×–15×, or any change to what an existing row's ingredients resolve to. That last one is the guard: `docs/catalog/catalog.lock.json` is the committed record of every row's resolution, and a change to it has to be deliberate.
+
+## 0.8 Cuisine and course tags
+
+Two facts the source files already carry, and the pipeline records as `FoodItems.cuisineTags`:
+
+- **Cuisine**, from the file — `01-common.md` is `pan-indian`, `02-gujarat.md` is `gujarati`, and so on.
+- **Course**, from the `## N.` heading a row sits under — `tiffin`, `farsan`, `sweet`, `bread`, `rice`, `gravy`, `snack`, `beverage`.
+
+A file that is not a single cuisine says so per section instead: `06-rice-and-biryani.md` spans several, and `Overnight oats` belongs to no cuisine at all (`modern`). Tags describe **where a dish is from, never what is in it** — no tag may ever imply a nutrient.

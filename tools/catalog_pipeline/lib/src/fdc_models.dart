@@ -29,6 +29,13 @@ class FdcNutrientReading {
       amountPer100g: amount.toDouble(),
     );
   }
+
+  /// The details-endpoint shape, which [fromJson] reads back unchanged.
+  /// Written by the on-disk cache (`fdc_cache.dart`), never sent anywhere.
+  Map<String, dynamic> toJson() => {
+    'nutrient': {'name': name, 'unitName': unit},
+    'amount': amountPer100g,
+  };
 }
 
 /// A single food record from FDC — one hit from search, or the result of
@@ -66,4 +73,18 @@ class FdcFood {
       ],
     );
   }
+
+  /// The four fields this pipeline reads, and nothing else.
+  ///
+  /// A real FDC details response also carries portions, input foods, lab
+  /// methods, market acquisition dates and more — none of which the
+  /// normalizer looks at. Writing the trimmed record keeps the committed
+  /// cache (`fdc_cache.dart`) reviewable and small, and [fromJson] reads
+  /// this shape back identically.
+  Map<String, dynamic> toJson() => {
+    'fdcId': fdcId,
+    'description': description,
+    'dataType': dataType,
+    'foodNutrients': [for (final n in nutrients) n.toJson()],
+  };
 }

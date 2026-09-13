@@ -14,6 +14,7 @@ dependencies:
   meta: ^1.16.0
   nutrition_core:
     path: ../../packages/nutrition_core
+  crypto: ^3.0.6
   http: ^1.6.0
   uuid: ^4.6.0
 

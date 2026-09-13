@@ -2,7 +2,7 @@ import 'package:meta/meta.dart';
 
 import 'catalog_source_entry.dart';
 import 'composition.dart';
-import 'ingredient_aliases.dart';
+import 'ingredient_targets.dart';
 
 /// One catalog row paired with its parsed [Composition].
 @immutable
@@ -11,6 +11,10 @@ class CatalogRow {
 
   final CatalogSourceEntry entry;
   final Composition composition;
+
+  /// Whether this row can supply nutrients at all. A [NeedsManualReview]
+  /// row cannot, and must never be the answer to a lookup.
+  bool get isUsable => composition is! NeedsManualReview;
 
   @override
   String toString() => 'CatalogRow(${entry.foodName})';
@@ -26,17 +30,52 @@ String catalogKey(String raw) => raw
     .replaceAll(RegExp(r'\s+'), ' ')
     .trim();
 
-/// Name -> catalog row, for resolving a recipe ingredient that is itself a
-/// catalog entry rather than something FDC has ever heard of.
+/// One inference the old tier rules would have made, offered to a human
+/// rather than acted on. Produced by [CatalogIndex.suggest].
+@immutable
+class TargetSuggestion {
+  const TargetSuggestion({
+    required this.name,
+    required this.candidates,
+    required this.tier,
+  });
+
+  /// The unmapped ingredient string, normalized.
+  final String name;
+
+  /// Every row the tier that matched would have considered. One candidate
+  /// is a suggestion worth pasting; several is a decision only a person
+  /// should make, and is exactly where the old inference guessed wrong.
+  final List<CatalogRow> candidates;
+
+  /// `name`, `alias` or `prefix` — which tier produced [candidates].
+  final String tier;
+
+  bool get isAmbiguous => candidates.length > 1;
+
+  /// The line to paste into `ingredient_targets.dart`, or a `TODO` when
+  /// the tier could not settle it.
+  String get line => isAmbiguous
+      ? "  // TODO(you): '$name' is claimed by "
+            '${candidates.map((c) => "${c.entry.key} (${c.entry.foodName})").join(", ")}'
+      : "  '$name': '${candidates.single.entry.key}', "
+            '// ${candidates.single.entry.foodName}';
+}
+
+/// Resolves a recipe's ingredient strings to the catalog rows that supply
+/// their nutrients.
 ///
-/// This exists because the catalog is compositional: "Bhel" lists `sev`,
-/// "Mohanthal" lists `khoya`, "Kothu parotta" lists `Parotta` — all of
-/// which are catalog rows, none of which FDC can match on the regional
-/// name. Direct-USDA entries already get their `Also` synonyms tried as
-/// search terms; this gives recipe ingredients the same reach, plus the
-/// ability to resolve an ingredient recursively through its own recipe.
+/// **Resolution is table-driven, not inferred.** [lookup] consults
+/// `ingredientTargets` and nothing else, so what an ingredient means
+/// cannot change because some unrelated row was added. See
+/// `ingredient_targets.dart` for why that matters — in short, inference
+/// let four innocuous pantry rows silently retarget sixty-three
+/// ingredient references with no error at all.
 ///
-/// Three tiers of key, each fully exhausted before the next is consulted:
+/// The old inference survives in [suggest], which is how new entries get
+/// written: it proposes, a human disposes. It used three tiers, each fully
+/// exhausted before the next was consulted:
+///
 /// 1. the row's own name ("Patra", "Fafda", "Kesari bath")
 /// 2. every `Also` synonym ("dudhi" -> Bottle gourd, "moth bean" -> Matki)
 /// 3. the name's leading segment before a `,` or `/` ("Sev, thin" -> "sev",
@@ -45,22 +84,18 @@ String catalogKey(String raw) => raw
 /// The tiers are ranked, not merged, because a row's own name is stronger
 /// evidence than some other row's synonym: "Kesari bath" is a dish in
 /// 04-karnataka.md *and* an `Also` for Tamil Nadu's "Rava kesari", and the
-/// row actually named that is the one to take.
-///
-/// Within a tier, a key that several rows claim is **dropped**, not guessed
-/// at — "dosa" and "palya" each head three-to-five rows, and picking one
-/// silently would put the wrong dish's nutrients in the answer. Those fall
-/// through to the plain FDC search, exactly as before this index existed.
-/// The one exception is a tie where all but one candidate is
-/// [NeedsManualReview]: "Muthiya, steamed" vs "Muthiya, fried" ("As above +
-/// absorbed oil"), where only the steamed row can be resolved at all.
+/// row actually named that is the one to take. Within a tier, a key that
+/// several rows claim is reported as ambiguous rather than picked.
 class CatalogIndex {
   CatalogIndex(Iterable<CatalogRow> rows) {
+    final byKey = <String, CatalogRow>{};
     final byName = <String, List<CatalogRow>>{};
     final byAlias = <String, List<CatalogRow>>{};
     final byPrefix = <String, List<CatalogRow>>{};
 
     for (final row in rows) {
+      byKey[row.entry.key] = row;
+
       final nameKey = catalogKey(row.entry.foodName);
       if (nameKey.isNotEmpty) (byName[nameKey] ??= []).add(row);
       for (final also in row.entry.alsoNames) {
@@ -72,43 +107,57 @@ class CatalogIndex {
       if (head.isNotEmpty && head != nameKey) (byPrefix[head] ??= []).add(row);
     }
 
-    _byName = _collapse(byName);
-    _byAlias = _collapse(byAlias);
-    _byPrefix = _collapse(byPrefix);
+    _byKey = byKey;
+    _byName = byName;
+    _byAlias = byAlias;
+    _byPrefix = byPrefix;
   }
 
-  late final Map<String, CatalogRow> _byName;
-  late final Map<String, CatalogRow> _byAlias;
-  late final Map<String, CatalogRow> _byPrefix;
+  late final Map<String, CatalogRow> _byKey;
+  late final Map<String, List<CatalogRow>> _byName;
+  late final Map<String, List<CatalogRow>> _byAlias;
+  late final Map<String, List<CatalogRow>> _byPrefix;
 
-  /// Keeps only keys that resolve to exactly one usable row. A
-  /// [NeedsManualReview] row is not usable, so it never wins a key and
-  /// never blocks a sibling that is resolvable.
-  static Map<String, CatalogRow> _collapse(Map<String, List<CatalogRow>> raw) {
-    final out = <String, CatalogRow>{};
-    for (final entry in raw.entries) {
-      final usable = entry.value
-          .where((r) => r.composition is! NeedsManualReview)
-          .toList();
-      if (usable.length == 1) out[entry.key] = usable.single;
-    }
-    return out;
-  }
+  /// Every row, by [CatalogSourceEntry.key].
+  Map<String, CatalogRow> get rowsByKey => Map.unmodifiable(_byKey);
 
-  /// The single catalog row [name] refers to, or null when nothing matches
-  /// or several rows do.
+  /// The row [key] names, or null if no such row exists.
+  CatalogRow? row(String key) => _byKey[key];
+
+  /// The catalog row [name] refers to, via `ingredientTargets` only.
   ///
-  /// [ingredientAliases] is consulted first: it exists precisely to settle
-  /// the names the tier rules drop for ambiguity (`oil`, `curd`, `rice`),
-  /// and a curated decision outranks any inference from the name alone.
+  /// Null means one of two things, and both are curation gaps to report
+  /// rather than guess past: the name has no entry in the target map, or
+  /// its entry points at a key no row carries.
   CatalogRow? lookup(String name) {
+    final target = ingredientTargets[catalogKey(name)];
+    if (target == null) return null;
+    final row = _byKey[target];
+    return row != null && row.isUsable ? row : null;
+  }
+
+  /// The target key [name] is mapped to, whether or not a row carries it.
+  /// Used by `--check` to tell "no mapping" apart from "mapping points at
+  /// a row that no longer exists".
+  String? targetKeyFor(String name) => ingredientTargets[catalogKey(name)];
+
+  /// What the old tier inference would have proposed for an unmapped
+  /// [name], for `parse_catalog.dart --suggest` to print. Never consulted
+  /// during a build.
+  TargetSuggestion? suggest(String name) {
     final key = catalogKey(name);
-    if (ingredientAliases[key] case final target?) {
-      final targetKey = catalogKey(target);
-      final row =
-          _byName[targetKey] ?? _byAlias[targetKey] ?? _byPrefix[targetKey];
-      if (row != null) return row;
+    for (final (tier, table) in [
+      ('name', _byName),
+      ('alias', _byAlias),
+      ('prefix', _byPrefix),
+    ]) {
+      final candidates = (table[key] ?? const <CatalogRow>[])
+          .where((r) => r.isUsable)
+          .toList();
+      if (candidates.isNotEmpty) {
+        return TargetSuggestion(name: key, candidates: candidates, tier: tier);
+      }
     }
-    return _byName[key] ?? _byAlias[key] ?? _byPrefix[key];
+    return null;
   }
 }

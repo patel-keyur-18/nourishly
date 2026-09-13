@@ -33,6 +33,7 @@ Foods common to Gujarati, Tamil and Kannadiga households. Tier 1 items are marke
 | Bajra flour | pearl millet | 100 g | 100 | USDA pearl millet |
 | Semolina, rava | sooji, sajjige | 100 g | 100 | USDA semolina |
 | Poha, raw | raw poha, aval, flattened rice | 50 g | 50 | USDA rice flakes |
+| Oats, rolled | jai, oatmeal, rolled oats | 40 g | 40 | USDA oats |
 | Vermicelli, raw | semiya, shavige, sevai | 50 g | 50 | USDA |
 | Bread, white | — | 1 slice | 25 | USDA |
 | Pav | ladi pav, bun | 1 piece | 45 | USDA bread white commercially prepared roll |
@@ -115,6 +116,7 @@ Raw weights; the pipeline applies cooking yield per dish.
 | Drumstick | saragvo, murungakkai, nuggekayi | 1 piece | 50 | USDA |
 | **①** Green peas | vatana, pattani | 1 katori | 100 | USDA |
 | Capsicum | simla mirch, kudaimilagai | 1 medium | 80 | USDA bell pepper |
+| Mushroom | khumb, button mushroom, kaalan | 100 g | 100 | USDA mushrooms white raw |
 | Cucumber | kakdi, vellarikkai | 1 medium | 100 | USDA |
 | Radish | mooli, mullangi | 1 medium | 80 | USDA |
 | Beetroot | beets | 1 medium | 80 | USDA |
@@ -172,6 +174,10 @@ Raw weights; the pipeline applies cooking yield per dish.
 | Pistachio | pista | 10 pieces | 8 | USDA |
 | Sesame seeds | til, ellu | 1 tbsp | 9 | USDA |
 | Flaxseed | alsi, agasi, ali vidai | 1 tbsp | 10 | USDA seeds flaxseed |
+| Chia seeds | — | 1 tbsp | 12 | USDA seeds chia seeds dried |
+| Pumpkin seeds | pepita, kaddu ke beej | 1 tbsp | 10 | USDA seeds pumpkin and squash seed kernels dried |
+| Watermelon seeds | magaz, tarbooj ke beej | 1 tbsp | 10 | USDA seeds watermelon seed kernels dried |
+| Sunflower seeds | surajmukhi ke beej | 1 tbsp | 10 | USDA seeds sunflower seed kernels dried |
 | **①** Groundnut oil | sing tel, kadalai ennai | 1 tsp | 5 | USDA peanut oil |
 | Sunflower oil | — | 1 tsp | 5 | USDA |
 | Coconut oil | — | 1 tsp | 5 | USDA |

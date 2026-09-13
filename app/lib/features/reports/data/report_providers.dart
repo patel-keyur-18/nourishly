@@ -94,3 +94,35 @@ final monthComparisonProvider =
       );
       return PeriodComparison.between(current: current, previous: previous);
     });
+
+/// An inclusive date range, as a family key. A record, so two ranges with
+/// the same ends are the same provider.
+typedef ReportRange = ({DateTime from, DateTime to});
+
+/// What this household's own lighter versions of dishes saved over a
+/// period (`ForkSavingsDao`).
+///
+/// This is the payoff for recording how the kitchen actually cooks: it is
+/// a difference between two recipes each summed from its own ingredients,
+/// not a model of anything, and no public nutrition app can tell this
+/// household the same thing because none of them knows how they cook.
+final periodSavingsProvider = FutureProvider.family<PeriodSavings, ReportRange>(
+  (ref, range) async {
+    await ref.watch(catalogReadyProvider.future);
+    final ownerId = await ref.watch(defaultOwnerProvider.future);
+    return ForkSavingsDao(ref.watch(nourishlyDatabaseProvider))
+        .savingsOver(ownerId, from: range.from, to: range.to);
+  },
+);
+
+/// How a period's logged meals divided by cuisine (`CuisineDao.cuisineMix`).
+final cuisineMixProvider =
+    FutureProvider.family<
+      ({List<CuisineCount> byCuisine, int totalEntries}),
+      ReportRange
+    >((ref, range) async {
+      await ref.watch(catalogReadyProvider.future);
+      final ownerId = await ref.watch(defaultOwnerProvider.future);
+      return CuisineDao(ref.watch(nourishlyDatabaseProvider))
+          .cuisineMix(ownerId, from: range.from, to: range.to);
+    });

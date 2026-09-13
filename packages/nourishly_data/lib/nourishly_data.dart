@@ -8,12 +8,16 @@
 library;
 
 export 'src/catalog_importer.dart';
+export 'src/cooking_fat.dart';
+export 'src/cuisine_tags.dart';
 export 'src/dao/body_weight_dao.dart';
+export 'src/dao/cuisine_dao.dart';
 export 'src/dao/custom_food_dao.dart';
 export 'src/dao/daily_summary_dao.dart';
 export 'src/dao/default_owner.dart';
 export 'src/dao/food_logging_dao.dart';
 export 'src/dao/food_search_dao.dart';
+export 'src/dao/fork_savings_dao.dart';
 export 'src/dao/period_summary_dao.dart';
 export 'src/dao/preferences_dao.dart';
 export 'src/dao/recipe_dao.dart';

@@ -23,75 +23,126 @@ CatalogRow _row(
 );
 
 void main() {
-  group('CatalogIndex', () {
-    test('matches a row by its own name', () {
-      final index = CatalogIndex([_row('Patra', 'Besan 25 g, oil 10 g')]);
+  group('CatalogIndex.lookup — table-driven, not inferred', () {
+    // `lookup` consults `ingredientTargets` and nothing else. That is the
+    // whole point: what an ingredient means must not depend on which other
+    // rows happen to exist, because that dependence is how four innocuous
+    // pantry rows silently retargeted sixty-three references.
+    test(
+      'a name with no target does not resolve, however obvious it looks',
+      () {
+        final index = CatalogIndex([_row('Patra', 'Besan 25 g, oil 10 g')]);
+        // `patra` *is* in the real target table, but it points at the real
+        // catalog row, not at this test's row — so nothing resolves here.
+        expect(index.lookup('patra'), isNull);
+      },
+    );
 
-      expect(index.lookup('patra')?.entry.foodName, 'Patra');
-      expect(index.lookup('  PATRA ')?.entry.foodName, 'Patra');
+    test('a target pointing at a row that does not exist resolves to null', () {
+      // A dangling target is a curation gap to report, never something to
+      // fall back from.
+      expect(CatalogIndex(const []).lookup('oil'), isNull);
     });
 
-    test('matches a row by an Also synonym', () {
+    test('a row that only needs manual review never answers a lookup', () {
+      final index = CatalogIndex([_row('Sev tameta', 'See §1')]);
+      expect(index.lookup('sev tameta'), isNull);
+    });
+
+    test('rows are addressable by key', () {
+      final index = CatalogIndex([_row('Patra', 'Besan 25 g, oil 10 g')]);
+      expect(index.row('test:patra')?.entry.foodName, 'Patra');
+      expect(index.row('test:nope'), isNull);
+      expect(index.rowsByKey.keys, ['test:patra']);
+    });
+  });
+
+  group('CatalogIndex.suggest — inference, demoted to advice', () {
+    test('proposes a row matched by its own name', () {
+      final index = CatalogIndex([_row('Patra', 'Besan 25 g, oil 10 g')]);
+      final suggestion = index.suggest('  PATRA ')!;
+      expect(suggestion.tier, 'name');
+      expect(suggestion.isAmbiguous, isFalse);
+      expect(suggestion.candidates.single.entry.foodName, 'Patra');
+      expect(suggestion.line, contains("'patra': 'test:patra'"));
+    });
+
+    test('proposes a row matched by an Also synonym', () {
       final index = CatalogIndex([
         _row('Bottle gourd', 'USDA calabash', also: ['dudhi', 'lauki']),
       ]);
-
-      expect(index.lookup('dudhi')?.entry.foodName, 'Bottle gourd');
+      expect(
+        index.suggest('dudhi')!.candidates.single.entry.foodName,
+        'Bottle gourd',
+      );
+      expect(index.suggest('dudhi')!.tier, 'alias');
     });
 
-    test('matches a row by the segment before a comma or slash', () {
+    test('proposes a row matched by the segment before a comma or slash', () {
       final index = CatalogIndex([
         _row('Sev, thin', 'Besan 13 g, absorbed oil 6 g'),
         _row('Khoya / Mawa', 'USDA condensed milk solids basis'),
       ]);
-
-      expect(index.lookup('sev')?.entry.foodName, 'Sev, thin');
-      expect(index.lookup('khoya')?.entry.foodName, 'Khoya / Mawa');
+      expect(
+        index.suggest('sev')!.candidates.single.entry.foodName,
+        'Sev, thin',
+      );
+      expect(index.suggest('sev')!.tier, 'prefix');
+      expect(
+        index.suggest('khoya')!.candidates.single.entry.foodName,
+        'Khoya / Mawa',
+      );
     });
 
-    test("a row's own name beats another row's synonym", () {
+    test("a row's own name outranks another row's synonym", () {
       final index = CatalogIndex([
         _row('Rava kesari', 'Rava 35 g, ghee 18 g', also: ['kesari bath']),
         _row('Kesari bath', 'Rava 35 g, ghee 18 g, sugar 30 g'),
       ]);
-
-      expect(index.lookup('kesari bath')?.entry.foodName, 'Kesari bath');
+      final suggestion = index.suggest('kesari bath')!;
+      expect(suggestion.tier, 'name');
+      expect(suggestion.candidates.single.entry.foodName, 'Kesari bath');
     });
 
-    test("a synonym beats another row's leading segment", () {
+    test("a synonym outranks another row's leading segment", () {
       final index = CatalogIndex([
         _row('Vermicelli, raw', 'USDA', also: ['semiya']),
         _row('Vermicelli bath', 'Vermicelli 45 g, oil 8 g'),
       ]);
-
-      expect(index.lookup('semiya')?.entry.foodName, 'Vermicelli, raw');
-      expect(index.lookup('vermicelli')?.entry.foodName, 'Vermicelli, raw');
+      expect(
+        index.suggest('semiya')!.candidates.single.entry.foodName,
+        'Vermicelli, raw',
+      );
+      expect(
+        index.suggest('vermicelli')!.candidates.single.entry.foodName,
+        'Vermicelli, raw',
+      );
     });
 
-    test('drops a leading segment several rows claim rather than guessing', () {
+    test('several claimants are reported as a decision, not tie-broken', () {
       final index = CatalogIndex([
         _row('Palya, beans', 'French beans 95 g, oil 6 g'),
         _row('Palya, cabbage', 'Cabbage 95 g, oil 6 g'),
         _row('Palya, potato', 'Potato 100 g, oil 8 g'),
       ]);
-
-      expect(index.lookup('palya'), isNull);
-      expect(index.lookup('palya, potato')?.entry.foodName, 'Palya, potato');
+      final suggestion = index.suggest('palya')!;
+      expect(suggestion.isAmbiguous, isTrue);
+      expect(suggestion.candidates, hasLength(3));
+      expect(suggestion.line, startsWith('  // TODO'));
     });
 
-    test('a tie is broken against the row that needs manual review', () {
+    test('a row needing manual review is not offered as a candidate', () {
       final index = CatalogIndex([
         _row('Muthiya, steamed', 'Wheat flour 25 g, besan 10 g, oil 8 g'),
         _row('Muthiya, fried', 'As above + absorbed oil 6 g'),
       ]);
-
-      expect(index.lookup('muthiya')?.entry.foodName, 'Muthiya, steamed');
+      final suggestion = index.suggest('muthiya')!;
+      expect(suggestion.isAmbiguous, isFalse);
+      expect(suggestion.candidates.single.entry.foodName, 'Muthiya, steamed');
     });
 
-    test('a row that only needs manual review never claims a name', () {
-      final index = CatalogIndex([_row('Sev tameta', 'See §1')]);
-
-      expect(index.lookup('sev tameta'), isNull);
+    test('a name nothing matches has no suggestion at all', () {
+      expect(CatalogIndex(const []).suggest('unobtanium'), isNull);
     });
   });
 
