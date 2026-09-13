@@ -45,6 +45,19 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   uuid: ^4.6.0
 
+  # Generates the per-density launcher icons for both platforms from one
+  # source image, so the icon is edited in `assets/` rather than in
+  # twenty-odd PNGs checked in by hand. Build-time only.
+  flutter_launcher_icons: ^0.14.4
+
+# Run after changing the source image:
+#   dart run flutter_launcher_icons
+flutter_launcher_icons:
+  image_path: assets/nourishly_app_logo.png
+  android: true
+  ios: true
+  remove_alpha_ios: true
+
 flutter:
   uses-material-design: true
   assets:
