@@ -84,7 +84,7 @@ Raw entries feed recipes; cooked entries are logged directly.
 | Butter | makhan, venna | 1 tsp | 5 | USDA #173410 butter salted — a bare `USDA` returned clarified butter, which is the Ghee row |
 | Malai / fresh cream | — | 1 tbsp | 15 | USDA #2346386 heavy cream |
 | Khoya / Mawa | — | 25 g | 25 | USDA #170876 milk dry whole |
-| Cheese, processed | — | 1 slice | 20 | USDA #171254 cheese pasteurized process american — a bare `USDA` returned the pimento variety |
+| Cheese, processed | — | 1 slice | 20 | USDA #170853 cheese pasteurized process american fortified with vitamin D — #171254 was a cheese *spread*, not a slice |
 | Curd rice | thayir sadam, mosaranna | 1 katori | 180 | Rice cooked 120 g, curd 60 g, salt, tempering 3 g |
 
 ---
@@ -117,7 +117,7 @@ Raw weights; the pipeline applies cooking yield per dish.
 | **①** Green peas | vatana, pattani | 1 katori | 100 | USDA #170419  |
 | Capsicum | simla mirch, kudaimilagai | 1 medium | 80 | USDA #2258588 bell pepper |
 | Mushroom | khumb, button mushroom, kaalan | 100 g | 100 | USDA #169251 mushrooms white raw |
-| Cucumber | kakdi, vellarikkai | 1 medium | 100 | USDA #169225 cucumber with peel raw |
+| Cucumber | kakdi, vellarikkai | 1 medium | 100 | USDA #168409 cucumber with peel raw |
 | Radish | mooli, mullangi | 1 medium | 80 | USDA #169276  |
 | Beetroot | beets | 1 medium | 80 | USDA #2685576  |
 | Yam | suran, senaikizhangu, suvarnagadde | 100 g | 100 | USDA #170071  |
@@ -237,7 +237,7 @@ Raw weights; the pipeline applies cooking yield per dish.
 | Fish, pomfret | paplet, vavval | 100 g | 100 | USDA #174196 fish flatfish flounder and sole species raw — FDC has no pomfret; a flat lean white fish is the nearest it measures |
 | Fish, seer / kingfish | surmai, vanjaram, anjal | 100 g | 100 | USDA #175122 fish mackerel king raw — `mackerel basis` returned *salted* mackerel, 305 kcal |
 | Fish, sardine | mathi, bootai | 100 g | 100 | USDA #175139 fish sardine atlantic canned in oil drained solids with bone — a bare `USDA` returned sardine *oil*, 902 kcal |
-| Prawns | jhinga, eral, sigadi | 100 g | 100 | USDA #171972 crustaceans shrimp mixed species raw — `shrimp` returned the cooked record |
+| Prawns | jhinga, eral, sigadi | 100 g | 100 | USDA #171972 crustaceans shrimp mixed species canned — FDC publishes no raw shrimp in the preferred data types; canned is 100 kcal against a raw 85 |
 
 ---
 
