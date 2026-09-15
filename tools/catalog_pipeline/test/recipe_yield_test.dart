@@ -20,6 +20,23 @@ void main() {
       expect(gramsForIngredient(const RecipeIngredient('Ghee', 1, 'tbsp')), 15);
     });
 
+    test('a piece weighs what the caller says it weighs', () {
+      expect(
+        gramsForIngredient(
+          const RecipeIngredient('Egg', 2, 'pieces'),
+          pieceGrams: 50,
+        ),
+        100,
+      );
+    });
+
+    test('a piece with no stated weight is refused, not guessed', () {
+      expect(
+        () => gramsForIngredient(const RecipeIngredient('Egg', 2, 'pieces')),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
+
     test('a tumbler is the 170 g household starting estimate', () {
       expect(
         gramsForIngredient(const RecipeIngredient('Rice', 2, 'tumbler')),
@@ -151,6 +168,30 @@ void main() {
       expect(result.method, CookingMethod.pressureCooker);
       expect(result.rawIngredientGrams, 65);
       expect(result.cookedGrams, closeTo(162.5, 0.001));
+    });
+  });
+
+  group('pieceGramsFor', () {
+    CatalogSourceEntry entry(String label, double grams) => CatalogSourceEntry(
+      sourceFile: '01-common.md',
+      section: '8. Egg, meat and fish',
+      isTier1: false,
+      foodName: 'Egg, boiled',
+      alsoNames: const [],
+      servingLabel: label,
+      servingAmount: grams,
+      weightColumnLabel: 'g',
+      rawComposition: 'USDA',
+    );
+
+    test('reads one piece off a counted serving', () {
+      expect(pieceGramsFor(entry('1 large', 50)), 50);
+      expect(pieceGramsFor(entry('2 pieces', 100)), 50);
+    });
+
+    test('a measure is not a count — a katori yields no piece weight', () {
+      expect(pieceGramsFor(entry('1 katori', 150)), isNull);
+      expect(pieceGramsFor(entry('100 g', 100)), isNull);
     });
   });
 }

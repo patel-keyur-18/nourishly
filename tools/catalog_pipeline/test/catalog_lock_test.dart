@@ -173,22 +173,10 @@ void main() {
     test('matches what the catalog resolves to right now', () {
       // The regression guard itself, run against the real files: if this
       // fails, something changed what an existing dish is made of.
-      final parser = CatalogSourceParser();
-      final compositionParser = CompositionParser();
-      final files =
-          Directory('../../docs/catalog')
-              .listSync()
-              .whereType<File>()
-              .where(
-                (f) => f.path.endsWith('.md') && !f.path.endsWith('README.md'),
-              )
-              .toList()
-            ..sort((a, b) => a.path.compareTo(b.path));
-      final rows = [
-        for (final file in files)
-          for (final entry in parser.parseFile(file))
-            CatalogRow(entry, compositionParser.parse(entry.rawComposition)),
-      ];
+      final rows = loadCatalogSources(
+        csvDirectory: '../../app/assets/regional_food',
+        markdownDirectory: '../../docs/catalog',
+      ).rows;
 
       final current = CatalogLock.fromRows(rows, CatalogIndex(rows));
       final committed = CatalogLock.fromJson(

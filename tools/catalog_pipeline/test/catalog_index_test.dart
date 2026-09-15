@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:catalog_pipeline/catalog_pipeline.dart';
 import 'package:test/test.dart';
 
@@ -147,21 +145,16 @@ void main() {
   });
 
   group('the committed catalog', () {
-    const catalogDir = '../../docs/catalog';
-    final parser = CatalogSourceParser();
-    final compositionParser = CompositionParser();
-
-    final rows = [
-      for (final name in [
-        '01-common.md',
-        '02-gujarat.md',
-        '03-tamil-nadu.md',
-        '04-karnataka.md',
-      ])
-        for (final entry in parser.parseFile(File('$catalogDir/$name')))
-          CatalogRow(entry, compositionParser.parse(entry.rawComposition)),
-    ];
-    final index = CatalogIndex(rows);
+    // The whole source set, deduplicated, exactly as the pipeline builds
+    // it — not the markdown alone. Several of these ingredients now
+    // resolve to a regional CSV row that superseded the markdown one, and
+    // an index built from half the sources would not see that.
+    final index = CatalogIndex(
+      loadCatalogSources(
+        csvDirectory: '../../app/assets/regional_food',
+        markdownDirectory: '../../docs/catalog',
+      ).rows,
+    );
 
     // Every ingredient the 2026-09-10 pipeline run failed on. Each is a
     // catalog row under some name, and none of them is anything FDC has

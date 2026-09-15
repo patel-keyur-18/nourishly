@@ -33,17 +33,44 @@ const _cuisineByFile = <String, String>{
   '04': 'kannadiga',
   '05': 'north-indian',
   '06': 'pan-indian',
+  '08': 'pan-indian',
+};
+
+/// Regional CSV filename -> cuisine.
+///
+/// **Adding a CSV means adding a line here.** `--check` fails on a source
+/// file with no cuisine rather than defaulting to one, because a silent
+/// default would put a Bengali dish under whatever bucket happened to be
+/// first and nobody would notice until they went looking for it.
+const _cuisineByCsv = <String, String>{
+  'nourishly_andhra_pradesh_food_catalog.csv': 'andhra',
+  'nourishly_bihar_food_catalog.csv': 'bihari',
+  'nourishly_common_international_food_catalog.csv': 'international',
+  'nourishly_gujarat_food_catalog.csv': 'gujarati',
+  'nourishly_indian_food_catalog.csv': 'pan-indian',
+  'nourishly_karnataka_food_catalog.csv': 'kannadiga',
+  'nourishly_karnataka_tamilnadu_gujarat_additions_only.csv': 'pan-indian',
+  'nourishly_karnataka_tamilnadu_gujarat_food_catalog.csv': 'pan-indian',
+  'nourishly_kerala_food_catalog.csv': 'kerala',
+  'nourishly_maharashtra_food_catalog.csv': 'maharashtrian',
+  'nourishly_tamil_nadu_food_catalog.csv': 'tamil',
+  'nourishly_telangana_food_catalog.csv': 'telugu',
+  'nourishly_west_bengal_food_catalog.csv': 'bengali',
 };
 
 /// `<file>|<lowercased section>` -> cuisine, where a file spans several.
 ///
-/// Only `07-pasta-and-modern.md` needs this: its pasta is Italian, its
+/// `07-pasta-and-modern.md` needs this: its pasta is Italian, its
 /// vermicelli is Indian, and overnight oats is from nowhere at all.
+/// `08-regional-pantry.md` needs it for one section — olive oil and
+/// pepperoni are not pan-Indian pantry however Indian the dishes that
+/// reach for them are.
 const _cuisineBySection = <String, String>{
   '07|pantry': 'modern',
   '07|pasta': 'italian',
   '07|vermicelli': 'pan-indian',
   '07|modern breakfast': 'modern',
+  '08|6. western pantry': 'modern',
 };
 
 /// Section-heading keyword -> course, first match wins. Ordered, because
@@ -111,6 +138,10 @@ const _sectionsWithoutOneCourse = <String>{
 /// is mapped — a new file nobody has classified yet, which is a gap to
 /// notice rather than a default to invent.
 String? cuisineFor({required String sourceFile, required String section}) {
+  final basename = sourceFile.split('/').last;
+  if (basename.toLowerCase().endsWith('.csv')) {
+    return _cuisineByCsv[basename];
+  }
   final prefix = sourceFile.split('-').first;
   final override = _cuisineBySection['$prefix|${_normalize(section)}'];
   if (override != null) return override;
@@ -127,6 +158,14 @@ String? cuisineFor({required String sourceFile, required String section}) {
 String? courseFor({required String section, required bool isIngredient}) {
   if (isIngredient) return 'ingredient';
   final normalized = _normalize(section);
+  // A CSV's section is the file's own title — "Kerala food catalog" — and
+  // names no course at all. Guessing one from the word "catalog" would be
+  // worse than leaving it off: a dish with no course simply does not
+  // appear under a course filter, which is honest.
+  if (normalized.endsWith('food catalog') ||
+      normalized.endsWith('additions only')) {
+    return null;
+  }
   if (_sectionsWithoutOneCourse.contains(normalized)) return null;
   for (final (keyword, course) in _courseKeywords) {
     if (normalized.contains(keyword)) return course;

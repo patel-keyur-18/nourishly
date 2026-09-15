@@ -3,6 +3,7 @@ import 'package:meta/meta.dart';
 import 'catalog_source_entry.dart';
 import 'composition.dart';
 import 'ingredient_targets.dart';
+import 'recipe_yield.dart';
 
 /// One catalog row paired with its parsed [Composition].
 @immutable
@@ -134,6 +135,17 @@ class CatalogIndex {
     if (target == null) return null;
     final row = _byKey[target];
     return row != null && row.isUsable ? row : null;
+  }
+
+  /// What one piece of the row [name] resolves to weighs, for the few
+  /// ingredients a recipe counts rather than weighs ("Egg 2 pieces").
+  ///
+  /// Null when [name] resolves to nothing, or when the row it resolves to
+  /// does not count pieces — which `gramsForIngredient` reports rather
+  /// than papering over with a constant.
+  double? pieceGramsForIngredient(String name) {
+    final row = lookup(name);
+    return row == null ? null : pieceGramsFor(row.entry);
   }
 
   /// The target key [name] is mapped to, whether or not a row carries it.

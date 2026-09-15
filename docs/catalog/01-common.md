@@ -130,7 +130,6 @@ Raw weights; the pipeline applies cooking yield per dish.
 | Fenugreek leaves | methi, venthaya keerai, menthya soppu | 50 g | 50 | USDA |
 | Amaranth leaves | tandaljo, mulai keerai, dantina soppu | 100 g | 100 | USDA amaranth leaves |
 | Coriander leaves | kothmir, kothamalli, kottambari | 10 g | 10 | USDA cilantro |
-| Curry leaves | limdo, karuveppilai, karibevu | 2 g | 2 | Negligible; include for completeness |
 | Mint leaves | fudino, pudina | 10 g | 10 | USDA |
 | **①** Coconut, fresh grated | kopru, thengai, thengina kayi | 2 tbsp | 20 | USDA coconut meat raw |
 | Coconut, dry | copra | 20 g | 20 | USDA dried |

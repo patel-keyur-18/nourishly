@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:catalog_pipeline/catalog_pipeline.dart';
 import 'package:test/test.dart';
 
@@ -16,16 +14,13 @@ void main() {
   late List<CatalogRow> rows;
 
   setUpAll(() {
-    final sourceParser = CatalogSourceParser();
-    final compositionParser = CompositionParser();
-    rows = [
-      for (final file in Directory(
-        '../../docs/catalog',
-      ).listSync().whereType<File>())
-        if (file.path.endsWith('.md') && !file.path.endsWith('README.md'))
-          for (final entry in sourceParser.parseFile(file))
-            CatalogRow(entry, compositionParser.parse(entry.rawComposition)),
-    ];
+    // The whole source set, deduplicated, exactly as the pipeline builds
+    // it: the regional CSVs are catalog sources too, and half the sources
+    // resolves half the ingredients.
+    rows = loadCatalogSources(
+      csvDirectory: '../../app/assets/regional_food',
+      markdownDirectory: '../../docs/catalog',
+    ).rows;
     index = CatalogIndex(rows);
   });
 

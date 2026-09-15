@@ -1,6 +1,6 @@
 # Nourishly Food Catalog Specification
 
-*Revision 0.1 · 2026-09-09 · [Architecture index](../architecture/README.md) · [Personal-Use Scope](../architecture/00-scope.md)*
+*Revision 0.2 · 2026-09-15 · [Architecture index](../architecture/README.md) · [Personal-Use Scope](../architecture/00-scope.md)*
 
 The curated food list for the household catalog, covering **Gujarat, Tamil Nadu and Karnataka** plus the pan-Indian staples all three share, and the everyday North Indian, rice and non-regional cooking this household actually does.
 
@@ -13,8 +13,10 @@ The curated food list for the household catalog, covering **Gujarat, Tamil Nadu 
 | [`05-everyday-north.md`](./05-everyday-north.md) | Plain dals, chana and bean sabzis, stuffed parathas, egg bhurji, pav bhaji | ~13 |
 | [`06-rice-and-biryani.md`](./06-rice-and-biryani.md) | Paneer, egg and mushroom biryani; pudina and tawa pulav | ~5 |
 | [`07-pasta-and-modern.md`](./07-pasta-and-modern.md) | Pasta and its sauces, millet pasta and vermicelli, overnight oats | ~9 |
-| [`catalog.lock.json`](./catalog.lock.json) | Generated. What every row's ingredients resolve to — see [§0.7](#07-row-keys-and-why-adding-a-row-is-now-safe) | 441 |
-| | **Total** | **441** |
+| [`08-regional-pantry.md`](./08-regional-pantry.md) | Ingredient rows the regional CSVs need: spices, western pantry, fish and meat, cheeses | 89 |
+| `app/assets/regional_food/*.csv` | **The regional dish catalogs.** Thirteen files, one per state plus pan-Indian and international — see [§0.9](#09-the-regional-csv-catalogs) | 1,062 |
+| [`catalog.lock.json`](./catalog.lock.json) | Generated. What every row's ingredients resolve to — see [§0.7](#07-row-keys-and-why-adding-a-row-is-now-safe) | 1,613 |
+| | **Total** | **1,613** |
 
 ---
 
@@ -160,7 +162,9 @@ Curate in this order. Tier 1 alone makes the app usable.
 - **Fat matters more than people expect.** A paratha, a benne dose, or a puri carries 5–15 g of added fat that its plain counterpart does not. These are separate foods for that reason alone.
 - **Sweetness matters in Gujarati cooking** — jaggery and sugar appear in dal, kadhi and shaak where other cuisines use none. The recipes below reflect this.
 - **Absorbed oil is named separately from cooking oil.** A row that deep-fries writes `absorbed oil 6 g`, never folding it into the pan oil. The two are different things: pan oil is a choice the cook makes, absorbed oil is what the food takes up, and a puri fried in half the oil absorbs about the same. Keeping them apart is what lets a household record cooking lighter (`docs/plans/01-multi-cuisine-and-light-cooking.md` §7) without claiming a fried dish got lighter too.
-- **Names are unique within a file; they may repeat across files.** "Coconut rice" is a Tamil dish and a Kannadiga dish and both belong here — the app tells them apart by cuisine, not by renaming one. What must never repeat is a row's **key**.
+- **One row per food, across every source.** A food is its name, normalized. Whichever source names it first — in the precedence order of §0.9 — is the row that ships; the rest are collapsed and reported by `--check --superseded`. This supersedes the older rule below.
+
+> **Revised 2026-09-15.** This section used to read *"regional variants of the same dish are separate foods"* and *"names are unique within a file; they may repeat across files"* — so `Coconut rice` could be a Tamil row and a Kannadiga row at once, told apart by cuisine tag. The regional CSVs describe 1,525 foods between them and repeat 2,757 rows doing it, and a search for "coconut rice" that returns six indistinguishable lines is worse than one that returns the best one. Names may still repeat *within the sources*; what ships is one row. Keys are still per-file and still unique, so nothing below changes.
 
 ## 0.7 Row keys, and why adding a row is now safe
 
@@ -179,7 +183,8 @@ Nothing in the tables changed to get this — the key is computed, not written d
 ### Adding rows: the loop
 
 ```
-1. write the rows                    docs/catalog/*.md
+1. write the rows                    docs/catalog/*.md, or drop a CSV in
+                                     app/assets/regional_food/
 2. dart run .../parse_catalog.dart --suggest      ← lines to paste for new ingredients
 3. paste them into ingredient_targets.dart        ← one decision per line, by hand
 4. dart run .../parse_catalog.dart --check        ← offline. No key, no network.
@@ -188,7 +193,7 @@ Nothing in the tables changed to get this — the key is computed, not written d
 7. dart run .../parse_catalog.dart --write-lock   ← record the new resolution
 ```
 
-Steps 1–4 need no API key and no network, which is the point: **a new row can be proved harmless before anyone spends a fetch on it.** `--check` fails on a duplicate key, an ingredient nobody mapped, a target pointing at no row, a yield outside 0.5×–15×, or any change to what an existing row's ingredients resolve to. That last one is the guard: `docs/catalog/catalog.lock.json` is the committed record of every row's resolution, and a change to it has to be deliberate.
+Steps 1–4 need no API key and no network, which is the point: **a new row can be proved harmless before anyone spends a fetch on it.** `--check` fails on a duplicate key, an ingredient nobody mapped, a target pointing at no row, a yield outside 0.4×–15×, a source file nobody has given a cuisine, or any change to what an existing row's ingredients resolve to. That last one is the guard: `docs/catalog/catalog.lock.json` is the committed record of every row's resolution, and a change to it has to be deliberate.
 
 ## 0.8 Cuisine and course tags
 
@@ -198,3 +203,25 @@ Two facts the source files already carry, and the pipeline records as `FoodItems
 - **Course**, from the `## N.` heading a row sits under — `tiffin`, `farsan`, `sweet`, `bread`, `rice`, `gravy`, `snack`, `beverage`.
 
 A file that is not a single cuisine says so per section instead: `06-rice-and-biryani.md` spans several, and `Overnight oats` belongs to no cuisine at all (`modern`). Tags describe **where a dish is from, never what is in it** — no tag may ever imply a nutrient.
+
+## 0.9 The regional CSV catalogs
+
+`app/assets/regional_food/*.csv` carries the regional dish catalogs, and **they are the source of truth for the dishes they describe.** They hold the same five columns as the markdown tables (`Food, Also, Serving, g, Composition`), so every stage downstream — composition parsing, row keys, the lock, cuisine tags, the seed build — works on them unchanged. They are read where they are rather than converted, because two copies of a row drift.
+
+Files are discovered by glob, so **adding the next regional catalog is dropping the file in and adding one line** to `_cuisineByCsv` in `cuisine_tags.dart`. `--check` fails on a source file nobody has given a cuisine rather than defaulting to one: a silent default would file a Bengali dish under whatever bucket came first and nobody would notice until they went looking for it.
+
+**Precedence**, highest first, from `catalog_sources.dart`:
+
+1. `nourishly_indian_food_catalog.csv`, then the two `karnataka_tamilnadu_gujarat` files, then `nourishly_common_international_food_catalog.csv` — these four describe each dish on its own terms;
+2. every other CSV, alphabetically — the per-state files, which reuse one composition across several dishes (`Gajar halwa` and `Rice kheer` are given the same line), so where both describe a dish the file that distinguishes them wins;
+3. the markdown catalog.
+
+**CSV beats markdown**, with one exception: an **ingredient** row is never displaced by a dish row of the same name. An ingredient row is infrastructure — other recipes resolve through it — so losing one breaks every dish that used it and sometimes the dish that displaced it. `Coconut water` is exactly that: a CSV row whose only ingredient is coconut water.
+
+When a CSV does supersede a markdown row that `ingredientTargets` points at, `--check` reports it and names the row to repoint at. That is a one-line fix, and it is deliberately a fix rather than an automatic redirect: what an ingredient means stays something a person wrote down (§0.3b).
+
+### What the CSVs do not decide
+
+- **Ingredients still resolve through `ingredientTargets`.** A CSV naming `Curry leaves 2 g` does not create a curry leaves row; `08-regional-pantry.md` does, and the map points at it.
+- **An ingredient with no FoodData Central entry gets no invented row.** Kokum, ker, sangri, ajwain and kachampuli are settled in `ingredient_targets.dart` against the closest row the catalog already measures, with the reason on the line.
+- **A count is not a weight.** `Egg 2 pieces` resolves through the target row's own serving columns — `Egg, boiled | 1 large | 50 g` — and nowhere else. A row that does not count pieces makes the pipeline say so rather than pick a constant.

@@ -25,7 +25,13 @@ library;
 /// does not start with digits, so an unnumbered file still produces a
 /// usable key rather than a silent collision on an empty prefix.
 String catalogFilePrefix(String sourceFile) {
-  final basename = sourceFile.split('/').last.replaceAll(RegExp(r'\.md$'), '');
+  final basename = sourceFile
+      .split('/')
+      .last
+      .replaceAll(RegExp(r'\.(md|csv)$', caseSensitive: false), '')
+      // The regional CSVs all start with the same word, which would make
+      // every one of their keys begin `nourishly-`.
+      .replaceAll(RegExp(r'^nourishly[_-]'), '');
   final digits = RegExp(r'^(\d+)').firstMatch(basename);
   return digits != null ? digits.group(1)! : slugify(basename);
 }

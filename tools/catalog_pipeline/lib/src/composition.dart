@@ -85,8 +85,27 @@ final _explicitSelfReference = RegExp(
   caseSensitive: false,
 );
 final _quantity = RegExp(
-  r'^(?<name>.*?)\s+(?<amount>\d+(?:\.\d+)?)\s*(?<unit>g|ml|kg|l|tsp|tbsp|tumbler)\b(?<note>.*)$',
+  r'^(?<name>.*?)\s+(?<amount>\d+(?:\.\d+)?)\s*'
+  r'(?<unit>g|ml|kg|l|tsp|tbsp|tumbler)\b(?<note>.*)$',
 );
+
+/// A count, for the few ingredients a recipe states as whole items rather
+/// than by weight: "Egg 2 pieces" in the regional egg curries and
+/// biryanis. What one piece weighs is not decided here — it is read off
+/// the target row's own serving columns (`pieceGramsFor`), because the
+/// catalog already states it: `Egg, boiled | 1 large | 50 g`.
+///
+/// Tried only after [_quantity] fails, so a segment that states both —
+/// Misal pav's "pav 1 piece 60 g" — keeps the grams it was given rather
+/// than being re-derived from the Pav row.
+final _countQuantity = RegExp(
+  r'^(?<name>.*?)\s+(?<amount>\d+(?:\.\d+)?)\s*'
+  r'(?<unit>pieces|piece)\b(?<note>.*)$',
+);
+
+/// [_quantity] if it matches, else [_countQuantity].
+RegExpMatch? _matchQuantity(String segment) =>
+    _quantity.firstMatch(segment) ?? _countQuantity.firstMatch(segment);
 
 /// Markdown emphasis used inside a composition cell for prose, not for
 /// meaning: Benne dose reads "Dosa batter 80 g, **butter 22 g** — the
@@ -153,7 +172,7 @@ class CompositionParser {
     // ingredient list — flag it rather than silently dropping "Bhakhri"'s
     // own nutrient contribution into a negligible-mass note alongside
     // curry leaves.
-    if (!_quantity.hasMatch(segments.first)) {
+    if (_matchQuantity(segments.first) == null) {
       return NeedsManualReview(
         'first segment has no quantity — likely references another dish by name',
         text,
@@ -164,7 +183,7 @@ class CompositionParser {
     final notes = <String>[];
 
     for (final segment in segments) {
-      final match = _quantity.firstMatch(segment);
+      final match = _matchQuantity(segment);
       if (match == null) {
         // No quantity in this segment — a negligible-mass note (spices,
         // curry leaves, "no added fat"), per catalog spec §0.2.

@@ -110,6 +110,33 @@ void main() {
       expect(result.yieldFactor, CookingMethod.openPot.yieldFactor);
     });
 
+    test('a dish that simmers down to half its weight keeps its own '
+        'ratio', () {
+      // A payasam reduces 221 g of milk, rice and jaggery to a 100 g
+      // katori. Driving off water is the dish, not a typo, and the band
+      // has to leave room for it.
+      final result = computeRecipeNutrition(
+        components: [
+          _c('milk', 221, {'energy': 60}),
+        ],
+        cookedGrams: 100,
+        method: CookingMethod.openPot,
+      );
+      expect(result.basis, YieldBasis.cookedWeight);
+      expect(result.yieldFactor, closeTo(0.452, 0.001));
+    });
+
+    test('but a tenth of the ingredient weight is still a typo', () {
+      final result = computeRecipeNutrition(
+        components: [
+          _c('milk', 200, {'energy': 60}),
+        ],
+        cookedGrams: 20,
+        method: CookingMethod.openPot,
+      );
+      expect(result.basis, YieldBasis.cookingMethod);
+    });
+
     test('an assembly takes on nothing', () {
       final result = computeRecipeNutrition(
         components: [
