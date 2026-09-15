@@ -1,0 +1,17 @@
+{
+  "query": "fish mackerel king raw [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 175122,
+      "description": "Fish, mackerel, king, raw"
+    },
+    {
+      "fdcId": 175119,
+      "description": "Fish, mackerel, Atlantic, raw"
+    },
+    {
+      "fdcId": 173673,
+      "description": "Fish, mackerel, spanish, raw"
+    }
+  ]
+}
