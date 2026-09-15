@@ -24440,6 +24440,13 @@
       "valueSource": "measured"
     },
     {
+      "id": "2b28f14c-2ac4-5191-be16-5e23b33d0324",
+      "foodId": "5bdfb121-5979-5b76-ab28-4531516814ba",
+      "nutrientId": "energy",
+      "amountPer100g": 350.9328,
+      "valueSource": "measured"
+    },
+    {
       "id": "1cad48c3-a8a1-516e-a400-cc1ec05a12ca",
       "foodId": "5bdfb121-5979-5b76-ab28-4531516814ba",
       "nutrientId": "protein",
@@ -24678,6 +24685,13 @@
       "valueSource": "measured"
     },
     {
+      "id": "80dbc49f-f5ae-561a-a22d-d50f82c29ad8",
+      "foodId": "d07ae9b3-bba4-567d-8d02-5c513d6452dc",
+      "nutrientId": "energy",
+      "amountPer100g": 371.99469,
+      "valueSource": "measured"
+    },
+    {
       "id": "67527491-6c9c-5821-bc68-12f6004047f9",
       "foodId": "d07ae9b3-bba4-567d-8d02-5c513d6452dc",
       "nutrientId": "protein",
@@ -24745,6 +24759,13 @@
       "foodId": "d07ae9b3-bba4-567d-8d02-5c513d6452dc",
       "nutrientId": "phosphorus",
       "amountPer100g": 353.1,
+      "valueSource": "measured"
+    },
+    {
+      "id": "0df602ed-d818-5ab3-b726-391c6bc579a6",
+      "foodId": "6515de3a-2a91-5b4c-93a6-1f594de6a5f8",
+      "nutrientId": "energy",
+      "amountPer100g": 331.6005206,
       "valueSource": "measured"
     },
     {
@@ -24850,6 +24871,13 @@
       "foodId": "6515de3a-2a91-5b4c-93a6-1f594de6a5f8",
       "nutrientId": "niacin",
       "amountPer100g": 5.366,
+      "valueSource": "measured"
+    },
+    {
+      "id": "74e85484-a472-58b8-ac35-fc1b07a888c8",
+      "foodId": "98242835-eea2-59d2-b4d6-63a873c9f83d",
+      "nutrientId": "energy",
+      "amountPer100g": 331.6005206,
       "valueSource": "measured"
     },
     {
@@ -25273,6 +25301,13 @@
       "valueSource": "measured"
     },
     {
+      "id": "f2d4997c-c2a7-5109-bf9c-58fa754f7186",
+      "foodId": "94d9bd71-4ef1-52d2-950c-88aedc300c90",
+      "nutrientId": "energy",
+      "amountPer100g": 23.529215,
+      "valueSource": "measured"
+    },
+    {
       "id": "863e9791-7ea2-5045-8176-f35e26557cfd",
       "foodId": "94d9bd71-4ef1-52d2-950c-88aedc300c90",
       "nutrientId": "protein",
@@ -25550,6 +25585,13 @@
       "foodId": "13ef73c0-b04b-5fd7-aca5-fe106ed4217b",
       "nutrientId": "niacin",
       "amountPer100g": 0.39,
+      "valueSource": "measured"
+    },
+    {
+      "id": "b7a2ef2c-2a5f-55c8-9139-29a9521de379",
+      "foodId": "981c03ff-9a8a-51de-a6b5-c95d528a4921",
+      "nutrientId": "energy",
+      "amountPer100g": 550.62181,
       "valueSource": "measured"
     },
     {
@@ -26617,6 +26659,13 @@
       "valueSource": "measured"
     },
     {
+      "id": "8eb256af-1e88-5d84-8ac2-30b6c6d835d5",
+      "foodId": "faf6a67d-0ef4-5268-99c7-3e908d9b8575",
+      "nutrientId": "energy",
+      "amountPer100g": 94.507135,
+      "valueSource": "measured"
+    },
+    {
       "id": "95a5eb5c-479d-57b7-97f3-195fa8cce7dd",
       "foodId": "faf6a67d-0ef4-5268-99c7-3e908d9b8575",
       "nutrientId": "protein",
@@ -26726,6 +26775,13 @@
       "foodId": "faf6a67d-0ef4-5268-99c7-3e908d9b8575",
       "nutrientId": "niacin",
       "amountPer100g": 0.2269,
+      "valueSource": "measured"
+    },
+    {
+      "id": "67376162-c990-5499-9555-6ccc392c314e",
+      "foodId": "ece9a1f8-f321-5ddf-857a-f1b586770185",
+      "nutrientId": "energy",
+      "amountPer100g": 42.9180362,
       "valueSource": "measured"
     },
     {
@@ -27251,6 +27307,13 @@
       "foodId": "87f651c6-b70d-5911-9dd6-c86e7ad3776c",
       "nutrientId": "vitamin_c",
       "amountPer100g": 0.0,
+      "valueSource": "measured"
+    },
+    {
+      "id": "aba43420-7b3d-56cc-9661-824f4f95cef9",
+      "foodId": "ecf0285d-33de-5081-961a-eb1a342f7e82",
+      "nutrientId": "energy",
+      "amountPer100g": 335.8933226,
       "valueSource": "measured"
     },
     {
@@ -28385,6 +28448,13 @@
       "foodId": "c5d12f69-6538-56d8-b4e1-e252e21026c7",
       "nutrientId": "niacin",
       "amountPer100g": 1.0,
+      "valueSource": "measured"
+    },
+    {
+      "id": "416766cb-d734-5d8f-85e0-46548ccaef19",
+      "foodId": "46151d38-83e5-5034-85c2-0a67dee4b112",
+      "nutrientId": "energy",
+      "amountPer100g": 22.85237775,
       "valueSource": "measured"
     },
     {
@@ -30677,6 +30747,13 @@
       "valueSource": "measured"
     },
     {
+      "id": "1590a4ef-1fd2-5007-88e9-b0d3992b4ab9",
+      "foodId": "0fec5dda-8e2b-5b7a-ae6f-baefc47a7145",
+      "nutrientId": "energy",
+      "amountPer100g": 19.692148,
+      "valueSource": "measured"
+    },
+    {
       "id": "cdced598-3b96-5777-80b1-e2f64d756282",
       "foodId": "0fec5dda-8e2b-5b7a-ae6f-baefc47a7145",
       "nutrientId": "protein",
@@ -31297,6 +31374,13 @@
       "foodId": "923711b3-4ab6-518e-9bda-d2ae6bb4430b",
       "nutrientId": "niacin",
       "amountPer100g": 0.254,
+      "valueSource": "measured"
+    },
+    {
+      "id": "a77a0ca8-3b53-5a2d-a4d2-c42a8ccfac0c",
+      "foodId": "ac981df1-5471-51d4-96a9-f665dbd658b8",
+      "nutrientId": "energy",
+      "amountPer100g": 40.965255,
       "valueSource": "measured"
     },
     {
@@ -33631,6 +33715,13 @@
       "valueSource": "measured"
     },
     {
+      "id": "8ccf0fac-ddef-5c99-9d45-813dcbb6be87",
+      "foodId": "9b14a3fa-4afc-5d86-b0d0-c07af9fb8df8",
+      "nutrientId": "energy",
+      "amountPer100g": 23.529215,
+      "valueSource": "measured"
+    },
+    {
       "id": "cd73df4c-e7f9-5787-ae1f-9d6bc662b498",
       "foodId": "9b14a3fa-4afc-5d86-b0d0-c07af9fb8df8",
       "nutrientId": "protein",
@@ -35059,6 +35150,13 @@
       "valueSource": "measured"
     },
     {
+      "id": "ba5b3e93-90de-5c5a-88dc-9ee036ce7f2b",
+      "foodId": "77ce8b4d-533b-5050-a103-1569f9949990",
+      "nutrientId": "energy",
+      "amountPer100g": 77.35727375,
+      "valueSource": "measured"
+    },
+    {
       "id": "530d9014-2f05-5e5d-a655-1b9d96ca40fd",
       "foodId": "77ce8b4d-533b-5050-a103-1569f9949990",
       "nutrientId": "protein",
@@ -36410,6 +36508,13 @@
       "valueSource": "measured"
     },
     {
+      "id": "b3671cd5-2420-5733-95de-c66befe350bd",
+      "foodId": "fa5faf7c-5dfb-530e-9ead-9307288babf7",
+      "nutrientId": "energy",
+      "amountPer100g": 577.62536,
+      "valueSource": "measured"
+    },
+    {
       "id": "3687dd41-80e1-59ca-a824-b3a9f88eea5c",
       "foodId": "fa5faf7c-5dfb-530e-9ead-9307288babf7",
       "nutrientId": "protein",
@@ -36519,6 +36624,13 @@
       "foodId": "fa5faf7c-5dfb-530e-9ead-9307288babf7",
       "nutrientId": "niacin",
       "amountPer100g": 3.998,
+      "valueSource": "measured"
+    },
+    {
+      "id": "c824dda4-6443-52a2-ba12-987d0e1998ff",
+      "foodId": "bad5ef05-2615-5779-bb45-cbf7111fc6e1",
+      "nutrientId": "energy",
+      "amountPer100g": 533.47799,
       "valueSource": "measured"
     },
     {
@@ -44180,6 +44292,13 @@
       "valueSource": "measured"
     },
     {
+      "id": "e5a8e17b-8064-569c-9c8a-ed548bc9745b",
+      "foodId": "a68a9bae-db2d-56d1-b4e3-4920c298afb4",
+      "nutrientId": "energy",
+      "amountPer100g": 14.455425,
+      "valueSource": "measured"
+    },
+    {
       "id": "08052dfc-8c0f-5635-9831-6b7a9ddcb3d7",
       "foodId": "a68a9bae-db2d-56d1-b4e3-4920c298afb4",
       "nutrientId": "protein",
@@ -45657,6 +45776,13 @@
       "valueSource": "measured"
     },
     {
+      "id": "1a85141f-fded-5ac2-96c2-f590f5fd01c3",
+      "foodId": "0c51700f-301e-584e-87dc-a9ee54763982",
+      "nutrientId": "energy",
+      "amountPer100g": 54.046596,
+      "valueSource": "measured"
+    },
+    {
       "id": "c8b53148-01b2-552c-80ef-f797d9078b5e",
       "foodId": "0c51700f-301e-584e-87dc-a9ee54763982",
       "nutrientId": "protein",
@@ -46417,6 +46543,13 @@
       "foodId": "7272991e-b15b-5070-86b3-ab9b9f0c93ad",
       "nutrientId": "niacin",
       "amountPer100g": 0.022,
+      "valueSource": "measured"
+    },
+    {
+      "id": "d97af84f-adc9-5cd9-b6e4-fe8451c9b355",
+      "foodId": "85f55dcc-61f7-5e8e-8e56-b19eb2458be3",
+      "nutrientId": "energy",
+      "amountPer100g": 34.76031875,
       "valueSource": "measured"
     },
     {
@@ -47628,6 +47761,13 @@
       "foodId": "3fc1c497-0771-5b61-bf47-d1dd2c69d52d",
       "nutrientId": "niacin",
       "amountPer100g": 0.0,
+      "valueSource": "measured"
+    },
+    {
+      "id": "e1efd8fc-c0f7-58a7-8796-81b18114fc53",
+      "foodId": "91a089df-af7d-5a1f-b2ab-61d924c397d8",
+      "nutrientId": "energy",
+      "amountPer100g": 368.3584745,
       "valueSource": "measured"
     },
     {
@@ -56636,7 +56776,7 @@
       "id": "aebe1d72-8e0e-5253-93b2-99165b159068",
       "foodId": "7871b971-6080-504b-9b19-575840c7e62a",
       "nutrientId": "energy",
-      "amountPer100g": 191.80714285714285,
+      "amountPer100g": 192.14327450000002,
       "valueSource": "derived"
     },
     {
@@ -56972,7 +57112,7 @@
       "id": "2fa18fec-66e7-5e47-bd84-6e567eea6aa3",
       "foodId": "80877951-e371-55bf-9639-0aa0ed750a1e",
       "nutrientId": "energy",
-      "amountPer100g": 170.56153846153845,
+      "amountPer100g": 179.35091451923077,
       "valueSource": "derived"
     },
     {
@@ -59982,7 +60122,7 @@
       "id": "c52a6440-b008-530e-8616-263fc1546cfe",
       "foodId": "16fa998b-0655-57c9-a638-205dd7b5bd53",
       "nutrientId": "energy",
-      "amountPer100g": 113.87,
+      "amountPer100g": 162.60652955,
       "valueSource": "derived"
     },
     {
@@ -60150,7 +60290,7 @@
       "id": "35ecac6b-721a-57db-a7ae-b3107d0700bf",
       "foodId": "5a4380a7-e2dd-56b4-a4b5-b6b31102df2c",
       "nutrientId": "energy",
-      "amountPer100g": 131.0,
+      "amountPer100g": 134.3817699090909,
       "valueSource": "derived"
     },
     {
@@ -60318,7 +60458,7 @@
       "id": "62078686-51b4-56a5-baf1-ee00ab590a32",
       "foodId": "2f9573e5-84ef-5dfd-b196-9123f07d6e3e",
       "nutrientId": "energy",
-      "amountPer100g": 144.27619047619044,
+      "amountPer100g": 183.6063197619047,
       "valueSource": "derived"
     },
     {
@@ -60486,7 +60626,7 @@
       "id": "c3c56939-17b4-5fd4-ac8e-0af0cc321536",
       "foodId": "e86b7853-73f4-5583-93f4-3c14329d5f87",
       "nutrientId": "energy",
-      "amountPer100g": 152.65499999999997,
+      "amountPer100g": 158.4702125,
       "valueSource": "derived"
     },
     {
@@ -60654,7 +60794,7 @@
       "id": "91f6fa83-1cb8-58ab-ba25-566ff503db8f",
       "foodId": "b436c532-9d3b-51f5-8692-60369a4def71",
       "nutrientId": "energy",
-      "amountPer100g": 102.73333333333335,
+      "amountPer100g": 120.51593299999999,
       "valueSource": "derived"
     },
     {
@@ -61659,6 +61799,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "e4140a79-b950-5e3c-aa39-e95b83297ca0",
+      "foodId": "494a809c-749d-5ef4-b634-bacd9642c114",
+      "nutrientId": "energy",
+      "amountPer100g": 156.9533971636363,
+      "valueSource": "derived"
+    },
+    {
       "id": "62ba9318-283c-5bd2-950c-89f67179e3d9",
       "foodId": "494a809c-749d-5ef4-b634-bacd9642c114",
       "nutrientId": "protein",
@@ -61726,13 +61873,6 @@
       "foodId": "494a809c-749d-5ef4-b634-bacd9642c114",
       "nutrientId": "phosphorus",
       "amountPer100g": 98.94909090909091,
-      "valueSource": "derived"
-    },
-    {
-      "id": "e4140a79-b950-5e3c-aa39-e95b83297ca0",
-      "foodId": "494a809c-749d-5ef4-b634-bacd9642c114",
-      "nutrientId": "energy",
-      "amountPer100g": 82.50454545454545,
       "valueSource": "derived"
     },
     {
@@ -61995,6 +62135,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "3bca0ef4-dc29-57e7-8844-5339d3e869f5",
+      "foodId": "d859b02e-992a-51dc-9cb5-6060c7548184",
+      "nutrientId": "energy",
+      "amountPer100g": 145.08513015000003,
+      "valueSource": "derived"
+    },
+    {
       "id": "844a63a2-64f7-5756-9189-0fe3b772c95e",
       "foodId": "d859b02e-992a-51dc-9cb5-6060c7548184",
       "nutrientId": "protein",
@@ -62100,13 +62247,6 @@
       "valueSource": "derived"
     },
     {
-      "id": "3bca0ef4-dc29-57e7-8844-5339d3e869f5",
-      "foodId": "d859b02e-992a-51dc-9cb5-6060c7548184",
-      "nutrientId": "energy",
-      "amountPer100g": 62.18499999999999,
-      "valueSource": "derived"
-    },
-    {
       "id": "cd32a8c9-6ca7-522c-93d2-b62fb9285574",
       "foodId": "d859b02e-992a-51dc-9cb5-6060c7548184",
       "nutrientId": "saturated_fat",
@@ -62160,6 +62300,13 @@
       "foodId": "d859b02e-992a-51dc-9cb5-6060c7548184",
       "nutrientId": "folate",
       "amountPer100g": 21.445,
+      "valueSource": "derived"
+    },
+    {
+      "id": "b78cbc90-a18e-5689-b93f-55dcd2b4cb4b",
+      "foodId": "48654f42-2436-59d0-b366-acd6288e1cde",
+      "nutrientId": "energy",
+      "amountPer100g": 143.30013699999998,
       "valueSource": "derived"
     },
     {
@@ -62265,13 +62412,6 @@
       "foodId": "48654f42-2436-59d0-b366-acd6288e1cde",
       "nutrientId": "niacin",
       "amountPer100g": 2.6460894736842104,
-      "valueSource": "derived"
-    },
-    {
-      "id": "b78cbc90-a18e-5689-b93f-55dcd2b4cb4b",
-      "foodId": "48654f42-2436-59d0-b366-acd6288e1cde",
-      "nutrientId": "energy",
-      "amountPer100g": 56.03684210526316,
       "valueSource": "derived"
     },
     {
@@ -62499,6 +62639,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "addb9836-2e44-56e2-b7ff-ab6c357ad2db",
+      "foodId": "38ab70da-ff40-5e91-926e-68c73e3d17eb",
+      "nutrientId": "energy",
+      "amountPer100g": 147.4332,
+      "valueSource": "derived"
+    },
+    {
       "id": "a023baa7-356e-54bb-b790-c37e6d82a749",
       "foodId": "38ab70da-ff40-5e91-926e-68c73e3d17eb",
       "nutrientId": "protein",
@@ -62566,13 +62713,6 @@
       "foodId": "38ab70da-ff40-5e91-926e-68c73e3d17eb",
       "nutrientId": "phosphorus",
       "amountPer100g": 142.02222222222224,
-      "valueSource": "derived"
-    },
-    {
-      "id": "addb9836-2e44-56e2-b7ff-ab6c357ad2db",
-      "foodId": "38ab70da-ff40-5e91-926e-68c73e3d17eb",
-      "nutrientId": "energy",
-      "amountPer100g": 59.70000000000001,
       "valueSource": "derived"
     },
     {
@@ -62670,7 +62810,7 @@
       "id": "1c0ad6ae-fee3-54b0-aae1-6af59167c1b3",
       "foodId": "d2de3d56-8098-5646-b6b9-f94c58890539",
       "nutrientId": "energy",
-      "amountPer100g": 114.98947368421054,
+      "amountPer100g": 138.17354989473685,
       "valueSource": "derived"
     },
     {
@@ -62838,7 +62978,7 @@
       "id": "4fcc1831-d61b-513b-86cd-73d552d34b1f",
       "foodId": "25ee7c1a-51c6-55fa-b1d4-c1060521138e",
       "nutrientId": "energy",
-      "amountPer100g": 122.8,
+      "amountPer100g": 156.9330816842105,
       "valueSource": "derived"
     },
     {
@@ -63174,7 +63314,7 @@
       "id": "8b9bec06-0671-5d8d-99bf-79d9b3beaa51",
       "foodId": "e7e7b78c-11f6-5846-8806-4cdbf11f00f9",
       "nutrientId": "energy",
-      "amountPer100g": 257.1166666666667,
+      "amountPer100g": 299.48753969999996,
       "valueSource": "derived"
     },
     {
@@ -63342,7 +63482,7 @@
       "id": "24cea61b-a3d6-518f-a6a3-52d9a686b5b3",
       "foodId": "b836d8da-a6a7-597b-a24d-9dd01b41773d",
       "nutrientId": "energy",
-      "amountPer100g": 199.45789473684215,
+      "amountPer100g": 202.56718126315795,
       "valueSource": "derived"
     },
     {
@@ -63510,7 +63650,7 @@
       "id": "356a8f5c-e6c8-512a-9cf4-f895982fb80e",
       "foodId": "6d937433-02b1-5c1c-995a-e7017a190c49",
       "nutrientId": "energy",
-      "amountPer100g": 215.85263157894735,
+      "amountPer100g": 270.44831441578947,
       "valueSource": "derived"
     },
     {
@@ -63678,7 +63818,7 @@
       "id": "e6996a6f-d58c-57f5-bc81-c507c8e946d4",
       "foodId": "6498bcf2-0ede-5122-8e5b-e54408fd3212",
       "nutrientId": "energy",
-      "amountPer100g": 182.0842105263158,
+      "amountPer100g": 196.2270872673684,
       "valueSource": "derived"
     },
     {
@@ -63843,6 +63983,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "0fc47636-5412-5d13-8c7f-44dd12280a1c",
+      "foodId": "e7aaaeac-26d3-5c12-84a0-142efa0832ea",
+      "nutrientId": "energy",
+      "amountPer100g": 145.08513015000003,
+      "valueSource": "derived"
+    },
+    {
       "id": "0307de6e-ebf9-5d2b-9fdd-0b831e781ba4",
       "foodId": "e7aaaeac-26d3-5c12-84a0-142efa0832ea",
       "nutrientId": "protein",
@@ -63948,13 +64095,6 @@
       "valueSource": "derived"
     },
     {
-      "id": "0fc47636-5412-5d13-8c7f-44dd12280a1c",
-      "foodId": "e7aaaeac-26d3-5c12-84a0-142efa0832ea",
-      "nutrientId": "energy",
-      "amountPer100g": 62.18499999999999,
-      "valueSource": "derived"
-    },
-    {
       "id": "39cfa010-1cca-521f-bc90-742b6e91979b",
       "foodId": "e7aaaeac-26d3-5c12-84a0-142efa0832ea",
       "nutrientId": "saturated_fat",
@@ -64014,7 +64154,7 @@
       "id": "e14b93d9-0e23-5783-bdda-a57de89eaf54",
       "foodId": "18f39d9f-a0b6-5585-9934-949b8e98e36a",
       "nutrientId": "energy",
-      "amountPer100g": 135.0470588235294,
+      "amountPer100g": 145.12899018382353,
       "valueSource": "derived"
     },
     {
@@ -64350,7 +64490,7 @@
       "id": "651dc557-0812-5404-982b-9aed7bf8c115",
       "foodId": "702b5b84-263c-50f0-abca-9c983ad8d7be",
       "nutrientId": "energy",
-      "amountPer100g": 192.9333333333333,
+      "amountPer100g": 193.24705619999997,
       "valueSource": "derived"
     },
     {
@@ -64686,7 +64826,7 @@
       "id": "6a4fa8cc-c9f6-55ee-99ef-c2d1f2830165",
       "foodId": "a3a3c3e3-816d-58d9-9df6-000df04a7c1f",
       "nutrientId": "energy",
-      "amountPer100g": 90.11176470588235,
+      "amountPer100g": 90.38857900000001,
       "valueSource": "derived"
     },
     {
@@ -64854,7 +64994,7 @@
       "id": "ec1d96f7-5332-5ef0-aaa7-eb79c00bfaef",
       "foodId": "539ed37c-4eeb-5bb5-b4ae-355ac4c873fc",
       "nutrientId": "energy",
-      "amountPer100g": 154.35263157894735,
+      "amountPer100g": 235.46620830526314,
       "valueSource": "derived"
     },
     {
@@ -65022,7 +65162,7 @@
       "id": "9c13cbe8-784a-5ab5-9059-ba662291038b",
       "foodId": "a341ee0e-500c-5fd4-9d82-7b44c948ba4e",
       "nutrientId": "energy",
-      "amountPer100g": 190.15909090909088,
+      "amountPer100g": 232.4601079954545,
       "valueSource": "derived"
     },
     {
@@ -65190,7 +65330,7 @@
       "id": "6b1567ff-f005-5bda-830b-4f08b1187fca",
       "foodId": "324793da-e513-59dc-b12a-d9718f85a803",
       "nutrientId": "energy",
-      "amountPer100g": 91.16,
+      "amountPer100g": 143.02589869499994,
       "valueSource": "derived"
     },
     {
@@ -65358,7 +65498,7 @@
       "id": "81f6c7ef-c9ef-583b-b8fb-9b94da6578f6",
       "foodId": "a874ea04-01ab-5ab4-844c-21577a2d1ea6",
       "nutrientId": "energy",
-      "amountPer100g": 152.64999999999995,
+      "amountPer100g": 156.45872962499996,
       "valueSource": "derived"
     },
     {
@@ -65691,6 +65831,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "dae3876c-a1ed-552a-bc83-dbca7514d4c6",
+      "foodId": "d553f93c-2c0e-5408-8f8e-3999fc5d4f4e",
+      "nutrientId": "energy",
+      "amountPer100g": 175.36679061904766,
+      "valueSource": "derived"
+    },
+    {
       "id": "13286c18-f5d0-5e5d-9b95-04519af9c671",
       "foodId": "d553f93c-2c0e-5408-8f8e-3999fc5d4f4e",
       "nutrientId": "protein",
@@ -65796,13 +65943,6 @@
       "valueSource": "derived"
     },
     {
-      "id": "dae3876c-a1ed-552a-bc83-dbca7514d4c6",
-      "foodId": "d553f93c-2c0e-5408-8f8e-3999fc5d4f4e",
-      "nutrientId": "energy",
-      "amountPer100g": 96.4142857142857,
-      "valueSource": "derived"
-    },
-    {
       "id": "cb8bec50-4ec4-5f18-975f-5919d8f00dad",
       "foodId": "d553f93c-2c0e-5408-8f8e-3999fc5d4f4e",
       "nutrientId": "saturated_fat",
@@ -65862,7 +66002,7 @@
       "id": "bdd7721b-91ae-50a9-881e-1e90fca1cebe",
       "foodId": "0f35ec54-23f0-57f5-8e57-ac22ec1dbd8c",
       "nutrientId": "energy",
-      "amountPer100g": 145.59545454545452,
+      "amountPer100g": 165.6180658181818,
       "valueSource": "derived"
     },
     {
@@ -66030,7 +66170,7 @@
       "id": "721da40a-1d15-522d-8c84-553b1a2905e3",
       "foodId": "03bf9f62-85dc-5036-b0e7-8a9b8f1cca2e",
       "nutrientId": "energy",
-      "amountPer100g": 215.9125,
+      "amountPer100g": 216.17393572222218,
       "valueSource": "derived"
     },
     {
@@ -66198,7 +66338,7 @@
       "id": "459d0048-fea8-563a-baf8-3899b4648fd4",
       "foodId": "10cb9d59-0f4a-5711-bcba-79748f7eecf2",
       "nutrientId": "energy",
-      "amountPer100g": 173.2222222222222,
+      "amountPer100g": 197.69430266666663,
       "valueSource": "derived"
     },
     {
@@ -66534,7 +66674,7 @@
       "id": "8d6754b8-2282-5d62-959e-b1e61c78b086",
       "foodId": "de61e24d-36ad-5407-8dff-b89e238297c3",
       "nutrientId": "energy",
-      "amountPer100g": 90.1764705882353,
+      "amountPer100g": 116.08808517647059,
       "valueSource": "derived"
     },
     {
@@ -67038,7 +67178,7 @@
       "id": "362f3e58-3efe-5d77-aa33-045593d7d5a5",
       "foodId": "48e8564d-1c27-5dcc-82cc-3816cc87fb8e",
       "nutrientId": "energy",
-      "amountPer100g": 78.32173913043479,
+      "amountPer100g": 78.526341,
       "valueSource": "derived"
     },
     {
@@ -67206,7 +67346,7 @@
       "id": "3026d5db-8f2c-5517-b511-8bba0e916a78",
       "foodId": "1cd6a520-e387-58b7-a503-1998d1b02ad7",
       "nutrientId": "energy",
-      "amountPer100g": 250.92,
+      "amountPer100g": 251.3905843,
       "valueSource": "derived"
     },
     {
@@ -67542,7 +67682,7 @@
       "id": "577fe4e0-9bc1-5212-8f80-572f85c95158",
       "foodId": "35575953-ac62-57f3-b808-11b1a2414cf8",
       "nutrientId": "energy",
-      "amountPer100g": 118.28666666666668,
+      "amountPer100g": 130.68648966666666,
       "valueSource": "derived"
     },
     {
@@ -68382,7 +68522,7 @@
       "id": "d1379241-f689-551a-ae2c-b1847e2fcb8f",
       "foodId": "18c4c4cd-9671-5544-98cc-4da398ed031c",
       "nutrientId": "energy",
-      "amountPer100g": 351.65999999999997,
+      "amountPer100g": 370.91417866666666,
       "valueSource": "derived"
     },
     {
@@ -68550,7 +68690,7 @@
       "id": "51f66324-652c-5055-a824-bb2b132d65c3",
       "foodId": "da996b32-f9db-5897-8bef-251025070f6b",
       "nutrientId": "energy",
-      "amountPer100g": 47.75,
+      "amountPer100g": 84.949469,
       "valueSource": "derived"
     },
     {
@@ -68715,6 +68855,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "e42e67d9-734a-5f2e-bf63-080a1bf037f0",
+      "foodId": "26e61173-c7be-5821-b040-7c1632f5ed33",
+      "nutrientId": "energy",
+      "amountPer100g": 151.8887258,
+      "valueSource": "derived"
+    },
+    {
       "id": "f2212d65-73a4-5877-b4ee-1975b79f1e6a",
       "foodId": "26e61173-c7be-5821-b040-7c1632f5ed33",
       "nutrientId": "protein",
@@ -68782,13 +68929,6 @@
       "foodId": "26e61173-c7be-5821-b040-7c1632f5ed33",
       "nutrientId": "phosphorus",
       "amountPer100g": 130.963,
-      "valueSource": "derived"
-    },
-    {
-      "id": "e42e67d9-734a-5f2e-bf63-080a1bf037f0",
-      "foodId": "26e61173-c7be-5821-b040-7c1632f5ed33",
-      "nutrientId": "energy",
-      "amountPer100g": 21.22,
       "valueSource": "derived"
     },
     {
@@ -68886,7 +69026,7 @@
       "id": "10354d68-e06f-5320-a179-8b9a2c3ebc89",
       "foodId": "f1098942-0c3b-58b8-b26d-c2ef89eab78c",
       "nutrientId": "energy",
-      "amountPer100g": 52.090909090909086,
+      "amountPer100g": 92.67214799999999,
       "valueSource": "derived"
     },
     {
@@ -69054,7 +69194,7 @@
       "id": "926b2a3f-366c-5c23-9034-099185e1d590",
       "foodId": "e8e6a1b3-e4b8-51b9-84ae-b6fd7df0f127",
       "nutrientId": "energy",
-      "amountPer100g": 142.4,
+      "amountPer100g": 167.19964599999997,
       "valueSource": "derived"
     },
     {
@@ -69390,7 +69530,7 @@
       "id": "1eec9d5e-be58-53e1-bb73-962933e28f6c",
       "foodId": "4bad457c-e023-51fe-9397-7a69fde77461",
       "nutrientId": "energy",
-      "amountPer100g": 54.94444444444444,
+      "amountPer100g": 79.74409044444442,
       "valueSource": "derived"
     },
     {
@@ -69558,7 +69698,7 @@
       "id": "117ed26d-5c9c-5de0-bf45-c8ef9bbfee76",
       "foodId": "9d4395f8-53ad-5181-89a8-5af1f0f4d04f",
       "nutrientId": "energy",
-      "amountPer100g": 103.98571428571428,
+      "amountPer100g": 165.17715717857143,
       "valueSource": "derived"
     },
     {
@@ -69723,6 +69863,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "a0711409-3f75-5977-9f1f-12b3826118d7",
+      "foodId": "5020948e-223f-5aa2-aa9f-17633354ef73",
+      "nutrientId": "energy",
+      "amountPer100g": 28.637485423076924,
+      "valueSource": "derived"
+    },
+    {
       "id": "f2143d30-54a9-52b1-837b-5641404fabcc",
       "foodId": "5020948e-223f-5aa2-aa9f-17633354ef73",
       "nutrientId": "protein",
@@ -69832,13 +69979,6 @@
       "foodId": "5020948e-223f-5aa2-aa9f-17633354ef73",
       "nutrientId": "niacin",
       "amountPer100g": 0.4869076923076924,
-      "valueSource": "derived"
-    },
-    {
-      "id": "a0711409-3f75-5977-9f1f-12b3826118d7",
-      "foodId": "5020948e-223f-5aa2-aa9f-17633354ef73",
-      "nutrientId": "energy",
-      "amountPer100g": 20.130769230769232,
       "valueSource": "derived"
     },
     {
@@ -70227,6 +70367,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "859b758f-6ed6-5d2c-a9a5-bdbd6d70c265",
+      "foodId": "902ed2f9-e3c1-51ba-82e0-410f5ecc0bb7",
+      "nutrientId": "energy",
+      "amountPer100g": 63.846779291666664,
+      "valueSource": "derived"
+    },
+    {
       "id": "63a21448-405b-53b3-abae-aceb307ecf42",
       "foodId": "902ed2f9-e3c1-51ba-82e0-410f5ecc0bb7",
       "nutrientId": "protein",
@@ -70336,13 +70483,6 @@
       "foodId": "902ed2f9-e3c1-51ba-82e0-410f5ecc0bb7",
       "nutrientId": "niacin",
       "amountPer100g": 1.000691666666667,
-      "valueSource": "derived"
-    },
-    {
-      "id": "859b758f-6ed6-5d2c-a9a5-bdbd6d70c265",
-      "foodId": "902ed2f9-e3c1-51ba-82e0-410f5ecc0bb7",
-      "nutrientId": "energy",
-      "amountPer100g": 59.729166666666664,
       "valueSource": "derived"
     },
     {
@@ -70734,7 +70874,7 @@
       "id": "28f42d14-206e-579c-8de4-d9fed112d220",
       "foodId": "1f220df3-494d-5878-9e80-db843bb9caa6",
       "nutrientId": "energy",
-      "amountPer100g": 127.00000000000003,
+      "amountPer100g": 148.58426004999998,
       "valueSource": "derived"
     },
     {
@@ -70902,7 +71042,7 @@
       "id": "62f91925-659f-5b1b-98e6-55476ff01f53",
       "foodId": "3386db7b-54a8-5a18-bbee-91de48c28ca2",
       "nutrientId": "energy",
-      "amountPer100g": 154.86666666666662,
+      "amountPer100g": 191.5747873333333,
       "valueSource": "derived"
     },
     {
@@ -71070,7 +71210,7 @@
       "id": "d6912c21-296c-511f-a38f-17139f6d09b3",
       "foodId": "b6af5190-ca29-5724-8c18-bc48ae449a8c",
       "nutrientId": "energy",
-      "amountPer100g": 102.73333333333335,
+      "amountPer100g": 120.51593299999996,
       "valueSource": "derived"
     },
     {
@@ -71238,7 +71378,7 @@
       "id": "eeb5af12-6b30-55ef-942c-d82766b24ace",
       "foodId": "af70df07-12be-50ad-b417-0116220d0ebc",
       "nutrientId": "energy",
-      "amountPer100g": 114.25,
+      "amountPer100g": 114.51143572222225,
       "valueSource": "derived"
     },
     {
@@ -71574,7 +71714,7 @@
       "id": "ea4030ef-66e7-5745-b6c5-83fa77ffe8ae",
       "foodId": "d5155b5e-5551-5ffd-84ac-6ca1ee311016",
       "nutrientId": "energy",
-      "amountPer100g": 66.0,
+      "amountPer100g": 72.08498315384617,
       "valueSource": "derived"
     },
     {
@@ -71739,6 +71879,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "97d55c35-d09a-5869-ad6d-4ef70f162e93",
+      "foodId": "0a2bdc5a-8f4a-5302-a205-470747538831",
+      "nutrientId": "energy",
+      "amountPer100g": 129.64363569421485,
+      "valueSource": "derived"
+    },
+    {
       "id": "eeb4b934-d3b7-54f7-8c50-01667d0ae61b",
       "foodId": "0a2bdc5a-8f4a-5302-a205-470747538831",
       "nutrientId": "protein",
@@ -71806,13 +71953,6 @@
       "foodId": "0a2bdc5a-8f4a-5302-a205-470747538831",
       "nutrientId": "phosphorus",
       "amountPer100g": 116.56128099173553,
-      "valueSource": "derived"
-    },
-    {
-      "id": "97d55c35-d09a-5869-ad6d-4ef70f162e93",
-      "foodId": "0a2bdc5a-8f4a-5302-a205-470747538831",
-      "nutrientId": "energy",
-      "amountPer100g": 70.2487603305785,
       "valueSource": "derived"
     },
     {
@@ -71910,7 +72050,7 @@
       "id": "094a456e-209c-532f-b806-c499e3c487d1",
       "foodId": "230dbd73-44d5-5d06-8f3a-086b6464de37",
       "nutrientId": "energy",
-      "amountPer100g": 97.27333333333334,
+      "amountPer100g": 153.07253683333334,
       "valueSource": "derived"
     },
     {
@@ -72246,7 +72386,7 @@
       "id": "1bf58660-ab13-5981-951b-b7538866032b",
       "foodId": "c9e01207-b6f4-566e-b848-cc056c809aeb",
       "nutrientId": "energy",
-      "amountPer100g": 281.76666666666665,
+      "amountPer100g": 282.08961667647054,
       "valueSource": "derived"
     },
     {
@@ -72414,7 +72554,7 @@
       "id": "eab50849-9964-5d0b-9e7f-c081d66dc2fa",
       "foodId": "819d9bb8-09a5-5258-9995-22afd1d8a850",
       "nutrientId": "energy",
-      "amountPer100g": 236.5766666666667,
+      "amountPer100g": 240.17471430833334,
       "valueSource": "derived"
     },
     {
@@ -72582,7 +72722,7 @@
       "id": "587838f6-c1f3-5f04-91ea-ec500100aab5",
       "foodId": "9456c61f-fb91-58e1-ace4-6b45b82d71ec",
       "nutrientId": "energy",
-      "amountPer100g": 172.7772727272727,
+      "amountPer100g": 218.04205004545452,
       "valueSource": "derived"
     },
     {
@@ -72750,7 +72890,7 @@
       "id": "cea2d388-0d2a-515d-aa0d-2d38f43ae853",
       "foodId": "9787d611-4b03-5d23-9c50-37455b1cbbee",
       "nutrientId": "energy",
-      "amountPer100g": 141.4454545454545,
+      "amountPer100g": 141.65935649999997,
       "valueSource": "derived"
     },
     {
@@ -73086,7 +73226,7 @@
       "id": "bb0d8860-b68d-5e3e-861f-264940a7df46",
       "foodId": "0d71ecc0-59b4-5f91-8c12-e609c880384f",
       "nutrientId": "energy",
-      "amountPer100g": 155.97777777777776,
+      "amountPer100g": 192.6858984444444,
       "valueSource": "derived"
     },
     {
@@ -73254,7 +73394,7 @@
       "id": "76c01ec7-3aba-5f61-a069-df679b5e54ac",
       "foodId": "08d6d650-67ff-5315-83cd-4a7eb2cd09c5",
       "nutrientId": "energy",
-      "amountPer100g": 140.2076923076923,
+      "amountPer100g": 140.56968023076922,
       "valueSource": "derived"
     },
     {
@@ -73422,7 +73562,7 @@
       "id": "46680313-5a7a-5f27-a5e5-33a9acd550de",
       "foodId": "c03c4c63-9ce6-575c-9412-7d789f516597",
       "nutrientId": "energy",
-      "amountPer100g": 70.97777777777779,
+      "amountPer100g": 107.68589844444443,
       "valueSource": "derived"
     },
     {
@@ -73758,7 +73898,7 @@
       "id": "7427eb24-1c24-5744-b4e8-76d61fbfd870",
       "foodId": "89d8acf3-e86c-5a29-8619-43bc87b2775b",
       "nutrientId": "energy",
-      "amountPer100g": 244.84117647058824,
+      "amountPer100g": 245.11799076470587,
       "valueSource": "derived"
     },
     {
@@ -75102,7 +75242,7 @@
       "id": "c1fd2988-6933-5621-89e8-7eb904095d23",
       "foodId": "6fb7adec-dadc-50d0-8416-d10b6cce0684",
       "nutrientId": "energy",
-      "amountPer100g": 254.21999999999997,
+      "amountPer100g": 268.4460797333333,
       "valueSource": "derived"
     },
     {
@@ -75774,7 +75914,7 @@
       "id": "5e80f5bc-3dfa-5e85-804a-5c07f2139378",
       "foodId": "c2132806-35e2-5183-8bf5-05a42e10c4e8",
       "nutrientId": "energy",
-      "amountPer100g": 219.09,
+      "amountPer100g": 219.56058430000002,
       "valueSource": "derived"
     },
     {
@@ -75942,7 +76082,7 @@
       "id": "caec838e-80b0-5bff-bbc9-4cc086bdedca",
       "foodId": "a5fb07d3-1af7-5329-b2ad-c0ace9678b27",
       "nutrientId": "energy",
-      "amountPer100g": 228.18,
+      "amountPer100g": 228.6505843,
       "valueSource": "derived"
     },
     {
@@ -76110,7 +76250,7 @@
       "id": "41d4c8f5-8eb3-5cd8-b617-a6d365e8c655",
       "foodId": "01eb7539-f40e-564d-b48f-abb13958b249",
       "nutrientId": "energy",
-      "amountPer100g": 120.18400000000003,
+      "amountPer100g": 136.30687948480002,
       "valueSource": "derived"
     },
     {
@@ -76278,7 +76418,7 @@
       "id": "b4feb043-6b3b-5457-b50d-f4c232d596d4",
       "foodId": "39275236-1e2f-542f-bfb3-5062df564bcf",
       "nutrientId": "energy",
-      "amountPer100g": 306.9909090909091,
+      "amountPer100g": 349.2919261772727,
       "valueSource": "derived"
     },
     {
@@ -76950,7 +77090,7 @@
       "id": "9c21ee3c-06e8-53ba-83a5-ed7b50321a28",
       "foodId": "dc308add-0a32-5819-ac41-3f67158eacde",
       "nutrientId": "energy",
-      "amountPer100g": 225.75652173913045,
+      "amountPer100g": 228.32506278260868,
       "valueSource": "derived"
     },
     {
@@ -78126,7 +78266,7 @@
       "id": "2e4cc7ee-2bd6-5bc6-abd6-960a278b0713",
       "foodId": "10a40dcf-b01e-5955-9983-0b58b7bc427a",
       "nutrientId": "energy",
-      "amountPer100g": 194.95454545454544,
+      "amountPer100g": 195.2753983863636,
       "valueSource": "derived"
     },
     {
@@ -78462,7 +78602,7 @@
       "id": "87a83995-50c4-566d-8849-37c36cd4dae1",
       "foodId": "1c14933e-d600-5f0d-ad38-a0679c15fb4e",
       "nutrientId": "energy",
-      "amountPer100g": 150.98125,
+      "amountPer100g": 153.1215040625,
       "valueSource": "derived"
     },
     {
@@ -78630,7 +78770,7 @@
       "id": "5085adb6-a900-553e-a8a8-99b08b8c32c3",
       "foodId": "3facb5f6-8587-56bc-a3a5-3bbbd4c1a87d",
       "nutrientId": "energy",
-      "amountPer100g": 159.52142857142857,
+      "amountPer100g": 159.85756021428574,
       "valueSource": "derived"
     },
     {
@@ -78798,7 +78938,7 @@
       "id": "ac6c94aa-dc59-5859-bdf3-aa11fd4951b8",
       "foodId": "75a6eb62-7ea8-5f07-8a6f-b6ed2c4454ea",
       "nutrientId": "energy",
-      "amountPer100g": 184.4913043478261,
+      "amountPer100g": 229.59208582173915,
       "valueSource": "derived"
     },
     {
@@ -79470,7 +79610,7 @@
       "id": "2ee50f8a-df57-5dc9-a924-ba8aa49ad7ae",
       "foodId": "b5b6f552-e65b-561f-8423-aaf15853ac1e",
       "nutrientId": "energy",
-      "amountPer100g": 202.61944444444447,
+      "amountPer100g": 233.20954500000002,
       "valueSource": "derived"
     },
     {
@@ -79806,7 +79946,7 @@
       "id": "499da2c4-58d1-5327-93d1-d3ace49ff2c6",
       "foodId": "d2e450f9-9589-50f5-8318-e40ce701c3a2",
       "nutrientId": "energy",
-      "amountPer100g": 132.26303174603174,
+      "amountPer100g": 132.28917531825394,
       "valueSource": "derived"
     },
     {
@@ -79974,7 +80114,7 @@
       "id": "f8385bdc-b25a-55da-87f1-895749d41adb",
       "foodId": "09277b9d-2bd7-5850-9311-cb5b15272a33",
       "nutrientId": "energy",
-      "amountPer100g": 227.6384615384615,
+      "amountPer100g": 228.0004494615384,
       "valueSource": "derived"
     },
     {
@@ -80142,7 +80282,7 @@
       "id": "b8282682-8183-5988-8e47-3b5a03da644f",
       "foodId": "5bfeea2c-09c6-5000-a402-a5579e83f771",
       "nutrientId": "energy",
-      "amountPer100g": 211.85714285714278,
+      "amountPer100g": 212.19327449999992,
       "valueSource": "derived"
     },
     {
@@ -80646,7 +80786,7 @@
       "id": "8eeb8df2-2e45-57d4-8642-3102855fe24f",
       "foodId": "683f7d0b-7269-5f88-b37c-46ea1f779207",
       "nutrientId": "energy",
-      "amountPer100g": 232.95999999999998,
+      "amountPer100g": 278.8451508333333,
       "valueSource": "derived"
     },
     {
@@ -80814,7 +80954,7 @@
       "id": "0723b3ac-dbeb-506b-a3b6-b59ff19c205a",
       "foodId": "81a12e64-343e-54f9-8249-e44aca0592fb",
       "nutrientId": "energy",
-      "amountPer100g": 182.78181818181815,
+      "amountPer100g": 184.1244646363636,
       "valueSource": "derived"
     },
     {
@@ -81315,6 +81455,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "c90220f6-23a2-5981-aa4b-256814ab215d",
+      "foodId": "5d8add8a-368c-5d8f-bd50-a586e48ebfc5",
+      "nutrientId": "energy",
+      "amountPer100g": 469.19459299999994,
+      "valueSource": "derived"
+    },
+    {
       "id": "d3fb6dfd-3c15-500e-ac43-6adb67a5ea2f",
       "foodId": "5d8add8a-368c-5d8f-bd50-a586e48ebfc5",
       "nutrientId": "protein",
@@ -81392,13 +81539,6 @@
       "valueSource": "derived"
     },
     {
-      "id": "c90220f6-23a2-5981-aa4b-256814ab215d",
-      "foodId": "5d8add8a-368c-5d8f-bd50-a586e48ebfc5",
-      "nutrientId": "energy",
-      "amountPer100g": 95.76,
-      "valueSource": "derived"
-    },
-    {
       "id": "2c665c67-2274-5747-aa0d-24ec11924989",
       "foodId": "5d8add8a-368c-5d8f-bd50-a586e48ebfc5",
       "nutrientId": "sugar",
@@ -81409,7 +81549,7 @@
       "id": "67093c26-61c6-5323-8c8d-c2f5898d7246",
       "foodId": "0a0ffde8-e06a-5957-bc64-01f63f327bcd",
       "nutrientId": "energy",
-      "amountPer100g": 471.1571428571429,
+      "amountPer100g": 501.64159942857157,
       "valueSource": "derived"
     },
     {
@@ -81577,7 +81717,7 @@
       "id": "ba34cdb9-fd1b-5835-96e2-2c58ed14f66b",
       "foodId": "fbcb507b-a8f7-5e1b-b525-56a6625f58de",
       "nutrientId": "energy",
-      "amountPer100g": 357.2,
+      "amountPer100g": 378.5391196,
       "valueSource": "derived"
     },
     {
@@ -81745,7 +81885,7 @@
       "id": "c750aeaa-a8b9-5176-822e-9b12f58486b3",
       "foodId": "3272681b-5a0d-5606-b454-c969cdd91f30",
       "nutrientId": "energy",
-      "amountPer100g": 373.06000000000006,
+      "amountPer100g": 387.2860797333334,
       "valueSource": "derived"
     },
     {
@@ -81913,7 +82053,7 @@
       "id": "35a797e2-94a6-540d-9174-7d8b72db19d0",
       "foodId": "95ad5933-1904-5825-8c99-80b5a3a0e8c7",
       "nutrientId": "energy",
-      "amountPer100g": 276.02,
+      "amountPer100g": 293.80259966666665,
       "valueSource": "derived"
     },
     {
@@ -82081,7 +82221,7 @@
       "id": "1675147a-ac4a-5c3e-bf1d-730e576c5263",
       "foodId": "629252c2-22a0-5264-8900-ac735ae9d75f",
       "nutrientId": "energy",
-      "amountPer100g": 251.45333333333335,
+      "amountPer100g": 265.6794130666667,
       "valueSource": "derived"
     },
     {
@@ -82249,7 +82389,7 @@
       "id": "052a572e-99df-5b35-88a6-7a793fdb0fe5",
       "foodId": "849beb36-d917-573e-ac41-c7d4f49d8309",
       "nutrientId": "energy",
-      "amountPer100g": 288.86111111111114,
+      "amountPer100g": 300.7161775555556,
       "valueSource": "derived"
     },
     {
@@ -82582,6 +82722,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "5aeb1bc2-83c4-53c4-b436-5a22748e2742",
+      "foodId": "558cc252-ad65-52ea-9142-cd9b84a8adce",
+      "nutrientId": "energy",
+      "amountPer100g": 151.61237466666668,
+      "valueSource": "derived"
+    },
+    {
       "id": "1ae11724-e724-59b9-ac6d-4f2b0080530d",
       "foodId": "558cc252-ad65-52ea-9142-cd9b84a8adce",
       "nutrientId": "protein",
@@ -82691,13 +82838,6 @@
       "foodId": "558cc252-ad65-52ea-9142-cd9b84a8adce",
       "nutrientId": "niacin",
       "amountPer100g": 0.24193333333333328,
-      "valueSource": "derived"
-    },
-    {
-      "id": "5aeb1bc2-83c4-53c4-b436-5a22748e2742",
-      "foodId": "558cc252-ad65-52ea-9142-cd9b84a8adce",
-      "nutrientId": "energy",
-      "amountPer100g": 76.00666666666666,
       "valueSource": "derived"
     },
     {
@@ -83089,7 +83229,7 @@
       "id": "74d6a771-6f9c-5718-a329-9d34254077f6",
       "foodId": "d308fab1-08e3-561d-9bf1-0c70d9531d26",
       "nutrientId": "energy",
-      "amountPer100g": 321.84444444444443,
+      "amountPer100g": 340.5051845888889,
       "valueSource": "derived"
     },
     {
@@ -85774,6 +85914,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "c2473178-468f-50ad-aaf4-6daeb7311cf8",
+      "foodId": "3730971a-e9a3-5474-a03b-6e17a72bb5b0",
+      "nutrientId": "energy",
+      "amountPer100g": 348.29646,
+      "valueSource": "derived"
+    },
+    {
       "id": "ff4da9a7-433c-5fe9-b21d-75604155bd41",
       "foodId": "3730971a-e9a3-5474-a03b-6e17a72bb5b0",
       "nutrientId": "protein",
@@ -85841,13 +85988,6 @@
       "foodId": "3730971a-e9a3-5474-a03b-6e17a72bb5b0",
       "nutrientId": "phosphorus",
       "amountPer100g": 279.53333333333336,
-      "valueSource": "derived"
-    },
-    {
-      "id": "c2473178-468f-50ad-aaf4-6daeb7311cf8",
-      "foodId": "3730971a-e9a3-5474-a03b-6e17a72bb5b0",
-      "nutrientId": "energy",
-      "amountPer100g": 100.29999999999998,
       "valueSource": "derived"
     },
     {
@@ -85942,6 +86082,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "adee9b2f-d2ab-5c1a-a6dc-bd42e67e900c",
+      "foodId": "595631d1-4b95-5488-b70c-929872df1db2",
+      "nutrientId": "energy",
+      "amountPer100g": 344.62101749999994,
+      "valueSource": "derived"
+    },
+    {
       "id": "6f513c53-a269-5f14-be9b-201ab1a2d66e",
       "foodId": "595631d1-4b95-5488-b70c-929872df1db2",
       "nutrientId": "protein",
@@ -86012,13 +86159,6 @@
       "valueSource": "derived"
     },
     {
-      "id": "adee9b2f-d2ab-5c1a-a6dc-bd42e67e900c",
-      "foodId": "595631d1-4b95-5488-b70c-929872df1db2",
-      "nutrientId": "energy",
-      "amountPer100g": 65.625,
-      "valueSource": "derived"
-    },
-    {
       "id": "8f8dff1b-5185-58e3-9fe2-5e0505a1c64b",
       "foodId": "595631d1-4b95-5488-b70c-929872df1db2",
       "nutrientId": "vitamin_b6",
@@ -86078,7 +86218,7 @@
       "id": "45196e60-2358-56fc-8ba2-472c71a6105e",
       "foodId": "0475dd78-fbff-59ef-92bd-2cc54f2880e2",
       "nutrientId": "energy",
-      "amountPer100g": 71.63333333333333,
+      "amountPer100g": 72.41764049999999,
       "valueSource": "derived"
     },
     {
@@ -86414,7 +86554,7 @@
       "id": "0c22a172-2598-5a81-85b5-2a7d4fc8c4d0",
       "foodId": "bd2d48be-7117-57ac-b07b-bf6b4900825b",
       "nutrientId": "energy",
-      "amountPer100g": 293.15,
+      "amountPer100g": 294.32646074999997,
       "valueSource": "derived"
     },
     {
@@ -86582,7 +86722,7 @@
       "id": "6584521a-3538-5b81-a45c-d43cdb116580",
       "foodId": "6636389d-f28b-5dde-a69b-34270f117d1d",
       "nutrientId": "energy",
-      "amountPer100g": 172.0477272727273,
+      "amountPer100g": 172.4755311818182,
       "valueSource": "derived"
     },
     {
@@ -86918,7 +87058,7 @@
       "id": "7474fe5f-04fe-598a-b6e7-45263484e16a",
       "foodId": "83aef8d9-dfa6-50aa-a38f-800e1a589505",
       "nutrientId": "energy",
-      "amountPer100g": 150.51333333333335,
+      "amountPer100g": 150.82705620000002,
       "valueSource": "derived"
     },
     {
@@ -87086,7 +87226,7 @@
       "id": "be5a6886-e8b6-59a4-9431-496ca777bd44",
       "foodId": "5717e91f-8db0-531e-a8e5-148ed059fae7",
       "nutrientId": "energy",
-      "amountPer100g": 55.272222222222226,
+      "amountPer100g": 86.27177972222222,
       "valueSource": "derived"
     },
     {
@@ -87422,7 +87562,7 @@
       "id": "bd1daa90-672a-5f6e-9566-9889d253cdb8",
       "foodId": "78edaa46-f533-51c1-baa3-1d1ebd6e39f1",
       "nutrientId": "energy",
-      "amountPer100g": 243.70454545454544,
+      "amountPer100g": 244.13234936363634,
       "valueSource": "derived"
     },
     {
@@ -87758,7 +87898,7 @@
       "id": "6d991e95-1121-592c-bfeb-3c1091a111f8",
       "foodId": "5f85a73a-5831-5c1b-9b5d-cc5ba30a8c75",
       "nutrientId": "energy",
-      "amountPer100g": 154.96250000000003,
+      "amountPer100g": 173.5622345,
       "valueSource": "derived"
     },
     {
@@ -87926,7 +88066,7 @@
       "id": "39af2d49-2417-5e9b-aa48-ee665eca46db",
       "foodId": "d5d5cc38-add4-5331-915a-a84bdfeb7fc6",
       "nutrientId": "energy",
-      "amountPer100g": 178.5,
+      "amountPer100g": 204.7413794615385,
       "valueSource": "derived"
     },
     {
@@ -88094,7 +88234,7 @@
       "id": "3e5e8ed7-7f42-53c8-87cc-a1e92af2fe88",
       "foodId": "aeef51d6-c114-5591-be2e-dd30da17e7ce",
       "nutrientId": "energy",
-      "amountPer100g": 54.94444444444444,
+      "amountPer100g": 79.74409044444442,
       "valueSource": "derived"
     },
     {
@@ -88262,7 +88402,7 @@
       "id": "3a6f6b68-f22f-5d81-a4fe-444b33806030",
       "foodId": "22342a7e-5670-52e3-8200-0dfd89cee765",
       "nutrientId": "energy",
-      "amountPer100g": 130.77302631578948,
+      "amountPer100g": 177.27236256578945,
       "valueSource": "derived"
     },
     {
@@ -88427,6 +88567,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "59ca0931-7fc1-5a61-8214-08f74604acf4",
+      "foodId": "2b9cc6cb-adcb-558f-8fea-fb8c2c3a7bff",
+      "nutrientId": "energy",
+      "amountPer100g": 130.54908985714286,
+      "valueSource": "derived"
+    },
+    {
       "id": "22728721-a839-5dad-84be-1fa53742411e",
       "foodId": "2b9cc6cb-adcb-558f-8fea-fb8c2c3a7bff",
       "nutrientId": "protein",
@@ -88494,13 +88641,6 @@
       "foodId": "2b9cc6cb-adcb-558f-8fea-fb8c2c3a7bff",
       "nutrientId": "phosphorus",
       "amountPer100g": 105.40214285714285,
-      "valueSource": "derived"
-    },
-    {
-      "id": "59ca0931-7fc1-5a61-8214-08f74604acf4",
-      "foodId": "2b9cc6cb-adcb-558f-8fea-fb8c2c3a7bff",
-      "nutrientId": "energy",
-      "amountPer100g": 37.21428571428572,
       "valueSource": "derived"
     },
     {
@@ -88598,7 +88738,7 @@
       "id": "eefbe14e-04a1-5117-9419-7db3ef198771",
       "foodId": "4869857c-cb77-55bf-907b-cb5406acdefb",
       "nutrientId": "energy",
-      "amountPer100g": 231.43583333333328,
+      "amountPer100g": 231.51426404999995,
       "valueSource": "derived"
     },
     {
@@ -89270,7 +89410,7 @@
       "id": "f7eeeea3-eaf3-5cc5-b9bf-81f1adbee608",
       "foodId": "f5c89a91-6c11-5e9b-a25c-a24de11fab07",
       "nutrientId": "energy",
-      "amountPer100g": 226.1681818181818,
+      "amountPer100g": 226.59598572727276,
       "valueSource": "derived"
     },
     {
@@ -89603,6 +89743,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "77c947ce-f666-5b95-8b32-1171e90399b8",
+      "foodId": "49473258-c8e3-5c02-8bfe-a9041bdb03c2",
+      "nutrientId": "energy",
+      "amountPer100g": 119.19473045454545,
+      "valueSource": "derived"
+    },
+    {
       "id": "e02fcaf1-701f-559a-b8a4-46e36ecbd66c",
       "foodId": "49473258-c8e3-5c02-8bfe-a9041bdb03c2",
       "nutrientId": "protein",
@@ -89687,13 +89834,6 @@
       "valueSource": "derived"
     },
     {
-      "id": "77c947ce-f666-5b95-8b32-1171e90399b8",
-      "foodId": "49473258-c8e3-5c02-8bfe-a9041bdb03c2",
-      "nutrientId": "energy",
-      "amountPer100g": 68.46818181818183,
-      "valueSource": "derived"
-    },
-    {
       "id": "62417cf2-dd5e-544c-b9cb-8b1c742b91b4",
       "foodId": "49473258-c8e3-5c02-8bfe-a9041bdb03c2",
       "nutrientId": "fibre",
@@ -89774,7 +89914,7 @@
       "id": "e9cd74f7-07b2-501d-8c62-68d2c71fd1ce",
       "foodId": "70e746aa-ff8e-53d8-b9ae-181d082fb5d4",
       "nutrientId": "energy",
-      "amountPer100g": 272.78291666666667,
+      "amountPer100g": 273.11624721249996,
       "valueSource": "derived"
     },
     {
@@ -90614,7 +90754,7 @@
       "id": "91b3242a-0bc0-583d-8d27-7a2f895e7152",
       "foodId": "e30592cc-0c3e-547b-a82f-ae491cc7dc33",
       "nutrientId": "energy",
-      "amountPer100g": 210.88,
+      "amountPer100g": 228.66259966666664,
       "valueSource": "derived"
     },
     {
@@ -90782,7 +90922,7 @@
       "id": "ea60254d-36eb-54b8-84fc-32dca8a72bee",
       "foodId": "288b815c-c7fa-5f90-b692-c7178fc46709",
       "nutrientId": "energy",
-      "amountPer100g": 157.86,
+      "amountPer100g": 166.39564783999998,
       "valueSource": "derived"
     },
     {
@@ -90950,7 +91090,7 @@
       "id": "01d1364c-26c0-5f2c-9971-5e139d44e9b5",
       "foodId": "482d6f59-a8bb-57b2-8fd6-f2f8e779aca3",
       "nutrientId": "energy",
-      "amountPer100g": 132.22105263157897,
+      "amountPer100g": 143.4521682105263,
       "valueSource": "derived"
     },
     {
@@ -91118,7 +91258,7 @@
       "id": "d0367cbf-3ec9-5e9f-a57f-4c3e011e24cb",
       "foodId": "4e53ad0e-9f5d-5c82-89b2-552273a0624d",
       "nutrientId": "energy",
-      "amountPer100g": 133.93809523809523,
+      "amountPer100g": 173.2682245238095,
       "valueSource": "derived"
     },
     {
@@ -91454,7 +91594,7 @@
       "id": "9f166eb4-e81a-5cbc-8ffd-534e08188d62",
       "foodId": "1a69e7c4-a479-58bd-b415-d0ec66a85eed",
       "nutrientId": "energy",
-      "amountPer100g": 146.01111111111112,
+      "amountPer100g": 148.55026419444442,
       "valueSource": "derived"
     },
     {
@@ -91622,7 +91762,7 @@
       "id": "f921719a-96a5-515e-93c9-cac324d8b403",
       "foodId": "929f9d22-1850-5066-9d6c-d542118172a8",
       "nutrientId": "energy",
-      "amountPer100g": 66.98888888888888,
+      "amountPer100g": 67.25032461111111,
       "valueSource": "derived"
     },
     {
@@ -91790,7 +91930,7 @@
       "id": "84f01d29-3c3f-5ab7-8285-9f79ad5e993f",
       "foodId": "8d84ff95-b4c2-5a74-b2be-5ff3eb71419a",
       "nutrientId": "energy",
-      "amountPer100g": 56.61538461538461,
+      "amountPer100g": 62.700367769230766,
       "valueSource": "derived"
     },
     {
@@ -92126,7 +92266,7 @@
       "id": "bed98d10-0ae9-5091-a797-68c1f5e3edce",
       "foodId": "ca277346-4adb-51b8-a9f1-d06e067c5531",
       "nutrientId": "energy",
-      "amountPer100g": 57.3,
+      "amountPer100g": 101.9393628,
       "valueSource": "derived"
     },
     {
@@ -92795,6 +92935,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "5a1ceccc-d4ed-58ff-8fef-d54805dc0786",
+      "foodId": "e3559088-832d-5933-945e-3012978526e5",
+      "nutrientId": "energy",
+      "amountPer100g": 296.1635113333333,
+      "valueSource": "derived"
+    },
+    {
       "id": "2d5dc668-c847-5ce4-9380-bda6d7123c94",
       "foodId": "e3559088-832d-5933-945e-3012978526e5",
       "nutrientId": "protein",
@@ -92869,13 +93016,6 @@
       "foodId": "e3559088-832d-5933-945e-3012978526e5",
       "nutrientId": "phosphorus",
       "amountPer100g": 195.9733333333333,
-      "valueSource": "derived"
-    },
-    {
-      "id": "5a1ceccc-d4ed-58ff-8fef-d54805dc0786",
-      "foodId": "e3559088-832d-5933-945e-3012978526e5",
-      "nutrientId": "energy",
-      "amountPer100g": 39.20666666666667,
       "valueSource": "derived"
     },
     {
@@ -92966,7 +93106,7 @@
       "id": "cb602d7a-25e6-58b9-b396-73d9a898dc29",
       "foodId": "dc98e3e8-7f0f-5209-bbd1-db70d58d2249",
       "nutrientId": "energy",
-      "amountPer100g": 77.84,
+      "amountPer100g": 130.34210406666665,
       "valueSource": "derived"
     },
     {
@@ -93134,7 +93274,7 @@
       "id": "c8b9d567-c56b-5abd-b5aa-0643ed9c1e72",
       "foodId": "e6e232ae-7e34-54a5-87f2-bd4715c1dfdd",
       "nutrientId": "energy",
-      "amountPer100g": 157.72196969696967,
+      "amountPer100g": 157.87883113030298,
       "valueSource": "derived"
     },
     {
@@ -93806,7 +93946,7 @@
       "id": "3f71f328-ad49-5e19-a8d0-4277bfc4fb27",
       "foodId": "96fc0666-0a57-5cea-b446-2a8cbeab2a84",
       "nutrientId": "energy",
-      "amountPer100g": 85.22222222222224,
+      "amountPer100g": 85.48365794444446,
       "valueSource": "derived"
     },
     {
@@ -94142,7 +94282,7 @@
       "id": "d0b21954-e266-578e-b866-37cacaec9811",
       "foodId": "23117d80-cad9-5dcf-a012-8ff4217e5afa",
       "nutrientId": "energy",
-      "amountPer100g": 33.32000000000001,
+      "amountPer100g": 33.63372286666667,
       "valueSource": "derived"
     },
     {
@@ -94310,7 +94450,7 @@
       "id": "fba4f40d-dfe2-52ef-9783-620ff8ebca98",
       "foodId": "960d9285-342f-53e1-a70b-07668bc91864",
       "nutrientId": "energy",
-      "amountPer100g": 171.1705882352941,
+      "amountPer100g": 171.44740252941173,
       "valueSource": "derived"
     },
     {
@@ -94478,7 +94618,7 @@
       "id": "cb00fca9-13c8-5bb4-b1a8-dc7421fd77ec",
       "foodId": "1748b2bc-a012-558e-baef-f419af36dfa3",
       "nutrientId": "energy",
-      "amountPer100g": 101.4625,
+      "amountPer100g": 101.75661518750002,
       "valueSource": "derived"
     },
     {
@@ -94646,7 +94786,7 @@
       "id": "1ffab96b-d0de-5e56-a716-53951894699c",
       "foodId": "080cbae6-c00c-5d90-8446-fb668249caaf",
       "nutrientId": "energy",
-      "amountPer100g": 110.7,
+      "amountPer100g": 111.01372286666668,
       "valueSource": "derived"
     },
     {
@@ -94982,7 +95122,7 @@
       "id": "43ddfc9d-7909-5317-b2bd-21cadbc38e91",
       "foodId": "f6f99535-7426-5e93-8753-a13be61bb76e",
       "nutrientId": "energy",
-      "amountPer100g": 120.0764705882353,
+      "amountPer100g": 152.46598882352941,
       "valueSource": "derived"
     },
     {
@@ -95150,7 +95290,7 @@
       "id": "303b09d1-df88-54c6-b3e0-f43f068c6c88",
       "foodId": "34031cab-d1af-5f81-babc-982833dedcb8",
       "nutrientId": "energy",
-      "amountPer100g": 218.74666666666664,
+      "amountPer100g": 224.0203187333333,
       "valueSource": "derived"
     },
     {
@@ -95486,7 +95626,7 @@
       "id": "8e5c7402-819c-562a-b327-609e7e59f986",
       "foodId": "2010b0ea-655d-5a13-b122-a1aeac74a7cc",
       "nutrientId": "energy",
-      "amountPer100g": 58.99285714285715,
+      "amountPer100g": 64.47513282142857,
       "valueSource": "derived"
     },
     {
@@ -95651,6 +95791,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "2b1a595a-6bff-5a30-a479-549f72bf0e2a",
+      "foodId": "0ff7fad8-8668-5fda-abb5-1edde7adb42d",
+      "nutrientId": "energy",
+      "amountPer100g": 71.22050264285716,
+      "valueSource": "derived"
+    },
+    {
       "id": "a51d2dd5-e29d-5d4a-be05-b2ee38c32b0a",
       "foodId": "0ff7fad8-8668-5fda-abb5-1edde7adb42d",
       "nutrientId": "protein",
@@ -95742,13 +95889,6 @@
       "valueSource": "derived"
     },
     {
-      "id": "2b1a595a-6bff-5a30-a479-549f72bf0e2a",
-      "foodId": "0ff7fad8-8668-5fda-abb5-1edde7adb42d",
-      "nutrientId": "energy",
-      "amountPer100g": 35.014285714285705,
-      "valueSource": "derived"
-    },
-    {
       "id": "0a6f5fdd-ad95-5f76-bca7-9435c37bda87",
       "foodId": "0ff7fad8-8668-5fda-abb5-1edde7adb42d",
       "nutrientId": "saturated_fat",
@@ -95822,7 +95962,7 @@
       "id": "3067745c-5127-5d71-943c-a76ffb40bd6f",
       "foodId": "b7eb7bfa-1ee8-5e12-9199-403016ba1a1d",
       "nutrientId": "energy",
-      "amountPer100g": 168.5857142857143,
+      "amountPer100g": 174.06798996428572,
       "valueSource": "derived"
     },
     {
@@ -95990,7 +96130,7 @@
       "id": "e87ce153-3cb3-52c7-bcd7-a28b6ba2d0af",
       "foodId": "614b3f61-e3c8-53ec-b981-1b9b8ce3e5c4",
       "nutrientId": "energy",
-      "amountPer100g": 67.60769230769232,
+      "amountPer100g": 67.78868626923078,
       "valueSource": "derived"
     },
     {
@@ -96155,6 +96295,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "facf3fa1-1fbc-56c6-bab8-68cb241dc030",
+      "foodId": "d900a104-dd6c-5533-ad75-3a3039f33537",
+      "nutrientId": "energy",
+      "amountPer100g": 81.35564953571429,
+      "valueSource": "derived"
+    },
+    {
       "id": "81fe3794-b5c1-5d62-92ce-8b4483715ca5",
       "foodId": "d900a104-dd6c-5533-ad75-3a3039f33537",
       "nutrientId": "protein",
@@ -96257,13 +96404,6 @@
       "foodId": "d900a104-dd6c-5533-ad75-3a3039f33537",
       "nutrientId": "niacin",
       "amountPer100g": 0.22667857142857142,
-      "valueSource": "derived"
-    },
-    {
-      "id": "facf3fa1-1fbc-56c6-bab8-68cb241dc030",
-      "foodId": "d900a104-dd6c-5533-ad75-3a3039f33537",
-      "nutrientId": "energy",
-      "amountPer100g": 54.16428571428571,
       "valueSource": "derived"
     },
     {
@@ -96491,6 +96631,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "85347737-32d4-5a01-b25e-d0cb669e426f",
+      "foodId": "12a24f33-b7c1-5db6-8066-0791889891b6",
+      "nutrientId": "energy",
+      "amountPer100g": 332.8383008,
+      "valueSource": "derived"
+    },
+    {
       "id": "46d73a66-8607-5e46-9c70-6041056d7483",
       "foodId": "12a24f33-b7c1-5db6-8066-0791889891b6",
       "nutrientId": "protein",
@@ -96558,13 +96705,6 @@
       "foodId": "12a24f33-b7c1-5db6-8066-0791889891b6",
       "nutrientId": "phosphorus",
       "amountPer100g": 287.072,
-      "valueSource": "derived"
-    },
-    {
-      "id": "85347737-32d4-5a01-b25e-d0cb669e426f",
-      "foodId": "12a24f33-b7c1-5db6-8066-0791889891b6",
-      "nutrientId": "energy",
-      "amountPer100g": 213.79999999999998,
       "valueSource": "derived"
     },
     {
@@ -96827,6 +96967,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "16cbbaf9-7cad-599a-8ddf-37d11155f8ee",
+      "foodId": "03311e15-e0db-5e91-96d3-479e136d45ab",
+      "nutrientId": "energy",
+      "amountPer100g": 28.637485423076924,
+      "valueSource": "derived"
+    },
+    {
       "id": "a4db1994-7ae3-5eb7-9822-df6f19982c0e",
       "foodId": "03311e15-e0db-5e91-96d3-479e136d45ab",
       "nutrientId": "protein",
@@ -96939,13 +97086,6 @@
       "valueSource": "derived"
     },
     {
-      "id": "16cbbaf9-7cad-599a-8ddf-37d11155f8ee",
-      "foodId": "03311e15-e0db-5e91-96d3-479e136d45ab",
-      "nutrientId": "energy",
-      "amountPer100g": 20.130769230769232,
-      "valueSource": "derived"
-    },
-    {
       "id": "32d61c8c-9c6a-5230-a6dc-2619a584c61a",
       "foodId": "03311e15-e0db-5e91-96d3-479e136d45ab",
       "nutrientId": "saturated_fat",
@@ -96998,7 +97138,7 @@
       "id": "f074629b-6bf4-5d9e-b7fa-e6e3b3ee6030",
       "foodId": "4268b0cc-7f03-5963-9e44-e98176491daa",
       "nutrientId": "energy",
-      "amountPer100g": 119.19999999999999,
+      "amountPer100g": 139.35343966666667,
       "valueSource": "derived"
     },
     {
@@ -97166,7 +97306,7 @@
       "id": "a3dc3cbd-6794-5064-874a-a298fd24cae0",
       "foodId": "39e0387d-f4d8-5d72-acde-f58c0b4b8bea",
       "nutrientId": "energy",
-      "amountPer100g": 92.19375000000001,
+      "amountPer100g": 144.79961846875003,
       "valueSource": "derived"
     },
     {
@@ -97334,7 +97474,7 @@
       "id": "439d27ff-c107-52e8-8709-239a52665b99",
       "foodId": "cfa03b9c-9fba-5c59-8ceb-f6ac604aa9b8",
       "nutrientId": "energy",
-      "amountPer100g": 89.49894736842106,
+      "amountPer100g": 170.75041913157892,
       "valueSource": "derived"
     },
     {
@@ -97838,7 +97978,7 @@
       "id": "8e210f95-c5df-520d-8768-ffb72afb36b6",
       "foodId": "4723be39-cb82-57e3-b929-6f17981083ad",
       "nutrientId": "energy",
-      "amountPer100g": 128.73333333333335,
+      "amountPer100g": 143.5521663888889,
       "valueSource": "derived"
     },
     {
@@ -98006,7 +98146,7 @@
       "id": "a0b0ad8d-4339-5e7b-a65c-af6f0678c7a7",
       "foodId": "c7f75d6f-5f4d-5461-9e01-9c9fe577cb5f",
       "nutrientId": "energy",
-      "amountPer100g": 295.66111111111115,
+      "amountPer100g": 307.5161775555556,
       "valueSource": "derived"
     },
     {
@@ -98174,7 +98314,7 @@
       "id": "d580e368-1171-51be-8ea2-0f9a3f6eeff8",
       "foodId": "a53de12b-4581-52bd-a334-5a1c45215770",
       "nutrientId": "energy",
-      "amountPer100g": 327.0,
+      "amountPer100g": 338.85506644444445,
       "valueSource": "derived"
     },
     {
@@ -98342,7 +98482,7 @@
       "id": "35e2fa12-a24f-5247-8443-b282945426a5",
       "foodId": "1aae2191-5ca8-5a1f-ae74-eb6e7f61d91e",
       "nutrientId": "energy",
-      "amountPer100g": 66.31764705882354,
+      "amountPer100g": 78.87007035294118,
       "valueSource": "derived"
     },
     {
@@ -99347,6 +99487,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "acd81899-9844-5c06-85ce-7c584d4f9f0f",
+      "foodId": "8eebe692-89af-52cd-9df2-fc9f3ee0f16e",
+      "nutrientId": "energy",
+      "amountPer100g": 106.27841647368423,
+      "valueSource": "derived"
+    },
+    {
       "id": "d370efc0-35b9-5e22-b91d-810699da13af",
       "foodId": "8eebe692-89af-52cd-9df2-fc9f3ee0f16e",
       "nutrientId": "protein",
@@ -99414,13 +99561,6 @@
       "foodId": "8eebe692-89af-52cd-9df2-fc9f3ee0f16e",
       "nutrientId": "phosphorus",
       "amountPer100g": 117.97263157894737,
-      "valueSource": "derived"
-    },
-    {
-      "id": "acd81899-9844-5c06-85ce-7c584d4f9f0f",
-      "foodId": "8eebe692-89af-52cd-9df2-fc9f3ee0f16e",
-      "nutrientId": "energy",
-      "amountPer100g": 47.29473684210526,
       "valueSource": "derived"
     },
     {
@@ -99518,7 +99658,7 @@
       "id": "24bfdf40-fefc-50e5-b0c4-e413923d908d",
       "foodId": "a6bd771c-0af7-5c7b-a8df-f326a10a9d05",
       "nutrientId": "energy",
-      "amountPer100g": 133.9375,
+      "amountPer100g": 138.58743362500002,
       "valueSource": "derived"
     },
     {
@@ -99686,7 +99826,7 @@
       "id": "01ce6e6e-47ea-5370-aad5-f21c790f5568",
       "foodId": "6da9146a-4216-53be-97d4-f2920dbf6bec",
       "nutrientId": "energy",
-      "amountPer100g": 49.3125,
+      "amountPer100g": 54.10949121875001,
       "valueSource": "derived"
     },
     {
@@ -99854,7 +99994,7 @@
       "id": "a6cbff80-5a96-5ea7-a76a-4a51d1e48f4f",
       "foodId": "0bb1061d-ab84-5f58-9ae1-f1e84febb321",
       "nutrientId": "energy",
-      "amountPer100g": 224.87500000000003,
+      "amountPer100g": 257.94119466666666,
       "valueSource": "derived"
     },
     {
@@ -100022,7 +100162,7 @@
       "id": "e36f7652-5cef-55b9-b609-3e2d8596c643",
       "foodId": "e48939e3-feae-523b-ab66-e10e9ac89106",
       "nutrientId": "energy",
-      "amountPer100g": 205.10833333333335,
+      "amountPer100g": 262.4828256666667,
       "valueSource": "derived"
     },
     {
@@ -100190,7 +100330,7 @@
       "id": "96cc5287-4fb3-5efe-96b6-388f9da653fe",
       "foodId": "0203465b-8cee-5e18-a144-3e8b85aba6fb",
       "nutrientId": "energy",
-      "amountPer100g": 259.171875,
+      "amountPer100g": 282.421543125,
       "valueSource": "derived"
     },
     {
@@ -100358,7 +100498,7 @@
       "id": "b2569d0b-abbd-550e-a83b-74095cd2b66b",
       "foodId": "48e2343c-dc79-5be0-a0ad-a85dd2448acb",
       "nutrientId": "energy",
-      "amountPer100g": 141.65517241379314,
+      "amountPer100g": 183.34423250000003,
       "valueSource": "derived"
     },
     {
@@ -100694,7 +100834,7 @@
       "id": "dbf07879-46c1-5d33-a02c-b69e335a265b",
       "foodId": "35ce5279-0b5f-5b20-b76d-db9ae34f0a27",
       "nutrientId": "energy",
-      "amountPer100g": 123.58571428571426,
+      "amountPer100g": 139.31776599999998,
       "valueSource": "derived"
     },
     {
@@ -101198,7 +101338,7 @@
       "id": "e96c92f6-6b56-5151-b175-128783d05af8",
       "foodId": "8b83b140-7afb-5769-87a5-7aaa828599bd",
       "nutrientId": "energy",
-      "amountPer100g": 107.73555555555556,
+      "amountPer100g": 124.53008861111113,
       "valueSource": "derived"
     },
     {
@@ -101366,7 +101506,7 @@
       "id": "98e755f1-3393-50af-9dbf-e0ae63d1921b",
       "foodId": "103bf262-ed60-5e35-9bf5-721fbf206b5a",
       "nutrientId": "energy",
-      "amountPer100g": 105.97625000000002,
+      "amountPer100g": 120.85603760000001,
       "valueSource": "derived"
     },
     {
@@ -101702,7 +101842,7 @@
       "id": "18ab5a62-a95e-58b2-bbcc-517e7be17f5f",
       "foodId": "ee365bdc-5822-5863-938b-a77a3cc40f31",
       "nutrientId": "energy",
-      "amountPer100g": 57.26153846153848,
+      "amountPer100g": 91.96149776923077,
       "valueSource": "derived"
     },
     {
@@ -101870,7 +102010,7 @@
       "id": "95504e78-25db-5520-959b-d0e5c4bda1b2",
       "foodId": "194c93fd-bdce-5b91-821d-e4cb1a8e9bd8",
       "nutrientId": "energy",
-      "amountPer100g": 200.7611111111111,
+      "amountPer100g": 225.4946272777777,
       "valueSource": "derived"
     },
     {
@@ -102038,7 +102178,7 @@
       "id": "a4eeb081-b7ca-5b69-8bde-1e2224bc69ce",
       "foodId": "5b9bfe71-08a4-59ad-b771-dea07453227b",
       "nutrientId": "energy",
-      "amountPer100g": 138.37499999999997,
+      "amountPer100g": 138.6691151875,
       "valueSource": "derived"
     },
     {
@@ -102206,7 +102346,7 @@
       "id": "a98fd135-7b7a-541a-92b8-ade9c3770188",
       "foodId": "7eddf6ed-ab89-59ef-9f7e-7d762230eec1",
       "nutrientId": "energy",
-      "amountPer100g": 221.54666666666668,
+      "amountPer100g": 221.86038953333335,
       "valueSource": "derived"
     },
     {
@@ -102542,7 +102682,7 @@
       "id": "0dba50e3-05f3-5815-a7e3-666aa66a3745",
       "foodId": "d3fc8f71-2a0f-552a-922a-2c7475b8c7c8",
       "nutrientId": "energy",
-      "amountPer100g": 279.33333333333337,
+      "amountPer100g": 300.6724529333333,
       "valueSource": "derived"
     },
     {
@@ -102878,7 +103018,7 @@
       "id": "4530794f-4f88-5911-97aa-0e6172687c2a",
       "foodId": "4b7e0284-6073-546e-9b79-298e390e2f39",
       "nutrientId": "energy",
-      "amountPer100g": 455.88750000000005,
+      "amountPer100g": 482.56139950000005,
       "valueSource": "derived"
     },
     {
@@ -103211,6 +103351,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "af2f55ba-88eb-59cf-9af1-092d38d6488a",
+      "foodId": "4f2befef-c001-589f-b3f5-3643171b98de",
+      "nutrientId": "energy",
+      "amountPer100g": 350.3960558333334,
+      "valueSource": "derived"
+    },
+    {
       "id": "c7175965-7769-51e2-ac8b-26288ac8b3a9",
       "foodId": "4f2befef-c001-589f-b3f5-3643171b98de",
       "nutrientId": "protein",
@@ -103285,13 +103432,6 @@
       "foodId": "4f2befef-c001-589f-b3f5-3643171b98de",
       "nutrientId": "phosphorus",
       "amountPer100g": 221.99999999999997,
-      "valueSource": "derived"
-    },
-    {
-      "id": "af2f55ba-88eb-59cf-9af1-092d38d6488a",
-      "foodId": "4f2befef-c001-589f-b3f5-3643171b98de",
-      "nutrientId": "energy",
-      "amountPer100g": 29.2,
       "valueSource": "derived"
     },
     {
@@ -103382,7 +103522,7 @@
       "id": "c2253193-c884-514f-956e-010c2ff229fa",
       "foodId": "8052054c-f72c-55d6-8f8b-0901921f60f5",
       "nutrientId": "energy",
-      "amountPer100g": 484.4857142857143,
+      "amountPer100g": 514.970170857143,
       "valueSource": "derived"
     },
     {
@@ -103550,7 +103690,7 @@
       "id": "1b98239b-ba73-5b56-b39b-7f00c6a18626",
       "foodId": "3e12f6e3-4adf-5c3d-a457-65f26433d521",
       "nutrientId": "energy",
-      "amountPer100g": 150.22500000000002,
+      "amountPer100g": 163.56194975,
       "valueSource": "derived"
     },
     {
@@ -103718,7 +103858,7 @@
       "id": "8baee7d6-995a-5c25-9b1b-150868129d63",
       "foodId": "1b147fdb-1c8c-5660-82c7-452e57b5f283",
       "nutrientId": "energy",
-      "amountPer100g": 165.66470588235293,
+      "amountPer100g": 178.2171291764706,
       "valueSource": "derived"
     },
     {
@@ -103886,7 +104026,7 @@
       "id": "711e409c-e90f-5e86-8ffd-c6e02b26cf8f",
       "foodId": "5a4ca100-64af-5d40-8063-56e9f9cb7a37",
       "nutrientId": "energy",
-      "amountPer100g": 102.7986111111111,
+      "amountPer100g": 103.06004683333336,
       "valueSource": "derived"
     },
     {
@@ -104558,7 +104698,7 @@
       "id": "9027514f-aaea-597a-a622-ede0bb0f9bb3",
       "foodId": "d24ed533-6eac-5077-a99f-55d00819af75",
       "nutrientId": "energy",
-      "amountPer100g": 237.52499999999998,
+      "amountPer100g": 237.8191151875,
       "valueSource": "derived"
     },
     {
@@ -105062,7 +105202,7 @@
       "id": "c68351f2-b6cd-5ec1-a53f-2b6fbce48e8b",
       "foodId": "98410f2b-7df7-5d98-822a-8b2e2c2649d1",
       "nutrientId": "energy",
-      "amountPer100g": 275.2916666666667,
+      "amountPer100g": 330.54992445833335,
       "valueSource": "derived"
     },
     {
@@ -105398,7 +105538,7 @@
       "id": "f39d384f-60e3-5520-a6e5-f8c47051ca2c",
       "foodId": "bfb43ff2-1b8e-5f9b-a9e4-bf66da750c0f",
       "nutrientId": "energy",
-      "amountPer100g": 95.31527777777778,
+      "amountPer100g": 95.57671350000001,
       "valueSource": "derived"
     },
     {
@@ -105566,7 +105706,7 @@
       "id": "34e19726-428c-56b8-9f39-120696c41bd0",
       "foodId": "3b454369-1c61-5e90-b955-04db10fdc45a",
       "nutrientId": "energy",
-      "amountPer100g": 175.3360984848485,
+      "amountPer100g": 175.43235436439397,
       "valueSource": "derived"
     },
     {
@@ -105902,7 +106042,7 @@
       "id": "27e9d853-91ff-5ea6-86d5-eeafb2ebe94b",
       "foodId": "46de333b-ddfc-5c82-9814-8d0742ffd31c",
       "nutrientId": "energy",
-      "amountPer100g": 57.26153846153848,
+      "amountPer100g": 91.96149776923077,
       "valueSource": "derived"
     },
     {
@@ -106070,7 +106210,7 @@
       "id": "2db59b75-3531-5f15-b1a3-51f75f344b07",
       "foodId": "c5db2190-c898-5569-9800-33a80d2b3869",
       "nutrientId": "energy",
-      "amountPer100g": 215.61428571428567,
+      "amountPer100g": 268.75638428571426,
       "valueSource": "derived"
     },
     {
@@ -106574,7 +106714,7 @@
       "id": "dbc68b27-4fff-5e5f-a4b8-7cfaae7d4997",
       "foodId": "33033d85-3b38-51e3-8870-90293c9ba244",
       "nutrientId": "energy",
-      "amountPer100g": 334.5,
+      "amountPer100g": 389.56218099999995,
       "valueSource": "derived"
     },
     {
@@ -107582,7 +107722,7 @@
       "id": "082a53f9-0a21-5802-9502-3c0f94b8de54",
       "foodId": "629f8ac9-ac32-58b0-91a0-16c46f9beda1",
       "nutrientId": "energy",
-      "amountPer100g": 122.82380952380953,
+      "amountPer100g": 128.61719598214287,
       "valueSource": "derived"
     },
     {
@@ -108758,7 +108898,7 @@
       "id": "71ee0830-613c-582e-a668-dea0f8fca21f",
       "foodId": "a55e2484-6503-5cd7-9c8f-329f86d9875a",
       "nutrientId": "energy",
-      "amountPer100g": 221.56410256410254,
+      "amountPer100g": 222.45366717948713,
       "valueSource": "derived"
     },
     {
@@ -108926,7 +109066,7 @@
       "id": "736b5993-a6d0-592d-b049-028bb4b08f4e",
       "foodId": "66320d62-9107-5c6c-9d79-96424a83ab07",
       "nutrientId": "energy",
-      "amountPer100g": 178.9741935483871,
+      "amountPer100g": 180.09332322580647,
       "valueSource": "derived"
     },
     {
@@ -109094,7 +109234,7 @@
       "id": "63ac16b4-4354-576e-8a3d-d47391d47303",
       "foodId": "fe179faf-2ba2-5155-b5f3-86a1b3dfee89",
       "nutrientId": "energy",
-      "amountPer100g": 161.48387096774195,
+      "amountPer100g": 162.41647903225805,
       "valueSource": "derived"
     },
     {
@@ -109598,7 +109738,7 @@
       "id": "156cecf2-4c02-565d-ad02-b74ad6446818",
       "foodId": "0177b0b0-940a-53e3-841e-d76f7c6f20de",
       "nutrientId": "energy",
-      "amountPer100g": 220.7849999999999,
+      "amountPer100g": 221.50777124999993,
       "valueSource": "derived"
     },
     {
@@ -109766,7 +109906,7 @@
       "id": "cc5d8c91-9430-56bd-ab2b-5301f787d260",
       "foodId": "59d090e8-2768-539f-b390-45b262ad5561",
       "nutrientId": "energy",
-      "amountPer100g": 318.0238095238095,
+      "amountPer100g": 318.7121630952381,
       "valueSource": "derived"
     },
     {
@@ -111278,7 +111418,7 @@
       "id": "e94f5cf0-e4a5-5607-99bb-fd2d65f9f178",
       "foodId": "5afc7fb6-ef81-5e55-b624-fde0006f638b",
       "nutrientId": "energy",
-      "amountPer100g": 207.436,
+      "amountPer100g": 209.93874295,
       "valueSource": "derived"
     },
     {
@@ -111446,7 +111586,7 @@
       "id": "397aef24-63c7-54c5-b013-4c836b89c68f",
       "foodId": "931adf5e-1cd9-5803-b80f-7e4bed88d46d",
       "nutrientId": "energy",
-      "amountPer100g": 205.53600000000003,
+      "amountPer100g": 208.03874295,
       "valueSource": "derived"
     },
     {
@@ -112118,7 +112258,7 @@
       "id": "f21843dd-75d9-5ab9-9c17-f9d38c6707cf",
       "foodId": "0e9eacfe-6c99-5996-8950-5295717c71e5",
       "nutrientId": "energy",
-      "amountPer100g": 146.02499999999998,
+      "amountPer100g": 149.71727775,
       "valueSource": "derived"
     },
     {
@@ -112286,7 +112426,7 @@
       "id": "a65363db-d32d-552f-bcb1-c011e008fe5a",
       "foodId": "4ba45ad2-04d8-564e-a4f9-d8de9dd3ddb4",
       "nutrientId": "energy",
-      "amountPer100g": 293.36875,
+      "amountPer100g": 331.1567487925,
       "valueSource": "derived"
     },
     {
@@ -112454,7 +112594,7 @@
       "id": "b5db3a16-222d-5e1d-bfc4-c2967eae73e1",
       "foodId": "653a78b5-c8a5-5dd2-8812-b34b2d6ae67a",
       "nutrientId": "energy",
-      "amountPer100g": 203.8590909090909,
+      "amountPer100g": 226.76090835909088,
       "valueSource": "derived"
     },
     {
@@ -112622,7 +112762,7 @@
       "id": "7b43d11e-1110-5a02-b26c-93e06891efd3",
       "foodId": "10af2712-acfb-52c6-8bf8-312431ffcc25",
       "nutrientId": "energy",
-      "amountPer100g": 220.74999999999994,
+      "amountPer100g": 243.65181744999998,
       "valueSource": "derived"
     },
     {
@@ -112787,6 +112927,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "18eaabd4-983d-597b-827b-6e99400a219b",
+      "foodId": "089b27d5-105f-5750-9b84-9257eea1d3ba",
+      "nutrientId": "energy",
+      "amountPer100g": 138.44293092105264,
+      "valueSource": "derived"
+    },
+    {
       "id": "e06cc43b-e096-5906-8cea-88cebe4e9ed7",
       "foodId": "089b27d5-105f-5750-9b84-9257eea1d3ba",
       "nutrientId": "protein",
@@ -112878,13 +113025,6 @@
       "valueSource": "derived"
     },
     {
-      "id": "18eaabd4-983d-597b-827b-6e99400a219b",
-      "foodId": "089b27d5-105f-5750-9b84-9257eea1d3ba",
-      "nutrientId": "energy",
-      "amountPer100g": 132.73684210526312,
-      "valueSource": "derived"
-    },
-    {
       "id": "e0c2d1a9-99c3-5aca-9341-c1164bfaa29c",
       "foodId": "089b27d5-105f-5750-9b84-9257eea1d3ba",
       "nutrientId": "fibre",
@@ -112958,7 +113098,7 @@
       "id": "f926a159-ecb3-52f2-8f0a-bde23b575ec0",
       "foodId": "8e4e3916-dee3-5d1e-8ac5-f10fe852ff72",
       "nutrientId": "energy",
-      "amountPer100g": 134.82222222222222,
+      "amountPer100g": 140.82739955555553,
       "valueSource": "derived"
     },
     {
@@ -113462,7 +113602,7 @@
       "id": "425dea53-46e7-5d7c-ad9a-924803faf93e",
       "foodId": "fc7dc472-34e0-5495-adaf-3246b6b79021",
       "nutrientId": "energy",
-      "amountPer100g": 108.87777777777777,
+      "amountPer100g": 111.68855486111109,
       "valueSource": "derived"
     },
     {
@@ -113630,7 +113770,7 @@
       "id": "85ee7379-6ace-511a-9408-76984503f11d",
       "foodId": "38003114-ed4d-5e2e-907e-bb682e7e0642",
       "nutrientId": "energy",
-      "amountPer100g": 91.92941176470588,
+      "amountPer100g": 94.90552867647058,
       "valueSource": "derived"
     },
     {
@@ -114134,7 +114274,7 @@
       "id": "faa2ad20-475b-54a7-a9e3-7524e9bfdfbd",
       "foodId": "266a6d22-825d-5310-8504-ab7fa8d2a8c5",
       "nutrientId": "energy",
-      "amountPer100g": 352.5,
+      "amountPer100g": 368.2534189090909,
       "valueSource": "derived"
     },
     {
@@ -114974,7 +115114,7 @@
       "id": "de559b0b-c828-58c8-9ec2-2e1810f1faf7",
       "foodId": "1eb1a2e3-e85e-5cff-b1cd-2e049e4f8a1a",
       "nutrientId": "energy",
-      "amountPer100g": 164.23529411764704,
+      "amountPer100g": 203.75215559999998,
       "valueSource": "derived"
     },
     {
@@ -115310,7 +115450,7 @@
       "id": "a65c96ce-c505-5695-9b7e-fd8196fbceac",
       "foodId": "39dd2771-a1d6-5048-b749-6a4f3fe0503f",
       "nutrientId": "energy",
-      "amountPer100g": 448.49999999999994,
+      "amountPer100g": 479.0357566,
       "valueSource": "derived"
     },
     {
@@ -115646,7 +115786,7 @@
       "id": "d91bae82-d191-58b1-a25d-153a78c7da46",
       "foodId": "de0eee85-97a1-508a-b24c-3c2103f7c2b5",
       "nutrientId": "energy",
-      "amountPer100g": 256.04583333333335,
+      "amountPer100g": 257.52274443333334,
       "valueSource": "derived"
     },
     {
@@ -116150,7 +116290,7 @@
       "id": "03fefa1a-5d50-50cc-995b-db4b8cabe94e",
       "foodId": "8bffc059-c1ba-5a80-ae55-1b05d197f34b",
       "nutrientId": "energy",
-      "amountPer100g": 282.30400000000003,
+      "amountPer100g": 283.48552888,
       "valueSource": "derived"
     },
     {
@@ -116318,7 +116458,7 @@
       "id": "cd9765b2-4c3e-581f-bf5e-9a777faae385",
       "foodId": "29d2b2cf-4aec-5023-9095-55f20293bc5f",
       "nutrientId": "energy",
-      "amountPer100g": 251.29999999999998,
+      "amountPer100g": 252.48152888,
       "valueSource": "derived"
     },
     {
@@ -116822,7 +116962,7 @@
       "id": "3de45116-064c-52dd-b339-1446e17faedf",
       "foodId": "d7107261-43a8-5dbf-ad36-ea5726f061dc",
       "nutrientId": "energy",
-      "amountPer100g": 232.836,
+      "amountPer100g": 234.77046376,
       "valueSource": "derived"
     },
     {
@@ -117494,7 +117634,7 @@
       "id": "0f9bddee-ae29-510e-88b7-598cd6821f07",
       "foodId": "bb992ca3-52c8-578b-b9e9-3bdd0f5a6727",
       "nutrientId": "energy",
-      "amountPer100g": 215.0052631578947,
+      "amountPer100g": 217.5963352631579,
       "valueSource": "derived"
     },
     {
@@ -117662,7 +117802,7 @@
       "id": "3742704c-6968-5347-b386-a9b93db03e24",
       "foodId": "85b96b70-d464-5172-b0af-3a097ce70906",
       "nutrientId": "energy",
-      "amountPer100g": 263.8619047619047,
+      "amountPer100g": 264.687929047619,
       "valueSource": "derived"
     },
     {
@@ -117998,7 +118138,7 @@
       "id": "fe64c36f-0cd6-56a3-80b6-017592d066c0",
       "foodId": "afa1397e-3adb-515b-9c73-dae3c42f6b39",
       "nutrientId": "energy",
-      "amountPer100g": 232.69565217391306,
+      "amountPer100g": 234.40801286956523,
       "valueSource": "derived"
     },
     {
@@ -118166,7 +118306,7 @@
       "id": "7a56ccef-4b6a-5770-b20e-67ab697c119c",
       "foodId": "0624479c-6c69-53d9-a2f9-d789c0de0008",
       "nutrientId": "energy",
-      "amountPer100g": 244.04,
+      "amountPer100g": 245.45783465600005,
       "valueSource": "derived"
     },
     {
@@ -118502,7 +118642,7 @@
       "id": "d98ce3d0-dec5-54ea-a833-f21321cb42a0",
       "foodId": "e1f069ad-fd4d-5615-b1e1-b3f8723a121a",
       "nutrientId": "energy",
-      "amountPer100g": 290.46000000000004,
+      "amountPer100g": 293.2408255,
       "valueSource": "derived"
     },
     {
@@ -118670,7 +118810,7 @@
       "id": "e6991f4a-39ef-57ea-a8c9-ac416a238337",
       "foodId": "7e7b9f53-db8b-589d-b21e-ffa048659ee9",
       "nutrientId": "energy",
-      "amountPer100g": 326.016,
+      "amountPer100g": 355.57461238879995,
       "valueSource": "derived"
     },
     {
@@ -118838,7 +118978,7 @@
       "id": "4bcc42c3-93eb-54c7-a995-fb235e599cfe",
       "foodId": "ae81cf17-7853-5036-bcd7-379c7c3fc586",
       "nutrientId": "energy",
-      "amountPer100g": 329.69200000000006,
+      "amountPer100g": 353.8763192272001,
       "valueSource": "derived"
     },
     {
@@ -119174,7 +119314,7 @@
       "id": "8c319a9a-50e8-5b3b-833b-743d2bc34149",
       "foodId": "f0cfa2f2-2c6d-5213-8b8c-73c22f67b770",
       "nutrientId": "energy",
-      "amountPer100g": 299.236,
+      "amountPer100g": 302.0168255,
       "valueSource": "derived"
     },
     {
@@ -119342,7 +119482,7 @@
       "id": "3313c619-98c4-592b-b3cb-017e317783d1",
       "foodId": "3358cd75-f402-52eb-b7e8-8e01721996bb",
       "nutrientId": "energy",
-      "amountPer100g": 326.7896551724138,
+      "amountPer100g": 328.9471921982759,
       "valueSource": "derived"
     },
     {
@@ -119510,7 +119650,7 @@
       "id": "0df57f18-a994-52ca-bbff-3f7b929b88e8",
       "foodId": "8a353e53-db5f-5807-ba5a-61778868dc26",
       "nutrientId": "energy",
-      "amountPer100g": 245.37727272727275,
+      "amountPer100g": 274.4760721818182,
       "valueSource": "derived"
     },
     {
@@ -119678,7 +119818,7 @@
       "id": "b00da676-cd71-5529-97c8-873cb227720e",
       "foodId": "a608e240-2d1d-55f2-80ee-2f26e838648e",
       "nutrientId": "energy",
-      "amountPer100g": 272.956,
+      "amountPer100g": 277.42795775,
       "valueSource": "derived"
     },
     {
@@ -120014,7 +120154,7 @@
       "id": "3ff132a8-b4bc-58fc-b880-958c9f9c4aa0",
       "foodId": "7318336f-b2c6-59be-b09f-9d62b57ee000",
       "nutrientId": "energy",
-      "amountPer100g": 277.50740740740747,
+      "amountPer100g": 281.28343962037036,
       "valueSource": "derived"
     },
     {
@@ -120854,7 +120994,7 @@
       "id": "8f407479-7429-5808-aa72-3584a0d576fb",
       "foodId": "c09a726d-efdd-5097-8213-36d51cbe010c",
       "nutrientId": "energy",
-      "amountPer100g": 164.4346153846154,
+      "amountPer100g": 166.32809115384612,
       "valueSource": "derived"
     },
     {
@@ -121526,7 +121666,7 @@
       "id": "2aab95d8-df06-5146-a001-bb11d180d890",
       "foodId": "bf7324fb-1ea0-56af-b020-ff6b643fb883",
       "nutrientId": "energy",
-      "amountPer100g": 301.63599999999997,
+      "amountPer100g": 328.50746580799995,
       "valueSource": "derived"
     },
     {
@@ -122030,7 +122170,7 @@
       "id": "520c2a3d-b398-5cc5-8fe4-6165a2f01463",
       "foodId": "af3301a4-5ec1-5c94-bd3c-14c6fcaf43b9",
       "nutrientId": "energy",
-      "amountPer100g": 243.90454545454548,
+      "amountPer100g": 259.17242375454543,
       "valueSource": "derived"
     },
     {
@@ -122366,7 +122506,7 @@
       "id": "3fd77014-1d6a-5e81-a96e-2db53f6b5a6e",
       "foodId": "8c5435d1-a7e0-5b80-98ab-202fff432386",
       "nutrientId": "energy",
-      "amountPer100g": 187.03500000000003,
+      "amountPer100g": 189.4965185,
       "valueSource": "derived"
     },
     {
@@ -122867,6 +123007,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "f064410a-e06b-5481-b967-648a27da6c37",
+      "foodId": "8532fd5c-d1d2-5e79-9ffb-86ee73feaee8",
+      "nutrientId": "energy",
+      "amountPer100g": 351.6749932916666,
+      "valueSource": "derived"
+    },
+    {
       "id": "7431ca02-f95f-50f0-a6e0-412544b5a5e6",
       "foodId": "8532fd5c-d1d2-5e79-9ffb-86ee73feaee8",
       "nutrientId": "protein",
@@ -122972,13 +123119,6 @@
       "valueSource": "derived"
     },
     {
-      "id": "f064410a-e06b-5481-b967-648a27da6c37",
-      "foodId": "8532fd5c-d1d2-5e79-9ffb-86ee73feaee8",
-      "nutrientId": "energy",
-      "amountPer100g": 141.74166666666665,
-      "valueSource": "derived"
-    },
-    {
       "id": "abdcf844-e0e7-5d7e-8576-6cfca440832d",
       "foodId": "8532fd5c-d1d2-5e79-9ffb-86ee73feaee8",
       "nutrientId": "fibre",
@@ -123038,7 +123178,7 @@
       "id": "0fa257f4-2a4a-5588-9491-9b3406005878",
       "foodId": "fee2e83d-a081-5da0-a518-30ff43221059",
       "nutrientId": "energy",
-      "amountPer100g": 306.5333333333333,
+      "amountPer100g": 388.6405899688889,
       "valueSource": "derived"
     },
     {
@@ -123206,7 +123346,7 @@
       "id": "dc053ed0-c5a5-5086-85fb-ccb4cf32ea40",
       "foodId": "8da1e7ed-7bee-5238-a0d7-bfeab7b466d0",
       "nutrientId": "energy",
-      "amountPer100g": 178.508,
+      "amountPer100g": 180.47721480000004,
       "valueSource": "derived"
     },
     {
@@ -123374,7 +123514,7 @@
       "id": "8f12ad10-6486-5feb-9d44-6b1da9a40c50",
       "foodId": "eaf13b46-92b3-5c22-b2d0-5f1ca30be7e3",
       "nutrientId": "energy",
-      "amountPer100g": 187.14736842105268,
+      "amountPer100g": 188.87474982456146,
       "valueSource": "derived"
     },
     {
@@ -123542,7 +123682,7 @@
       "id": "16f0fd25-97e5-5b45-aa18-2afbbd9df576",
       "foodId": "9e57b319-0152-57bf-b6ed-db4b1380168a",
       "nutrientId": "energy",
-      "amountPer100g": 187.0607142857143,
+      "amountPer100g": 188.81894178571432,
       "valueSource": "derived"
     },
     {
@@ -123710,7 +123850,7 @@
       "id": "e5461403-d3d2-5eea-8514-886f4711f357",
       "foodId": "5dba396d-2053-5fde-a129-4f6bd5ebe65c",
       "nutrientId": "energy",
-      "amountPer100g": 173.3346153846154,
+      "amountPer100g": 175.22809115384618,
       "valueSource": "derived"
     },
     {
@@ -123878,7 +124018,7 @@
       "id": "68bd5d53-d594-59e7-9905-458fcb22676d",
       "foodId": "8d963b9c-ef94-550e-b1cc-a10f77f9ca86",
       "nutrientId": "energy",
-      "amountPer100g": 181.74,
+      "amountPer100g": 183.7092148,
       "valueSource": "derived"
     },
     {
@@ -124046,7 +124186,7 @@
       "id": "d97ea00c-f6e6-5b32-bff6-ab9485305764",
       "foodId": "2bbb09df-61c8-564f-b582-ea6c4d70b93c",
       "nutrientId": "energy",
-      "amountPer100g": 189.98245614035093,
+      "amountPer100g": 191.70983754385972,
       "valueSource": "derived"
     },
     {
@@ -124214,7 +124354,7 @@
       "id": "0c946bcc-3d76-565a-9786-a2300d97cd00",
       "foodId": "02f664aa-35cd-5976-90c8-2cac9e1f3dbb",
       "nutrientId": "energy",
-      "amountPer100g": 178.1921568627451,
+      "amountPer100g": 180.12275960784314,
       "valueSource": "derived"
     },
     {
@@ -124382,7 +124522,7 @@
       "id": "af025a6b-d542-5eaf-be4e-61f1c25717d5",
       "foodId": "a400d931-286a-5b61-8c60-3df67759865b",
       "nutrientId": "energy",
-      "amountPer100g": 186.39259259259262,
+      "amountPer100g": 188.21593962962964,
       "valueSource": "derived"
     },
     {
@@ -124550,7 +124690,7 @@
       "id": "9f0e4fef-9063-50a3-b22b-39717414e67a",
       "foodId": "d4c2e2b2-a57a-539f-bdc2-8054d5f058da",
       "nutrientId": "energy",
-      "amountPer100g": 191.34000000000003,
+      "amountPer100g": 193.30921480000003,
       "valueSource": "derived"
     },
     {
@@ -124718,7 +124858,7 @@
       "id": "4f0d403f-5f39-563d-a7af-6de2c9d864e4",
       "foodId": "c01f1bd5-8f59-5d8c-8379-ca05cda32eb0",
       "nutrientId": "energy",
-      "amountPer100g": 134.86666666666665,
+      "amountPer100g": 136.507679,
       "valueSource": "derived"
     },
     {
@@ -124886,7 +125026,7 @@
       "id": "6e5bee04-8f47-5c9f-b2eb-560a78072e5a",
       "foodId": "3fc27a3d-169c-5ab8-9320-b5d280bc8e31",
       "nutrientId": "energy",
-      "amountPer100g": 120.12592592592593,
+      "amountPer100g": 121.58460355555556,
       "valueSource": "derived"
     },
     {
@@ -125054,7 +125194,7 @@
       "id": "31b6ab5f-11d6-553a-89f6-e2e14374f97a",
       "foodId": "f61a5429-ea23-5a1a-a917-c5f392567c7f",
       "nutrientId": "energy",
-      "amountPer100g": 175.5857142857143,
+      "amountPer100g": 176.9922962857143,
       "valueSource": "derived"
     },
     {
@@ -125222,7 +125362,7 @@
       "id": "4fff14b2-e2c7-5639-aaca-77dd689fdaf2",
       "foodId": "f63bcc8b-cc02-58ce-a912-325c430a0449",
       "nutrientId": "energy",
-      "amountPer100g": 133.8736842105263,
+      "amountPer100g": 135.25558933333332,
       "valueSource": "derived"
     },
     {
@@ -125390,7 +125530,7 @@
       "id": "f5c52117-715e-52a3-8037-9c7710e5dba0",
       "foodId": "1c033d91-3b7c-5153-9450-6a8a83bc5214",
       "nutrientId": "energy",
-      "amountPer100g": 130.715625,
+      "amountPer100g": 131.94638425,
       "valueSource": "derived"
     },
     {
@@ -125558,7 +125698,7 @@
       "id": "1c421406-a169-5085-aa65-99b1ac606f15",
       "foodId": "02ff2ee9-ab8f-5646-972a-c3316c5551d6",
       "nutrientId": "energy",
-      "amountPer100g": 138.1365591397849,
+      "amountPer100g": 139.950495353405,
       "valueSource": "derived"
     },
     {
@@ -125726,7 +125866,7 @@
       "id": "6412156c-5cfc-5c51-bb1f-4f116a4d6def",
       "foodId": "6043ed24-82a6-584c-b2e8-8f5dc9821820",
       "nutrientId": "energy",
-      "amountPer100g": 162.83333333333331,
+      "amountPer100g": 165.2401514222222,
       "valueSource": "derived"
     },
     {
@@ -125894,7 +126034,7 @@
       "id": "092aa07c-e921-576c-983f-63e2a8dbcae9",
       "foodId": "b3eb7060-6b53-562b-bfdb-e28cc77f8ca2",
       "nutrientId": "energy",
-      "amountPer100g": 134.06086956521742,
+      "amountPer100g": 135.94446633043478,
       "valueSource": "derived"
     },
     {
@@ -126059,6 +126199,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "76dd3441-a740-5552-a3ad-549cb99a10f5",
+      "foodId": "e678053c-9653-5fca-8b96-faa35b06072f",
+      "nutrientId": "energy",
+      "amountPer100g": 133.63737177638887,
+      "valueSource": "derived"
+    },
+    {
       "id": "50e49662-d5fd-5459-845a-02486a9947b9",
       "foodId": "e678053c-9653-5fca-8b96-faa35b06072f",
       "nutrientId": "protein",
@@ -126150,13 +126297,6 @@
       "valueSource": "derived"
     },
     {
-      "id": "76dd3441-a740-5552-a3ad-549cb99a10f5",
-      "foodId": "e678053c-9653-5fca-8b96-faa35b06072f",
-      "nutrientId": "energy",
-      "amountPer100g": 117.89999999999998,
-      "valueSource": "derived"
-    },
-    {
       "id": "3743550f-6351-56af-97be-1c650d7910ef",
       "foodId": "e678053c-9653-5fca-8b96-faa35b06072f",
       "nutrientId": "saturated_fat",
@@ -126224,6 +126364,13 @@
       "foodId": "e678053c-9653-5fca-8b96-faa35b06072f",
       "nutrientId": "niacin",
       "amountPer100g": 1.058047777777778,
+      "valueSource": "derived"
+    },
+    {
+      "id": "4895510f-bbd4-562b-989a-fc5331c1e88d",
+      "foodId": "75c13d7d-8c1f-5723-8160-fa2c9473e378",
+      "nutrientId": "energy",
+      "amountPer100g": 111.21185617282609,
       "valueSource": "derived"
     },
     {
@@ -126318,13 +126465,6 @@
       "valueSource": "derived"
     },
     {
-      "id": "4895510f-bbd4-562b-989a-fc5331c1e88d",
-      "foodId": "75c13d7d-8c1f-5723-8160-fa2c9473e378",
-      "nutrientId": "energy",
-      "amountPer100g": 98.89565217391304,
-      "valueSource": "derived"
-    },
-    {
       "id": "5e2fb7e5-d727-593e-a484-a5dc09f44886",
       "foodId": "75c13d7d-8c1f-5723-8160-fa2c9473e378",
       "nutrientId": "saturated_fat",
@@ -126398,7 +126538,7 @@
       "id": "4ca879a2-567b-5470-9031-a7ecd9f2b906",
       "foodId": "99bb6cd8-8705-50bc-ae8b-59ad70527a98",
       "nutrientId": "energy",
-      "amountPer100g": 276.32777777777784,
+      "amountPer100g": 278.73459586666667,
       "valueSource": "derived"
     },
     {
@@ -126566,7 +126706,7 @@
       "id": "c8d56653-f72b-5479-96e5-c9ede347c2c2",
       "foodId": "8f01bfce-2719-5ea1-bb41-a703fb5c742e",
       "nutrientId": "energy",
-      "amountPer100g": 312.18000000000006,
+      "amountPer100g": 314.34613628000005,
       "valueSource": "derived"
     },
     {
@@ -126734,7 +126874,7 @@
       "id": "3bc9a424-286b-5b44-af3b-130ac13365b1",
       "foodId": "088f0d64-ffa2-5748-9f79-877e1bc3394e",
       "nutrientId": "energy",
-      "amountPer100g": 255.84000000000006,
+      "amountPer100g": 257.572909024,
       "valueSource": "derived"
     },
     {
@@ -126902,7 +127042,7 @@
       "id": "41afd1f2-88b6-57d8-96fe-874d1a2c8eaf",
       "foodId": "8b11c134-7f9c-5863-b7cd-8f0eaba2300c",
       "nutrientId": "energy",
-      "amountPer100g": 256.3277777777778,
+      "amountPer100g": 259.60980244444437,
       "valueSource": "derived"
     },
     {
@@ -127070,7 +127210,7 @@
       "id": "6c770e9b-c560-5490-bacf-b4fdd193968f",
       "foodId": "61e54c31-a0a1-56f2-bf74-233106fe97bd",
       "nutrientId": "energy",
-      "amountPer100g": 208.88695652173914,
+      "amountPer100g": 211.45549756521737,
       "valueSource": "derived"
     },
     {
@@ -127238,7 +127378,7 @@
       "id": "23584814-342e-58a1-9c36-8f2d5c7e348b",
       "foodId": "fe5da3d9-97e9-57e6-be85-9fa7865972c0",
       "nutrientId": "energy",
-      "amountPer100g": 349.4111111111112,
+      "amountPer100g": 352.69313577777785,
       "valueSource": "derived"
     },
     {
@@ -127406,7 +127546,7 @@
       "id": "8903aeb9-2178-5c61-ae44-6b17ce25b90b",
       "foodId": "cf89d44e-461b-54b5-adca-dc89b5ec39d5",
       "nutrientId": "energy",
-      "amountPer100g": 281.7347826086957,
+      "amountPer100g": 284.30332365217396,
       "valueSource": "derived"
     },
     {
@@ -127574,7 +127714,7 @@
       "id": "d3d1eac3-69bc-568b-a158-f68ebffa1c4e",
       "foodId": "95ce84a1-373e-5798-a1eb-3a876a7291dd",
       "nutrientId": "energy",
-      "amountPer100g": 95.96666666666667,
+      "amountPer100g": 99.24869133333334,
       "valueSource": "derived"
     },
     {
@@ -127742,7 +127882,7 @@
       "id": "d0823acc-2580-527e-b3e3-46791a207d55",
       "foodId": "01347156-7eb5-50bd-ba1e-871ebb8dccde",
       "nutrientId": "energy",
-      "amountPer100g": 281.4111111111111,
+      "amountPer100g": 284.69313577777774,
       "valueSource": "derived"
     },
     {
@@ -127910,7 +128050,7 @@
       "id": "f6489d95-e249-55e6-89eb-596c5ad8cb79",
       "foodId": "1ada41c3-f832-5be9-81ec-611b57f96f72",
       "nutrientId": "energy",
-      "amountPer100g": 317.7888888888889,
+      "amountPer100g": 321.07091355555553,
       "valueSource": "derived"
     },
     {
@@ -130094,7 +130234,7 @@
       "id": "007a5286-119d-5e0e-a201-77eb61d75de5",
       "foodId": "47f6fac4-a0a0-5f44-8bfd-624e7bceaad5",
       "nutrientId": "energy",
-      "amountPer100g": 243.14999999999998,
+      "amountPer100g": 290.70714874545456,
       "valueSource": "derived"
     },
     {
@@ -130262,7 +130402,7 @@
       "id": "38b9dedf-d154-5967-8dc9-d6f347743453",
       "foodId": "142e4efd-22e5-5f3c-818b-10dd1e1fef04",
       "nutrientId": "energy",
-      "amountPer100g": 250.97142857142853,
+      "amountPer100g": 253.5970483047619,
       "valueSource": "derived"
     },
     {
@@ -130430,7 +130570,7 @@
       "id": "e078e5f4-676f-560b-af14-d6b836052ff6",
       "foodId": "08c13d2d-829a-5b65-b290-992383ca703e",
       "nutrientId": "energy",
-      "amountPer100g": 229.5958333333333,
+      "amountPer100g": 231.89325060000004,
       "valueSource": "derived"
     },
     {
@@ -130766,7 +130906,7 @@
       "id": "9b0443f8-824e-518f-9e47-0f5bbb6f359f",
       "foodId": "a2e871b6-1b94-5ea4-a58f-7b41021403ab",
       "nutrientId": "energy",
-      "amountPer100g": 271.06818181818187,
+      "amountPer100g": 302.6732546545455,
       "valueSource": "derived"
     },
     {
@@ -130934,7 +131074,7 @@
       "id": "786fd1a5-a048-5f1c-8dda-0840069b074a",
       "foodId": "66d51dfe-3fd5-5c85-b477-cb9e3d83666e",
       "nutrientId": "energy",
-      "amountPer100g": 94.08947368421053,
+      "amountPer100g": 97.19876021052633,
       "valueSource": "derived"
     },
     {
@@ -131102,7 +131242,7 @@
       "id": "a8540ad3-38c9-5189-8fed-e789d2e04a56",
       "foodId": "da87fd47-ef3b-5901-9e4b-c1de7ca994c3",
       "nutrientId": "energy",
-      "amountPer100g": 100.49130434782609,
+      "amountPer100g": 102.88860932173915,
       "valueSource": "derived"
     },
     {
@@ -131270,7 +131410,7 @@
       "id": "d18ef241-98f6-533c-b0dd-ca0a2ca1663d",
       "foodId": "3dc100ff-0023-51c7-9dad-76a8f03c21bc",
       "nutrientId": "energy",
-      "amountPer100g": 163.5333333333333,
+      "amountPer100g": 165.8307506,
       "valueSource": "derived"
     },
     {
@@ -131438,7 +131578,7 @@
       "id": "8a7323a6-cc82-5f39-8a6f-a7e72dde5bc2",
       "foodId": "58d368eb-c0b7-5d7f-b92b-47aeb266b182",
       "nutrientId": "energy",
-      "amountPer100g": 169.08333333333334,
+      "amountPer100g": 174.32745206666667,
       "valueSource": "derived"
     },
     {
@@ -131606,7 +131746,7 @@
       "id": "6a88687f-2003-5f37-8d2d-9fddd7ade4ad",
       "foodId": "ca4ba305-b5ef-562f-9647-91732875a626",
       "nutrientId": "energy",
-      "amountPer100g": 213.8722222222222,
+      "amountPer100g": 216.06023866666666,
       "valueSource": "derived"
     },
     {
@@ -131939,6 +132079,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "ff3d2f43-c743-5865-8fe0-fa646baf1633",
+      "foodId": "5e98bef2-7a5c-5b55-93d3-d7632677a62d",
+      "nutrientId": "energy",
+      "amountPer100g": 129.7751859473684,
+      "valueSource": "derived"
+    },
+    {
       "id": "714c65b6-1fad-5e30-b4fb-a99278ceaf90",
       "foodId": "5e98bef2-7a5c-5b55-93d3-d7632677a62d",
       "nutrientId": "protein",
@@ -132030,13 +132177,6 @@
       "valueSource": "derived"
     },
     {
-      "id": "ff3d2f43-c743-5865-8fe0-fa646baf1633",
-      "foodId": "5e98bef2-7a5c-5b55-93d3-d7632677a62d",
-      "nutrientId": "energy",
-      "amountPer100g": 115.34210526315789,
-      "valueSource": "derived"
-    },
-    {
       "id": "c457e9ff-8419-5a13-b743-53a1db2d3c03",
       "foodId": "5e98bef2-7a5c-5b55-93d3-d7632677a62d",
       "nutrientId": "saturated_fat",
@@ -132110,7 +132250,7 @@
       "id": "acfc40ba-c4a3-525a-932a-f71c72fbec8c",
       "foodId": "6b57418d-575e-5b7f-81c0-5d12523a5032",
       "nutrientId": "energy",
-      "amountPer100g": 303.859090909091,
+      "amountPer100g": 306.3653642909091,
       "valueSource": "derived"
     },
     {
@@ -132278,7 +132418,7 @@
       "id": "e0ca69a6-d12e-5f9d-827e-3b15cd13ac4c",
       "foodId": "5e2517ac-9eb7-5feb-bf9e-2dc571470286",
       "nutrientId": "energy",
-      "amountPer100g": 263.8826086956522,
+      "amountPer100g": 273.32946966956524,
       "valueSource": "derived"
     },
     {
@@ -132443,6 +132583,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "55e6bdd8-2c78-5877-9262-ac7c910bf1c0",
+      "foodId": "72c65975-f69b-5d5d-b173-afe19200b98f",
+      "nutrientId": "energy",
+      "amountPer100g": 123.72963326704547,
+      "valueSource": "derived"
+    },
+    {
       "id": "1fd0cb6b-ddb9-55ba-af4a-2e080576a6e7",
       "foodId": "72c65975-f69b-5d5d-b173-afe19200b98f",
       "nutrientId": "protein",
@@ -132534,13 +132681,6 @@
       "valueSource": "derived"
     },
     {
-      "id": "55e6bdd8-2c78-5877-9262-ac7c910bf1c0",
-      "foodId": "72c65975-f69b-5d5d-b173-afe19200b98f",
-      "nutrientId": "energy",
-      "amountPer100g": 109.00000000000001,
-      "valueSource": "derived"
-    },
-    {
       "id": "025f6802-4038-5200-8fe9-2748d54e6660",
       "foodId": "72c65975-f69b-5d5d-b173-afe19200b98f",
       "nutrientId": "saturated_fat",
@@ -132614,7 +132754,7 @@
       "id": "6d754fa4-4196-5865-ace4-2290bf5ae2d4",
       "foodId": "78f8454a-53d6-5b53-abd6-d775726dbabe",
       "nutrientId": "energy",
-      "amountPer100g": 147.15,
+      "amountPer100g": 149.5568180888889,
       "valueSource": "derived"
     },
     {
@@ -132779,6 +132919,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "fe7ae86c-4eaf-5f9d-bcfd-828ca5460ddc",
+      "foodId": "6c4ebf64-22e9-5eb3-bd43-62f87a71b633",
+      "nutrientId": "energy",
+      "amountPer100g": 87.68144832638887,
+      "valueSource": "derived"
+    },
+    {
       "id": "4d3dfb9f-4c2f-53fb-ba11-fcd33e595ac2",
       "foodId": "6c4ebf64-22e9-5eb3-bd43-62f87a71b633",
       "nutrientId": "protein",
@@ -132867,13 +133014,6 @@
       "foodId": "6c4ebf64-22e9-5eb3-bd43-62f87a71b633",
       "nutrientId": "folate",
       "amountPer100g": 53.67916666666667,
-      "valueSource": "derived"
-    },
-    {
-      "id": "fe7ae86c-4eaf-5f9d-bcfd-828ca5460ddc",
-      "foodId": "6c4ebf64-22e9-5eb3-bd43-62f87a71b633",
-      "nutrientId": "energy",
-      "amountPer100g": 79.23333333333333,
       "valueSource": "derived"
     },
     {
@@ -133790,7 +133930,7 @@
       "id": "7ecb81a7-9ad8-53bb-a586-841d81dd62a4",
       "foodId": "deeadb1d-aa08-5e10-a3c0-989a6dd89603",
       "nutrientId": "energy",
-      "amountPer100g": 175.8090909090909,
+      "amountPer100g": 176.23689481818184,
       "valueSource": "derived"
     },
     {
@@ -133958,7 +134098,7 @@
       "id": "5823e8fd-78f2-5251-86bc-b1e91e9c2b68",
       "foodId": "4abe045a-4c6b-5180-9913-dfb1918a1931",
       "nutrientId": "energy",
-      "amountPer100g": 187.8090909090909,
+      "amountPer100g": 188.23689481818184,
       "valueSource": "derived"
     },
     {
@@ -134126,7 +134266,7 @@
       "id": "8d9137cb-a615-5494-93bb-4a2f01ed7736",
       "foodId": "4552b077-2331-5ccf-884d-f21e169279f1",
       "nutrientId": "energy",
-      "amountPer100g": 253.8090909090909,
+      "amountPer100g": 254.2368948181818,
       "valueSource": "derived"
     },
     {
@@ -135131,6 +135271,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "566a52fa-e6d7-55ea-bce8-a8aadb400638",
+      "foodId": "f6921c7e-70fb-57c7-ba80-055f3de5f42c",
+      "nutrientId": "energy",
+      "amountPer100g": 126.76949150000002,
+      "valueSource": "derived"
+    },
+    {
       "id": "bcf15db9-4399-5eda-b7bf-5dc8e42a710b",
       "foodId": "f6921c7e-70fb-57c7-ba80-055f3de5f42c",
       "nutrientId": "protein",
@@ -135233,13 +135380,6 @@
       "foodId": "f6921c7e-70fb-57c7-ba80-055f3de5f42c",
       "nutrientId": "niacin",
       "amountPer100g": 2.0905666666666667,
-      "valueSource": "derived"
-    },
-    {
-      "id": "566a52fa-e6d7-55ea-bce8-a8aadb400638",
-      "foodId": "f6921c7e-70fb-57c7-ba80-055f3de5f42c",
-      "nutrientId": "energy",
-      "amountPer100g": 3.9833333333333334,
       "valueSource": "derived"
     },
     {
@@ -135638,7 +135778,7 @@
       "id": "9fc6563c-7360-59e1-b7db-40c9ea9eb3ef",
       "foodId": "76f40752-4e66-5e38-96fb-9cedffa2b8ed",
       "nutrientId": "energy",
-      "amountPer100g": 111.67727272727271,
+      "amountPer100g": 155.3254719090909,
       "valueSource": "derived"
     },
     {
@@ -135974,7 +136114,7 @@
       "id": "656e41b4-000f-53a2-ae65-fdbe9e0cba98",
       "foodId": "6139c125-1c85-5a4b-a770-fd0aa5269ce0",
       "nutrientId": "energy",
-      "amountPer100g": 193.42857142857147,
+      "amountPer100g": 195.46896229910715,
       "valueSource": "derived"
     },
     {
@@ -139331,6 +139471,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "7e4b6cb9-6ccb-554d-8b5d-2c9d75a28d80",
+      "foodId": "b34bcc8a-e0ef-5eb4-82ed-c1c1d189184f",
+      "nutrientId": "energy",
+      "amountPer100g": 172.03764988888886,
+      "valueSource": "derived"
+    },
+    {
       "id": "aa0517c8-fb24-597c-9749-3a8d5c19b295",
       "foodId": "b34bcc8a-e0ef-5eb4-82ed-c1c1d189184f",
       "nutrientId": "protein",
@@ -139398,13 +139545,6 @@
       "foodId": "b34bcc8a-e0ef-5eb4-82ed-c1c1d189184f",
       "nutrientId": "phosphorus",
       "amountPer100g": 131.04555555555558,
-      "valueSource": "derived"
-    },
-    {
-      "id": "7e4b6cb9-6ccb-554d-8b5d-2c9d75a28d80",
-      "foodId": "b34bcc8a-e0ef-5eb4-82ed-c1c1d189184f",
-      "nutrientId": "energy",
-      "amountPer100g": 85.2388888888889,
       "valueSource": "derived"
     },
     {
@@ -140174,7 +140314,7 @@
       "id": "58108148-cb7b-5d5f-8804-6d79b040413a",
       "foodId": "10bbdca2-a835-509f-8237-bf6a4a6392a1",
       "nutrientId": "energy",
-      "amountPer100g": 133.70944444444447,
+      "amountPer100g": 133.78787516111112,
       "valueSource": "derived"
     },
     {
@@ -140339,6 +140479,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "d16637b8-00d0-5c69-9448-c447792867ff",
+      "foodId": "b0319b96-0e56-5743-b07a-122a5c8a182f",
+      "nutrientId": "energy",
+      "amountPer100g": 76.98589305555555,
+      "valueSource": "derived"
+    },
+    {
       "id": "ff47381c-e2b3-5776-92e9-3ff09600f631",
       "foodId": "b0319b96-0e56-5743-b07a-122a5c8a182f",
       "nutrientId": "protein",
@@ -140451,13 +140598,6 @@
       "valueSource": "derived"
     },
     {
-      "id": "d16637b8-00d0-5c69-9448-c447792867ff",
-      "foodId": "b0319b96-0e56-5743-b07a-122a5c8a182f",
-      "nutrientId": "energy",
-      "amountPer100g": 70.45,
-      "valueSource": "derived"
-    },
-    {
       "id": "5ee5c35f-a651-5d23-adb7-f82e7bed9cdf",
       "foodId": "b0319b96-0e56-5743-b07a-122a5c8a182f",
       "nutrientId": "saturated_fat",
@@ -140504,6 +140644,13 @@
       "foodId": "b0319b96-0e56-5743-b07a-122a5c8a182f",
       "nutrientId": "riboflavin",
       "amountPer100g": 0.13334444444444446,
+      "valueSource": "derived"
+    },
+    {
+      "id": "b6ecfd86-2e11-5e8b-8f3b-13f470dfa8e5",
+      "foodId": "cde875cb-f9b0-58b1-a742-8884c8182993",
+      "nutrientId": "energy",
+      "amountPer100g": 76.98589305555555,
       "valueSource": "derived"
     },
     {
@@ -140619,13 +140766,6 @@
       "valueSource": "derived"
     },
     {
-      "id": "b6ecfd86-2e11-5e8b-8f3b-13f470dfa8e5",
-      "foodId": "cde875cb-f9b0-58b1-a742-8884c8182993",
-      "nutrientId": "energy",
-      "amountPer100g": 70.45,
-      "valueSource": "derived"
-    },
-    {
       "id": "09c5e904-d528-50f4-9684-666702fcbd02",
       "foodId": "cde875cb-f9b0-58b1-a742-8884c8182993",
       "nutrientId": "saturated_fat",
@@ -140672,6 +140812,13 @@
       "foodId": "cde875cb-f9b0-58b1-a742-8884c8182993",
       "nutrientId": "riboflavin",
       "amountPer100g": 0.13334444444444446,
+      "valueSource": "derived"
+    },
+    {
+      "id": "e306bf2a-bb35-5c67-870b-14ebe2b332d1",
+      "foodId": "7711a12b-943d-5277-86dc-807a9a5822e4",
+      "nutrientId": "energy",
+      "amountPer100g": 162.56125572222223,
       "valueSource": "derived"
     },
     {
@@ -140777,13 +140924,6 @@
       "foodId": "7711a12b-943d-5277-86dc-807a9a5822e4",
       "nutrientId": "niacin",
       "amountPer100g": 3.067238888888888,
-      "valueSource": "derived"
-    },
-    {
-      "id": "e306bf2a-bb35-5c67-870b-14ebe2b332d1",
-      "foodId": "7711a12b-943d-5277-86dc-807a9a5822e4",
-      "nutrientId": "energy",
-      "amountPer100g": 70.45,
       "valueSource": "derived"
     },
     {
@@ -142022,7 +142162,7 @@
       "id": "b730f90d-10db-5760-bb6d-ec6441715a28",
       "foodId": "e25f86d7-ad4a-5ba8-a981-9fe17c5c59a6",
       "nutrientId": "energy",
-      "amountPer100g": 62.475,
+      "amountPer100g": 71.482766,
       "valueSource": "derived"
     },
     {
@@ -142190,7 +142330,7 @@
       "id": "21a41813-c346-5be5-b706-80ca31f9559d",
       "foodId": "f3284c66-850b-51e1-80f0-1182f8da9b3b",
       "nutrientId": "energy",
-      "amountPer100g": 249.38235294117646,
+      "amountPer100g": 273.09246983058824,
       "valueSource": "derived"
     },
     {
@@ -142358,7 +142498,7 @@
       "id": "6ecb9ef2-7a4e-50d3-aadc-7ed28b43f1d1",
       "foodId": "be47b26b-1d78-53fd-a83d-e895af6e48ac",
       "nutrientId": "energy",
-      "amountPer100g": 249.38235294117646,
+      "amountPer100g": 273.09246983058824,
       "valueSource": "derived"
     },
     {
@@ -142526,7 +142666,7 @@
       "id": "5f200f51-0eb6-5326-9bb4-2c7c08e7acea",
       "foodId": "9b43603d-30a7-52f5-876b-f735a7f15752",
       "nutrientId": "energy",
-      "amountPer100g": 164.6176470588235,
+      "amountPer100g": 188.32776394823526,
       "valueSource": "derived"
     },
     {
@@ -142694,7 +142834,7 @@
       "id": "43994510-5844-5cd6-97d7-088440a2fdc4",
       "foodId": "2478ca47-ad85-58eb-9c17-88270e67e9a7",
       "nutrientId": "energy",
-      "amountPer100g": 164.6176470588235,
+      "amountPer100g": 191.22366806588235,
       "valueSource": "derived"
     },
     {
@@ -142862,7 +143002,7 @@
       "id": "ebb81b6e-5f06-5931-bd2d-f3e82ab3b8b2",
       "foodId": "691bb669-779e-561b-b249-aab0ebc32dc0",
       "nutrientId": "energy",
-      "amountPer100g": 220.58823529411762,
+      "amountPer100g": 244.2983521835294,
       "valueSource": "derived"
     },
     {
@@ -143027,6 +143167,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "8f228450-a755-54e4-810b-3f7d2d1ea71e",
+      "foodId": "f27c5f24-05e9-5153-8855-cf8b539fd10a",
+      "nutrientId": "energy",
+      "amountPer100g": 245.9219346875,
+      "valueSource": "derived"
+    },
+    {
       "id": "55d2c0b6-1c4e-57f2-b277-5a48766adb7f",
       "foodId": "f27c5f24-05e9-5153-8855-cf8b539fd10a",
       "nutrientId": "protein",
@@ -143101,13 +143248,6 @@
       "foodId": "f27c5f24-05e9-5153-8855-cf8b539fd10a",
       "nutrientId": "phosphorus",
       "amountPer100g": 234.525,
-      "valueSource": "derived"
-    },
-    {
-      "id": "8f228450-a755-54e4-810b-3f7d2d1ea71e",
-      "foodId": "f27c5f24-05e9-5153-8855-cf8b539fd10a",
-      "nutrientId": "energy",
-      "amountPer100g": 95.88125,
       "valueSource": "derived"
     },
     {
@@ -143534,7 +143674,7 @@
       "id": "9691bf4d-9f85-570d-8fea-3e5e231d6929",
       "foodId": "2772310b-5a43-5502-a2db-f2b5169614e4",
       "nutrientId": "energy",
-      "amountPer100g": 256.3133333333333,
+      "amountPer100g": 260.90816786666664,
       "valueSource": "derived"
     },
     {
@@ -144038,7 +144178,7 @@
       "id": "b260b874-485d-5bc5-8708-9e95d3233439",
       "foodId": "5678d3ed-6ece-5b60-9fa4-992b5830f163",
       "nutrientId": "energy",
-      "amountPer100g": 104.41333333333334,
+      "amountPer100g": 170.48795053333333,
       "valueSource": "derived"
     },
     {
@@ -146555,6 +146695,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "e70aea2e-9b7c-5b12-a922-e2901e88dedd",
+      "foodId": "e38e21f5-5229-5f46-90f6-cb879f1c2373",
+      "nutrientId": "energy",
+      "amountPer100g": 83.89783693333332,
+      "valueSource": "derived"
+    },
+    {
       "id": "07a2468a-64fe-5d3c-8ece-f03b9eb9674b",
       "foodId": "e38e21f5-5229-5f46-90f6-cb879f1c2373",
       "nutrientId": "protein",
@@ -146671,13 +146818,6 @@
       "foodId": "e38e21f5-5229-5f46-90f6-cb879f1c2373",
       "nutrientId": "niacin",
       "amountPer100g": 2.037983333333333,
-      "valueSource": "derived"
-    },
-    {
-      "id": "e70aea2e-9b7c-5b12-a922-e2901e88dedd",
-      "foodId": "e38e21f5-5229-5f46-90f6-cb879f1c2373",
-      "nutrientId": "energy",
-      "amountPer100g": 70.11333333333334,
       "valueSource": "derived"
     },
     {
@@ -147395,6 +147535,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "b9ddd908-1b50-5517-b0c5-f6f16894b0bd",
+      "foodId": "68993e31-7147-50c4-9479-633664256723",
+      "nutrientId": "energy",
+      "amountPer100g": 191.2279223888889,
+      "valueSource": "derived"
+    },
+    {
       "id": "50500d12-c868-5cc2-86fb-a37cb74c5fb4",
       "foodId": "68993e31-7147-50c4-9479-633664256723",
       "nutrientId": "protein",
@@ -147497,13 +147644,6 @@
       "foodId": "68993e31-7147-50c4-9479-633664256723",
       "nutrientId": "niacin",
       "amountPer100g": 3.147072222222222,
-      "valueSource": "derived"
-    },
-    {
-      "id": "b9ddd908-1b50-5517-b0c5-f6f16894b0bd",
-      "foodId": "68993e31-7147-50c4-9479-633664256723",
-      "nutrientId": "energy",
-      "amountPer100g": 99.11666666666666,
       "valueSource": "derived"
     },
     {
@@ -149414,7 +149554,7 @@
       "id": "cd2ea7d2-38d8-53ce-9bcc-4d2f20ae8342",
       "foodId": "d5905f5b-c97a-5006-9575-ba51cf0f88fc",
       "nutrientId": "energy",
-      "amountPer100g": 193.18421052631572,
+      "amountPer100g": 243.72423063157888,
       "valueSource": "derived"
     },
     {
@@ -152438,7 +152578,7 @@
       "id": "72ae7d29-ffe7-5a09-ae54-09664600ab63",
       "foodId": "5dcb3d50-ffb1-5c21-b172-ad72f0cabf05",
       "nutrientId": "energy",
-      "amountPer100g": 118.61999999999999,
+      "amountPer100g": 174.41920349999998,
       "valueSource": "derived"
     },
     {
@@ -152606,7 +152746,7 @@
       "id": "8d646c61-d9dd-593d-9270-3913bca105c1",
       "foodId": "fa74d200-fd41-5cf9-94bc-1aa980c73cf5",
       "nutrientId": "energy",
-      "amountPer100g": 70.62142857142858,
+      "amountPer100g": 110.47800250000002,
       "valueSource": "derived"
     },
     {
@@ -152774,7 +152914,7 @@
       "id": "e9bf5490-5e60-5e4b-87b2-e4abdfa30626",
       "foodId": "3a55398d-4c50-55c3-982e-4be799d2efaa",
       "nutrientId": "energy",
-      "amountPer100g": 64.90714285714286,
+      "amountPer100g": 104.7637167857143,
       "valueSource": "derived"
     },
     {
@@ -152942,7 +153082,7 @@
       "id": "2d0eaab0-0fe6-5d1f-87eb-c5f73c661f73",
       "foodId": "aa14eaee-c9e0-5dab-bda5-9f5796a7093a",
       "nutrientId": "energy",
-      "amountPer100g": 64.90714285714286,
+      "amountPer100g": 104.7637167857143,
       "valueSource": "derived"
     },
     {
@@ -153110,7 +153250,7 @@
       "id": "b2474c18-2791-5cce-abb3-652b05056df1",
       "foodId": "7b40cb6e-9bac-5d2c-afff-4bb82f357024",
       "nutrientId": "energy",
-      "amountPer100g": 70.62142857142858,
+      "amountPer100g": 110.47800250000002,
       "valueSource": "derived"
     },
     {
@@ -153782,7 +153922,7 @@
       "id": "68dd8021-41ba-5400-9ce9-ab79abee460f",
       "foodId": "bfe5f9cc-770e-5a2c-a6eb-80a5ad94c4ee",
       "nutrientId": "energy",
-      "amountPer100g": 171.6833333333333,
+      "amountPer100g": 172.07548691666665,
       "valueSource": "derived"
     },
     {
@@ -153950,7 +154090,7 @@
       "id": "750d207f-d119-591a-aa3b-2d735b0e7d50",
       "foodId": "2840e5ba-f402-55da-954c-2ae8129a704e",
       "nutrientId": "energy",
-      "amountPer100g": 190.01666666666665,
+      "amountPer100g": 190.40882025,
       "valueSource": "derived"
     },
     {
@@ -154118,7 +154258,7 @@
       "id": "50fe92dd-402b-5dc5-ae4b-9fa431286c4e",
       "foodId": "f022ed9c-0981-5fd8-9351-9430ef2455aa",
       "nutrientId": "energy",
-      "amountPer100g": 150.69,
+      "amountPer100g": 151.1605843,
       "valueSource": "derived"
     },
     {
@@ -154286,7 +154426,7 @@
       "id": "18b4e74d-28bf-509f-ae4a-5da01513c112",
       "foodId": "27b65f6d-e020-58fd-8386-5dc00e64db5f",
       "nutrientId": "energy",
-      "amountPer100g": 133.09,
+      "amountPer100g": 133.5605843,
       "valueSource": "derived"
     },
     {
@@ -154454,7 +154594,7 @@
       "id": "275a63be-d299-57a9-bd6d-1c771cb06839",
       "foodId": "bc40f1b5-ff6e-5625-ada1-aaff78839c7f",
       "nutrientId": "energy",
-      "amountPer100g": 257.39,
+      "amountPer100g": 257.8605843,
       "valueSource": "derived"
     },
     {
@@ -154622,7 +154762,7 @@
       "id": "f49459fb-fe38-595b-aad1-0e28dc9ba383",
       "foodId": "1bdf2e8d-390c-5683-8322-0107e6a4f299",
       "nutrientId": "energy",
-      "amountPer100g": 188.62317460317462,
+      "amountPer100g": 188.71031984391539,
       "valueSource": "derived"
     },
     {
@@ -154790,7 +154930,7 @@
       "id": "d6f0317c-5203-5a5b-be6d-22bc1427eb97",
       "foodId": "6814a17c-005e-596b-bd30-422c0564c29e",
       "nutrientId": "energy",
-      "amountPer100g": 209.3157671957672,
+      "amountPer100g": 209.40291243650796,
       "valueSource": "derived"
     },
     {
@@ -154955,6 +155095,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "11c391f7-0902-5e1b-9673-1bd9c13f16d8",
+      "foodId": "e4002472-a1e1-5ed0-bfba-90be8fd44c4e",
+      "nutrientId": "energy",
+      "amountPer100g": 144.44790168095238,
+      "valueSource": "derived"
+    },
+    {
       "id": "990f7063-47c0-5083-b795-3c729d38a9ea",
       "foodId": "e4002472-a1e1-5ed0-bfba-90be8fd44c4e",
       "nutrientId": "protein",
@@ -155022,13 +155169,6 @@
       "foodId": "e4002472-a1e1-5ed0-bfba-90be8fd44c4e",
       "nutrientId": "phosphorus",
       "amountPer100g": 130.65657142857143,
-      "valueSource": "derived"
-    },
-    {
-      "id": "11c391f7-0902-5e1b-9673-1bd9c13f16d8",
-      "foodId": "e4002472-a1e1-5ed0-bfba-90be8fd44c4e",
-      "nutrientId": "energy",
-      "amountPer100g": 86.28576719576719,
       "valueSource": "derived"
     },
     {
@@ -155798,7 +155938,7 @@
       "id": "b1cce8ea-4097-528d-b549-d6f79e256452",
       "foodId": "fe5516ae-2817-542d-a10e-ee028268e7e1",
       "nutrientId": "energy",
-      "amountPer100g": 70.42552447552447,
+      "amountPer100g": 90.45600778321678,
       "valueSource": "derived"
     },
     {
@@ -155966,7 +156106,7 @@
       "id": "0bbc8e96-dbfa-5653-a641-7917a55916e5",
       "foodId": "58f0b6b5-839c-56dc-aa69-27c170a946aa",
       "nutrientId": "energy",
-      "amountPer100g": 89.60971250971251,
+      "amountPer100g": 134.12189763791758,
       "valueSource": "derived"
     },
     {
@@ -156467,6 +156607,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "47e38df6-587f-53ee-b973-9d9fc1374083",
+      "foodId": "01173ef9-0fbd-5751-ae9b-6bd8b495e816",
+      "nutrientId": "energy",
+      "amountPer100g": 553.9493738,
+      "valueSource": "derived"
+    },
+    {
       "id": "2b02c0c1-ad35-57d0-acae-bb4171896f01",
       "foodId": "01173ef9-0fbd-5751-ae9b-6bd8b495e816",
       "nutrientId": "protein",
@@ -156541,13 +156688,6 @@
       "foodId": "01173ef9-0fbd-5751-ae9b-6bd8b495e816",
       "nutrientId": "phosphorus",
       "amountPer100g": 373.272,
-      "valueSource": "derived"
-    },
-    {
-      "id": "47e38df6-587f-53ee-b973-9d9fc1374083",
-      "foodId": "01173ef9-0fbd-5751-ae9b-6bd8b495e816",
-      "nutrientId": "energy",
-      "amountPer100g": 14.34,
       "valueSource": "derived"
     },
     {
@@ -159158,7 +159298,7 @@
       "id": "b3552c28-842f-5837-baa1-a25f9831fe39",
       "foodId": "fd22dfa0-ee7f-5098-9300-74b5c1d191d8",
       "nutrientId": "energy",
-      "amountPer100g": 255.97727272727272,
+      "amountPer100g": 303.23752945454544,
       "valueSource": "derived"
     },
     {
@@ -159494,7 +159634,7 @@
       "id": "338650db-b0f0-56fa-8351-bd2eff20ae77",
       "foodId": "697ac92f-041f-5c47-b01c-ae49c7f3c669",
       "nutrientId": "energy",
-      "amountPer100g": 73.06666666666666,
+      "amountPer100g": 74.63528099999999,
       "valueSource": "derived"
     },
     {
@@ -159662,7 +159802,7 @@
       "id": "dc2f1ae5-943c-5f5f-9d5f-a4635f6caedd",
       "foodId": "fc64515d-e4ce-5fe0-83e9-23f8095e67ce",
       "nutrientId": "energy",
-      "amountPer100g": 251.0666666666667,
+      "amountPer100g": 252.63528100000002,
       "valueSource": "derived"
     },
     {
@@ -160502,7 +160642,7 @@
       "id": "5cbfc653-0426-5e64-9760-5410ece66188",
       "foodId": "9a79659d-ca6a-5511-a2c1-77dc87e75015",
       "nutrientId": "energy",
-      "amountPer100g": 191.0214015151515,
+      "amountPer100g": 191.41355509848486,
       "valueSource": "derived"
     },
     {
@@ -160670,7 +160810,7 @@
       "id": "92c774cb-fdba-51ff-a625-faf6dde90c60",
       "foodId": "1a55fccb-bf58-5e57-8855-1a5fb9dbcc2c",
       "nutrientId": "energy",
-      "amountPer100g": 88.04,
+      "amountPer100g": 200.10899129999999,
       "valueSource": "derived"
     },
     {
@@ -160835,6 +160975,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "765a59e6-3fb7-55bc-8bc6-3e758e5efb88",
+      "foodId": "033be968-23a4-53dd-a590-a5d65d6b4063",
+      "nutrientId": "energy",
+      "amountPer100g": 143.85165255,
+      "valueSource": "derived"
+    },
+    {
       "id": "853560eb-2cac-5feb-b4a5-fc1bbd76cf98",
       "foodId": "033be968-23a4-53dd-a590-a5d65d6b4063",
       "nutrientId": "protein",
@@ -160947,13 +161094,6 @@
       "valueSource": "derived"
     },
     {
-      "id": "765a59e6-3fb7-55bc-8bc6-3e758e5efb88",
-      "foodId": "033be968-23a4-53dd-a590-a5d65d6b4063",
-      "nutrientId": "energy",
-      "amountPer100g": 130.44,
-      "valueSource": "derived"
-    },
-    {
       "id": "66633605-b9e4-5284-a274-beb056fa007e",
       "foodId": "033be968-23a4-53dd-a590-a5d65d6b4063",
       "nutrientId": "saturated_fat",
@@ -161000,6 +161140,13 @@
       "foodId": "033be968-23a4-53dd-a590-a5d65d6b4063",
       "nutrientId": "riboflavin",
       "amountPer100g": 0.032479999999999995,
+      "valueSource": "derived"
+    },
+    {
+      "id": "c905f987-54d1-5a24-9a2a-c7de2ef2532c",
+      "foodId": "d00fb87b-1e9c-541c-b8f2-cd4ea46ece24",
+      "nutrientId": "energy",
+      "amountPer100g": 219.40766380000002,
       "valueSource": "derived"
     },
     {
@@ -161126,13 +161273,6 @@
       "foodId": "d00fb87b-1e9c-541c-b8f2-cd4ea46ece24",
       "nutrientId": "niacin",
       "amountPer100g": 0.022400000000000003,
-      "valueSource": "derived"
-    },
-    {
-      "id": "c905f987-54d1-5a24-9a2a-c7de2ef2532c",
-      "foodId": "d00fb87b-1e9c-541c-b8f2-cd4ea46ece24",
-      "nutrientId": "energy",
-      "amountPer100g": 14.34,
       "valueSource": "derived"
     },
     {
@@ -161846,7 +161986,7 @@
       "id": "5460cd08-68c8-56d9-becd-6ba16b266fe6",
       "foodId": "515b7eda-f5fe-5059-b7b5-d156f281ffac",
       "nutrientId": "energy",
-      "amountPer100g": 104.41333333333334,
+      "amountPer100g": 170.48795053333333,
       "valueSource": "derived"
     },
     {
@@ -162854,7 +162994,7 @@
       "id": "f4fe1b53-37d9-5f21-b946-7f42d7982b16",
       "foodId": "6a2e937c-288e-51e7-bdd6-5b86bc7c3aa7",
       "nutrientId": "energy",
-      "amountPer100g": 82.39999999999999,
+      "amountPer100g": 83.96861433333335,
       "valueSource": "derived"
     },
     {
@@ -163190,7 +163330,7 @@
       "id": "4ae7e6f2-15bf-5e38-8cb6-a9cfd845a1e1",
       "foodId": "aaa2670e-678d-5176-82b7-cec6c62a812f",
       "nutrientId": "energy",
-      "amountPer100g": 73.77894736842106,
+      "amountPer100g": 125.94311884210528,
       "valueSource": "derived"
     },
     {
@@ -163862,7 +164002,7 @@
       "id": "d494ef5a-897f-5497-a309-85d001373778",
       "foodId": "67279ff1-6fac-56ff-bb15-7aad85c377a7",
       "nutrientId": "energy",
-      "amountPer100g": 361.3090909090909,
+      "amountPer100g": 361.7368948181818,
       "valueSource": "derived"
     },
     {
@@ -164531,6 +164671,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "3bb566da-00b0-5a35-8d3c-cc8f8d1222d1",
+      "foodId": "5bfdbb09-8bd5-5df0-9793-7c2d7eefed58",
+      "nutrientId": "energy",
+      "amountPer100g": 398.8192722222222,
+      "valueSource": "derived"
+    },
+    {
       "id": "14d82c9a-c8e8-502e-bd01-e139323dade4",
       "foodId": "5bfdbb09-8bd5-5df0-9793-7c2d7eefed58",
       "nutrientId": "protein",
@@ -164598,13 +164745,6 @@
       "foodId": "5bfdbb09-8bd5-5df0-9793-7c2d7eefed58",
       "nutrientId": "phosphorus",
       "amountPer100g": 198.68888888888893,
-      "valueSource": "derived"
-    },
-    {
-      "id": "3bb566da-00b0-5a35-8d3c-cc8f8d1222d1",
-      "foodId": "5bfdbb09-8bd5-5df0-9793-7c2d7eefed58",
-      "nutrientId": "energy",
-      "amountPer100g": 192.15555555555554,
       "valueSource": "derived"
     },
     {
@@ -166379,6 +166519,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "17de4bf5-f4c6-5b40-83c6-ad9a1ef9d775",
+      "foodId": "be242c4a-c426-5af5-a93d-a9fc6abd86ae",
+      "nutrientId": "energy",
+      "amountPer100g": 158.36013015,
+      "valueSource": "derived"
+    },
+    {
       "id": "1c98d0c4-a763-5e16-b473-7ddf8e044dab",
       "foodId": "be242c4a-c426-5af5-a93d-a9fc6abd86ae",
       "nutrientId": "protein",
@@ -166481,13 +166628,6 @@
       "foodId": "be242c4a-c426-5af5-a93d-a9fc6abd86ae",
       "nutrientId": "niacin",
       "amountPer100g": 2.7974799999999997,
-      "valueSource": "derived"
-    },
-    {
-      "id": "17de4bf5-f4c6-5b40-83c6-ad9a1ef9d775",
-      "foodId": "be242c4a-c426-5af5-a93d-a9fc6abd86ae",
-      "nutrientId": "energy",
-      "amountPer100g": 75.46,
       "valueSource": "derived"
     },
     {
@@ -167894,7 +168034,7 @@
       "id": "ba3430a4-b0b6-5198-9dea-24987bfaa146",
       "foodId": "9f064cab-b1b2-5edc-ba0c-1f8381f11bd6",
       "nutrientId": "energy",
-      "amountPer100g": 84.11333333333334,
+      "amountPer100g": 150.18795053333335,
       "valueSource": "derived"
     },
     {
@@ -168398,7 +168538,7 @@
       "id": "0379c18f-221d-5d3d-bceb-f9fbcbac0383",
       "foodId": "432694c5-bd23-549a-b28c-679f648e7760",
       "nutrientId": "energy",
-      "amountPer100g": 154.81333333333336,
+      "amountPer100g": 220.8879505333333,
       "valueSource": "derived"
     },
     {
@@ -168566,7 +168706,7 @@
       "id": "910979fb-0482-595d-b2c1-fdab4c7b2477",
       "foodId": "dc80a1e9-8ed2-58be-8bf5-4e2ea8ef37c6",
       "nutrientId": "energy",
-      "amountPer100g": 93.21333333333332,
+      "amountPer100g": 159.28795053333334,
       "valueSource": "derived"
     },
     {
@@ -171422,7 +171562,7 @@
       "id": "0de34efe-d9bb-5d02-8288-d2f422c6bf94",
       "foodId": "93f11f8f-f203-50f4-998b-f6f9d5b071a6",
       "nutrientId": "energy",
-      "amountPer100g": 89.73333333333335,
+      "amountPer100g": 91.30194766666668,
       "valueSource": "derived"
     },
     {
@@ -171590,7 +171730,7 @@
       "id": "fd183b78-f127-5ddb-ab88-0953a4d55398",
       "foodId": "492899e2-0dd3-500d-9d21-228a00e3cf5a",
       "nutrientId": "energy",
-      "amountPer100g": 278.4,
+      "amountPer100g": 279.96861433333333,
       "valueSource": "derived"
     },
     {
@@ -171758,7 +171898,7 @@
       "id": "996be419-793d-5285-8c58-628745f75226",
       "foodId": "442fe7b2-fe3d-525f-824f-257d43e70ebf",
       "nutrientId": "energy",
-      "amountPer100g": 79.06666666666666,
+      "amountPer100g": 204.63351100000003,
       "valueSource": "derived"
     },
     {
@@ -171926,7 +172066,7 @@
       "id": "d9d00ae8-d092-5403-bbac-0e5a9f77a372",
       "foodId": "38dc3ef9-58c6-5b15-915f-682bbb2e3d78",
       "nutrientId": "energy",
-      "amountPer100g": 431.7333333333333,
+      "amountPer100g": 433.30194766666665,
       "valueSource": "derived"
     },
     {
@@ -172094,7 +172234,7 @@
       "id": "6665933a-d82e-5382-9779-f9d666464b31",
       "foodId": "fb0ebffe-cbf2-5b03-8deb-ba29b5866864",
       "nutrientId": "energy",
-      "amountPer100g": 65.73333333333333,
+      "amountPer100g": 75.14501933333332,
       "valueSource": "derived"
     },
     {
@@ -172262,7 +172402,7 @@
       "id": "9de7fa6a-6c59-56c9-89e4-35e2d49aea5d",
       "foodId": "29a4d4d4-2d95-528d-9d3a-18868932f78f",
       "nutrientId": "energy",
-      "amountPer100g": 43.06666666666666,
+      "amountPer100g": 52.47835266666666,
       "valueSource": "derived"
     },
     {
@@ -173270,7 +173410,7 @@
       "id": "8adb94db-ae15-525d-affd-6c296fa995cd",
       "foodId": "d137604c-8b8b-59ca-8b93-e9f06c0fbaef",
       "nutrientId": "energy",
-      "amountPer100g": 361.3090909090909,
+      "amountPer100g": 361.7368948181818,
       "valueSource": "derived"
     },
     {
@@ -173774,7 +173914,7 @@
       "id": "10c0704f-c05f-5362-97a1-5e4df7dfad91",
       "foodId": "342d7e75-6970-5550-988d-52f563f84b95",
       "nutrientId": "energy",
-      "amountPer100g": 204.14000000000004,
+      "amountPer100g": 204.61058430000003,
       "valueSource": "derived"
     },
     {
@@ -175790,7 +175930,7 @@
       "id": "4628276f-177b-524c-a048-55e553aa5dea",
       "foodId": "161e66e0-7835-5ee3-a5fb-c8313a780610",
       "nutrientId": "energy",
-      "amountPer100g": 361.3090909090909,
+      "amountPer100g": 361.7368948181818,
       "valueSource": "derived"
     },
     {
@@ -175958,7 +176098,7 @@
       "id": "ccf450a9-069d-52eb-9568-f732bbf4581c",
       "foodId": "92f76166-0b52-5dfb-a2d5-8057b43c0103",
       "nutrientId": "energy",
-      "amountPer100g": 99.74347826086957,
+      "amountPer100g": 103.22101400543477,
       "valueSource": "derived"
     },
     {
@@ -178646,7 +178786,7 @@
       "id": "292d34a1-72d8-54c4-817a-f3bc3bbfaba2",
       "foodId": "d720805d-fc46-5f83-930a-0420dc6929b9",
       "nutrientId": "energy",
-      "amountPer100g": 361.3090909090909,
+      "amountPer100g": 361.7368948181818,
       "valueSource": "derived"
     },
     {
@@ -178814,7 +178954,7 @@
       "id": "3e762d58-139c-5ef9-bdb7-ff4e76d78245",
       "foodId": "4599af91-2a8b-51e7-b764-85d6fc87bf65",
       "nutrientId": "energy",
-      "amountPer100g": 157.39,
+      "amountPer100g": 157.8605843,
       "valueSource": "derived"
     },
     {
@@ -178982,7 +179122,7 @@
       "id": "0d2124b3-cc6a-5d5c-9f6a-fa23d554e9b8",
       "foodId": "6cb14fda-829c-5698-a2f0-65a7687d9c30",
       "nutrientId": "energy",
-      "amountPer100g": 190.465,
+      "amountPer100g": 190.93558430000002,
       "valueSource": "derived"
     },
     {
@@ -179150,7 +179290,7 @@
       "id": "750e00dc-529c-5feb-b10e-6358d847c1c0",
       "foodId": "bccc8ea0-648d-55df-8d9f-7e7ac23472c6",
       "nutrientId": "energy",
-      "amountPer100g": 198.35,
+      "amountPer100g": 198.74215358333333,
       "valueSource": "derived"
     },
     {
@@ -179990,7 +180130,7 @@
       "id": "c970bbe9-3e65-5bce-ad52-ba94d20e1abe",
       "foodId": "2a76ca7b-4048-5694-92a9-5bc83212b2ff",
       "nutrientId": "energy",
-      "amountPer100g": 409.73333333333335,
+      "amountPer100g": 411.30194766666665,
       "valueSource": "derived"
     },
     {
@@ -180659,6 +180799,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "df29ff73-a7a9-5080-a860-f5114f4ede53",
+      "foodId": "4bf1457a-5f3b-54ec-83d1-4caf8748a6e7",
+      "nutrientId": "energy",
+      "amountPer100g": 162.56125572222223,
+      "valueSource": "derived"
+    },
+    {
       "id": "307dbdea-d1df-57a2-987a-acdbe12721ba",
       "foodId": "4bf1457a-5f3b-54ec-83d1-4caf8748a6e7",
       "nutrientId": "protein",
@@ -180761,13 +180908,6 @@
       "foodId": "4bf1457a-5f3b-54ec-83d1-4caf8748a6e7",
       "nutrientId": "niacin",
       "amountPer100g": 3.067238888888888,
-      "valueSource": "derived"
-    },
-    {
-      "id": "df29ff73-a7a9-5080-a860-f5114f4ede53",
-      "foodId": "4bf1457a-5f3b-54ec-83d1-4caf8748a6e7",
-      "nutrientId": "energy",
-      "amountPer100g": 70.45,
       "valueSource": "derived"
     },
     {
@@ -182675,6 +182815,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "aecffa35-5010-5f6a-b9ca-251bd5d8a89d",
+      "foodId": "26c65343-7b85-5d44-bf92-6dc024bc8967",
+      "nutrientId": "energy",
+      "amountPer100g": 162.56125572222223,
+      "valueSource": "derived"
+    },
+    {
       "id": "0ab5afb3-5c64-5cdf-b4d8-725146feeddb",
       "foodId": "26c65343-7b85-5d44-bf92-6dc024bc8967",
       "nutrientId": "protein",
@@ -182780,13 +182927,6 @@
       "valueSource": "derived"
     },
     {
-      "id": "aecffa35-5010-5f6a-b9ca-251bd5d8a89d",
-      "foodId": "26c65343-7b85-5d44-bf92-6dc024bc8967",
-      "nutrientId": "energy",
-      "amountPer100g": 70.45,
-      "valueSource": "derived"
-    },
-    {
       "id": "f849c3ff-d05e-54f4-9caf-9224a0167c5f",
       "foodId": "26c65343-7b85-5d44-bf92-6dc024bc8967",
       "nutrientId": "saturated_fat",
@@ -182840,6 +182980,13 @@
       "foodId": "26c65343-7b85-5d44-bf92-6dc024bc8967",
       "nutrientId": "folate",
       "amountPer100g": 22.91111111111111,
+      "valueSource": "derived"
+    },
+    {
+      "id": "9ad1f26e-0e24-597e-9185-9235c5d14858",
+      "foodId": "ebf088a2-2407-544f-8cda-83e647f97351",
+      "nutrientId": "energy",
+      "amountPer100g": 167.12320888888888,
       "valueSource": "derived"
     },
     {
@@ -182910,13 +183057,6 @@
       "foodId": "ebf088a2-2407-544f-8cda-83e647f97351",
       "nutrientId": "phosphorus",
       "amountPer100g": 135.8288888888889,
-      "valueSource": "derived"
-    },
-    {
-      "id": "9ad1f26e-0e24-597e-9185-9235c5d14858",
-      "foodId": "ebf088a2-2407-544f-8cda-83e647f97351",
-      "nutrientId": "energy",
-      "amountPer100g": 85.2388888888889,
       "valueSource": "derived"
     },
     {
@@ -183854,7 +183994,7 @@
       "id": "e0547258-8c66-5ee6-8440-129103eb08d0",
       "foodId": "ee744170-ed28-5964-8f74-8c70212012f4",
       "nutrientId": "energy",
-      "amountPer100g": 50.73333333333333,
+      "amountPer100g": 52.301947666666656,
       "valueSource": "derived"
     },
     {
@@ -184022,7 +184162,7 @@
       "id": "537c7a1f-5351-5b4e-9748-4fda1bc750ee",
       "foodId": "f55ecb98-4472-5557-902e-8de9b30077b3",
       "nutrientId": "energy",
-      "amountPer100g": 99.4,
+      "amountPer100g": 100.96861433333333,
       "valueSource": "derived"
     },
     {
@@ -184526,7 +184666,7 @@
       "id": "fd5e4b74-a2dd-5084-a0b1-f5601106a161",
       "foodId": "794f9856-03ce-5538-b677-d77b6ec3fa52",
       "nutrientId": "energy",
-      "amountPer100g": 255.97727272727272,
+      "amountPer100g": 303.23752945454544,
       "valueSource": "derived"
     },
     {
@@ -185184,7 +185324,7 @@
       "id": "586763eb-9435-5200-a12a-583fb66bbfad",
       "foodId": "101febee-2a06-513a-9b04-5c7f9a155ba8",
       "nutrientId": "energy",
-      "amountPer100g": 174.80909090909088,
+      "amountPer100g": 175.23689481818184,
       "valueSource": "derived"
     },
     {
@@ -185352,7 +185492,7 @@
       "id": "55ea2358-451e-5135-aa4f-b927179b6ab4",
       "foodId": "1a924a60-8fc0-5834-be19-29d05f72ac32",
       "nutrientId": "energy",
-      "amountPer100g": 227.19,
+      "amountPer100g": 227.6605843,
       "valueSource": "derived"
     },
     {
@@ -187365,6 +187505,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "0978d45a-9900-50f5-98d4-b2b41817fa5f",
+      "foodId": "4b7a3ec9-9ac6-5434-8fd7-fb8e707c4473",
+      "nutrientId": "energy",
+      "amountPer100g": 498.8192722222222,
+      "valueSource": "derived"
+    },
+    {
       "id": "0a9ae4ed-efee-5f5d-8f0f-1dfca2c62d1f",
       "foodId": "4b7a3ec9-9ac6-5434-8fd7-fb8e707c4473",
       "nutrientId": "protein",
@@ -187432,13 +187579,6 @@
       "foodId": "4b7a3ec9-9ac6-5434-8fd7-fb8e707c4473",
       "nutrientId": "phosphorus",
       "amountPer100g": 198.68888888888893,
-      "valueSource": "derived"
-    },
-    {
-      "id": "0978d45a-9900-50f5-98d4-b2b41817fa5f",
-      "foodId": "4b7a3ec9-9ac6-5434-8fd7-fb8e707c4473",
-      "nutrientId": "energy",
-      "amountPer100g": 292.15555555555557,
       "valueSource": "derived"
     },
     {
@@ -188208,7 +188348,7 @@
       "id": "8dc38e93-0579-5091-ac78-dfc37a04b34d",
       "foodId": "5ab02a5b-34c9-5bb6-b448-2ebbcb380a96",
       "nutrientId": "energy",
-      "amountPer100g": 324.09,
+      "amountPer100g": 324.56058429999996,
       "valueSource": "derived"
     },
     {
@@ -188376,7 +188516,7 @@
       "id": "7859eaae-1ab8-566e-aac6-1725674ad9e1",
       "foodId": "d35f28b3-8b2d-50d6-875d-1d5b9013cdcd",
       "nutrientId": "energy",
-      "amountPer100g": 227.19,
+      "amountPer100g": 227.6605843,
       "valueSource": "derived"
     },
     {
@@ -188544,7 +188684,7 @@
       "id": "6df7140f-8106-5aeb-9eca-9b70ce1e461d",
       "foodId": "091b773c-1a03-511b-8cac-e3a28670ef1c",
       "nutrientId": "energy",
-      "amountPer100g": 40.19,
+      "amountPer100g": 152.25899130000002,
       "valueSource": "derived"
     },
     {
@@ -188712,7 +188852,7 @@
       "id": "63cbeefc-828b-54a7-a928-0fcf7f8bfc28",
       "foodId": "77fc51a8-7b22-56e4-a34a-33742bf21f90",
       "nutrientId": "energy",
-      "amountPer100g": 161.07004070004072,
+      "amountPer100g": 161.15718594078143,
       "valueSource": "derived"
     },
     {
@@ -188880,7 +189020,7 @@
       "id": "237ccbe9-256a-506d-b5bf-a189277ee73f",
       "foodId": "923bd557-28cb-5aff-a7cd-85646d69b13a",
       "nutrientId": "energy",
-      "amountPer100g": 227.19,
+      "amountPer100g": 227.6605843,
       "valueSource": "derived"
     },
     {
@@ -189048,7 +189188,7 @@
       "id": "bb356204-98ba-5e3f-b3e6-82dc843f3c2e",
       "foodId": "5347dbc1-0be9-594e-a583-b1ab15c0c2af",
       "nutrientId": "energy",
-      "amountPer100g": 257.39,
+      "amountPer100g": 257.8605843,
       "valueSource": "derived"
     },
     {
@@ -189552,7 +189692,7 @@
       "id": "d828081a-44cf-5a40-9188-e1435e213d50",
       "foodId": "eb8fa4f8-1609-56d5-ab1d-8173e34cd323",
       "nutrientId": "energy",
-      "amountPer100g": 93.21333333333332,
+      "amountPer100g": 159.28795053333334,
       "valueSource": "derived"
     },
     {
@@ -191400,7 +191540,7 @@
       "id": "469435ec-1945-5d3e-a1f7-1f0c75510456",
       "foodId": "38d9a4ac-06f6-53d7-918f-e7055d3d6716",
       "nutrientId": "energy",
-      "amountPer100g": 60.242105263157896,
+      "amountPer100g": 112.40627673684212,
       "valueSource": "derived"
     },
     {
@@ -191568,7 +191708,7 @@
       "id": "1955f178-7da9-58d9-9c3c-7fc6c6fd544f",
       "foodId": "393c4e7b-41b2-5661-b1f4-0eafc67d5a2e",
       "nutrientId": "energy",
-      "amountPer100g": 207.59833333333327,
+      "amountPer100g": 207.75519476666662,
       "valueSource": "derived"
     },
     {
@@ -192912,7 +193052,7 @@
       "id": "585036a0-2e9f-5831-b187-93c5361546c3",
       "foodId": "6318e250-76c7-59bd-965e-c66a461aa941",
       "nutrientId": "energy",
-      "amountPer100g": 145.06666666666666,
+      "amountPer100g": 146.63528100000002,
       "valueSource": "derived"
     },
     {
@@ -193080,7 +193220,7 @@
       "id": "67540840-36b8-56bc-98a1-282966f929ae",
       "foodId": "7f32c151-095b-5de4-bff0-45018759ef14",
       "nutrientId": "energy",
-      "amountPer100g": 36.54615384615385,
+      "amountPer100g": 36.908141769230774,
       "valueSource": "derived"
     },
     {
@@ -193752,7 +193892,7 @@
       "id": "612be91e-0f16-5571-9630-9eec501e224e",
       "foodId": "64da1314-6004-51b1-9695-bd7a3d78dde4",
       "nutrientId": "energy",
-      "amountPer100g": 102.7642857142857,
+      "amountPer100g": 142.62085964285717,
       "valueSource": "derived"
     },
     {
@@ -193920,7 +194060,7 @@
       "id": "cd2475b9-2e53-5080-addf-0fee0e6c1999",
       "foodId": "044bf1a8-ffb7-50de-8db8-84c3c04f28bd",
       "nutrientId": "energy",
-      "amountPer100g": 196.0583333333333,
+      "amountPer100g": 196.45048691666668,
       "valueSource": "derived"
     },
     {
@@ -194256,7 +194396,7 @@
       "id": "7b368310-4651-5c76-b0be-525ce231bb34",
       "foodId": "fbfcc7ce-c1cd-5334-8f2f-61bb72b0108b",
       "nutrientId": "energy",
-      "amountPer100g": 61.90000000000001,
+      "amountPer100g": 114.06417147368421,
       "valueSource": "derived"
     },
     {
@@ -194424,7 +194564,7 @@
       "id": "d9d2dd0a-5ff9-5e51-9a92-4a98a02d968f",
       "foodId": "e386fdb9-d774-5e9b-83bc-09078ff2a8da",
       "nutrientId": "energy",
-      "amountPer100g": 73.77894736842106,
+      "amountPer100g": 125.94311884210528,
       "valueSource": "derived"
     },
     {
@@ -195096,7 +195236,7 @@
       "id": "e21904de-761e-51ae-a0fc-0cd317d68a58",
       "foodId": "7df005d7-c132-57d6-932e-a3c57166550b",
       "nutrientId": "energy",
-      "amountPer100g": 54.26315789473685,
+      "amountPer100g": 106.42732936842106,
       "valueSource": "derived"
     },
     {
@@ -195600,7 +195740,7 @@
       "id": "d462c5ae-9c3b-5e1f-a6bf-8413fa827bd4",
       "foodId": "25bc53bc-8263-5636-b350-2dbee75ad4f1",
       "nutrientId": "energy",
-      "amountPer100g": 248.09,
+      "amountPer100g": 248.56058430000002,
       "valueSource": "derived"
     },
     {
@@ -195768,7 +195908,7 @@
       "id": "1fc408e9-e7f2-5d68-ab11-fc4944e980c7",
       "foodId": "5c85ee66-92f6-59dd-beb0-4efb15de7ff3",
       "nutrientId": "energy",
-      "amountPer100g": 227.19,
+      "amountPer100g": 227.6605843,
       "valueSource": "derived"
     },
     {
@@ -195936,7 +196076,7 @@
       "id": "be78b60f-a01b-518f-90ba-b59f466a446a",
       "foodId": "5221df6a-1cf7-5e11-ac26-2fb2c4913ced",
       "nutrientId": "energy",
-      "amountPer100g": 321.42749999999995,
+      "amountPer100g": 321.89808429999994,
       "valueSource": "derived"
     },
     {
@@ -196104,7 +196244,7 @@
       "id": "2b5937bb-d01e-57d6-813c-e5e9d61d3218",
       "foodId": "f2cda86f-f705-55d1-bd91-b52681a8cb24",
       "nutrientId": "energy",
-      "amountPer100g": 215.2275,
+      "amountPer100g": 314.81001009999994,
       "valueSource": "derived"
     },
     {
@@ -196272,7 +196412,7 @@
       "id": "1fe01866-aed0-5d9b-8214-717c4127aba6",
       "foodId": "0c84f5bf-2237-52aa-b6af-e892aa31145d",
       "nutrientId": "energy",
-      "amountPer100g": 215.2275,
+      "amountPer100g": 327.29649129999996,
       "valueSource": "derived"
     },
     {
@@ -196437,6 +196577,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "ac7e3a88-f79b-59e2-92be-bde8d856a93c",
+      "foodId": "e81f2ba5-b541-5568-bcc8-a9f2d6617863",
+      "nutrientId": "energy",
+      "amountPer100g": 310.86559,
+      "valueSource": "derived"
+    },
+    {
       "id": "271d82e0-6eb5-5c21-a84e-4e55c06c69a8",
       "foodId": "e81f2ba5-b541-5568-bcc8-a9f2d6617863",
       "nutrientId": "protein",
@@ -196511,13 +196658,6 @@
       "foodId": "e81f2ba5-b541-5568-bcc8-a9f2d6617863",
       "nutrientId": "phosphorus",
       "amountPer100g": 211.5076923076923,
-      "valueSource": "derived"
-    },
-    {
-      "id": "ac7e3a88-f79b-59e2-92be-bde8d856a93c",
-      "foodId": "e81f2ba5-b541-5568-bcc8-a9f2d6617863",
-      "nutrientId": "energy",
-      "amountPer100g": 14.376923076923076,
       "valueSource": "derived"
     },
     {
@@ -196608,7 +196748,7 @@
       "id": "cc1e86d7-20c8-5ca5-9159-aeaf26a8db06",
       "foodId": "6c226ab6-525d-5290-8909-9ae9db71b6b6",
       "nutrientId": "energy",
-      "amountPer100g": 248.7775,
+      "amountPer100g": 249.24808430000002,
       "valueSource": "derived"
     },
     {
@@ -197112,7 +197252,7 @@
       "id": "7f112e26-df30-588a-b298-a07d88636e2b",
       "foodId": "c495d570-f6f9-56c9-99b5-04632e25de61",
       "nutrientId": "energy",
-      "amountPer100g": 392.15555555555557,
+      "amountPer100g": 540.343886111111,
       "valueSource": "derived"
     },
     {
@@ -197448,7 +197588,7 @@
       "id": "8d5ab666-0e28-50e4-9bf4-d231c3406c6e",
       "foodId": "bfb5669f-73ed-5b86-a7e0-108451482199",
       "nutrientId": "energy",
-      "amountPer100g": 344.8090909090909,
+      "amountPer100g": 345.2368948181818,
       "valueSource": "derived"
     },
     {
@@ -197616,7 +197756,7 @@
       "id": "47a1e2ad-939c-527f-aeeb-98f9db2715c0",
       "foodId": "2b6c20fa-5b88-5534-a0d3-de37564dc042",
       "nutrientId": "energy",
-      "amountPer100g": 167.8090909090909,
+      "amountPer100g": 443.5477998181818,
       "valueSource": "derived"
     },
     {
@@ -199128,7 +199268,7 @@
       "id": "10617fc6-3510-52c9-9e23-bb720a27c94c",
       "foodId": "0eee53b6-cec9-5550-8dbc-5ca206be88f1",
       "nutrientId": "energy",
-      "amountPer100g": 104.41333333333334,
+      "amountPer100g": 170.48795053333333,
       "valueSource": "derived"
     },
     {
@@ -199968,7 +200108,7 @@
       "id": "ba27cc17-6542-567f-ab04-1b27796920cb",
       "foodId": "fb881891-3f57-589d-b88b-47cff419d41a",
       "nutrientId": "energy",
-      "amountPer100g": 412.40000000000003,
+      "amountPer100g": 413.9686143333334,
       "valueSource": "derived"
     },
     {
@@ -200133,6 +200273,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "3b3cd549-8fb7-5247-b5dd-24654d9bed7f",
+      "foodId": "999f8e99-9208-5e6f-987a-52f9ad2fb6ac",
+      "nutrientId": "energy",
+      "amountPer100g": 418.3831543333333,
+      "valueSource": "derived"
+    },
+    {
       "id": "d9a92f07-9b80-5e9a-b717-0707c3e5448f",
       "foodId": "999f8e99-9208-5e6f-987a-52f9ad2fb6ac",
       "nutrientId": "protein",
@@ -200207,13 +200354,6 @@
       "foodId": "999f8e99-9208-5e6f-987a-52f9ad2fb6ac",
       "nutrientId": "phosphorus",
       "amountPer100g": 288.96,
-      "valueSource": "derived"
-    },
-    {
-      "id": "3b3cd549-8fb7-5247-b5dd-24654d9bed7f",
-      "foodId": "999f8e99-9208-5e6f-987a-52f9ad2fb6ac",
-      "nutrientId": "energy",
-      "amountPer100g": 49.733333333333334,
       "valueSource": "derived"
     },
     {
@@ -200304,7 +200444,7 @@
       "id": "c75f4e36-b50d-5af3-91ac-ef58990b6bff",
       "foodId": "05767c69-13cd-5a81-a4c7-0f336bef2f1c",
       "nutrientId": "energy",
-      "amountPer100g": 110.73333333333333,
+      "amountPer100g": 112.30194766666666,
       "valueSource": "derived"
     },
     {
@@ -202152,7 +202292,7 @@
       "id": "a0e202c5-f113-59a9-b713-f9c06cf7026b",
       "foodId": "6f28d469-3baa-5c59-b9ad-b8536d2dd97d",
       "nutrientId": "energy",
-      "amountPer100g": 69.94285714285714,
+      "amountPer100g": 109.79943107142857,
       "valueSource": "derived"
     },
     {
@@ -202653,6 +202793,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "b5124bda-eff0-5c42-9daf-a6aadc2c6261",
+      "foodId": "d8037960-1836-54b9-9a70-a200966949c0",
+      "nutrientId": "energy",
+      "amountPer100g": 231.39458905555554,
+      "valueSource": "derived"
+    },
+    {
       "id": "faa65139-3529-58e0-8f5a-b61636de4b26",
       "foodId": "d8037960-1836-54b9-9a70-a200966949c0",
       "nutrientId": "protein",
@@ -202755,13 +202902,6 @@
       "foodId": "d8037960-1836-54b9-9a70-a200966949c0",
       "nutrientId": "niacin",
       "amountPer100g": 3.1722388888888884,
-      "valueSource": "derived"
-    },
-    {
-      "id": "b5124bda-eff0-5c42-9daf-a6aadc2c6261",
-      "foodId": "d8037960-1836-54b9-9a70-a200966949c0",
-      "nutrientId": "energy",
-      "amountPer100g": 139.28333333333333,
       "valueSource": "derived"
     },
     {
@@ -203325,6 +203465,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "296662d9-1577-5ca2-9250-d1737397de50",
+      "foodId": "a690923f-4cc7-5436-b7ef-5445da356bf3",
+      "nutrientId": "energy",
+      "amountPer100g": 119.43838529411765,
+      "valueSource": "derived"
+    },
+    {
       "id": "40c8adc9-8cb7-5bb8-be94-34d9b8c04823",
       "foodId": "a690923f-4cc7-5436-b7ef-5445da356bf3",
       "nutrientId": "protein",
@@ -203413,13 +203560,6 @@
       "foodId": "a690923f-4cc7-5436-b7ef-5445da356bf3",
       "nutrientId": "folate",
       "amountPer100g": 65.63529411764706,
-      "valueSource": "derived"
-    },
-    {
-      "id": "296662d9-1577-5ca2-9250-d1737397de50",
-      "foodId": "a690923f-4cc7-5436-b7ef-5445da356bf3",
-      "nutrientId": "energy",
-      "amountPer100g": 95.34117647058824,
       "valueSource": "derived"
     },
     {
@@ -204168,7 +204308,7 @@
       "id": "2fcffc37-c204-5a14-a48a-c8aa67dbab0c",
       "foodId": "caf37864-dbd5-504f-87b6-bd8f9a3716d0",
       "nutrientId": "energy",
-      "amountPer100g": 111.52777777777779,
+      "amountPer100g": 120.53554377777778,
       "valueSource": "derived"
     },
     {
@@ -205344,7 +205484,7 @@
       "id": "75af22e9-a7f7-5adb-9857-7fabfa54eca7",
       "foodId": "abf229f2-a49b-574a-ad57-bfbb3241b678",
       "nutrientId": "energy",
-      "amountPer100g": 313.84,
+      "amountPer100g": 314.31058429999996,
       "valueSource": "derived"
     },
     {
@@ -206181,6 +206321,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "05040bba-0259-52ee-a6e7-91cccdc7ad07",
+      "foodId": "25532be2-45be-5490-b647-55bbdc1a48a8",
+      "nutrientId": "energy",
+      "amountPer100g": 315.31207094117656,
+      "valueSource": "derived"
+    },
+    {
       "id": "74be15d1-ccc4-59eb-8235-e895a65e5acd",
       "foodId": "25532be2-45be-5490-b647-55bbdc1a48a8",
       "nutrientId": "protein",
@@ -206283,13 +206430,6 @@
       "foodId": "25532be2-45be-5490-b647-55bbdc1a48a8",
       "nutrientId": "niacin",
       "amountPer100g": 3.3575705882352933,
-      "valueSource": "derived"
-    },
-    {
-      "id": "05040bba-0259-52ee-a6e7-91cccdc7ad07",
-      "foodId": "25532be2-45be-5490-b647-55bbdc1a48a8",
-      "nutrientId": "energy",
-      "amountPer100g": 120.25294117647059,
       "valueSource": "derived"
     },
     {
@@ -206520,7 +206660,7 @@
       "id": "3b85b4ad-c1cb-5a1b-ace2-89c5cbad3b4c",
       "foodId": "800a14a9-3a4c-5b7b-957d-f07b36d07a16",
       "nutrientId": "energy",
-      "amountPer100g": 91.975,
+      "amountPer100g": 98.80254249999999,
       "valueSource": "derived"
     },
     {
@@ -206688,7 +206828,7 @@
       "id": "f1a6278b-8a3b-5207-97ac-74b0301df0bb",
       "foodId": "25b977ff-320e-5506-8b30-f1bd92e9d0a4",
       "nutrientId": "energy",
-      "amountPer100g": 200.06666666666666,
+      "amountPer100g": 201.635281,
       "valueSource": "derived"
     },
     {
@@ -207186,6 +207326,13 @@
       "foodId": "8a1b05a1-cfa3-5cf8-a9fe-66bc3f1c0e52",
       "nutrientId": "niacin",
       "amountPer100g": 1.7261333333333333,
+      "valueSource": "derived"
+    },
+    {
+      "id": "872c8533-5379-5dba-a2c3-01f6d51982af",
+      "foodId": "67f668da-f0eb-5eed-9b3a-756224f8b8f7",
+      "nutrientId": "energy",
+      "amountPer100g": 334.79522099999997,
       "valueSource": "derived"
     },
     {
@@ -208116,7 +208263,7 @@
       "id": "2a036859-8415-5d9a-9ea3-6b4b85f94ec6",
       "foodId": "dbb2f721-e3c6-5be8-8d34-ccb869d572d2",
       "nutrientId": "energy",
-      "amountPer100g": 120.9785714285714,
+      "amountPer100g": 160.83514535714286,
       "valueSource": "derived"
     },
     {
@@ -208452,7 +208599,7 @@
       "id": "ffc2291f-bccf-55db-b5a9-52d5766bf14a",
       "foodId": "b7faaa2b-bd95-5b3d-afdd-0f02ebe5744f",
       "nutrientId": "energy",
-      "amountPer100g": 391.0454545454545,
+      "amountPer100g": 391.47325845454543,
       "valueSource": "derived"
     },
     {
@@ -208620,7 +208767,7 @@
       "id": "859fc326-d5fd-5911-82ad-1eae36a39471",
       "foodId": "0794d626-5d6a-5f97-85c4-9beffec91237",
       "nutrientId": "energy",
-      "amountPer100g": 205.3214285714286,
+      "amountPer100g": 239.61644221428574,
       "valueSource": "derived"
     },
     {
@@ -208788,7 +208935,7 @@
       "id": "18948daa-1b8f-5a12-aa1f-7427599d36e0",
       "foodId": "03f4850c-80a6-5556-a3fa-dc4c80becb1f",
       "nutrientId": "energy",
-      "amountPer100g": 145.85714285714283,
+      "amountPer100g": 180.1521565,
       "valueSource": "derived"
     },
     {
@@ -211644,7 +211791,7 @@
       "id": "2e5a13ab-8781-5511-bf04-7ab68c65ea40",
       "foodId": "13ca87dd-5d78-5000-b053-d9e307a6b0a5",
       "nutrientId": "energy",
-      "amountPer100g": 306.65454545454537,
+      "amountPer100g": 307.0823493636363,
       "valueSource": "derived"
     },
     {
@@ -212988,7 +213135,7 @@
       "id": "5ee536df-8942-54a7-8867-724834fe6d56",
       "foodId": "5df0f287-2c77-54ef-b572-13bc73291e97",
       "nutrientId": "energy",
-      "amountPer100g": 321.42749999999995,
+      "amountPer100g": 321.89808429999994,
       "valueSource": "derived"
     },
     {
@@ -213156,7 +213303,7 @@
       "id": "c532cfa4-6dbd-50c7-9961-fa9f5a716a3e",
       "foodId": "48a24cfd-67e8-5a2d-a9e3-9d60ea262131",
       "nutrientId": "energy",
-      "amountPer100g": 240.08000000000004,
+      "amountPer100g": 240.55058430000003,
       "valueSource": "derived"
     },
     {
@@ -213996,7 +214143,7 @@
       "id": "62b82dc2-9939-51f2-a811-dad582e736b2",
       "foodId": "eb386668-0fb4-5c96-8d96-801c331c22aa",
       "nutrientId": "energy",
-      "amountPer100g": 361.3090909090909,
+      "amountPer100g": 361.7368948181818,
       "valueSource": "derived"
     },
     {
@@ -214164,7 +214311,7 @@
       "id": "74d456fc-0884-5536-bbcc-9b65b6ed1679",
       "foodId": "749d4ce7-95f3-5c7b-8ed0-35ff8e4f452f",
       "nutrientId": "energy",
-      "amountPer100g": 291.03999999999996,
+      "amountPer100g": 291.51058429999995,
       "valueSource": "derived"
     },
     {
@@ -215004,7 +215151,7 @@
       "id": "4fea9b55-0ff0-59f6-a0b4-8ae76e4a9646",
       "foodId": "105bb8ae-a6b8-58ab-bcc2-8afdb1f0a144",
       "nutrientId": "energy",
-      "amountPer100g": 184.49999999999991,
+      "amountPer100g": 235.04002010526307,
       "valueSource": "derived"
     },
     {
@@ -217185,6 +217332,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "3e2cefc1-6012-54aa-a9d1-dcc57fda7e72",
+      "foodId": "79308334-867b-5635-8c68-bfcc555059e7",
+      "nutrientId": "energy",
+      "amountPer100g": 167.93133333333333,
+      "valueSource": "derived"
+    },
+    {
       "id": "b09de21b-094c-5024-be6f-1ef133356293",
       "foodId": "79308334-867b-5635-8c68-bfcc555059e7",
       "nutrientId": "protein",
@@ -217252,13 +217406,6 @@
       "foodId": "79308334-867b-5635-8c68-bfcc555059e7",
       "nutrientId": "phosphorus",
       "amountPer100g": 160.57777777777778,
-      "valueSource": "derived"
-    },
-    {
-      "id": "3e2cefc1-6012-54aa-a9d1-dcc57fda7e72",
-      "foodId": "79308334-867b-5635-8c68-bfcc555059e7",
-      "nutrientId": "energy",
-      "amountPer100g": 70.45,
       "valueSource": "derived"
     },
     {
@@ -217521,6 +217668,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "e251e2b5-2923-5ad6-84dc-d8fadb863e2f",
+      "foodId": "216a8aa9-4721-53fc-93a4-8ff8fc29ff57",
+      "nutrientId": "energy",
+      "amountPer100g": 76.98589305555555,
+      "valueSource": "derived"
+    },
+    {
       "id": "350b8973-3a71-537f-b621-49fbfc8ae93c",
       "foodId": "216a8aa9-4721-53fc-93a4-8ff8fc29ff57",
       "nutrientId": "protein",
@@ -217630,13 +217784,6 @@
       "foodId": "216a8aa9-4721-53fc-93a4-8ff8fc29ff57",
       "nutrientId": "niacin",
       "amountPer100g": 1.8761277777777776,
-      "valueSource": "derived"
-    },
-    {
-      "id": "e251e2b5-2923-5ad6-84dc-d8fadb863e2f",
-      "foodId": "216a8aa9-4721-53fc-93a4-8ff8fc29ff57",
-      "nutrientId": "energy",
-      "amountPer100g": 70.45,
       "valueSource": "derived"
     },
     {
@@ -218364,7 +218511,7 @@
       "id": "7705cc23-ca33-5edc-b38a-d541382582eb",
       "foodId": "04fc4f17-2306-5459-9556-10d4e69c5801",
       "nutrientId": "energy",
-      "amountPer100g": 99.51333333333335,
+      "amountPer100g": 165.58795053333333,
       "valueSource": "derived"
     },
     {
@@ -218532,7 +218679,7 @@
       "id": "31e79919-01b0-5dcc-a936-871f7549980a",
       "foodId": "50594e10-c896-599a-9028-d8f6da1ef31e",
       "nutrientId": "energy",
-      "amountPer100g": 93.21333333333332,
+      "amountPer100g": 159.28795053333334,
       "valueSource": "derived"
     },
     {
@@ -218868,7 +219015,7 @@
       "id": "c58fcdde-d530-5444-90a1-d88bae2b7147",
       "foodId": "9a1a2eff-13d7-518f-bf5b-ed32d2aeb0ec",
       "nutrientId": "energy",
-      "amountPer100g": 56.55789473684211,
+      "amountPer100g": 108.72206621052631,
       "valueSource": "derived"
     },
     {
@@ -219036,7 +219183,7 @@
       "id": "f7526102-d95d-5933-a63d-425e9c8b9f97",
       "foodId": "32ba076c-bdcb-56de-bfdb-434ab72808e4",
       "nutrientId": "energy",
-      "amountPer100g": 104.41333333333334,
+      "amountPer100g": 170.48795053333333,
       "valueSource": "derived"
     },
     {
@@ -219540,7 +219687,7 @@
       "id": "5eb41b51-c4c2-531b-bf46-0b7b6b83c742",
       "foodId": "b9b9f9a1-9462-5c53-9391-a1fbf301da93",
       "nutrientId": "energy",
-      "amountPer100g": 320.73999999999995,
+      "amountPer100g": 321.21058429999994,
       "valueSource": "derived"
     },
     {
@@ -219708,7 +219855,7 @@
       "id": "ef0b8ffb-8805-580b-9a7a-2de8d5484d20",
       "foodId": "d6c4cb68-8a29-575f-ba4e-1fb44303ac37",
       "nutrientId": "energy",
-      "amountPer100g": 201.3153846153846,
+      "amountPer100g": 277.55532753846154,
       "valueSource": "derived"
     },
     {
@@ -220380,7 +220527,7 @@
       "id": "26985894-1bd9-5885-890e-e4a71b45a1f6",
       "foodId": "46d537df-7d29-531f-b302-c00a222a8a8f",
       "nutrientId": "energy",
-      "amountPer100g": 143.09,
+      "amountPer100g": 143.56058430000002,
       "valueSource": "derived"
     },
     {
@@ -220716,7 +220863,7 @@
       "id": "8318ba45-d720-566f-b31a-421dc36d310d",
       "foodId": "64294917-de6f-58e5-b5ef-128e664bc010",
       "nutrientId": "energy",
-      "amountPer100g": 113.1731746031746,
+      "amountPer100g": 113.26031984391534,
       "valueSource": "derived"
     },
     {
@@ -221388,7 +221535,7 @@
       "id": "045fc64a-4593-5c37-80c0-ab8b63aabec9",
       "foodId": "400f1ee1-37f9-507d-a8e0-cf1ee68e79f2",
       "nutrientId": "energy",
-      "amountPer100g": 152.44,
+      "amountPer100g": 152.9105843,
       "valueSource": "derived"
     },
     {
@@ -222897,6 +223044,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "d192c406-bf56-5cbe-869d-2f584f3b03ce",
+      "foodId": "74e83a4a-9ee7-5f2f-94a6-c9635c9675d5",
+      "nutrientId": "energy",
+      "amountPer100g": 163.22585070000002,
+      "valueSource": "derived"
+    },
+    {
       "id": "1da4223e-6a2f-5d89-a6bf-25af87a9d819",
       "foodId": "74e83a4a-9ee7-5f2f-94a6-c9635c9675d5",
       "nutrientId": "protein",
@@ -223006,13 +223160,6 @@
       "foodId": "74e83a4a-9ee7-5f2f-94a6-c9635c9675d5",
       "nutrientId": "niacin",
       "amountPer100g": 0.31749799999999995,
-      "valueSource": "derived"
-    },
-    {
-      "id": "d192c406-bf56-5cbe-869d-2f584f3b03ce",
-      "foodId": "74e83a4a-9ee7-5f2f-94a6-c9635c9675d5",
-      "nutrientId": "energy",
-      "amountPer100g": 85.72999999999999,
       "valueSource": "derived"
     },
     {
@@ -224073,6 +224220,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "71524452-d64d-545d-b96c-17ac9db733d3",
+      "foodId": "26de8897-21ac-5e2d-a7df-e1a2d62590ce",
+      "nutrientId": "energy",
+      "amountPer100g": 237.195361,
+      "valueSource": "derived"
+    },
+    {
       "id": "29915606-6ce7-55f2-b488-cbfdaff0c60c",
       "foodId": "26de8897-21ac-5e2d-a7df-e1a2d62590ce",
       "nutrientId": "protein",
@@ -224185,13 +224339,6 @@
       "valueSource": "derived"
     },
     {
-      "id": "71524452-d64d-545d-b96c-17ac9db733d3",
-      "foodId": "26de8897-21ac-5e2d-a7df-e1a2d62590ce",
-      "nutrientId": "energy",
-      "amountPer100g": 36.4,
-      "valueSource": "derived"
-    },
-    {
       "id": "adac4de8-5892-59ed-be26-add0286bbbce",
       "foodId": "26de8897-21ac-5e2d-a7df-e1a2d62590ce",
       "nutrientId": "saturated_fat",
@@ -224244,7 +224391,7 @@
       "id": "8e52cd20-ab5b-504f-8d53-b18ee4e0caf9",
       "foodId": "3b5a3e88-b5bf-5421-a0f1-c8f0578e5f83",
       "nutrientId": "energy",
-      "amountPer100g": 249.73333333333332,
+      "amountPer100g": 251.30194766666665,
       "valueSource": "derived"
     },
     {
@@ -224412,7 +224559,7 @@
       "id": "855a092f-821d-5d59-b623-88766390901c",
       "foodId": "13e39b72-7236-5f7e-8083-061203d12b25",
       "nutrientId": "energy",
-      "amountPer100g": 18.77692307692308,
+      "amountPer100g": 95.016866,
       "valueSource": "derived"
     },
     {
@@ -224577,6 +224724,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "48875317-29d8-5d48-a6cb-6668ec03cb9d",
+      "foodId": "3f77539c-057e-5cc6-bdd3-60a6c0a1adf4",
+      "nutrientId": "energy",
+      "amountPer100g": 111.69046484615382,
+      "valueSource": "derived"
+    },
+    {
       "id": "b3e0d6d6-28dc-54de-bd6c-c4d332d12e05",
       "foodId": "3f77539c-057e-5cc6-bdd3-60a6c0a1adf4",
       "nutrientId": "protein",
@@ -224668,13 +224822,6 @@
       "valueSource": "derived"
     },
     {
-      "id": "48875317-29d8-5d48-a6cb-6668ec03cb9d",
-      "foodId": "3f77539c-057e-5cc6-bdd3-60a6c0a1adf4",
-      "nutrientId": "energy",
-      "amountPer100g": 13.392307692307693,
-      "valueSource": "derived"
-    },
-    {
       "id": "10e56d29-94d1-5a3f-9890-d1d0f5fc5771",
       "foodId": "3f77539c-057e-5cc6-bdd3-60a6c0a1adf4",
       "nutrientId": "saturated_fat",
@@ -224748,7 +224895,7 @@
       "id": "e4f4400c-e918-5d8a-840a-8369922c2f21",
       "foodId": "b426a093-cede-55ee-ba67-02e7817b5b96",
       "nutrientId": "energy",
-      "amountPer100g": 84.33333333333334,
+      "amountPer100g": 146.33244833333333,
       "valueSource": "derived"
     },
     {
@@ -225417,6 +225564,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "ea9ef50a-ba53-580f-854c-82f64adc9842",
+      "foodId": "09058c3f-a659-5119-8f0f-4252e059cd10",
+      "nutrientId": "energy",
+      "amountPer100g": 162.56125572222223,
+      "valueSource": "derived"
+    },
+    {
       "id": "4e10ee93-d324-5f34-bb60-a8df418ca263",
       "foodId": "09058c3f-a659-5119-8f0f-4252e059cd10",
       "nutrientId": "protein",
@@ -225522,13 +225676,6 @@
       "valueSource": "derived"
     },
     {
-      "id": "ea9ef50a-ba53-580f-854c-82f64adc9842",
-      "foodId": "09058c3f-a659-5119-8f0f-4252e059cd10",
-      "nutrientId": "energy",
-      "amountPer100g": 70.45,
-      "valueSource": "derived"
-    },
-    {
       "id": "7b13bb53-d887-524f-a9c1-c55b9972c8a6",
       "foodId": "09058c3f-a659-5119-8f0f-4252e059cd10",
       "nutrientId": "saturated_fat",
@@ -225582,6 +225729,13 @@
       "foodId": "09058c3f-a659-5119-8f0f-4252e059cd10",
       "nutrientId": "folate",
       "amountPer100g": 22.91111111111111,
+      "valueSource": "derived"
+    },
+    {
+      "id": "93ef03be-44d1-59cc-9922-2e55386dbfb4",
+      "foodId": "8e0e9cfe-6690-51b1-b534-1408f00da5bf",
+      "nutrientId": "energy",
+      "amountPer100g": 76.98589305555555,
       "valueSource": "derived"
     },
     {
@@ -225697,13 +225851,6 @@
       "valueSource": "derived"
     },
     {
-      "id": "93ef03be-44d1-59cc-9922-2e55386dbfb4",
-      "foodId": "8e0e9cfe-6690-51b1-b534-1408f00da5bf",
-      "nutrientId": "energy",
-      "amountPer100g": 70.45,
-      "valueSource": "derived"
-    },
-    {
       "id": "abc6e22d-1c74-529e-a6d5-3068fa9ab975",
       "foodId": "8e0e9cfe-6690-51b1-b534-1408f00da5bf",
       "nutrientId": "saturated_fat",
@@ -225756,7 +225903,7 @@
       "id": "f756a9e1-143b-5b30-9269-b9139400e768",
       "foodId": "e5b9bcd5-c5f7-5e1b-b308-529578b4250e",
       "nutrientId": "energy",
-      "amountPer100g": 215.2275,
+      "amountPer100g": 327.29649129999996,
       "valueSource": "derived"
     },
     {
@@ -225924,7 +226071,7 @@
       "id": "ed7b77f0-a350-5ce7-85cb-42f5950bc9e8",
       "foodId": "c2d28814-7aa0-5e86-b679-43925601a014",
       "nutrientId": "energy",
-      "amountPer100g": 331.32749999999993,
+      "amountPer100g": 331.7980842999999,
       "valueSource": "derived"
     },
     {
@@ -226092,7 +226239,7 @@
       "id": "55cf166c-48aa-56e1-885c-f8f1e2b2cec3",
       "foodId": "6ada69e5-5a0c-59db-b2a7-311e3e9bca1a",
       "nutrientId": "energy",
-      "amountPer100g": 227.19,
+      "amountPer100g": 227.6605843,
       "valueSource": "derived"
     },
     {
@@ -226257,6 +226404,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "6a27611f-494c-53b6-8b4b-aa488a565440",
+      "foodId": "e36d9607-7602-52bd-a306-93e28e53eb10",
+      "nutrientId": "energy",
+      "amountPer100g": 219.40766380000002,
+      "valueSource": "derived"
+    },
+    {
       "id": "57cb3a00-4a5a-5f39-b240-c6b891ab8474",
       "foodId": "e36d9607-7602-52bd-a306-93e28e53eb10",
       "nutrientId": "protein",
@@ -226383,13 +226537,6 @@
       "valueSource": "derived"
     },
     {
-      "id": "6a27611f-494c-53b6-8b4b-aa488a565440",
-      "foodId": "e36d9607-7602-52bd-a306-93e28e53eb10",
-      "nutrientId": "energy",
-      "amountPer100g": 14.34,
-      "valueSource": "derived"
-    },
-    {
       "id": "0024ac71-c1bb-5341-a986-54164cc413c9",
       "foodId": "e36d9607-7602-52bd-a306-93e28e53eb10",
       "nutrientId": "sugar",
@@ -226428,7 +226575,7 @@
       "id": "ad43b206-896a-5542-bb29-275fa74a15c4",
       "foodId": "13ada83c-fed9-5a60-b044-932b05d2cde2",
       "nutrientId": "energy",
-      "amountPer100g": 227.19,
+      "amountPer100g": 227.6605843,
       "valueSource": "derived"
     },
     {
@@ -226596,7 +226743,7 @@
       "id": "e3ae8650-6221-5840-a35c-8ea65e66efd4",
       "foodId": "2db2426a-d07b-5cd4-9dc7-475f551b9a97",
       "nutrientId": "energy",
-      "amountPer100g": 278.78999999999996,
+      "amountPer100g": 279.26058429999995,
       "valueSource": "derived"
     },
     {
@@ -227604,7 +227751,7 @@
       "id": "37fb15ad-bfaa-5adf-bb7c-693ac380e329",
       "foodId": "21ba494a-7105-5cf4-b460-e43dd6d01bb5",
       "nutrientId": "energy",
-      "amountPer100g": 200.06666666666666,
+      "amountPer100g": 201.635281,
       "valueSource": "derived"
     },
     {
@@ -227772,7 +227919,7 @@
       "id": "ed5331a5-4095-53d1-830f-4ddcf029d55f",
       "foodId": "5b5a769d-d713-5bb9-a388-6a8467baca12",
       "nutrientId": "energy",
-      "amountPer100g": 272.4,
+      "amountPer100g": 397.9668443333333,
       "valueSource": "derived"
     },
     {
@@ -227940,7 +228087,7 @@
       "id": "2f1c27ac-8ea8-54b0-b573-5cd0b8d12d5e",
       "foodId": "3afe63ab-eb8b-5930-8965-71622933d18c",
       "nutrientId": "energy",
-      "amountPer100g": 278.4,
+      "amountPer100g": 279.96861433333333,
       "valueSource": "derived"
     },
     {
@@ -228108,7 +228255,7 @@
       "id": "07b4ce1e-faae-5b03-b1e9-5688c4744474",
       "foodId": "8eab499c-6dd3-56dc-a588-67250de64940",
       "nutrientId": "energy",
-      "amountPer100g": 418.40000000000003,
+      "amountPer100g": 543.9668443333333,
       "valueSource": "derived"
     },
     {
@@ -228276,7 +228423,7 @@
       "id": "8183599f-903f-578e-baf0-649fe95db2b4",
       "foodId": "826866f1-5360-5f48-a4a1-754441838f11",
       "nutrientId": "energy",
-      "amountPer100g": 169.73333333333335,
+      "amountPer100g": 171.30194766666668,
       "valueSource": "derived"
     },
     {
@@ -228444,7 +228591,7 @@
       "id": "dfddb1da-82f9-52ac-9cd9-ef1a945c81ec",
       "foodId": "1dc4092f-aa33-5cc9-8a1e-4f54709ffdd8",
       "nutrientId": "energy",
-      "amountPer100g": 49.733333333333334,
+      "amountPer100g": 175.30017766666668,
       "valueSource": "derived"
     },
     {
@@ -228612,7 +228759,7 @@
       "id": "d5658724-2ec9-548f-9852-bbd5b7da74da",
       "foodId": "7a372d1a-857c-522a-9acf-5b2009cb66c0",
       "nutrientId": "energy",
-      "amountPer100g": 207.73333333333332,
+      "amountPer100g": 209.30194766666665,
       "valueSource": "derived"
     },
     {
@@ -230292,7 +230439,7 @@
       "id": "3d2dd80f-3027-5817-a249-9b090a4f24f4",
       "foodId": "37c2e2d9-667a-5ed3-a376-c0cae1124d14",
       "nutrientId": "energy",
-      "amountPer100g": 92.22857142857143,
+      "amountPer100g": 132.08514535714286,
       "valueSource": "derived"
     },
     {
@@ -230964,7 +231111,7 @@
       "id": "fa0ff165-dad6-5c2b-8cf9-30ef06555f7b",
       "foodId": "fddb74b5-54d7-5e3c-8498-5c61c07c84b6",
       "nutrientId": "energy",
-      "amountPer100g": 46.595454545454544,
+      "amountPer100g": 88.86757840909091,
       "valueSource": "derived"
     },
     {
@@ -232140,7 +232287,7 @@
       "id": "0b97cd22-4775-5251-b140-b5f7189de074",
       "foodId": "ca0c98bb-8442-56e2-be41-b2d02a9416b3",
       "nutrientId": "energy",
-      "amountPer100g": 69.94285714285714,
+      "amountPer100g": 109.79943107142857,
       "valueSource": "derived"
     },
     {
@@ -232644,7 +232791,7 @@
       "id": "f03d57d5-0a17-5808-8494-93daf1d720d2",
       "foodId": "fa999306-3478-5964-bd14-1081276d8d6d",
       "nutrientId": "energy",
-      "amountPer100g": 70.62142857142858,
+      "amountPer100g": 110.47800250000002,
       "valueSource": "derived"
     },
     {
@@ -232812,7 +232959,7 @@
       "id": "9cda7b45-91f8-54bb-b15b-f92e8b5735f6",
       "foodId": "60d98f4f-8f8a-54ae-ab9b-94acde5da865",
       "nutrientId": "energy",
-      "amountPer100g": 120.08571428571426,
+      "amountPer100g": 159.94228821428572,
       "valueSource": "derived"
     },
     {
@@ -234321,6 +234468,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "7028b51e-b796-53f5-bccf-49c1e9ecda21",
+      "foodId": "5614a408-4dbb-51e1-b8ce-527ab002beb5",
+      "nutrientId": "energy",
+      "amountPer100g": 152.65840103333335,
+      "valueSource": "derived"
+    },
+    {
       "id": "7d8d1513-615f-5d5d-8a50-91b64d1b5faa",
       "foodId": "5614a408-4dbb-51e1-b8ce-527ab002beb5",
       "nutrientId": "protein",
@@ -234433,13 +234587,6 @@
       "valueSource": "derived"
     },
     {
-      "id": "7028b51e-b796-53f5-bccf-49c1e9ecda21",
-      "foodId": "5614a408-4dbb-51e1-b8ce-527ab002beb5",
-      "nutrientId": "energy",
-      "amountPer100g": 70.11333333333334,
-      "valueSource": "derived"
-    },
-    {
       "id": "da22b8a8-692b-5805-a381-fbb685fa11a5",
       "foodId": "5614a408-4dbb-51e1-b8ce-527ab002beb5",
       "nutrientId": "saturated_fat",
@@ -234492,7 +234639,7 @@
       "id": "b0a26d22-b3d0-555c-b760-84e92518c8cd",
       "foodId": "578a9530-65b4-5a23-9478-8f65bec9f0db",
       "nutrientId": "energy",
-      "amountPer100g": 104.41333333333334,
+      "amountPer100g": 170.48795053333333,
       "valueSource": "derived"
     },
     {
@@ -234828,7 +234975,7 @@
       "id": "7f534bba-b3ad-5c38-ac14-21e7c9a7940a",
       "foodId": "855cc175-236d-53e5-bc8d-f532ece0c442",
       "nutrientId": "energy",
-      "amountPer100g": 180.04791666666665,
+      "amountPer100g": 263.03334175,
       "valueSource": "derived"
     },
     {
@@ -234996,7 +235143,7 @@
       "id": "52846d12-a99b-5bd7-bc14-77ed87c9c349",
       "foodId": "e2977542-56cc-5e56-aeb2-e7730524e7be",
       "nutrientId": "energy",
-      "amountPer100g": 283.98749999999995,
+      "amountPer100g": 284.45808429999994,
       "valueSource": "derived"
     },
     {
@@ -236172,7 +236319,7 @@
       "id": "36b2d461-4042-5259-ba86-1f21dce7ef58",
       "foodId": "3919c7a9-abcf-5ff7-9381-25ca5df5c976",
       "nutrientId": "energy",
-      "amountPer100g": 272.43999999999994,
+      "amountPer100g": 272.9105842999999,
       "valueSource": "derived"
     },
     {
@@ -237513,6 +237660,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "0b5b4ff3-730f-53e6-9eb8-f7ea2d219b01",
+      "foodId": "800bf538-f3ac-50be-906d-52abb347786d",
+      "nutrientId": "energy",
+      "amountPer100g": 566.2585333333334,
+      "valueSource": "derived"
+    },
+    {
       "id": "2160c1ee-9194-5cc9-9c89-f31892fc0b06",
       "foodId": "800bf538-f3ac-50be-906d-52abb347786d",
       "nutrientId": "protein",
@@ -237622,13 +237776,6 @@
       "foodId": "800bf538-f3ac-50be-906d-52abb347786d",
       "nutrientId": "niacin",
       "amountPer100g": 2.2336222222222224,
-      "valueSource": "derived"
-    },
-    {
-      "id": "0b5b4ff3-730f-53e6-9eb8-f7ea2d219b01",
-      "foodId": "800bf538-f3ac-50be-906d-52abb347786d",
-      "nutrientId": "energy",
-      "amountPer100g": 245.35555555555555,
       "valueSource": "derived"
     },
     {
@@ -238692,7 +238839,7 @@
       "id": "e36af3ba-3902-5462-8e30-f748038af85e",
       "foodId": "fcc8c8e7-fe7a-5284-96dc-0e877b9ea947",
       "nutrientId": "energy",
-      "amountPer100g": 103.85,
+      "amountPer100g": 151.8630191,
       "valueSource": "derived"
     },
     {
@@ -239028,7 +239175,7 @@
       "id": "11dd849c-9849-5d5b-b40f-bc679984a850",
       "foodId": "08c79098-dbf6-597c-88d2-2cb5d42b2a09",
       "nutrientId": "energy",
-      "amountPer100g": 216.15789473684205,
+      "amountPer100g": 243.51522328947362,
       "valueSource": "derived"
     },
     {
@@ -239364,7 +239511,7 @@
       "id": "d46d94c4-5dd8-5da5-ae09-6a8c173b5cca",
       "foodId": "7e131613-f25e-5460-9d73-173a688e9fd4",
       "nutrientId": "energy",
-      "amountPer100g": 317.97368421052636,
+      "amountPer100g": 368.51370431578954,
       "valueSource": "derived"
     },
     {
@@ -239532,7 +239679,7 @@
       "id": "57ad0fba-66ad-5c4a-a8be-45f8fabd1c1b",
       "foodId": "010474d9-0ea1-5feb-96a5-30b21af77bbe",
       "nutrientId": "energy",
-      "amountPer100g": 336.50526315789483,
+      "amountPer100g": 388.669434631579,
       "valueSource": "derived"
     },
     {
@@ -240204,7 +240351,7 @@
       "id": "b785e1a6-c4ac-5e4c-9286-64041759d84b",
       "foodId": "719c85dd-c049-547a-955c-077a012821ca",
       "nutrientId": "energy",
-      "amountPer100g": 74.87391304347827,
+      "amountPer100g": 120.64775652173914,
       "valueSource": "derived"
     },
     {
@@ -240372,7 +240519,7 @@
       "id": "9df4c4b2-cafa-54cc-a1de-5616dae812ca",
       "foodId": "7971ce7c-f9a5-538e-84b4-1f0e3b08a03f",
       "nutrientId": "energy",
-      "amountPer100g": 448.0666666666666,
+      "amountPer100g": 449.635281,
       "valueSource": "derived"
     },
     {
@@ -240540,7 +240687,7 @@
       "id": "2dc83994-f95a-54e3-97b2-db2bfefcbc28",
       "foodId": "f91683b0-2db1-5105-9107-3cafbe0b7458",
       "nutrientId": "energy",
-      "amountPer100g": 528.7333333333332,
+      "amountPer100g": 530.3019476666666,
       "valueSource": "derived"
     },
     {
@@ -240873,6 +241020,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "87cff79f-00b0-5428-8b9a-c69e2af21ebc",
+      "foodId": "cf573355-944f-5f4b-9d0a-a74180de38a3",
+      "nutrientId": "energy",
+      "amountPer100g": 158.36013015,
+      "valueSource": "derived"
+    },
+    {
       "id": "9bd3d4a5-f763-5385-9ed6-ecfea07d547c",
       "foodId": "cf573355-944f-5f4b-9d0a-a74180de38a3",
       "nutrientId": "protein",
@@ -240975,13 +241129,6 @@
       "foodId": "cf573355-944f-5f4b-9d0a-a74180de38a3",
       "nutrientId": "niacin",
       "amountPer100g": 2.7974799999999997,
-      "valueSource": "derived"
-    },
-    {
-      "id": "87cff79f-00b0-5428-8b9a-c69e2af21ebc",
-      "foodId": "cf573355-944f-5f4b-9d0a-a74180de38a3",
-      "nutrientId": "energy",
-      "amountPer100g": 75.46,
       "valueSource": "derived"
     },
     {
@@ -242556,7 +242703,7 @@
       "id": "e2844426-0794-522c-aea9-235c0aa9c497",
       "foodId": "6b7ed1bc-b75c-5b41-bea2-a36b93df13fa",
       "nutrientId": "energy",
-      "amountPer100g": 84.11333333333334,
+      "amountPer100g": 150.18795053333335,
       "valueSource": "derived"
     },
     {
@@ -243396,7 +243543,7 @@
       "id": "d2af0814-3df8-5b2b-a747-60cf113f81ac",
       "foodId": "6d4c8a24-7716-5040-8747-2816dd782685",
       "nutrientId": "energy",
-      "amountPer100g": 174.34999999999997,
+      "amountPer100g": 174.7421535833333,
       "valueSource": "derived"
     },
     {
@@ -243564,7 +243711,7 @@
       "id": "4a0c94d4-c022-500f-a287-96a84580aa23",
       "foodId": "6e6c36de-c223-5c6b-acb4-cedc0e234941",
       "nutrientId": "energy",
-      "amountPer100g": 88.04,
+      "amountPer100g": 200.10899129999999,
       "valueSource": "derived"
     },
     {
@@ -243729,6 +243876,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "a0ebad5a-c25a-5f9e-b6bc-3f6a455cd24e",
+      "foodId": "103c0648-688c-5f7a-8733-0ab7aa4f11e6",
+      "nutrientId": "energy",
+      "amountPer100g": 219.40766380000002,
+      "valueSource": "derived"
+    },
+    {
       "id": "e14a4811-2432-5199-abe6-48a24cdd1680",
       "foodId": "103c0648-688c-5f7a-8733-0ab7aa4f11e6",
       "nutrientId": "protein",
@@ -243855,13 +244009,6 @@
       "valueSource": "derived"
     },
     {
-      "id": "a0ebad5a-c25a-5f9e-b6bc-3f6a455cd24e",
-      "foodId": "103c0648-688c-5f7a-8733-0ab7aa4f11e6",
-      "nutrientId": "energy",
-      "amountPer100g": 14.34,
-      "valueSource": "derived"
-    },
-    {
       "id": "3b3779ac-2fcb-59ac-9234-bbee1482518b",
       "foodId": "103c0648-688c-5f7a-8733-0ab7aa4f11e6",
       "nutrientId": "sugar",
@@ -243900,7 +244047,7 @@
       "id": "2162351b-92ef-5d2b-a06b-053abc8d2fab",
       "foodId": "23079fb9-2aba-5266-bc30-11b28c38a21a",
       "nutrientId": "energy",
-      "amountPer100g": 361.3090909090909,
+      "amountPer100g": 361.7368948181818,
       "valueSource": "derived"
     },
     {
@@ -245244,7 +245391,7 @@
       "id": "a791bf25-b5f9-5c1d-a3d6-5dcecd94f508",
       "foodId": "f5a6ff45-70a7-5b04-a28e-fa0b783dae40",
       "nutrientId": "energy",
-      "amountPer100g": 76.4,
+      "amountPer100g": 85.81168600000001,
       "valueSource": "derived"
     },
     {
@@ -245412,7 +245559,7 @@
       "id": "e8014bd9-5031-58ec-932f-d19bbef12afb",
       "foodId": "d41b8376-912f-517f-81e2-9b1ac11a9bab",
       "nutrientId": "energy",
-      "amountPer100g": 82.39999999999999,
+      "amountPer100g": 83.96861433333335,
       "valueSource": "derived"
     },
     {
@@ -245580,7 +245727,7 @@
       "id": "dbf24260-2861-560f-b91b-495a58d520fb",
       "foodId": "a644b045-d214-59e2-8b54-4563b4adbf58",
       "nutrientId": "energy",
-      "amountPer100g": 428.7333333333333,
+      "amountPer100g": 430.3019476666666,
       "valueSource": "derived"
     },
     {
@@ -250620,7 +250767,7 @@
       "id": "f24ee3e4-72c2-522f-a101-7c95071dd9c1",
       "foodId": "ec1d99ef-256b-5751-b49b-49c0b71445b6",
       "nutrientId": "energy",
-      "amountPer100g": 266.3636363636364,
+      "amountPer100g": 266.79144027272724,
       "valueSource": "derived"
     },
     {
@@ -250956,7 +251103,7 @@
       "id": "ad81b362-80cf-5906-ab4d-57bc6810efa8",
       "foodId": "06a1b6c6-538d-5e3d-95d5-695630f23f6c",
       "nutrientId": "energy",
-      "amountPer100g": 276.14,
+      "amountPer100g": 276.61058429999997,
       "valueSource": "derived"
     },
     {
@@ -251124,7 +251271,7 @@
       "id": "2bc3eff5-608e-55d7-a661-4d9d4e3e9d7b",
       "foodId": "301364e0-d2e9-5648-b250-ed0206a7fcac",
       "nutrientId": "energy",
-      "amountPer100g": 358.64,
+      "amountPer100g": 359.11058429999997,
       "valueSource": "derived"
     },
     {
@@ -251292,7 +251439,7 @@
       "id": "56eab217-c7d5-5035-b16d-6e969c6b9a0a",
       "foodId": "87cb3f0b-3653-5a44-b6c5-9ddfeca4b312",
       "nutrientId": "energy",
-      "amountPer100g": 157.39,
+      "amountPer100g": 157.8605843,
       "valueSource": "derived"
     },
     {
@@ -251460,7 +251607,7 @@
       "id": "1188571e-16f4-5254-855f-cd89411212d0",
       "foodId": "221ab8c3-c26b-5f94-a774-d36002911186",
       "nutrientId": "energy",
-      "amountPer100g": 276.73999999999995,
+      "amountPer100g": 277.21058429999994,
       "valueSource": "derived"
     },
     {
@@ -251628,7 +251775,7 @@
       "id": "7b6c0894-f54d-52f0-9f50-c90aed7f2d75",
       "foodId": "7e1e58f1-d53f-57e7-8ec9-bd1194a92047",
       "nutrientId": "energy",
-      "amountPer100g": 227.19,
+      "amountPer100g": 227.6605843,
       "valueSource": "derived"
     },
     {
@@ -251796,7 +251943,7 @@
       "id": "8ba1f4fc-12ea-5686-9268-a8c343a149d5",
       "foodId": "916a2321-6d4e-5b57-a5e3-fbcfb9e82664",
       "nutrientId": "energy",
-      "amountPer100g": 238.83999999999997,
+      "amountPer100g": 239.31058430000002,
       "valueSource": "derived"
     },
     {
@@ -251964,7 +252111,7 @@
       "id": "db7447d8-6018-544f-93b3-9c1cff18e0e9",
       "foodId": "22ab6d91-d2bf-5dc5-b4ca-f8154f9c7682",
       "nutrientId": "energy",
-      "amountPer100g": 214.54,
+      "amountPer100g": 326.60899129999996,
       "valueSource": "derived"
     },
     {
@@ -252468,7 +252615,7 @@
       "id": "d4cc3c90-ff19-5279-9ea5-d0eac8ed7fb6",
       "foodId": "531bb27e-6a9f-51e6-a9a1-7ba5c24bfaa2",
       "nutrientId": "energy",
-      "amountPer100g": 87.13181818181816,
+      "amountPer100g": 130.78001736363635,
       "valueSource": "derived"
     },
     {
@@ -254484,7 +254631,7 @@
       "id": "c098f867-f121-5333-859a-3cd3a3fbd415",
       "foodId": "8a855e73-f58c-5000-a2ae-fd11cb2f8aa6",
       "nutrientId": "energy",
-      "amountPer100g": 288.5,
+      "amountPer100g": 312.2101168894118,
       "valueSource": "derived"
     },
     {
@@ -257718,7 +257865,7 @@
       "id": "d240de1b-8db3-51e8-8e94-5e0739f9debc",
       "foodId": "7dc339c9-4a4e-582e-8162-d92862c01c5b",
       "nutrientId": "energy",
-      "amountPer100g": 93.8,
+      "amountPer100g": 186.7986725,
       "valueSource": "derived"
     },
     {
@@ -259693,6 +259840,13 @@
       "foodId": "ac47d41f-a8ba-532d-97dd-d4d813df2b2c",
       "nutrientId": "niacin",
       "amountPer100g": 0.701,
+      "valueSource": "derived"
+    },
+    {
+      "id": "260b74bd-fa6f-56b6-83b1-c314fb8b5367",
+      "foodId": "dfb7ad72-f601-5f58-b2be-a88d968e31a0",
+      "nutrientId": "energy",
+      "amountPer100g": 275.31090499999993,
       "valueSource": "derived"
     },
     {
@@ -262510,6 +262664,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "acc3d25e-2048-53a7-bef9-4030c2f8bb42",
+      "foodId": "38afb860-84e6-5b5f-922d-6bcd4472ce2c",
+      "nutrientId": "energy",
+      "amountPer100g": 108.55733154,
+      "valueSource": "derived"
+    },
+    {
       "id": "c7087c78-7b5b-5752-b9e9-f60417451841",
       "foodId": "38afb860-84e6-5b5f-922d-6bcd4472ce2c",
       "nutrientId": "protein",
@@ -262598,13 +262759,6 @@
       "foodId": "38afb860-84e6-5b5f-922d-6bcd4472ce2c",
       "nutrientId": "folate",
       "amountPer100g": 99.68,
-      "valueSource": "derived"
-    },
-    {
-      "id": "acc3d25e-2048-53a7-bef9-4030c2f8bb42",
-      "foodId": "38afb860-84e6-5b5f-922d-6bcd4472ce2c",
-      "nutrientId": "energy",
-      "amountPer100g": 95.76,
       "valueSource": "derived"
     },
     {
@@ -263185,7 +263339,7 @@
       "id": "50ab14d8-5a90-5f6a-8838-e04b51dc75a1",
       "foodId": "bb9ca72a-de9b-5709-a3ad-f49f17601229",
       "nutrientId": "energy",
-      "amountPer100g": 70.35,
+      "amountPer100g": 140.099004375,
       "valueSource": "derived"
     },
     {
@@ -264487,7 +264641,7 @@
       "id": "73da1e04-71cb-52b8-9f6e-cfcb9f89c333",
       "foodId": "a717341c-b377-5569-80d1-bc3c65016bf8",
       "nutrientId": "energy",
-      "amountPer100g": 159.15234567901234,
+      "amountPer100g": 159.36149425679014,
       "valueSource": "derived"
     },
     {
@@ -265156,6 +265310,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "f8100f32-601a-5808-bbb2-8644c5ca9ef2",
+      "foodId": "46742124-4b7e-518f-9ed2-0791eb90cc8d",
+      "nutrientId": "energy",
+      "amountPer100g": 148.504281,
+      "valueSource": "derived"
+    },
+    {
       "id": "2b685129-c4ce-5578-bd9a-529cddcc7247",
       "foodId": "46742124-4b7e-518f-9ed2-0791eb90cc8d",
       "nutrientId": "protein",
@@ -265265,13 +265426,6 @@
       "foodId": "46742124-4b7e-518f-9ed2-0791eb90cc8d",
       "nutrientId": "niacin",
       "amountPer100g": 0.26993999999999996,
-      "valueSource": "derived"
-    },
-    {
-      "id": "f8100f32-601a-5808-bbb2-8644c5ca9ef2",
-      "foodId": "46742124-4b7e-518f-9ed2-0791eb90cc8d",
-      "nutrientId": "energy",
-      "amountPer100g": 91.8,
       "valueSource": "derived"
     },
     {
@@ -266475,7 +266629,7 @@
       "id": "d4749e92-1e9a-5aea-baa0-33718f365dd2",
       "foodId": "d75d39f3-975c-56cb-998f-7e87de560829",
       "nutrientId": "energy",
-      "amountPer100g": 83.37777777777778,
+      "amountPer100g": 166.04326444444445,
       "valueSource": "derived"
     },
     {
@@ -266636,7 +266790,7 @@
       "id": "11ea6d85-c84b-5e7e-903e-7b77dab8614e",
       "foodId": "22f2b7f7-f206-5837-8466-cf18529be337",
       "nutrientId": "energy",
-      "amountPer100g": 130.025,
+      "amountPer100g": 176.52433625,
       "valueSource": "derived"
     },
     {
@@ -266804,7 +266958,7 @@
       "id": "02600548-f4e5-53f5-8912-2b4813f0642e",
       "foodId": "b8d6c83f-4db1-562e-ab51-d15745ab014e",
       "nutrientId": "energy",
-      "amountPer100g": 206.44,
+      "amountPer100g": 280.838938,
       "valueSource": "derived"
     },
     {
@@ -267133,7 +267287,7 @@
       "id": "a3038da5-5d13-5694-92d3-ec81f9517f23",
       "foodId": "d6f6c70f-bd17-5cd5-bb8f-7a865e0efcc1",
       "nutrientId": "energy",
-      "amountPer100g": 77.30909090909091,
+      "amountPer100g": 144.9444890909091,
       "valueSource": "derived"
     },
     {
@@ -267301,7 +267455,7 @@
       "id": "c2464811-df15-595a-b47e-272615dcb795",
       "foodId": "d7c8599e-38b5-520e-af7c-886e3af98015",
       "nutrientId": "energy",
-      "amountPer100g": 134.17777777777778,
+      "amountPer100g": 148.99661083333334,
       "valueSource": "derived"
     },
     {
@@ -267802,6 +267956,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "336ebe0b-6813-5b2c-9b88-912aa94e9884",
+      "foodId": "6174469c-74a7-5f1c-833a-6bae0549722c",
+      "nutrientId": "energy",
+      "amountPer100g": 139.49800875,
+      "valueSource": "derived"
+    },
+    {
       "id": "9ff1e97b-4161-549b-98c4-451243f6b752",
       "foodId": "6174469c-74a7-5f1c-833a-6bae0549722c",
       "nutrientId": "protein",
@@ -268225,7 +268386,7 @@
       "id": "3780b300-d05f-507f-8e27-96dd74122efd",
       "foodId": "dc6d4859-37a3-5ee6-a919-5192fac9975d",
       "nutrientId": "energy",
-      "amountPer100g": 79.73,
+      "amountPer100g": 158.77887162500002,
       "valueSource": "derived"
     },
     {
@@ -268386,7 +268547,7 @@
       "id": "54897488-223f-5531-a963-9f612141fc48",
       "foodId": "2e61bece-43ea-5c9b-9d2f-88fdf6c4736a",
       "nutrientId": "energy",
-      "amountPer100g": 65.66,
+      "amountPer100g": 130.75907075,
       "valueSource": "derived"
     },
     {
@@ -269002,7 +269163,7 @@
       "id": "49a09f4d-22dd-5018-826a-6ac81b1327b4",
       "foodId": "38123bc9-5647-57f4-b547-34177a631621",
       "nutrientId": "energy",
-      "amountPer100g": 120.80769230769232,
+      "amountPer100g": 154.69211138461537,
       "valueSource": "derived"
     },
     {
@@ -271018,7 +271179,7 @@
       "id": "370b0943-93e7-582e-8183-55b0c9e3c4bc",
       "foodId": "9aef3632-c24e-5586-a8bf-915953cf1431",
       "nutrientId": "energy",
-      "amountPer100g": 154.8,
+      "amountPer100g": 184.5595752,
       "valueSource": "derived"
     },
     {
@@ -271183,6 +271344,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "c7afbcd5-917f-5c57-acd4-ae06a147cfd0",
+      "foodId": "bbeff06b-5d64-57ac-a026-d47baa5d9beb",
+      "nutrientId": "energy",
+      "amountPer100g": 158.54018220999998,
+      "valueSource": "derived"
+    },
+    {
       "id": "a1bb1039-6708-506f-896e-a702ab90503d",
       "foodId": "bbeff06b-5d64-57ac-a026-d47baa5d9beb",
       "nutrientId": "protein",
@@ -271288,13 +271456,6 @@
       "valueSource": "derived"
     },
     {
-      "id": "c7afbcd5-917f-5c57-acd4-ae06a147cfd0",
-      "foodId": "bbeff06b-5d64-57ac-a026-d47baa5d9beb",
-      "nutrientId": "energy",
-      "amountPer100g": 42.48,
-      "valueSource": "derived"
-    },
-    {
       "id": "20d2b287-249a-5660-a564-b395a3a2f4c8",
       "foodId": "bbeff06b-5d64-57ac-a026-d47baa5d9beb",
       "nutrientId": "saturated_fat",
@@ -271348,6 +271509,13 @@
       "foodId": "bbeff06b-5d64-57ac-a026-d47baa5d9beb",
       "nutrientId": "folate",
       "amountPer100g": 3.12,
+      "valueSource": "derived"
+    },
+    {
+      "id": "e7257abf-2928-5a6e-a7f2-bb11360ab59c",
+      "foodId": "7d36ae1f-162f-5592-a875-ae355bb5a1d7",
+      "nutrientId": "energy",
+      "amountPer100g": 253.46403722222223,
       "valueSource": "derived"
     },
     {
@@ -271425,13 +271593,6 @@
       "foodId": "7d36ae1f-162f-5592-a875-ae355bb5a1d7",
       "nutrientId": "phosphorus",
       "amountPer100g": 160.48888888888888,
-      "valueSource": "derived"
-    },
-    {
-      "id": "e7257abf-2928-5a6e-a7f2-bb11360ab59c",
-      "foodId": "7d36ae1f-162f-5592-a875-ae355bb5a1d7",
-      "nutrientId": "energy",
-      "amountPer100g": 39.33333333333333,
       "valueSource": "derived"
     },
     {
@@ -271519,6 +271680,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "1a752c13-1ed1-51b6-87ea-1b50935b5f1d",
+      "foodId": "690234d0-d63b-5fce-beb2-4b8387820193",
+      "nutrientId": "energy",
+      "amountPer100g": 539.5239379999999,
+      "valueSource": "derived"
+    },
+    {
       "id": "f7217cef-f065-5300-9fc1-13835e91bfad",
       "foodId": "690234d0-d63b-5fce-beb2-4b8387820193",
       "nutrientId": "protein",
@@ -271586,13 +271754,6 @@
       "foodId": "690234d0-d63b-5fce-beb2-4b8387820193",
       "nutrientId": "phosphorus",
       "amountPer100g": 179.42000000000002,
-      "valueSource": "derived"
-    },
-    {
-      "id": "1a752c13-1ed1-51b6-87ea-1b50935b5f1d",
-      "foodId": "690234d0-d63b-5fce-beb2-4b8387820193",
-      "nutrientId": "energy",
-      "amountPer100g": 465.125,
       "valueSource": "derived"
     },
     {
@@ -271684,6 +271845,13 @@
       "foodId": "690234d0-d63b-5fce-beb2-4b8387820193",
       "nutrientId": "niacin",
       "amountPer100g": 0.8035249999999999,
+      "valueSource": "derived"
+    },
+    {
+      "id": "aa319f2b-5173-56bf-b407-82a076c2a00c",
+      "foodId": "1f968486-b79d-5c75-8b4f-455ef053fce1",
+      "nutrientId": "energy",
+      "amountPer100g": 286.1497615384615,
       "valueSource": "derived"
     },
     {
@@ -273405,7 +273573,7 @@
       "id": "6e754986-dc1b-5659-a078-82cbd6e6b426",
       "foodId": "a9d72646-1ecd-53a7-b574-8dfdce531d7e",
       "nutrientId": "energy",
-      "amountPer100g": 201.44666666666672,
+      "amountPer100g": 246.61745045238098,
       "valueSource": "derived"
     },
     {
@@ -273573,7 +273741,7 @@
       "id": "2361c1ff-3f7f-5d44-ab46-2d68fd4e4d82",
       "foodId": "097b7af1-4fec-5729-8b58-7b5ef318e720",
       "nutrientId": "energy",
-      "amountPer100g": 227.53333333333336,
+      "amountPer100g": 289.5324483333333,
       "valueSource": "derived"
     },
     {
@@ -273734,7 +273902,7 @@
       "id": "3ca464ea-09e8-5bd2-b8f2-d32c1c1f9fda",
       "foodId": "2f635bd1-5e2f-578d-87c6-3981983d81d7",
       "nutrientId": "energy",
-      "amountPer100g": 82.94615384615386,
+      "amountPer100g": 161.63733826923078,
       "valueSource": "derived"
     },
     {
@@ -273902,7 +274070,7 @@
       "id": "8f933f63-a60a-53cc-8b58-228307e1b3b2",
       "foodId": "efc6b986-2ad5-5bfd-8f00-47ccc9368ec4",
       "nutrientId": "energy",
-      "amountPer100g": 236.29298245614038,
+      "amountPer100g": 275.4503182456141,
       "valueSource": "derived"
     },
     {
@@ -274399,7 +274567,7 @@
       "id": "c540cfab-7d3e-5c88-bdef-cbea564a9c3f",
       "foodId": "3fe1b327-5bae-5b0c-ad63-6d92eb1288cf",
       "nutrientId": "energy",
-      "amountPer100g": 126.96153846153848,
+      "amountPer100g": 160.84595753846153,
       "valueSource": "derived"
     },
     {
@@ -274900,6 +275068,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "88e26285-8748-50fc-bb5b-7f1b2c9e561a",
+      "foodId": "7586e47b-4931-5b08-b2ab-8e2b05c5a4bd",
+      "nutrientId": "energy",
+      "amountPer100g": 139.49800875,
+      "valueSource": "derived"
+    },
+    {
       "id": "07aaead3-9fdb-57be-bacb-8129d0a212d6",
       "foodId": "7586e47b-4931-5b08-b2ab-8e2b05c5a4bd",
       "nutrientId": "protein",
@@ -274987,7 +275162,7 @@
       "id": "0d04257c-0c48-58b0-bd01-f6e075cd54b2",
       "foodId": "e6adc77e-0c69-5588-a56a-465cb185aa28",
       "nutrientId": "energy",
-      "amountPer100g": 101.29411764705883,
+      "amountPer100g": 127.20573223529411,
       "valueSource": "derived"
     },
     {
@@ -276142,7 +276317,7 @@
       "id": "45699282-fc1c-5698-914f-829b7c979f3e",
       "foodId": "61c60c66-8ebb-5d61-8c5f-e6f3f1b40d25",
       "nutrientId": "energy",
-      "amountPer100g": 33.92307692307692,
+      "amountPer100g": 76.27860076923075,
       "valueSource": "derived"
     },
     {
@@ -276472,6 +276647,13 @@
       "foodId": "111edc6b-81c1-504c-a084-0936b64c584b",
       "nutrientId": "niacin",
       "amountPer100g": 0.30911538461538457,
+      "valueSource": "derived"
+    },
+    {
+      "id": "2744ed02-f205-5faf-9534-da9669f710de",
+      "foodId": "8a889031-efcd-5c6f-812a-a1eb66395e1f",
+      "nutrientId": "energy",
+      "amountPer100g": 367.0812066666667,
       "valueSource": "derived"
     },
     {
@@ -278060,7 +278242,7 @@
       "id": "d12f0e22-d95e-5919-a0e9-56cd17883825",
       "foodId": "10deff63-d473-5cca-a118-3ebbf9cce250",
       "nutrientId": "energy",
-      "amountPer100g": 215.40344827586208,
+      "amountPer100g": 250.67880681034484,
       "valueSource": "derived"
     },
     {
@@ -278396,7 +278578,7 @@
       "id": "ba41114f-23d6-53a3-aaa5-7f403fde8581",
       "foodId": "c7ffc834-bf41-5781-bf46-427011147d5b",
       "nutrientId": "energy",
-      "amountPer100g": 50.477777777777774,
+      "amountPer100g": 86.64392819444444,
       "valueSource": "derived"
     },
     {
@@ -279681,6 +279863,13 @@
       "valueSource": "derived"
     },
     {
+      "id": "41b53fb5-2fdf-5637-9d00-980039d3429b",
+      "foodId": "e577f36b-f7da-5719-ad61-eaaece7e03bc",
+      "nutrientId": "energy",
+      "amountPer100g": 166.89347216,
+      "valueSource": "derived"
+    },
+    {
       "id": "780e3b65-322d-5c4a-8802-845fd1587cdb",
       "foodId": "e577f36b-f7da-5719-ad61-eaaece7e03bc",
       "nutrientId": "protein",
@@ -279786,13 +279975,6 @@
       "valueSource": "derived"
     },
     {
-      "id": "41b53fb5-2fdf-5637-9d00-980039d3429b",
-      "foodId": "e577f36b-f7da-5719-ad61-eaaece7e03bc",
-      "nutrientId": "energy",
-      "amountPer100g": 78.46666666666667,
-      "valueSource": "derived"
-    },
-    {
       "id": "0f153b0d-fd66-5c73-8120-25399e4c942a",
       "foodId": "e577f36b-f7da-5719-ad61-eaaece7e03bc",
       "nutrientId": "saturated_fat",
@@ -279846,6 +280028,13 @@
       "foodId": "e577f36b-f7da-5719-ad61-eaaece7e03bc",
       "nutrientId": "folate",
       "amountPer100g": 31.8,
+      "valueSource": "derived"
+    },
+    {
+      "id": "37702e2b-4495-5417-ae56-b96a9902c763",
+      "foodId": "745c508a-be25-55f1-8ae9-0f9f113405ab",
+      "nutrientId": "energy",
+      "amountPer100g": 154.38586302857144,
       "valueSource": "derived"
     },
     {
@@ -279951,13 +280140,6 @@
       "foodId": "745c508a-be25-55f1-8ae9-0f9f113405ab",
       "nutrientId": "niacin",
       "amountPer100g": 3.1806071428571427,
-      "valueSource": "derived"
-    },
-    {
-      "id": "37702e2b-4495-5417-ae56-b96a9902c763",
-      "foodId": "745c508a-be25-55f1-8ae9-0f9f113405ab",
-      "nutrientId": "energy",
-      "amountPer100g": 59.64285714285714,
       "valueSource": "derived"
     },
     {
@@ -281504,7 +281686,7 @@
       "id": "f256fc33-7fe6-5cb2-bc6e-4012c50c1410",
       "foodId": "fb93de54-9333-5e43-96a0-fbd8c01555a6",
       "nutrientId": "energy",
-      "amountPer100g": 209.53999999999996,
+      "amountPer100g": 211.11537183999997,
       "valueSource": "derived"
     },
     {
@@ -282344,7 +282526,7 @@
       "id": "2d30ca73-945d-5a4e-bae3-bded8b22f71f",
       "foodId": "e28bbe45-3715-53d3-9900-92ed31bef585",
       "nutrientId": "energy",
-      "amountPer100g": 170.9230769230769,
+      "amountPer100g": 172.81655269230768,
       "valueSource": "derived"
     },
     {
@@ -282512,7 +282694,7 @@
       "id": "9efa04c8-64cc-5b2e-905e-e048392d055e",
       "foodId": "b714c500-1e46-512e-9b19-1c1d4d389a3d",
       "nutrientId": "energy",
-      "amountPer100g": 99.29999999999998,
+      "amountPer100g": 128.66649653333332,
       "valueSource": "derived"
     },
     {
