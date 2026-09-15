@@ -1,8 +1,13 @@
 # Nourishly Food Catalog Specification
 
-*Revision 0.3 · 2026-09-15 · [Architecture index](../architecture/README.md) · [Personal-Use Scope](../architecture/00-scope.md)*
+*Revision 0.4 · 2026-09-15 · [Architecture index](../architecture/README.md) · [Personal-Use Scope](../architecture/00-scope.md)*
 
 The curated food list for the household catalog, covering **Gujarat, Tamil Nadu and Karnataka** plus the pan-Indian staples all three share, and the everyday North Indian, rice and non-regional cooking this household actually does.
+
+> **Adding a new regional CSV?** The whole routine is
+> [§0.9's checklist](#adding-the-next-csv-the-checklist). Steps 1–5 need
+> no API key and no network, and a CSV whose ingredients the catalog
+> already has needs no fetch at all.
 
 | File | Contents | Items |
 |---|---|---|
@@ -361,6 +366,89 @@ Files are discovered by glob, so **adding the next regional catalog is dropping 
 **CSV beats markdown**, with one exception: an **ingredient** row is never displaced by a dish row of the same name. An ingredient row is infrastructure — other recipes resolve through it — so losing one breaks every dish that used it and sometimes the dish that displaced it. `Coconut water` is exactly that: a CSV row whose only ingredient is coconut water.
 
 When a CSV does supersede a markdown row that `ingredientTargets` points at, `--check` reports it and names the row to repoint at. That is a one-line fix, and it is deliberately a fix rather than an automatic redirect: what an ingredient means stays something a person wrote down (§0.3b).
+
+### Adding the next CSV: the checklist
+
+Written out because this is the routine job, and it should never need
+anyone's help. Steps 1–5 are offline. **A CSV whose ingredients the
+catalog already has costs no network at all** — a five-dish file was
+added end to end in 2.6 seconds with zero fetches, because every
+ingredient it named was already pinned and cached.
+
+**1. Drop the file in `app/assets/regional_food/`.** Same five columns:
+`Food, Also, Serving, g, Composition`. Files are found by glob; there is
+no list to add it to.
+
+**2. Give it a cuisine** — one line in `_cuisineByCsv`
+(`tools/catalog_pipeline/lib/src/cuisine_tags.dart`):
+
+```dart
+'nourishly_assam_food_catalog.csv': 'assamese',
+```
+
+**3. Run the gate.** It names everything wrong in one pass:
+
+```
+dart run tools/catalog_pipeline/bin/parse_catalog.dart --check
+```
+
+```
+  "Masor tenga" uses ingredient "fish rohu", which has no entry in
+  ingredientTargets. Run --suggest.
+  source file "nourishly_assam_food_catalog.csv" has no cuisine. Add it
+  to _cuisineByCsv or _cuisineByFile in cuisine_tags.dart.
+```
+
+**4. Map any ingredient strings that are new.** `--suggest` writes the
+lines; paste the ones that are right into `ingredient_targets.dart`:
+
+```
+dart run tools/catalog_pipeline/bin/parse_catalog.dart --suggest
+```
+
+Only genuinely new *strings* appear. Matching is literal after
+normalizing, so a file writing `Fish Rohu` needs its own line even though
+`rohu fish` is already mapped — **reusing the spellings already in
+`ingredient_targets.dart` keeps this step empty.**
+
+An ingredient that is a real, distinct food with no row of its own gets a
+row in `08-regional-pantry.md` with a `USDA <descriptor>` hint (§0.3c).
+One that FoodData Central does not measure gets the nearest food it does,
+named on the row with the reason.
+
+**5. Preview offline**, before spending a fetch:
+
+```
+dart run tools/catalog_pipeline/bin/preview_fdc.dart --all
+```
+
+Read the list. Most wrong matches are invisible to both guards — spinach
+resolving to spinach *souffle* is still spinach — and this is where a
+person catches them. Repeat 3–5 until `--check` passes and the preview
+reports nothing broken.
+
+**6. Fetch, pin, build, lock.**
+
+```
+FDC_API_KEY=... dart run tools/catalog_pipeline/bin/fetch_catalog.dart
+dart run tools/catalog_pipeline/bin/pin_fdc_ids.dart --write   # only if step 4 added rows
+dart run tools/catalog_pipeline/bin/build_seed.dart
+dart run tools/catalog_pipeline/bin/parse_catalog.dart --write-lock
+```
+
+Expect `Failed: 0` and `Rejected matches: 0`. A pinned row has nothing to
+refuse, so anything under **Refused candidates** is an *unpinned* new row
+— read it, then pin it. Skip the pin step entirely when the CSV added no
+new ingredient rows.
+
+**What each report means**
+
+| Line | Meaning |
+|---|---|
+| `Failed` | A row resolved to nothing. Always act on it. |
+| `Refused candidates` | The gate skipped a wrong record and took the next. Normal on an unpinned row; should be 0 once pinned. |
+| `[removed]` in `--check` | A CSV superseded a markdown row. Expected when a new file covers an existing dish; repoint any target it names. |
+| `Yield warnings` | Serving weight against ingredient weight is outside 0.4×–15×. Check both weight columns. |
 
 ### What the CSVs do not decide
 
