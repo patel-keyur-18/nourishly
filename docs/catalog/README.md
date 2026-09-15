@@ -241,9 +241,14 @@ moved.
 
 ### Checking a hint without spending a fetch
 
-`fetch_catalog` takes about twenty-five minutes and needs an API key,
-which used to make every curation mistake cost a full round trip: run it,
-read the report, fix two rows, run it again.
+`fetch_catalog` needs an API key, and used to take about twenty-five
+minutes however little it actually fetched — it slept 150 ms after every
+ingredient it resolved, cached or not, which on a warm run was thousands
+of sleeps for zero requests. The throttle now lives in the caching layer
+and fires only when a call reaches the network, so a fully cached run
+finishes in about four seconds.
+
+Even so, checking a hint by fetching is the slow way round.
 
 `preview_fdc.dart` ends that. The cache stores every candidate a search
 returned along with its description, so the decision the real run makes —

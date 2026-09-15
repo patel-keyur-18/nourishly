@@ -175,7 +175,6 @@ Future<FdcFood?> _searchFdc(
         }
         return detail;
       }
-      await Future<void>.delayed(const Duration(milliseconds: 150));
     }
   }
   return null;
@@ -348,7 +347,6 @@ class IngredientResolver {
           pieceGrams: source.pieceGrams,
         ),
       );
-      await Future<void>.delayed(const Duration(milliseconds: 150));
     }
 
     final yieldResult = resolveRecipeYield(
@@ -518,7 +516,6 @@ Future<void> main(List<String> args) async {
     // A light pause between requests — polite to a free government API,
     // and keeps well inside even the DEMO_KEY's 30/hour limit if that's
     // what's set.
-    await Future<void>.delayed(const Duration(milliseconds: 150));
   }
 
   for (final (entry, recipe) in recipes) {
@@ -585,8 +582,6 @@ Future<void> main(List<String> args) async {
         'fdcDataType': source.food?.dataType,
         'nutrientsPer100g': source.nutrientsPer100g,
       });
-
-      await Future<void>.delayed(const Duration(milliseconds: 150));
     }
 
     if (missingIngredient) continue;

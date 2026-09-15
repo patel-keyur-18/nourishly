@@ -242,6 +242,27 @@ class CachingFdcSource implements FdcSource {
   /// recorded; an empty result is not a resolution.
   final resolutions = <String, ({int fdcId, String description})>{};
 
+  /// Spacing between consecutive **live** requests, to stay well inside
+  /// FoodData Central's rate limit.
+  ///
+  /// It lives here rather than in the caller because only this class
+  /// knows whether a call reached the network. `fetch_catalog` used to
+  /// sleep after every ingredient it resolved, cached or not, which on a
+  /// warm run was 8,879 sleeps for zero requests — around twenty minutes
+  /// of a twenty-five minute run spent waiting on nothing.
+  static const _spacing = Duration(milliseconds: 150);
+
+  DateTime? _lastRequest;
+
+  Future<void> _throttle() async {
+    final last = _lastRequest;
+    if (last != null) {
+      final since = DateTime.now().difference(last);
+      if (since < _spacing) await Future<void>.delayed(_spacing - since);
+    }
+    _lastRequest = DateTime.now();
+  }
+
   int _hits = 0;
   int _fetches = 0;
 
@@ -287,6 +308,7 @@ class CachingFdcSource implements FdcSource {
       throw FdcCacheMiss('search "$label"');
     }
 
+    await _throttle();
     _fetches++;
     final foods = await live!.search(
       query,
@@ -339,6 +361,7 @@ class CachingFdcSource implements FdcSource {
       throw FdcCacheMiss('food details for fdcId $fdcId');
     }
 
+    await _throttle();
     _fetches++;
     final food = await live!.getDetails(fdcId);
     cache.writeFood(food);
