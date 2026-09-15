@@ -455,7 +455,10 @@ Future<void> main(List<String> args) async {
         continue;
       }
 
-      final wrongForm = differentForm(detail.description, entry.foodName);
+      final wrongForm = differentForm(
+        detail.description,
+        _matchTerms(entry, lookup),
+      );
       if (wrongForm.isNotEmpty) {
         // Not a failure: the record names the right food, and only a
         // person can say whether the form is the one the row means. Every

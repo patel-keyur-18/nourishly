@@ -145,53 +145,77 @@ void main() {
     // because each really does name the food — as an oil, as leaves, as
     // a salted or cooked version.
     test('an oil pressed from the food', () {
-      expect(differentForm('Fish oil, sardine', 'Fish, sardine'), {'oil'});
+      expect(differentForm('Fish oil, sardine', ['Fish, sardine']), {'oil'});
     });
 
     test('the leaves of its plant', () {
-      expect(differentForm('Drumstick leaves, raw', 'Drumstick'), {'leaves'});
-      expect(differentForm('Sweet potato leaves, raw', 'Sweet potato'), {
+      expect(differentForm('Drumstick leaves, raw', ['Drumstick']), {'leaves'});
+      expect(differentForm('Sweet potato leaves, raw', ['Sweet potato']), {
         'leaves',
       });
     });
 
     test('a salted, breaded or cooked version', () {
-      expect(differentForm('Fish, mackerel, salted', 'Fish, seer / kingfish'), {
-        'salted',
-      });
       expect(
-        differentForm('Fish, fish sticks, frozen, prepared', 'Fish, pomfret'),
+        differentForm('Fish, mackerel, salted', ['Fish, seer / kingfish']),
+        {'salted'},
+      );
+      expect(
+        differentForm('Fish, fish sticks, frozen, prepared', ['Fish, pomfret']),
         {'sticks'},
       );
       expect(
-        differentForm(
-          'Chicken, broiler, rotisserie, BBQ',
+        differentForm('Chicken, broiler, rotisserie, BBQ', [
           'Chicken, curry cut, raw',
-        ),
+        ]),
         {'rotisserie'},
       );
     });
 
     test('a row that names the form itself is not flagged', () {
-      expect(differentForm('Oil, coconut', 'Coconut oil'), isEmpty);
+      expect(differentForm('Oil, coconut', ['Coconut oil']), isEmpty);
       expect(
-        differentForm('Drumstick leaves, raw', 'Drumstick leaves'),
+        differentForm('Drumstick leaves, raw', ['Drumstick leaves']),
         isEmpty,
       );
+    });
+
+    test('a hint that names the form acknowledges it', () {
+      // Ghee really is anhydrous butter oil and breadcrumbs really are
+      // dry grated bread. A row that says so in its hint has answered the
+      // question, and repeating it every run would bury the one warning
+      // that is real.
+      expect(
+        differentForm('Butter oil, anhydrous', [
+          'Ghee',
+          'butter oil anhydrous',
+        ]),
+        isEmpty,
+      );
+      expect(
+        differentForm('Bread, crumbs, dry, grated, plain', [
+          'Breadcrumbs',
+          'bread crumbs dry grated plain',
+        ]),
+        isEmpty,
+      );
+      // But an unacknowledged form still speaks up.
+      expect(differentForm('Fish oil, sardine', ['Fish, sardine', '']), {
+        'oil',
+      });
     });
 
     test('matches whole words, so unsweetened is not sweetened', () {
       // `parboiled` contains "oil" and `unsweetened` contains "sweetened";
       // substring matching flagged a dozen correct rows.
       expect(
-        differentForm(
-          'Rice, white, long-grain, parboiled, cooked',
+        differentForm('Rice, white, long-grain, parboiled, cooked', [
           'Rice, white, cooked',
-        ),
+        ]),
         isEmpty,
       );
       expect(
-        differentForm('Cocoa, dry powder, unsweetened', 'Cocoa powder'),
+        differentForm('Cocoa, dry powder, unsweetened', ['Cocoa powder']),
         isEmpty,
       );
     });

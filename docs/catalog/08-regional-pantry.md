@@ -127,7 +127,7 @@ Serving weights are the raw-ingredient convention of `01-common.md`: 100 g for a
 | Baking powder | — | 100 g | 100 | USDA leavening agents baking powder double-acting |
 | Baking soda | mitha soda, sodium bicarbonate | 100 g | 100 | USDA leavening agents baking soda |
 | Gelatin | china grass, agar agar | 100 g | 100 | USDA gelatins dry powder unsweetened |
-| Edible gum | gond, dinkh, gum acacia | 100 g | 100 | USDA gum arabic — no FDC entry for gond; the nearest measured gum is chewing gum, which is what this resolves to |
+| Edible gum | gond, dinkh, gum acacia | 100 g | 100 | USDA chewing gum — no FDC entry for gond; chewing gum is the nearest measured gum |
 | Cocoa powder | — | 100 g | 100 | USDA cocoa dry powder unsweetened |
 | Dark chocolate | — | 100 g | 100 | USDA chocolate dark 70-85% cacao |
 | Vanilla essence | vanilla extract | 100 g | 100 | USDA vanilla extract |
@@ -136,5 +136,5 @@ Serving weights are the raw-ingredient convention of `01-common.md`: 100 g for a
 | Tea leaves | chai patti, black tea | 100 g | 100 | USDA tea instant unsweetened powder |
 | Sponge cake | plain cake | 100 g | 100 | USDA cake sponge commercially prepared |
 | Custard | custard powder, vanilla custard | 1 katori | 150 | USDA puddings vanilla ready-to-eat |
-| Biscuits, digestive | marie biscuit, digestive biscuit | 100 g | 100 | USDA cookies digestive — FDC has no digestive biscuit; resolves to a plain sweet biscuit |
+| Biscuits, digestive | marie biscuit, digestive biscuit | 100 g | 100 | USDA cookies graham crackers plain — FDC has no digestive; the graham cracker is the same semi-sweet wholemeal biscuit, and `cookies digestive` returned a babyfood record |
 | Pepperoni | — | 100 g | 100 | USDA salami italian pork — FDC publishes no pepperoni with proximates; salami is the same cured pork-and-beef family |

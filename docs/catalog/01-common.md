@@ -36,7 +36,7 @@ Foods common to Gujarati, Tamil and Kannadiga households. Tier 1 items are marke
 | Oats, rolled | jai, oatmeal, rolled oats | 40 g | 40 | USDA cereals oats regular and quick unenriched dry |
 | Vermicelli, raw | semiya, shavige, sevai | 50 g | 50 | USDA |
 | Bread, white | — | 1 slice | 25 | USDA |
-| Pav | ladi pav, bun | 1 piece | 45 | USDA bread white commercially prepared roll |
+| Pav | ladi pav, bun | 1 piece | 45 | USDA bread white commercially prepared — the `roll` in the old hint returned the *toasted* record, which is denser per 100 g |
 | Broken wheat | dalia, fada, godhi nucchu, samba rava | 100 g | 100 | USDA bulgur dry |
 | Puffed rice | murmura, mamra, pori, kadle puri | 1 katori | 15 | USDA cereals ready-to-eat rice puffed |
 | **①** Idli rice + urad batter | — | 100 g | 100 | Rice 70 g, urad dal 25 g, fenugreek — the base for idli, dosa, uttapam |
@@ -80,7 +80,7 @@ Raw entries feed recipes; cooked entries are logged directly.
 | Curd, low-fat | — | 1 katori | 150 | USDA yogurt plain low fat |
 | **①** Buttermilk | chaas, mor, majjige | 1 glass | 200 | Curd 50 g + water 150 ml, salt, cumin |
 | **①** Paneer | panir, cottage cheese | 50 g | 50 | USDA paneer/queso fresco |
-| **①** Ghee | tup, nei, tuppa | 1 tsp | 5 | USDA butter oil |
+| **①** Ghee | tup, nei, tuppa | 1 tsp | 5 | USDA butter oil anhydrous |
 | Butter | makhan, venna | 1 tsp | 5 | USDA |
 | Malai / fresh cream | — | 1 tbsp | 15 | USDA heavy cream |
 | Khoya / Mawa | — | 25 g | 25 | USDA milk dry whole |
@@ -148,7 +148,7 @@ Raw weights; the pipeline applies cooking yield per dish.
 | **①** Banana | kela, vazhaipazham, balehannu | 1 medium | 100 | USDA |
 | **①** Mango | keri, mampazham, mavinahannu | 1 medium | 200 | USDA |
 | **①** Apple | seb | 1 medium | 150 | USDA apples raw with skin |
-| Lemon | nimbu, elumichai, nimbehannu | 1 medium | 60 | USDA lemon raw |
+| Lemon | nimbu, elumichai, nimbehannu | 1 medium | 60 | USDA lemon juice raw — recipes measure lemon as juice (95 of them, ~7 ml each), so juice is the form to sum from |
 | Papaya | papaiya, pappali | 1 katori | 150 | USDA |
 | Guava | jamphal, koyya, sibe | 1 medium | 100 | USDA guavas common raw |
 | Orange / Sweet lime | santara, mosambi | 1 medium | 130 | USDA |
@@ -167,7 +167,7 @@ Raw weights; the pipeline applies cooking yield per dish.
 
 | Food | Also | Serving | g | Composition |
 |---|---|---|---|---|
-| Almonds | badam | 5 pieces | 6 | USDA |
+| Almonds | badam | 5 pieces | 6 | USDA nuts almonds — a bare `USDA` returned almond flour; the same food ground, but an odd thing to log 5 pieces of |
 | Cashew | kaju, mundiri, godambi | 5 pieces | 8 | USDA |
 | Walnut | akhrot | 2 halves | 8 | USDA nuts walnuts english |
 | Pistachio | pista | 10 pieces | 8 | USDA |

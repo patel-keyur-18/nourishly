@@ -146,13 +146,23 @@ const differentFormWords = {
   'breaded',
 };
 
-/// The [differentFormWords] that [description] carries and [name] does
-/// not — empty when the record is the same form as the row asked for.
+/// The [differentFormWords] that [description] carries and [terms] — the
+/// row's name and its `USDA` hint — do not. Empty when the record is the
+/// form the row asked for.
+///
+/// The hint counts, which is what keeps this list worth reading. Ghee
+/// really is anhydrous butter *oil* and breadcrumbs really are dry
+/// grated *bread*; a row that names the form it means has said so, and
+/// warning about it every run would train the reader to skim past the
+/// one line that matters. Acknowledging a form is therefore a one-word
+/// edit to the hint, and a warning that survives is a real question.
 ///
 /// Matched on whole words: `unsweetened` must not read as `sweetened`,
 /// and `parboiled` must not read as `oil`.
-Set<String> differentForm(String description, String name) {
+Set<String> differentForm(String description, Iterable<String> terms) {
   final theirs = description.toLowerCase().split(RegExp(r'[^a-z]+')).toSet();
-  final ours = name.toLowerCase().split(RegExp(r'[^a-z]+')).toSet();
+  final ours = {
+    for (final t in terms) ...t.toLowerCase().split(RegExp(r'[^a-z]+')),
+  };
   return theirs.intersection(differentFormWords).difference(ours);
 }
