@@ -123,7 +123,7 @@ Raw weights; the pipeline applies cooking yield per dish.
 | Yam | suran, senaikizhangu, suvarnagadde | 100 g | 100 | USDA |
 | Colocasia | arbi, seppankizhangu, kesuvina gadde | 100 g | 100 | USDA taro |
 | Colocasia leaves | patra na paan, alu leaves, kesuvina ele | 100 g | 100 | USDA taro leaves raw |
-| Sweet potato | shakarkand, sarkaraivalli | 1 medium | 100 | USDA sweet potato raw unprepared — a bare `USDA` returned the leaves |
+| Sweet potato | shakarkand, sarkaraivalli | 1 medium | 100 | USDA sweetpotato raw unprepared — USDA spells it one word; `sweet potato raw unprepared` returned frozen *puffs*, and a bare `USDA` returned the leaves |
 | Raw banana | kacha kela, vazhaikkai, balekayi | 1 medium | 100 | USDA plantains green raw |
 | Raw mango | keri, mangai | 50 g | 50 | USDA |
 | **①** Spinach | palak, keerai, palak soppu | 100 g | 100 | USDA |

@@ -162,13 +162,25 @@ void main() {
       );
       expect(
         differentForm('Fish, fish sticks, frozen, prepared', ['Fish, pomfret']),
-        {'sticks'},
+        {'sticks', 'frozen'},
       );
       expect(
         differentForm('Chicken, broiler, rotisserie, BBQ', [
           'Chicken, curry cut, raw',
         ]),
         {'rotisserie'},
+      );
+    });
+
+    test('a processed convenience form', () {
+      // `Sweet Potato puffs, frozen, unprepared` answered a search for
+      // raw sweet potato — they share the word "unprepared".
+      expect(
+        differentForm('Sweet Potato puffs, frozen, unprepared', [
+          'Sweet potato',
+          'sweet potato raw unprepared',
+        ]),
+        {'puffs', 'frozen'},
       );
     });
 

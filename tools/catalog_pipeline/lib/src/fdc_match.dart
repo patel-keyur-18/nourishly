@@ -144,6 +144,13 @@ const differentFormWords = {
   'toasted',
   'rotisserie',
   'breaded',
+  // Processed forms sold as a snack or a convenience pack. `Sweet Potato
+  // puffs, frozen` answered a search for raw sweet potato, on the word
+  // "unprepared" the hint shared with it.
+  'puffs',
+  'frozen',
+  'dehydrated',
+  'instant',
 };
 
 /// The [differentFormWords] that [description] carries and [terms] — the
