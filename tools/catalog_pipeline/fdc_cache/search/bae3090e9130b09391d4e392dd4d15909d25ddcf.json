@@ -1,0 +1,17 @@
+{
+  "query": "chewing gum [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 168771,
+      "description": "Chewing gum"
+    },
+    {
+      "fdcId": 169882,
+      "description": "Chewing gum, sugarless"
+    },
+    {
+      "fdcId": 169045,
+      "description": "Gums, seed gums (includes locust bean, guar)"
+    }
+  ]
+}

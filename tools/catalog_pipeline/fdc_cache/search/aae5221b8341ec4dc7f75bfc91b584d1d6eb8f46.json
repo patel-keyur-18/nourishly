@@ -1,0 +1,17 @@
+{
+  "query": "lemon juice raw [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 167747,
+      "description": "Lemon juice, raw"
+    },
+    {
+      "fdcId": 167749,
+      "description": "Lemon peel, raw"
+    },
+    {
+      "fdcId": 171687,
+      "description": "Acerola juice, raw"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "query": "butter oil anhydrous [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 173412,
+      "description": "Butter oil, anhydrous"
+    },
+    {
+      "fdcId": 171421,
+      "description": "Oil, cocoa butter"
+    },
+    {
+      "fdcId": 172335,
+      "description": "Oil, nutmeg butter"
+    }
+  ]
+}

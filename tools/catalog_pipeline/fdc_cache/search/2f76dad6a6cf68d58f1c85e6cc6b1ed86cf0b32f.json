@@ -1,0 +1,17 @@
+{
+  "query": "bread white commercially prepared [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 174925,
+      "description": "Bread, white, commercially prepared, toasted"
+    },
+    {
+      "fdcId": 174924,
+      "description": "Bread, white, commercially prepared (includes soft bread crumbs)"
+    },
+    {
+      "fdcId": 172818,
+      "description": "Bread, white, commercially prepared, low sodium, no salt"
+    }
+  ]
+}
