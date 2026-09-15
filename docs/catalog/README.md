@@ -172,6 +172,14 @@ that happens to contain the food's name (`Bread, potato` for potato), and
 they are not meant to: the hint is what gets the right record, and the
 guards stop the obviously wrong one from being summed in silence.
 
+**A record can name the right food in the wrong form**, and no word rule
+separates those: `Fish oil, sardine` really is sardine, `Drumstick
+leaves` really is drumstick. Both shipped — sardine at 902 kcal, and
+drumstick and sweet potato as their leaves. `fetch_catalog` now prints a
+**form warning** whenever the record it accepted carries a word the row
+does not — oil, leaves, salted, sticks, rotisserie, juice — and those are
+for a curator to read, not for the pipeline to decide.
+
 **A food FoodData Central does not measure gets the nearest food that it
 does, named on the row.** Jaggery's only FDC record carries zero
 nutrients, so the row reads `USDA sugars brown — no FDC record for gur

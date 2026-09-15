@@ -139,4 +139,61 @@ void main() {
       expect(hasProximates(const {}), isFalse);
     });
   });
+
+  group('differentForm flags a record that is another form of the food', () {
+    // Every pairing here shipped. None is caught by describesSameFood,
+    // because each really does name the food — as an oil, as leaves, as
+    // a salted or cooked version.
+    test('an oil pressed from the food', () {
+      expect(differentForm('Fish oil, sardine', 'Fish, sardine'), {'oil'});
+    });
+
+    test('the leaves of its plant', () {
+      expect(differentForm('Drumstick leaves, raw', 'Drumstick'), {'leaves'});
+      expect(differentForm('Sweet potato leaves, raw', 'Sweet potato'), {
+        'leaves',
+      });
+    });
+
+    test('a salted, breaded or cooked version', () {
+      expect(differentForm('Fish, mackerel, salted', 'Fish, seer / kingfish'), {
+        'salted',
+      });
+      expect(
+        differentForm('Fish, fish sticks, frozen, prepared', 'Fish, pomfret'),
+        {'sticks'},
+      );
+      expect(
+        differentForm(
+          'Chicken, broiler, rotisserie, BBQ',
+          'Chicken, curry cut, raw',
+        ),
+        {'rotisserie'},
+      );
+    });
+
+    test('a row that names the form itself is not flagged', () {
+      expect(differentForm('Oil, coconut', 'Coconut oil'), isEmpty);
+      expect(
+        differentForm('Drumstick leaves, raw', 'Drumstick leaves'),
+        isEmpty,
+      );
+    });
+
+    test('matches whole words, so unsweetened is not sweetened', () {
+      // `parboiled` contains "oil" and `unsweetened` contains "sweetened";
+      // substring matching flagged a dozen correct rows.
+      expect(
+        differentForm(
+          'Rice, white, long-grain, parboiled, cooked',
+          'Rice, white, cooked',
+        ),
+        isEmpty,
+      );
+      expect(
+        differentForm('Cocoa, dry powder, unsweetened', 'Cocoa powder'),
+        isEmpty,
+      );
+    });
+  });
 }

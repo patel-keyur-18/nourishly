@@ -423,6 +423,11 @@ Future<void> main(List<String> args) async {
 
   final resolved = <Map<String, dynamic>>[];
   final failures = <String>[];
+
+  /// Records that name the right food in the wrong form — an oil pressed
+  /// from it, its leaves, a salted or cooked version. Reported, never
+  /// refused: only a curator can say which form a row means.
+  final formWarnings = <String>[];
   var done = 0;
 
   for (final (entry, lookup) in lookups) {
@@ -448,6 +453,19 @@ Future<void> main(List<String> args) async {
           'FoodData Central does.',
         );
         continue;
+      }
+
+      final wrongForm = differentForm(detail.description, entry.foodName);
+      if (wrongForm.isNotEmpty) {
+        // Not a failure: the record names the right food, and only a
+        // person can say whether the form is the one the row means. Every
+        // one of these that shipped was wrong, though, so the run says so
+        // rather than leaving it to be found by reading the seed.
+        formWarnings.add(
+          '${entry.foodName}: resolved to "${detail.description}" '
+          '(${wrongForm.join(', ')}). If that is a different form of the '
+          'food, name the one you mean in the row\'s `USDA` hint.',
+        );
       }
 
       final result = normalizer.normalize(detail);
@@ -622,7 +640,17 @@ Future<void> main(List<String> args) async {
   stdout.writeln('Failed:   ${failures.length}');
   stdout.writeln('Yield warnings: $warned (see yieldWarning in the JSON)');
   stdout.writeln('Rejected matches: ${resolver.rejected.length}');
+  stdout.writeln('Form warnings: ${formWarnings.length}');
   stdout.writeln('Wrote ${outFile.path}');
+
+  if (formWarnings.isNotEmpty) {
+    stdout.writeln(
+      '\nResolved, but to another form of the food — check these:',
+    );
+    for (final w in formWarnings) {
+      stdout.writeln('  - $w');
+    }
+  }
 
   if (resolver.rejected.isNotEmpty) {
     // Printed in full, not counted. Each line is a search result the run

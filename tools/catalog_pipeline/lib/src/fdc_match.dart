@@ -107,3 +107,52 @@ class RejectedMatch {
   String toString() =>
       '"$query" -> ${food.description} (${food.fdcId}): $reason';
 }
+
+/// Words that mean a record is a different **form** of the food rather
+/// than the food: an oil pressed from it, the leaves of its plant, a
+/// breaded or salted version, a sweet made of it.
+///
+/// Separate from [describesSameFood] because these records pass it —
+/// `Fish oil, sardine` really does name sardine, `Drumstick leaves` really
+/// does name drumstick. They are the sieve's blind spot, found by reading
+/// the shipped catalog rather than by reasoning: sardine came back as
+/// sardine *oil* at 902 kcal, drumstick and sweet potato both came back as
+/// their leaves, kingfish as *salted* mackerel, chicken as a cooked
+/// rotisserie bird 76% above raw.
+///
+/// This is a reviewer's aid, not a gate. A row legitimately naming the
+/// form — `Coconut oil`, `Drumstick leaves`, `Lemon` used for its juice —
+/// says so in its own name and is not flagged.
+const differentFormWords = {
+  'oil',
+  'sticks',
+  'salted',
+  'candies',
+  'babyfood',
+  'pastry',
+  'bread',
+  'soup',
+  'juice',
+  'novelties',
+  'chewing',
+  'flour',
+  'croissants',
+  'cookies',
+  'pickled',
+  'leaves',
+  'leafy',
+  'toasted',
+  'rotisserie',
+  'breaded',
+};
+
+/// The [differentFormWords] that [description] carries and [name] does
+/// not — empty when the record is the same form as the row asked for.
+///
+/// Matched on whole words: `unsweetened` must not read as `sweetened`,
+/// and `parboiled` must not read as `oil`.
+Set<String> differentForm(String description, String name) {
+  final theirs = description.toLowerCase().split(RegExp(r'[^a-z]+')).toSet();
+  final ours = name.toLowerCase().split(RegExp(r'[^a-z]+')).toSet();
+  return theirs.intersection(differentFormWords).difference(ours);
+}

@@ -121,13 +121,13 @@ Serving weights are the raw-ingredient convention of `01-common.md`: 100 g for a
 | Vinegar | sirka | 100 g | 100 | USDA vinegar distilled |
 | Mayonnaise | mayo | 100 g | 100 | USDA salad dressing mayonnaise regular with salt |
 | Pesto | basil pesto | 100 g | 100 | USDA pesto sauce |
-| Vegetable stock | vegetable broth | 1 katori | 150 | USDA soup stock vegetable |
+| Vegetable stock | vegetable broth | 1 katori | 150 | USDA soup vegetable broth ready to serve — `soup stock vegetable` returned beef stock |
 | Chicken stock | chicken broth | 1 katori | 150 | USDA soup stock chicken home-prepared |
 | Yeast | baker's yeast, active dry yeast | 100 g | 100 | USDA yeast baker's active dry |
 | Baking powder | — | 100 g | 100 | USDA leavening agents baking powder double-acting |
 | Baking soda | mitha soda, sodium bicarbonate | 100 g | 100 | USDA leavening agents baking soda |
 | Gelatin | china grass, agar agar | 100 g | 100 | USDA gelatins dry powder unsweetened |
-| Edible gum | gond, dinkh, gum acacia | 100 g | 100 | USDA gum arabic |
+| Edible gum | gond, dinkh, gum acacia | 100 g | 100 | USDA gum arabic — no FDC entry for gond; the nearest measured gum is chewing gum, which is what this resolves to |
 | Cocoa powder | — | 100 g | 100 | USDA cocoa dry powder unsweetened |
 | Dark chocolate | — | 100 g | 100 | USDA chocolate dark 70-85% cacao |
 | Vanilla essence | vanilla extract | 100 g | 100 | USDA vanilla extract |
@@ -136,5 +136,5 @@ Serving weights are the raw-ingredient convention of `01-common.md`: 100 g for a
 | Tea leaves | chai patti, black tea | 100 g | 100 | USDA tea instant unsweetened powder |
 | Sponge cake | plain cake | 100 g | 100 | USDA cake sponge commercially prepared |
 | Custard | custard powder, vanilla custard | 1 katori | 150 | USDA puddings vanilla ready-to-eat |
-| Biscuits, digestive | marie biscuit, digestive biscuit | 100 g | 100 | USDA cookies digestive |
+| Biscuits, digestive | marie biscuit, digestive biscuit | 100 g | 100 | USDA cookies digestive — FDC has no digestive biscuit; resolves to a plain sweet biscuit |
 | Pepperoni | — | 100 g | 100 | USDA salami italian pork — FDC publishes no pepperoni with proximates; salami is the same cured pork-and-beef family |
