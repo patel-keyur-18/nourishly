@@ -1,0 +1,17 @@
+{
+  "query": "fish flatfish flounder and sole species raw [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 174196,
+      "description": "Fish, flatfish (flounder and sole species), raw"
+    },
+    {
+      "fdcId": 174197,
+      "description": "Fish, flatfish (flounder and sole species), cooked, dry heat"
+    },
+    {
+      "fdcId": 174193,
+      "description": "Fish, eel, mixed species, raw"
+    }
+  ]
+}

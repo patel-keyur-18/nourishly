@@ -1,0 +1,17 @@
+{
+  "query": "sweet potato raw unprepared [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 168016,
+      "description": "Sweet Potato puffs, frozen, unprepared"
+    },
+    {
+      "fdcId": 168482,
+      "description": "Sweet potato, raw, unprepared (Includes foods for USDA's Food Distribution Program)"
+    },
+    {
+      "fdcId": 168015,
+      "description": "Sweet Potatoes, french fried, crosscut, frozen, unprepared"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "query": "fish sardine atlantic canned in oil drained solids with bone [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 175139,
+      "description": "Fish, sardine, Atlantic, canned in oil, drained solids with bone"
+    },
+    {
+      "fdcId": 175140,
+      "description": "Fish, sardine, Pacific, canned in tomato sauce, drained solids with bone"
+    },
+    {
+      "fdcId": 175135,
+      "description": "Fish, salmon, chum, canned, drained solids with bone"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "query": "soup vegetable broth ready to serve [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 171583,
+      "description": "Soup, vegetable broth, ready to serve"
+    },
+    {
+      "fdcId": 174536,
+      "description": "Soup, chicken broth, ready-to-serve"
+    },
+    {
+      "fdcId": 171190,
+      "description": "Soup, beef and vegetables, canned, ready-to-serve"
+    }
+  ]
+}

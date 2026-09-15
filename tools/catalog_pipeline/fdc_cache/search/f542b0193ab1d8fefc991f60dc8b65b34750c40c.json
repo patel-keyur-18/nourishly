@@ -1,0 +1,17 @@
+{
+  "query": "grapes red or green european type raw [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 174683,
+      "description": "Grapes, red or green (European type, such as Thompson seedless), raw"
+    },
+    {
+      "fdcId": 174682,
+      "description": "Grapes, american type (slip skin), raw"
+    },
+    {
+      "fdcId": 2346412,
+      "description": "Grapes, red, seedless, raw"
+    }
+  ]
+}

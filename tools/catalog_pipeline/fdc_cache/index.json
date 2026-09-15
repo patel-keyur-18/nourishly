@@ -153,9 +153,9 @@
       "fdcId": 174608,
       "description": "Chicken breast, roll, oven-roasted"
     },
-    "chicken broiler [Foundation,SR Legacy]": {
-      "fdcId": 171524,
-      "description": "Chicken, broiler, rotisserie, BBQ, skin"
+    "chicken broilers or fryers meat and skin raw [Foundation,SR Legacy]": {
+      "fdcId": 171447,
+      "description": "Chicken, broilers or fryers, meat and skin, raw"
     },
     "chickpea flour [Foundation,SR Legacy]": {
       "fdcId": 174288,
@@ -249,13 +249,13 @@
       "fdcId": 168191,
       "description": "Dates, medjool"
     },
-    "drumstick [Foundation,SR Legacy]": {
-      "fdcId": 168416,
-      "description": "Drumstick leaves, raw"
-    },
     "drumstick leaves raw [Foundation,SR Legacy]": {
       "fdcId": 168416,
       "description": "Drumstick leaves, raw"
+    },
+    "drumstick pods raw [Foundation,SR Legacy]": {
+      "fdcId": 170483,
+      "description": "Drumstick pods, raw"
     },
     "duck meat raw [Foundation,SR Legacy]": {
       "fdcId": 172408,
@@ -281,9 +281,21 @@
       "fdcId": 171952,
       "description": "Fish, carp, raw"
     },
+    "fish flatfish flounder and sole species raw [Foundation,SR Legacy]": {
+      "fdcId": 174196,
+      "description": "Fish, flatfish (flounder and sole species), raw"
+    },
+    "fish mackerel king raw [Foundation,SR Legacy]": {
+      "fdcId": 175122,
+      "description": "Fish, mackerel, king, raw"
+    },
     "fish mackerel raw [Foundation,SR Legacy]": {
       "fdcId": 175119,
       "description": "Fish, mackerel, Atlantic, raw"
+    },
+    "fish sardine atlantic canned in oil drained solids with bone [Foundation,SR Legacy]": {
+      "fdcId": 175139,
+      "description": "Fish, sardine, Atlantic, canned in oil, drained solids with bone"
     },
     "fish shad american raw [Foundation,SR Legacy]": {
       "fdcId": 173696,
@@ -292,14 +304,6 @@
     "fish tuna light canned in water drained [Foundation,SR Legacy]": {
       "fdcId": 334194,
       "description": "Fish, tuna, light, canned in water, drained solids"
-    },
-    "fish, pomfret [Foundation,SR Legacy]": {
-      "fdcId": 174195,
-      "description": "Fish, fish sticks, frozen, prepared"
-    },
-    "fish, sardine [Foundation,SR Legacy]": {
-      "fdcId": 173578,
-      "description": "Fish oil, sardine"
     },
     "fruit cocktail peach pineapple pear grape canned juice pack [Foundation,SR Legacy]": {
       "fdcId": 174668,
@@ -321,9 +325,13 @@
       "fdcId": 173030,
       "description": "Gooseberries, raw"
     },
-    "grapes [Foundation,SR Legacy]": {
-      "fdcId": 169393,
-      "description": "Grape leaves, canned"
+    "grape juice canned unsweetened [Foundation,SR Legacy]": {
+      "fdcId": 173041,
+      "description": "Grape juice, canned or bottled, unsweetened, with added ascorbic acid"
+    },
+    "grapes red or green european type raw [Foundation,SR Legacy]": {
+      "fdcId": 174683,
+      "description": "Grapes, red or green (European type, such as Thompson seedless), raw"
     },
     "green beans [Foundation,SR Legacy]": {
       "fdcId": 169965,
@@ -404,10 +412,6 @@
     "lotus seeds dried [Foundation,SR Legacy]": {
       "fdcId": 170149,
       "description": "Seeds, lotus seeds, dried"
-    },
-    "mackerel basis [Foundation,SR Legacy]": {
-      "fdcId": 168149,
-      "description": "Fish, mackerel, salted"
     },
     "mango [Foundation,SR Legacy]": {
       "fdcId": 169910,
@@ -729,9 +733,9 @@
       "fdcId": 172884,
       "description": "Soup, stock, chicken, home-prepared"
     },
-    "soup stock vegetable [Foundation,SR Legacy]": {
-      "fdcId": 172883,
-      "description": "Soup, stock, beef, home-prepared"
+    "soup vegetable broth ready to serve [Foundation,SR Legacy]": {
+      "fdcId": 171583,
+      "description": "Soup, vegetable broth, ready to serve"
     },
     "soy protein concentrate [Foundation,SR Legacy]": {
       "fdcId": 174301,
@@ -809,17 +813,13 @@
       "fdcId": 168175,
       "description": "Sugar-apples, (sweetsop), raw"
     },
-    "sugarcane juice [Foundation,SR Legacy]": {
-      "fdcId": 167721,
-      "description": "Frozen novelties, juice type, juice with cream"
-    },
     "sugars brown [Foundation,SR Legacy]": {
       "fdcId": 168833,
       "description": "Sugars, brown"
     },
-    "sweet potato [Foundation,SR Legacy]": {
-      "fdcId": 169303,
-      "description": "Sweet potato leaves, raw"
+    "sweet potato raw unprepared [Foundation,SR Legacy]": {
+      "fdcId": 168016,
+      "description": "Sweet Potato puffs, frozen, unprepared"
     },
     "tamarinds raw [Foundation,SR Legacy]": {
       "fdcId": 167763,
