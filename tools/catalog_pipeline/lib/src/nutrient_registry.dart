@@ -30,9 +30,16 @@ class NutrientDef {
   /// `kcal` | `g` | `mg` | `ug`.
   final String canonicalUnit;
 
-  /// The FDC nutrient `name` strings that map to this nutrient. More than
-  /// one where USDA's own naming has varied across dataTypes/API versions
-  /// (e.g. `Sugars, total including NLEA` vs. the older `Sugars, total`).
+  /// The FDC nutrient `name` strings that map to this nutrient, **in
+  /// preference order**. More than one where USDA's own naming has varied
+  /// across dataTypes/API versions (e.g. `Sugars, total including NLEA`
+  /// vs. the older `Sugars, total`).
+  ///
+  /// Order matters where the names are not synonyms but different
+  /// computations of the same quantity — see `energy`. The normalizer
+  /// takes the first name the food carries, so a food with several is
+  /// resolved by this list rather than by the order its nutrients
+  /// happened to arrive in.
   final List<String> fdcNames;
 
   /// FDC's `unitName` for this nutrient (e.g. `KCAL`, `G`, `MG`, `UG`),
@@ -52,12 +59,29 @@ const nutrientGroups = [
 /// micronutrients (§0.3 of the personal-use scope document).
 const nutrientRegistry = <NutrientDef>[
   // --- Macronutrients (5) ---
+  // Three names, and the order is the whole point. SR Legacy and the
+  // older Foundation records report a plain `Energy`; newer Foundation
+  // records drop it and report the two Atwater computations instead,
+  // which is why 32 catalog foods shipped at 0 kcal while their macros
+  // were right.
+  //
+  // Specific before General, because that is what the rest of the
+  // catalog already uses: SR Legacy's `Energy` is itself computed with
+  // Atwater specific factors, and measured against the committed FDC
+  // cache 102 of 189 plain-`Energy` foods sit more than 2% below a flat
+  // 4/9/4 — up to 29% below for leafy vegetables. Preferring General
+  // would leave the same foods reading 7-17% higher than their
+  // neighbours purely by which record USDA happened to publish.
   NutrientDef(
     id: 'energy',
     groupId: 'macronutrients',
     displayName: 'Energy',
     canonicalUnit: 'kcal',
-    fdcNames: ['Energy'],
+    fdcNames: [
+      'Energy',
+      'Energy (Atwater Specific Factors)',
+      'Energy (Atwater General Factors)',
+    ],
     fdcUnit: 'KCAL',
   ),
   NutrientDef(
