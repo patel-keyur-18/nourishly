@@ -111,6 +111,13 @@ void main() {
       );
     });
 
+    test('a name that is only a category and a colour still matches', () {
+      // `Bread, white` is a form word and a colour and nothing else. It
+      // has to be matched on them, which works because a row's own words
+      // are authoritative about what it means.
+      expect(describesSameFood('Bread, white wheat', ['Bread, white']), isTrue);
+    });
+
     test('a colour alone is not a match', () {
       // `Asparagus, green, raw` answered a search for green chilli.
       expect(

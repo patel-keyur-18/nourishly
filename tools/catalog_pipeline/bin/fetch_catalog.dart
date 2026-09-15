@@ -129,6 +129,30 @@ Future<FdcFood?> _searchFdc(
           );
           continue;
         }
+        // A record that names the food in another form — an oil pressed
+        // from it, its leaves, a frozen or toasted version — is skipped
+        // so the next candidate gets a turn. This is a gate rather than a
+        // warning because the right record is usually sitting directly
+        // behind the wrong one: `sweet potato raw unprepared` returned
+        // frozen puffs, then the real thing; `bread white commercially
+        // prepared` returned the toasted loaf, then the plain one.
+        //
+        // A row that means the form says so in its hint, and is not
+        // stopped: ghee names butter *oil*, breadcrumbs name dry grated
+        // *bread*.
+        final form = differentForm(candidate.description, terms);
+        if (form.isNotEmpty) {
+          rejected.add(
+            RejectedMatch(
+              query: query,
+              food: candidate,
+              reason:
+                  'is another form of the food (${form.join(', ')}) — name '
+                  'the form in the hint if it is the one you mean',
+            ),
+          );
+          continue;
+        }
         // Full detail fetch: search results sometimes carry an
         // abbreviated nutrient panel compared to the food's own record,
         // so the proximates check has to run on the detailed record.
@@ -424,10 +448,6 @@ Future<void> main(List<String> args) async {
   final resolved = <Map<String, dynamic>>[];
   final failures = <String>[];
 
-  /// Records that name the right food in the wrong form — an oil pressed
-  /// from it, its leaves, a salted or cooked version. Reported, never
-  /// refused: only a curator can say which form a row means.
-  final formWarnings = <String>[];
   var done = 0;
 
   for (final (entry, lookup) in lookups) {
@@ -453,22 +473,6 @@ Future<void> main(List<String> args) async {
           'FoodData Central does.',
         );
         continue;
-      }
-
-      final wrongForm = differentForm(
-        detail.description,
-        _matchTerms(entry, lookup),
-      );
-      if (wrongForm.isNotEmpty) {
-        // Not a failure: the record names the right food, and only a
-        // person can say whether the form is the one the row means. Every
-        // one of these that shipped was wrong, though, so the run says so
-        // rather than leaving it to be found by reading the seed.
-        formWarnings.add(
-          '${entry.foodName}: resolved to "${detail.description}" '
-          '(${wrongForm.join(', ')}). If that is a different form of the '
-          'food, name the one you mean in the row\'s `USDA` hint.',
-        );
       }
 
       final result = normalizer.normalize(detail);
@@ -643,17 +647,7 @@ Future<void> main(List<String> args) async {
   stdout.writeln('Failed:   ${failures.length}');
   stdout.writeln('Yield warnings: $warned (see yieldWarning in the JSON)');
   stdout.writeln('Rejected matches: ${resolver.rejected.length}');
-  stdout.writeln('Form warnings: ${formWarnings.length}');
   stdout.writeln('Wrote ${outFile.path}');
-
-  if (formWarnings.isNotEmpty) {
-    stdout.writeln(
-      '\nResolved, but to another form of the food — check these:',
-    );
-    for (final w in formWarnings) {
-      stdout.writeln('  - $w');
-    }
-  }
 
   if (resolver.rejected.isNotEmpty) {
     // Printed in full, not counted. Each line is a search result the run

@@ -36,7 +36,7 @@ Foods common to Gujarati, Tamil and Kannadiga households. Tier 1 items are marke
 | Oats, rolled | jai, oatmeal, rolled oats | 40 g | 40 | USDA cereals oats regular and quick unenriched dry |
 | Vermicelli, raw | semiya, shavige, sevai | 50 g | 50 | USDA |
 | Bread, white | — | 1 slice | 25 | USDA |
-| Pav | ladi pav, bun | 1 piece | 45 | USDA bread white commercially prepared — the `roll` in the old hint returned the *toasted* record, which is denser per 100 g |
+| Pav | ladi pav, bun | 1 piece | 45 | USDA bread white commercially prepared |
 | Broken wheat | dalia, fada, godhi nucchu, samba rava | 100 g | 100 | USDA bulgur dry |
 | Puffed rice | murmura, mamra, pori, kadle puri | 1 katori | 15 | USDA cereals ready-to-eat rice puffed |
 | **①** Idli rice + urad batter | — | 100 g | 100 | Rice 70 g, urad dal 25 g, fenugreek — the base for idli, dosa, uttapam |
@@ -102,7 +102,7 @@ Raw weights; the pipeline applies cooking yield per dish.
 | **①** Okra | bhindi, vendakkai, bendekai | 100 g | 100 | USDA |
 | **①** Cauliflower | phool gobi, cauliflower | 100 g | 100 | USDA |
 | **①** Cabbage | kobi, muttaikose | 100 g | 100 | USDA |
-| **①** Carrot | gajar | 1 medium | 60 | USDA |
+| **①** Carrot | gajar | 1 medium | 60 | USDA carrots raw |
 | Bottle gourd | dudhi, lauki, sorekayi | 100 g | 100 | USDA calabash |
 | Ridge gourd | turiya, peerkangai, heerekayi | 100 g | 100 | USDA |
 | Ivy gourd | tindora, kovakkai, tondekayi | 100 g | 100 | USDA |
@@ -123,14 +123,14 @@ Raw weights; the pipeline applies cooking yield per dish.
 | Yam | suran, senaikizhangu, suvarnagadde | 100 g | 100 | USDA |
 | Colocasia | arbi, seppankizhangu, kesuvina gadde | 100 g | 100 | USDA taro |
 | Colocasia leaves | patra na paan, alu leaves, kesuvina ele | 100 g | 100 | USDA taro leaves raw |
-| Sweet potato | shakarkand, sarkaraivalli | 1 medium | 100 | USDA sweetpotato raw unprepared — USDA spells it one word; `sweet potato raw unprepared` returned frozen *puffs*, and a bare `USDA` returned the leaves |
+| Sweet potato | shakarkand, sarkaraivalli | 1 medium | 100 | USDA sweet potato raw unprepared |
 | Raw banana | kacha kela, vazhaikkai, balekayi | 1 medium | 100 | USDA plantains green raw |
 | Raw mango | keri, mangai | 50 g | 50 | USDA |
 | **①** Spinach | palak, keerai, palak soppu | 100 g | 100 | USDA |
 | Fenugreek leaves | methi, venthaya keerai, menthya soppu | 50 g | 50 | USDA spinach raw — FDC has no methi leaf; spinach is the nearest measured leafy green |
 | Amaranth leaves | tandaljo, mulai keerai, dantina soppu | 100 g | 100 | USDA amaranth leaves |
 | Coriander leaves | kothmir, kothamalli, kottambari | 10 g | 10 | USDA cilantro |
-| Mint leaves | fudino, pudina | 10 g | 10 | USDA |
+| Mint leaves | fudino, pudina | 10 g | 10 | USDA spearmint fresh |
 | **①** Coconut, fresh grated | kopru, thengai, thengina kayi | 2 tbsp | 20 | USDA coconut meat raw |
 | Coconut, dry | copra | 20 g | 20 | USDA nuts coconut meat dried desiccated not sweetened |
 | Coconut milk | — | 100 ml | 100 | USDA nuts coconut milk raw liquid expressed from grated meat and water |
@@ -145,7 +145,7 @@ Raw weights; the pipeline applies cooking yield per dish.
 
 | Food | Also | Serving | g | Composition |
 |---|---|---|---|---|
-| **①** Banana | kela, vazhaipazham, balehannu | 1 medium | 100 | USDA |
+| **①** Banana | kela, vazhaipazham, balehannu | 1 medium | 100 | USDA bananas raw |
 | **①** Mango | keri, mampazham, mavinahannu | 1 medium | 200 | USDA |
 | **①** Apple | seb | 1 medium | 150 | USDA apples raw with skin |
 | Lemon | nimbu, elumichai, nimbehannu | 1 medium | 60 | USDA lemon juice raw — recipes measure lemon as juice (95 of them, ~7 ml each), so juice is the form to sum from |

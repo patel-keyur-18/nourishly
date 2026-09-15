@@ -27,7 +27,8 @@ const _noise = {
   'in', 'of', 'a', 'an', 'nfs', 'usda', 'for', 'use', 'recipe', 'commercially',
   'prepared', 'canned', 'frozen', 'regular', 'unenriched', 'enriched',
   'added', 'mature', 'seeds', 'salad', 'cooking', 'type', 'home', 'style',
-  'all', 'not', 'from', 'made',
+  'all', 'not', 'from', 'made', 'unprepared', 'includes', 'distribution',
+  'program', 'foods', 'species',
   // Colours identify almost nothing on their own — `Asparagus, green` is
   // not a green chilli — and every one of them appears across dozens of
   // unrelated FDC records.
@@ -73,8 +74,28 @@ bool _sameWord(String a, String b) {
 /// wrongly rejects surfaces as a curation gap instead of shipping the
 /// wrong food.
 bool describesSameFood(String description, Iterable<String> terms) {
-  final theirs = matchTokens(description);
   final ours = {for (final t in terms) ...matchTokens(t)};
+
+  // A [differentFormWords] word carries a match only when the row itself
+  // used it. `Asparagus, frozen, unprepared` answered a search for sweet
+  // potato on "unprepared" alone, and `Drumstick leaves` answered curry
+  // leaves and mint leaves alike on "leaves" — none of which says
+  // anything about what the food is.
+  //
+  // But the row's own words are authoritative about what it means: Pav's
+  // hint says `bread white commercially prepared`, so for that row
+  // "bread" is exactly the identity, and stripping it would leave Pav
+  // unable to match any bread at all.
+  final theirs = {
+    for (final w in matchTokens(description))
+      if (!differentFormWords.contains(w) || ours.contains(w)) w,
+  };
+
+  // No fallback when a side comes out empty. A row whose every word is
+  // preparation noise has said nothing about what the food is, and
+  // matching on "raw" would be worse than not matching at all — that is
+  // how `Potatoes, au gratin, home-prepared from recipe` once answered a
+  // hint reading ", for recipe use".
   return ours.any((o) => theirs.any((t) => _sameWord(o, t)));
 }
 

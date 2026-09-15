@@ -172,13 +172,30 @@ that happens to contain the food's name (`Bread, potato` for potato), and
 they are not meant to: the hint is what gets the right record, and the
 guards stop the obviously wrong one from being summed in silence.
 
-**A record can name the right food in the wrong form**, and no word rule
-separates those: `Fish oil, sardine` really is sardine, `Drumstick
-leaves` really is drumstick. Both shipped — sardine at 902 kcal, and
-drumstick and sweet potato as their leaves. `fetch_catalog` now prints a
-**form warning** whenever the record it accepted carries a word the row
-does not — oil, leaves, salted, sticks, rotisserie, juice — and those are
-for a curator to read, not for the pipeline to decide.
+**A record that names the right food in the wrong form is refused too.**
+`Fish oil, sardine` really is sardine and `Drumstick leaves` really is
+drumstick, so the first guard passes both; a second one reads the words
+that describe a *form* — oil, leaves, salted, sticks, toasted, frozen,
+dehydrated, puffs — and refuses a record carrying one the row does not.
+
+This began as a warning and became a gate once the evidence came in: the
+right record is usually sitting directly behind the wrong one. `sweet
+potato raw unprepared` returns frozen puffs, then the real thing;
+`bread white commercially prepared` returns the toasted loaf, then the
+plain one. Refusing the first simply takes the second.
+
+**A row that means the form says so in its hint**, and is not stopped:
+ghee names butter *oil*, breadcrumbs name dry grated *bread*. That makes
+acknowledging a form a one-word edit, and it keeps the refusal list worth
+reading — a list that always has eight known-fine lines in it is a list
+nobody reads.
+
+The same words are ignored when deciding whether two names agree, unless
+the row itself used one. `Asparagus, frozen, unprepared` once answered a
+search for sweet potato on the word "unprepared" alone, and `Drumstick
+leaves` answered both curry leaves and mint leaves on "leaves"; but Pav's
+hint says `bread white commercially prepared`, so for that row "bread" is
+the identity and not noise.
 
 **A food FoodData Central does not measure gets the nearest food that it
 does, named on the row.** Jaggery's only FDC record carries zero

@@ -23,7 +23,7 @@ Serving weights are the raw-ingredient convention of `01-common.md`: 100 g for a
 | Fenugreek seeds | methi dana, venthayam, menthe | 100 g | 100 | USDA spices fenugreek seed |
 | Poppy seeds | khus khus, gasagase, kasakasa | 100 g | 100 | USDA spices poppy seed |
 | Dried red chilli | sukhi lal mirch, vatha milagai, byadgi chilli | 100 g | 100 | USDA peppers hot chili red dried |
-| Curry leaves | kadi patta, karuveppilai, kari bevu | 100 g | 100 | USDA curry leaves |
+| Curry leaves | kadi patta, karuveppilai, kari bevu | 100 g | 100 | USDA coriander cilantro leaves raw — FDC has no curry leaf; `curry leaves` returned drumstick leaves, and cilantro is the nearest measured fresh aromatic leaf |
 | Mixed herbs | italian seasoning, oregano | 100 g | 100 | USDA spices oregano dried |
 | Basil | tulsi, sweet basil | 100 g | 100 | USDA basil fresh |
 | Parsley | — | 100 g | 100 | USDA parsley fresh |
@@ -136,5 +136,5 @@ Serving weights are the raw-ingredient convention of `01-common.md`: 100 g for a
 | Tea leaves | chai patti, black tea | 100 g | 100 | USDA tea instant unsweetened powder |
 | Sponge cake | plain cake | 100 g | 100 | USDA cake sponge commercially prepared |
 | Custard | custard powder, vanilla custard | 1 katori | 150 | USDA puddings vanilla ready-to-eat |
-| Biscuits, digestive | marie biscuit, digestive biscuit | 100 g | 100 | USDA cookies graham crackers plain — FDC has no digestive; the graham cracker is the same semi-sweet wholemeal biscuit, and `cookies digestive` returned a babyfood record |
+| Biscuits, digestive | marie biscuit, digestive biscuit | 100 g | 100 | USDA cookies graham crackers plain or honey includes cinnamon — FDC has no digestive; the graham cracker is the same semi-sweet wholemeal biscuit |
 | Pepperoni | — | 100 g | 100 | USDA salami italian pork — FDC publishes no pepperoni with proximates; salami is the same cured pork-and-beef family |
