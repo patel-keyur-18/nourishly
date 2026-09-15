@@ -926,7 +926,7 @@
       ],
       "qualityTier": "verified",
       "provenanceSource": "usda_fdc",
-      "provenanceId": "171254",
+      "provenanceId": "170853",
       "isVerified": true
     },
     {
@@ -1225,7 +1225,7 @@
       ],
       "qualityTier": "verified",
       "provenanceSource": "usda_fdc",
-      "provenanceId": "169225",
+      "provenanceId": "168409",
       "isVerified": true
     },
     {
@@ -28020,28 +28020,28 @@
       "id": "6e404582-3c7d-5e35-9215-135d8af85c55",
       "foodId": "e1f7f816-1923-5194-b163-f6a4984f81aa",
       "nutrientId": "energy",
-      "amountPer100g": 290.0,
+      "amountPer100g": 366.0,
       "valueSource": "measured"
     },
     {
       "id": "04bdaefc-9ca3-5150-8835-d570afe0c43b",
       "foodId": "e1f7f816-1923-5194-b163-f6a4984f81aa",
       "nutrientId": "protein",
-      "amountPer100g": 16.41,
+      "amountPer100g": 18.13,
       "valueSource": "measured"
     },
     {
       "id": "057de9fe-58ee-5387-afbc-643658fd9e8c",
       "foodId": "e1f7f816-1923-5194-b163-f6a4984f81aa",
       "nutrientId": "carbs",
-      "amountPer100g": 8.73,
+      "amountPer100g": 4.78,
       "valueSource": "measured"
     },
     {
       "id": "6647192c-e0e5-51d4-be39-c26e801871d2",
       "foodId": "e1f7f816-1923-5194-b163-f6a4984f81aa",
       "nutrientId": "fat",
-      "amountPer100g": 21.23,
+      "amountPer100g": 30.71,
       "valueSource": "measured"
     },
     {
@@ -28055,70 +28055,70 @@
       "id": "cad80444-b024-5c5a-901d-fddaae557f61",
       "foodId": "e1f7f816-1923-5194-b163-f6a4984f81aa",
       "nutrientId": "saturated_fat",
-      "amountPer100g": 13.327,
+      "amountPer100g": 18.057,
       "valueSource": "measured"
     },
     {
       "id": "8c3a6ff3-7ab7-5716-a2b8-ec676d2bad2a",
       "foodId": "e1f7f816-1923-5194-b163-f6a4984f81aa",
       "nutrientId": "sugar",
-      "amountPer100g": 7.32,
+      "amountPer100g": 2.26,
       "valueSource": "measured"
     },
     {
       "id": "7e78d601-f20b-5559-b2c0-a16eecbb7889",
       "foodId": "e1f7f816-1923-5194-b163-f6a4984f81aa",
       "nutrientId": "sodium",
-      "amountPer100g": 1625.0,
+      "amountPer100g": 1671.0,
       "valueSource": "measured"
     },
     {
       "id": "6c61f0c3-e0f1-5bcb-9609-36cee7ad3820",
       "foodId": "e1f7f816-1923-5194-b163-f6a4984f81aa",
       "nutrientId": "potassium",
-      "amountPer100g": 242.0,
+      "amountPer100g": 132.0,
       "valueSource": "measured"
     },
     {
       "id": "0624acb5-063c-5ee7-a536-2034cc6066c2",
       "foodId": "e1f7f816-1923-5194-b163-f6a4984f81aa",
       "nutrientId": "calcium",
-      "amountPer100g": 562.0,
+      "amountPer100g": 1045.0,
       "valueSource": "measured"
     },
     {
       "id": "441707cc-a3d5-55ae-8025-fc80481512c4",
       "foodId": "e1f7f816-1923-5194-b163-f6a4984f81aa",
       "nutrientId": "iron",
-      "amountPer100g": 0.33,
+      "amountPer100g": 0.63,
       "valueSource": "measured"
     },
     {
       "id": "b3c7e712-3a7f-5f3d-b0e4-cc30d8286446",
       "foodId": "e1f7f816-1923-5194-b163-f6a4984f81aa",
       "nutrientId": "magnesium",
-      "amountPer100g": 29.0,
+      "amountPer100g": 26.0,
       "valueSource": "measured"
     },
     {
       "id": "dfa1f1fc-7e0c-579b-ba6b-325c35a71f63",
       "foodId": "e1f7f816-1923-5194-b163-f6a4984f81aa",
       "nutrientId": "zinc",
-      "amountPer100g": 2.59,
+      "amountPer100g": 2.49,
       "valueSource": "measured"
     },
     {
       "id": "645db6c8-b1a6-532c-8b8b-96535c3b014e",
       "foodId": "e1f7f816-1923-5194-b163-f6a4984f81aa",
       "nutrientId": "phosphorus",
-      "amountPer100g": 875.0,
+      "amountPer100g": 641.0,
       "valueSource": "measured"
     },
     {
       "id": "bf5225e8-1d88-526f-b07f-72a64dd17438",
       "foodId": "e1f7f816-1923-5194-b163-f6a4984f81aa",
       "nutrientId": "vitamin_a",
-      "amountPer100g": 173.0,
+      "amountPer100g": 317.0,
       "valueSource": "measured"
     },
     {
@@ -28132,56 +28132,56 @@
       "id": "cce84901-4a8f-5d0c-b382-deca0bfcd712",
       "foodId": "e1f7f816-1923-5194-b163-f6a4984f81aa",
       "nutrientId": "vitamin_d",
-      "amountPer100g": 0.4,
+      "amountPer100g": 7.5,
       "valueSource": "measured"
     },
     {
       "id": "c67b4d9c-23a9-55d9-acf4-c4e6debc6363",
       "foodId": "e1f7f816-1923-5194-b163-f6a4984f81aa",
       "nutrientId": "vitamin_e",
-      "amountPer100g": 0.19,
+      "amountPer100g": 0.8,
       "valueSource": "measured"
     },
     {
       "id": "aef46f6d-d81b-57e5-8664-0c02b003d921",
       "foodId": "e1f7f816-1923-5194-b163-f6a4984f81aa",
       "nutrientId": "vitamin_b6",
-      "amountPer100g": 0.117,
+      "amountPer100g": 0.054,
       "valueSource": "measured"
     },
     {
       "id": "40843c75-9685-50c1-86ea-74b4c66df720",
       "foodId": "e1f7f816-1923-5194-b163-f6a4984f81aa",
       "nutrientId": "vitamin_b12",
-      "amountPer100g": 0.4,
+      "amountPer100g": 1.5,
       "valueSource": "measured"
     },
     {
       "id": "a92f965d-63d3-5ce2-93de-d5189a26071b",
       "foodId": "e1f7f816-1923-5194-b163-f6a4984f81aa",
       "nutrientId": "folate",
-      "amountPer100g": 7.0,
+      "amountPer100g": 8.0,
       "valueSource": "measured"
     },
     {
       "id": "46a48a1f-3d54-503b-92f0-f3d41ea0ea9e",
       "foodId": "e1f7f816-1923-5194-b163-f6a4984f81aa",
       "nutrientId": "thiamin",
-      "amountPer100g": 0.048,
+      "amountPer100g": 0.015,
       "valueSource": "measured"
     },
     {
       "id": "63ff7192-92eb-5015-83ff-f7aef07d985e",
       "foodId": "e1f7f816-1923-5194-b163-f6a4984f81aa",
       "nutrientId": "riboflavin",
-      "amountPer100g": 0.431,
+      "amountPer100g": 0.234,
       "valueSource": "measured"
     },
     {
       "id": "9285d223-abce-504f-931e-f41c6da62916",
       "foodId": "e1f7f816-1923-5194-b163-f6a4984f81aa",
       "nutrientId": "niacin",
-      "amountPer100g": 0.131,
+      "amountPer100g": 0.076,
       "valueSource": "measured"
     },
     {
@@ -31506,49 +31506,49 @@
       "id": "ef2cd8e1-1733-575e-ad4e-a5841befcbde",
       "foodId": "85f73811-d68a-500e-a0ba-0a1d22b702a2",
       "nutrientId": "energy",
-      "amountPer100g": 10.0,
+      "amountPer100g": 15.0,
       "valueSource": "measured"
     },
     {
       "id": "74182234-1822-5807-9860-5828514eb0b5",
       "foodId": "85f73811-d68a-500e-a0ba-0a1d22b702a2",
       "nutrientId": "protein",
-      "amountPer100g": 0.59,
+      "amountPer100g": 0.65,
       "valueSource": "measured"
     },
     {
       "id": "2314a812-3af5-5cb7-ac49-497eadd16f71",
       "foodId": "85f73811-d68a-500e-a0ba-0a1d22b702a2",
       "nutrientId": "carbs",
-      "amountPer100g": 2.16,
+      "amountPer100g": 3.63,
       "valueSource": "measured"
     },
     {
       "id": "63f54398-04ac-59af-bfc4-ff52fe76e1e0",
       "foodId": "85f73811-d68a-500e-a0ba-0a1d22b702a2",
       "nutrientId": "fat",
-      "amountPer100g": 0.16,
+      "amountPer100g": 0.11,
       "valueSource": "measured"
     },
     {
       "id": "5101b772-6721-5a5e-93f4-95df33157a09",
       "foodId": "85f73811-d68a-500e-a0ba-0a1d22b702a2",
       "nutrientId": "fibre",
-      "amountPer100g": 0.7,
+      "amountPer100g": 0.5,
       "valueSource": "measured"
     },
     {
       "id": "098ce3a0-9396-5fbf-9780-68e4cf57e4d2",
       "foodId": "85f73811-d68a-500e-a0ba-0a1d22b702a2",
       "nutrientId": "saturated_fat",
-      "amountPer100g": 0.078,
+      "amountPer100g": 0.037,
       "valueSource": "measured"
     },
     {
       "id": "dceb7090-e032-5e98-8973-664d34056add",
       "foodId": "85f73811-d68a-500e-a0ba-0a1d22b702a2",
       "nutrientId": "sugar",
-      "amountPer100g": 1.38,
+      "amountPer100g": 1.67,
       "valueSource": "measured"
     },
     {
@@ -31562,56 +31562,56 @@
       "id": "c3c272af-e225-5ce1-933f-07aede0d900a",
       "foodId": "85f73811-d68a-500e-a0ba-0a1d22b702a2",
       "nutrientId": "potassium",
-      "amountPer100g": 136.0,
+      "amountPer100g": 147.0,
       "valueSource": "measured"
     },
     {
       "id": "0fab4f21-e0ba-54f1-8176-0ed42548e0da",
       "foodId": "85f73811-d68a-500e-a0ba-0a1d22b702a2",
       "nutrientId": "calcium",
-      "amountPer100g": 14.0,
+      "amountPer100g": 16.0,
       "valueSource": "measured"
     },
     {
       "id": "1538e910-33b4-5e0a-8860-782e5fc76c67",
       "foodId": "85f73811-d68a-500e-a0ba-0a1d22b702a2",
       "nutrientId": "iron",
-      "amountPer100g": 0.22,
+      "amountPer100g": 0.28,
       "valueSource": "measured"
     },
     {
       "id": "d01eae0c-ff5d-5c32-86d5-ba618283422a",
       "foodId": "85f73811-d68a-500e-a0ba-0a1d22b702a2",
       "nutrientId": "magnesium",
-      "amountPer100g": 12.0,
+      "amountPer100g": 13.0,
       "valueSource": "measured"
     },
     {
       "id": "d5393baa-2fd6-5491-b056-b8ff261a3b6f",
       "foodId": "85f73811-d68a-500e-a0ba-0a1d22b702a2",
       "nutrientId": "zinc",
-      "amountPer100g": 0.17,
+      "amountPer100g": 0.2,
       "valueSource": "measured"
     },
     {
       "id": "befdb9fc-d8f4-53eb-85e1-b9a792b09ab6",
       "foodId": "85f73811-d68a-500e-a0ba-0a1d22b702a2",
       "nutrientId": "phosphorus",
-      "amountPer100g": 21.0,
+      "amountPer100g": 24.0,
       "valueSource": "measured"
     },
     {
       "id": "13dab9ca-9a75-5941-a57c-3f95195d0c66",
       "foodId": "85f73811-d68a-500e-a0ba-0a1d22b702a2",
       "nutrientId": "vitamin_a",
-      "amountPer100g": 4.0,
+      "amountPer100g": 5.0,
       "valueSource": "measured"
     },
     {
       "id": "353e3368-c61e-546d-bc39-a1ae47252c67",
       "foodId": "85f73811-d68a-500e-a0ba-0a1d22b702a2",
       "nutrientId": "vitamin_c",
-      "amountPer100g": 3.2,
+      "amountPer100g": 2.8,
       "valueSource": "measured"
     },
     {
@@ -31632,7 +31632,7 @@
       "id": "3cc5f3fe-edf4-5f4f-a1b0-81b0259c4b8d",
       "foodId": "85f73811-d68a-500e-a0ba-0a1d22b702a2",
       "nutrientId": "vitamin_b6",
-      "amountPer100g": 0.051,
+      "amountPer100g": 0.04,
       "valueSource": "measured"
     },
     {
@@ -31646,28 +31646,28 @@
       "id": "881169b8-897e-550c-ab8d-516c4e4cbb7a",
       "foodId": "85f73811-d68a-500e-a0ba-0a1d22b702a2",
       "nutrientId": "folate",
-      "amountPer100g": 14.0,
+      "amountPer100g": 7.0,
       "valueSource": "measured"
     },
     {
       "id": "17877832-09d2-519d-b01e-07c7cb7f68b6",
       "foodId": "85f73811-d68a-500e-a0ba-0a1d22b702a2",
       "nutrientId": "thiamin",
-      "amountPer100g": 0.031,
+      "amountPer100g": 0.027,
       "valueSource": "measured"
     },
     {
       "id": "e12aba9e-3a28-5a63-aa7e-0b86110c259d",
       "foodId": "85f73811-d68a-500e-a0ba-0a1d22b702a2",
       "nutrientId": "riboflavin",
-      "amountPer100g": 0.025,
+      "amountPer100g": 0.033,
       "valueSource": "measured"
     },
     {
       "id": "98d04b43-bc6d-5404-bb5b-46c3a14fe62c",
       "foodId": "85f73811-d68a-500e-a0ba-0a1d22b702a2",
       "nutrientId": "niacin",
-      "amountPer100g": 0.037,
+      "amountPer100g": 0.098,
       "valueSource": "measured"
     },
     {
@@ -86876,49 +86876,49 @@
       "id": "0f5fcd97-6022-581e-a86b-9084f798f752",
       "foodId": "1416cb48-6d91-58a7-811f-505280f77084",
       "nutrientId": "energy",
-      "amountPer100g": 120.80416666666667,
+      "amountPer100g": 121.08194444444445,
       "valueSource": "derived"
     },
     {
       "id": "9fbb6640-ecd4-5916-9519-1b3a618a4cd1",
       "foodId": "1416cb48-6d91-58a7-811f-505280f77084",
       "nutrientId": "protein",
-      "amountPer100g": 4.781763888888888,
+      "amountPer100g": 4.7850972222222214,
       "valueSource": "derived"
     },
     {
       "id": "45f9f188-5ace-53ce-81e8-41465361f333",
       "foodId": "1416cb48-6d91-58a7-811f-505280f77084",
       "nutrientId": "carbs",
-      "amountPer100g": 9.237749999999998,
+      "amountPer100g": 9.319416666666665,
       "valueSource": "derived"
     },
     {
       "id": "be456041-9946-5b71-8850-5c0cd595274f",
       "foodId": "1416cb48-6d91-58a7-811f-505280f77084",
       "nutrientId": "fat",
-      "amountPer100g": 7.379958333333334,
+      "amountPer100g": 7.377180555555555,
       "valueSource": "derived"
     },
     {
       "id": "a6f9f4ea-6db0-504e-957d-61c92525a1ad",
       "foodId": "1416cb48-6d91-58a7-811f-505280f77084",
       "nutrientId": "fibre",
-      "amountPer100g": 1.161666666666667,
+      "amountPer100g": 1.1505555555555558,
       "valueSource": "derived"
     },
     {
       "id": "1a36b9c2-1d2b-5d67-b731-e0a1fba4e715",
       "foodId": "1416cb48-6d91-58a7-811f-505280f77084",
       "nutrientId": "saturated_fat",
-      "amountPer100g": 2.3020513888888887,
+      "amountPer100g": 2.2997736111111116,
       "valueSource": "derived"
     },
     {
       "id": "d0421da0-1378-5526-a1fd-5d076335ce5f",
       "foodId": "1416cb48-6d91-58a7-811f-505280f77084",
       "nutrientId": "sugar",
-      "amountPer100g": 4.456402777777778,
+      "amountPer100g": 4.472513888888889,
       "valueSource": "derived"
     },
     {
@@ -86932,56 +86932,56 @@
       "id": "152fec7c-9caf-5070-a13f-345c95503e1c",
       "foodId": "1416cb48-6d91-58a7-811f-505280f77084",
       "nutrientId": "potassium",
-      "amountPer100g": 221.57500000000005,
+      "amountPer100g": 222.1861111111111,
       "valueSource": "derived"
     },
     {
       "id": "ee7ca8b4-8598-5cf0-a57a-9e74c98dc4a2",
       "foodId": "1416cb48-6d91-58a7-811f-505280f77084",
       "nutrientId": "calcium",
-      "amountPer100g": 103.45138888888891,
+      "amountPer100g": 103.5625,
       "valueSource": "derived"
     },
     {
       "id": "68b6602d-806b-585c-bd57-e8be59670b48",
       "foodId": "1416cb48-6d91-58a7-811f-505280f77084",
       "nutrientId": "iron",
-      "amountPer100g": 1.2471666666666665,
+      "amountPer100g": 1.2505,
       "valueSource": "derived"
     },
     {
       "id": "61386cc9-81e9-509f-a64b-1d50e03df252",
       "foodId": "1416cb48-6d91-58a7-811f-505280f77084",
       "nutrientId": "magnesium",
-      "amountPer100g": 28.68055555555556,
+      "amountPer100g": 28.73611111111111,
       "valueSource": "derived"
     },
     {
       "id": "344cecef-90ac-5734-8cc2-a633dc254257",
       "foodId": "1416cb48-6d91-58a7-811f-505280f77084",
       "nutrientId": "zinc",
-      "amountPer100g": 0.7490972222222222,
+      "amountPer100g": 0.7507638888888889,
       "valueSource": "derived"
     },
     {
       "id": "1d463c23-75d3-58eb-a12b-be5227390feb",
       "foodId": "1416cb48-6d91-58a7-811f-505280f77084",
       "nutrientId": "phosphorus",
-      "amountPer100g": 104.5638888888889,
+      "amountPer100g": 104.73055555555557,
       "valueSource": "derived"
     },
     {
       "id": "9bf27f63-fcf2-5f81-8341-fb8a4ca19f8c",
       "foodId": "1416cb48-6d91-58a7-811f-505280f77084",
       "nutrientId": "vitamin_a",
-      "amountPer100g": 24.358333333333338,
+      "amountPer100g": 24.413888888888895,
       "valueSource": "derived"
     },
     {
       "id": "a2ce4ff3-a52b-50d8-a146-43b2eac94cc6",
       "foodId": "1416cb48-6d91-58a7-811f-505280f77084",
       "nutrientId": "vitamin_c",
-      "amountPer100g": 0.9244444444444444,
+      "amountPer100g": 0.9022222222222223,
       "valueSource": "derived"
     },
     {
@@ -87002,7 +87002,7 @@
       "id": "6b5f9b61-d7cb-5783-ae91-a4ae423458cb",
       "foodId": "1416cb48-6d91-58a7-811f-505280f77084",
       "nutrientId": "vitamin_b6",
-      "amountPer100g": 0.07685000000000002,
+      "amountPer100g": 0.07623888888888888,
       "valueSource": "derived"
     },
     {
@@ -87016,77 +87016,77 @@
       "id": "d6a73f26-e36b-5104-84dd-ecd0e169c272",
       "foodId": "1416cb48-6d91-58a7-811f-505280f77084",
       "nutrientId": "folate",
-      "amountPer100g": 46.084722222222226,
+      "amountPer100g": 45.69583333333333,
       "valueSource": "derived"
     },
     {
       "id": "26331c47-b66f-51a8-81b1-4adc3640501d",
       "foodId": "1416cb48-6d91-58a7-811f-505280f77084",
       "nutrientId": "thiamin",
-      "amountPer100g": 0.0742638888888889,
+      "amountPer100g": 0.07404166666666667,
       "valueSource": "derived"
     },
     {
       "id": "56d40b4b-a4ac-5ac7-aa38-a5dd3bd0abae",
       "foodId": "1416cb48-6d91-58a7-811f-505280f77084",
       "nutrientId": "riboflavin",
-      "amountPer100g": 0.1189472222222222,
+      "amountPer100g": 0.11939166666666665,
       "valueSource": "derived"
     },
     {
       "id": "ac217a9c-bc19-5c57-8b67-af7515b9eec9",
       "foodId": "1416cb48-6d91-58a7-811f-505280f77084",
       "nutrientId": "niacin",
-      "amountPer100g": 0.2785472222222222,
+      "amountPer100g": 0.2819361111111111,
       "valueSource": "derived"
     },
     {
       "id": "8611de8e-fd03-5cb0-bc62-0d7f5779aaff",
       "foodId": "e17a194c-69e8-5ab5-a02c-9b4695ae990a",
       "nutrientId": "energy",
-      "amountPer100g": 50.7,
+      "amountPer100g": 51.81111111111112,
       "valueSource": "derived"
     },
     {
       "id": "ae8d3832-e722-56ba-bfb5-c3595c77259f",
       "foodId": "e17a194c-69e8-5ab5-a02c-9b4695ae990a",
       "nutrientId": "protein",
-      "amountPer100g": 2.8587777777777785,
+      "amountPer100g": 2.8721111111111117,
       "valueSource": "derived"
     },
     {
       "id": "ce10e4a5-6a56-57d9-b3d8-182cd68a163d",
       "foodId": "e17a194c-69e8-5ab5-a02c-9b4695ae990a",
       "nutrientId": "carbs",
-      "amountPer100g": 4.37788888888889,
+      "amountPer100g": 4.704555555555556,
       "valueSource": "derived"
     },
     {
       "id": "18b60372-66dc-5805-9247-566faf8b948e",
       "foodId": "e17a194c-69e8-5ab5-a02c-9b4695ae990a",
       "nutrientId": "fat",
-      "amountPer100g": 2.636,
+      "amountPer100g": 2.6248888888888886,
       "valueSource": "derived"
     },
     {
       "id": "76184e1f-d7d6-545a-90e9-1c2362a177fe",
       "foodId": "e17a194c-69e8-5ab5-a02c-9b4695ae990a",
       "nutrientId": "fibre",
-      "amountPer100g": 0.3033333333333334,
+      "amountPer100g": 0.25888888888888895,
       "valueSource": "derived"
     },
     {
       "id": "fe8ddc50-1da5-5913-8e90-4de3a9dc93ee",
       "foodId": "e17a194c-69e8-5ab5-a02c-9b4695ae990a",
       "nutrientId": "saturated_fat",
-      "amountPer100g": 1.5483222222222226,
+      "amountPer100g": 1.5392111111111115,
       "valueSource": "derived"
     },
     {
       "id": "091e7277-61f8-5e5c-90b5-d77e76f9f659",
       "foodId": "e17a194c-69e8-5ab5-a02c-9b4695ae990a",
       "nutrientId": "sugar",
-      "amountPer100g": 3.7068888888888902,
+      "amountPer100g": 3.771333333333335,
       "valueSource": "derived"
     },
     {
@@ -87100,56 +87100,56 @@
       "id": "bfa47e99-925c-57b0-a516-153de3db7bf2",
       "foodId": "e17a194c-69e8-5ab5-a02c-9b4695ae990a",
       "nutrientId": "potassium",
-      "amountPer100g": 167.8666666666667,
+      "amountPer100g": 170.31111111111116,
       "valueSource": "derived"
     },
     {
       "id": "4709b603-9af5-5514-85c5-122bcd315427",
       "foodId": "e17a194c-69e8-5ab5-a02c-9b4695ae990a",
       "nutrientId": "calcium",
-      "amountPer100g": 101.72222222222224,
+      "amountPer100g": 102.1666666666667,
       "valueSource": "derived"
     },
     {
       "id": "5978f952-dfbd-5e4c-af17-f7b31dbb83ac",
       "foodId": "e17a194c-69e8-5ab5-a02c-9b4695ae990a",
       "nutrientId": "iron",
-      "amountPer100g": 0.8438333333333335,
+      "amountPer100g": 0.8571666666666669,
       "valueSource": "derived"
     },
     {
       "id": "7c0734e4-d86a-53d8-a0d4-69f2989b2648",
       "foodId": "e17a194c-69e8-5ab5-a02c-9b4695ae990a",
       "nutrientId": "magnesium",
-      "amountPer100g": 15.694444444444446,
+      "amountPer100g": 15.916666666666671,
       "valueSource": "derived"
     },
     {
       "id": "fbeae728-72a5-57ed-a3d5-c545025981ce",
       "foodId": "e17a194c-69e8-5ab5-a02c-9b4695ae990a",
       "nutrientId": "zinc",
-      "amountPer100g": 0.5233333333333334,
+      "amountPer100g": 0.5300000000000001,
       "valueSource": "derived"
     },
     {
       "id": "fc310abf-eac7-5371-a52e-a674a9381bb9",
       "foodId": "e17a194c-69e8-5ab5-a02c-9b4695ae990a",
       "nutrientId": "phosphorus",
-      "amountPer100g": 79.35555555555557,
+      "amountPer100g": 80.02222222222223,
       "valueSource": "derived"
     },
     {
       "id": "5ccaaece-8724-552f-a52d-c3cf7756867b",
       "foodId": "e17a194c-69e8-5ab5-a02c-9b4695ae990a",
       "nutrientId": "vitamin_a",
-      "amountPer100g": 24.844444444444452,
+      "amountPer100g": 25.06666666666667,
       "valueSource": "derived"
     },
     {
       "id": "536fb972-88a5-5f26-b3bd-7c54a8d41e02",
       "foodId": "e17a194c-69e8-5ab5-a02c-9b4695ae990a",
       "nutrientId": "vitamin_c",
-      "amountPer100g": 1.457777777777778,
+      "amountPer100g": 1.368888888888889,
       "valueSource": "derived"
     },
     {
@@ -87170,7 +87170,7 @@
       "id": "15e3d5ba-0eef-55ea-a896-1515c2c8008f",
       "foodId": "e17a194c-69e8-5ab5-a02c-9b4695ae990a",
       "nutrientId": "vitamin_b6",
-      "amountPer100g": 0.040933333333333335,
+      "amountPer100g": 0.03848888888888889,
       "valueSource": "derived"
     },
     {
@@ -87184,77 +87184,77 @@
       "id": "37617571-40ea-522c-8f16-50c63b83cb77",
       "foodId": "e17a194c-69e8-5ab5-a02c-9b4695ae990a",
       "nutrientId": "folate",
-      "amountPer100g": 8.966666666666665,
+      "amountPer100g": 7.411111111111111,
       "valueSource": "derived"
     },
     {
       "id": "25d0d69c-7922-5f98-92af-03472f137623",
       "foodId": "e17a194c-69e8-5ab5-a02c-9b4695ae990a",
       "nutrientId": "thiamin",
-      "amountPer100g": 0.03555555555555555,
+      "amountPer100g": 0.03466666666666667,
       "valueSource": "derived"
     },
     {
       "id": "8d90c597-748b-5ddd-8aba-6ca2e6d09e25",
       "foodId": "e17a194c-69e8-5ab5-a02c-9b4695ae990a",
       "nutrientId": "riboflavin",
-      "amountPer100g": 0.11354444444444446,
+      "amountPer100g": 0.11532222222222221,
       "valueSource": "derived"
     },
     {
       "id": "6d8c9fa5-3c9c-5bd6-b727-45393edf5ce4",
       "foodId": "e17a194c-69e8-5ab5-a02c-9b4695ae990a",
       "nutrientId": "niacin",
-      "amountPer100g": 0.12564444444444445,
+      "amountPer100g": 0.13920000000000002,
       "valueSource": "derived"
     },
     {
       "id": "90ce81f5-267d-5bed-a4d0-aa7cde20eb18",
       "foodId": "48b32633-ce5a-5fc5-8ccf-33084ef0b6e7",
       "nutrientId": "energy",
-      "amountPer100g": 31.387500000000003,
+      "amountPer100g": 32.637499999999996,
       "valueSource": "derived"
     },
     {
       "id": "22678662-5b1a-5acc-9bee-99809faec642",
       "foodId": "48b32633-ce5a-5fc5-8ccf-33084ef0b6e7",
       "nutrientId": "protein",
-      "amountPer100g": 0.9478750000000001,
+      "amountPer100g": 0.9628750000000001,
       "valueSource": "derived"
     },
     {
       "id": "34d46da9-44ad-551d-9a74-e28b4b860da8",
       "foodId": "48b32633-ce5a-5fc5-8ccf-33084ef0b6e7",
       "nutrientId": "carbs",
-      "amountPer100g": 7.352125000000001,
+      "amountPer100g": 7.719625,
       "valueSource": "derived"
     },
     {
       "id": "7c764481-3c37-5d4f-ac24-b4c6da34a31c",
       "foodId": "48b32633-ce5a-5fc5-8ccf-33084ef0b6e7",
       "nutrientId": "fat",
-      "amountPer100g": 0.12724999999999997,
+      "amountPer100g": 0.11474999999999999,
       "valueSource": "derived"
     },
     {
       "id": "04490415-f2f6-51a1-af28-511c1a17b762",
       "foodId": "48b32633-ce5a-5fc5-8ccf-33084ef0b6e7",
       "nutrientId": "fibre",
-      "amountPer100g": 1.3937500000000003,
+      "amountPer100g": 1.3437500000000002,
       "valueSource": "derived"
     },
     {
       "id": "3a684a83-a668-549e-abbc-7a32e84ca17b",
       "foodId": "48b32633-ce5a-5fc5-8ccf-33084ef0b6e7",
       "nutrientId": "saturated_fat",
-      "amountPer100g": 0.05055,
+      "amountPer100g": 0.040299999999999996,
       "valueSource": "derived"
     },
     {
       "id": "9b0ce1d3-f535-5558-b1e1-a74a7c7c84ee",
       "foodId": "48b32633-ce5a-5fc5-8ccf-33084ef0b6e7",
       "nutrientId": "sugar",
-      "amountPer100g": 3.3968750000000005,
+      "amountPer100g": 3.4693750000000008,
       "valueSource": "derived"
     },
     {
@@ -87268,56 +87268,56 @@
       "id": "9c7e7844-57ec-5053-88fc-c8c804490cd0",
       "foodId": "48b32633-ce5a-5fc5-8ccf-33084ef0b6e7",
       "nutrientId": "potassium",
-      "amountPer100g": 146.0375,
+      "amountPer100g": 148.7875,
       "valueSource": "derived"
     },
     {
       "id": "43657b10-9720-55a3-bca9-4e884f849733",
       "foodId": "48b32633-ce5a-5fc5-8ccf-33084ef0b6e7",
       "nutrientId": "calcium",
-      "amountPer100g": 20.45,
+      "amountPer100g": 20.950000000000003,
       "valueSource": "derived"
     },
     {
       "id": "7099c186-9870-5291-9aa2-b3e1b9ce9c16",
       "foodId": "48b32633-ce5a-5fc5-8ccf-33084ef0b6e7",
       "nutrientId": "iron",
-      "amountPer100g": 0.2255,
+      "amountPer100g": 0.2405,
       "valueSource": "derived"
     },
     {
       "id": "f901eb3c-d06c-504c-9c2e-b35743d0fd0d",
       "foodId": "48b32633-ce5a-5fc5-8ccf-33084ef0b6e7",
       "nutrientId": "magnesium",
-      "amountPer100g": 10.500000000000002,
+      "amountPer100g": 10.75,
       "valueSource": "derived"
     },
     {
       "id": "f24ede48-b532-575f-8e7c-4c4c0a14fbcb",
       "foodId": "48b32633-ce5a-5fc5-8ccf-33084ef0b6e7",
       "nutrientId": "zinc",
-      "amountPer100g": 0.168125,
+      "amountPer100g": 0.17562500000000003,
       "valueSource": "derived"
     },
     {
       "id": "3999bd6e-0fdb-5a93-8bb4-3b48b4a319b5",
       "foodId": "48b32633-ce5a-5fc5-8ccf-33084ef0b6e7",
       "nutrientId": "phosphorus",
-      "amountPer100g": 26.187499999999996,
+      "amountPer100g": 26.937500000000004,
       "valueSource": "derived"
     },
     {
       "id": "ac7c46cf-6f94-5a8f-893a-b158a0615c15",
       "foodId": "48b32633-ce5a-5fc5-8ccf-33084ef0b6e7",
       "nutrientId": "vitamin_a",
-      "amountPer100g": 5.2124999999999995,
+      "amountPer100g": 5.4625,
       "valueSource": "derived"
     },
     {
       "id": "9678bcdc-b344-54a4-be5c-316e38461768",
       "foodId": "48b32633-ce5a-5fc5-8ccf-33084ef0b6e7",
       "nutrientId": "vitamin_c",
-      "amountPer100g": 8.16,
+      "amountPer100g": 8.06,
       "valueSource": "derived"
     },
     {
@@ -87338,7 +87338,7 @@
       "id": "9c56448c-e478-51b3-b1cd-f778af035c5c",
       "foodId": "48b32633-ce5a-5fc5-8ccf-33084ef0b6e7",
       "nutrientId": "vitamin_b6",
-      "amountPer100g": 0.0994125,
+      "amountPer100g": 0.09666250000000001,
       "valueSource": "derived"
     },
     {
@@ -87352,77 +87352,77 @@
       "id": "a55a34ea-1bb2-5e6b-911b-f6ea02502e8d",
       "foodId": "48b32633-ce5a-5fc5-8ccf-33084ef0b6e7",
       "nutrientId": "folate",
-      "amountPer100g": 18.337500000000002,
+      "amountPer100g": 16.5875,
       "valueSource": "derived"
     },
     {
       "id": "d1efbbc0-091b-57a4-b2f0-3ce2ba3f9d92",
       "foodId": "48b32633-ce5a-5fc5-8ccf-33084ef0b6e7",
       "nutrientId": "thiamin",
-      "amountPer100g": 0.0414125,
+      "amountPer100g": 0.0404125,
       "valueSource": "derived"
     },
     {
       "id": "7395edfd-43a3-52cb-87c3-9511c4510fab",
       "foodId": "48b32633-ce5a-5fc5-8ccf-33084ef0b6e7",
       "nutrientId": "riboflavin",
-      "amountPer100g": 0.027587499999999997,
+      "amountPer100g": 0.029587499999999996,
       "valueSource": "derived"
     },
     {
       "id": "2b1683b6-dc57-54cd-b1ec-70d1d6039bef",
       "foodId": "48b32633-ce5a-5fc5-8ccf-33084ef0b6e7",
       "nutrientId": "niacin",
-      "amountPer100g": 0.107475,
+      "amountPer100g": 0.122725,
       "valueSource": "derived"
     },
     {
       "id": "508a5d59-fa53-5bc2-8a60-2db352bf6e84",
       "foodId": "3221fa0a-0d1f-5792-b57d-f9704998728d",
       "nutrientId": "energy",
-      "amountPer100g": 23.383333333333336,
+      "amountPer100g": 25.05,
       "valueSource": "derived"
     },
     {
       "id": "a3aec798-00df-50df-9c0e-e692bf456206",
       "foodId": "3221fa0a-0d1f-5792-b57d-f9704998728d",
       "nutrientId": "protein",
-      "amountPer100g": 0.8045833333333333,
+      "amountPer100g": 0.8245833333333334,
       "valueSource": "derived"
     },
     {
       "id": "c61343f0-fd95-57ae-ac82-822f3608544d",
       "foodId": "3221fa0a-0d1f-5792-b57d-f9704998728d",
       "nutrientId": "carbs",
-      "amountPer100g": 5.356083333333332,
+      "amountPer100g": 5.846083333333333,
       "valueSource": "derived"
     },
     {
       "id": "ce4699d4-9b25-5d7e-8cbb-93e01955c067",
       "foodId": "3221fa0a-0d1f-5792-b57d-f9704998728d",
       "nutrientId": "fat",
-      "amountPer100g": 0.18766666666666668,
+      "amountPer100g": 0.171,
       "valueSource": "derived"
     },
     {
       "id": "724c3721-df10-570c-ae0e-ac21079af3a6",
       "foodId": "3221fa0a-0d1f-5792-b57d-f9704998728d",
       "nutrientId": "fibre",
-      "amountPer100g": 1.4608333333333332,
+      "amountPer100g": 1.3941666666666666,
       "valueSource": "derived"
     },
     {
       "id": "0d08fe84-9d4e-51c2-89f5-56a1a681153c",
       "foodId": "3221fa0a-0d1f-5792-b57d-f9704998728d",
       "nutrientId": "saturated_fat",
-      "amountPer100g": 0.04736666666666667,
+      "amountPer100g": 0.0337,
       "valueSource": "derived"
     },
     {
       "id": "15577449-e9b1-536b-9265-1f205916398a",
       "foodId": "3221fa0a-0d1f-5792-b57d-f9704998728d",
       "nutrientId": "sugar",
-      "amountPer100g": 2.8990833333333335,
+      "amountPer100g": 2.99575,
       "valueSource": "derived"
     },
     {
@@ -87436,56 +87436,56 @@
       "id": "524cc56b-454d-569d-9d90-3a069e494e05",
       "foodId": "3221fa0a-0d1f-5792-b57d-f9704998728d",
       "nutrientId": "potassium",
-      "amountPer100g": 211.63333333333333,
+      "amountPer100g": 215.3,
       "valueSource": "derived"
     },
     {
       "id": "4a2b5e4b-74ad-5fb4-ba2e-d35e1033c0fc",
       "foodId": "3221fa0a-0d1f-5792-b57d-f9704998728d",
       "nutrientId": "calcium",
-      "amountPer100g": 18.28333333333333,
+      "amountPer100g": 18.950000000000003,
       "valueSource": "derived"
     },
     {
       "id": "77917b8c-1119-57fc-b314-a8e6b3839d1c",
       "foodId": "3221fa0a-0d1f-5792-b57d-f9704998728d",
       "nutrientId": "iron",
-      "amountPer100g": 0.2500833333333334,
+      "amountPer100g": 0.27008333333333334,
       "valueSource": "derived"
     },
     {
       "id": "797d84e8-1702-54b0-959d-6890e9caea38",
       "foodId": "3221fa0a-0d1f-5792-b57d-f9704998728d",
       "nutrientId": "magnesium",
-      "amountPer100g": 11.358333333333333,
+      "amountPer100g": 11.691666666666665,
       "valueSource": "derived"
     },
     {
       "id": "9b080d27-dd01-5d85-a2a6-ca4ab0ea4b62",
       "foodId": "3221fa0a-0d1f-5792-b57d-f9704998728d",
       "nutrientId": "zinc",
-      "amountPer100g": 0.1845,
+      "amountPer100g": 0.1945,
       "valueSource": "derived"
     },
     {
       "id": "c1128670-193b-5bf2-9793-e3f7bce55d20",
       "foodId": "3221fa0a-0d1f-5792-b57d-f9704998728d",
       "nutrientId": "phosphorus",
-      "amountPer100g": 25.85,
+      "amountPer100g": 26.85,
       "valueSource": "derived"
     },
     {
       "id": "08bce857-6cad-5c77-b568-d9db15b025ad",
       "foodId": "3221fa0a-0d1f-5792-b57d-f9704998728d",
       "nutrientId": "vitamin_a",
-      "amountPer100g": 222.33333333333337,
+      "amountPer100g": 222.66666666666666,
       "valueSource": "derived"
     },
     {
       "id": "98e46b24-926a-55b6-8ee4-7477576ef83d",
       "foodId": "3221fa0a-0d1f-5792-b57d-f9704998728d",
       "nutrientId": "vitamin_c",
-      "amountPer100g": 8.245,
+      "amountPer100g": 8.111666666666666,
       "valueSource": "derived"
     },
     {
@@ -87506,7 +87506,7 @@
       "id": "b605bf68-efe5-5775-94df-cedc86e4bb9b",
       "foodId": "3221fa0a-0d1f-5792-b57d-f9704998728d",
       "nutrientId": "vitamin_b6",
-      "amountPer100g": 0.08798333333333334,
+      "amountPer100g": 0.08431666666666668,
       "valueSource": "derived"
     },
     {
@@ -87520,28 +87520,28 @@
       "id": "afec0d85-addc-5276-8fd1-ff89c4097cc7",
       "foodId": "3221fa0a-0d1f-5792-b57d-f9704998728d",
       "nutrientId": "folate",
-      "amountPer100g": 16.191666666666666,
+      "amountPer100g": 13.858333333333336,
       "valueSource": "derived"
     },
     {
       "id": "46023f19-8b58-55a9-95e2-81347f910aff",
       "foodId": "3221fa0a-0d1f-5792-b57d-f9704998728d",
       "nutrientId": "thiamin",
-      "amountPer100g": 0.042824999999999995,
+      "amountPer100g": 0.04149166666666667,
       "valueSource": "derived"
     },
     {
       "id": "40ba42cb-3ecb-531e-bf04-f66a9bb77a04",
       "foodId": "3221fa0a-0d1f-5792-b57d-f9704998728d",
       "nutrientId": "riboflavin",
-      "amountPer100g": 0.03144999999999999,
+      "amountPer100g": 0.03411666666666666,
       "valueSource": "derived"
     },
     {
       "id": "d2a7c693-5c88-55dd-af63-02d5b635a55f",
       "foodId": "3221fa0a-0d1f-5792-b57d-f9704998728d",
       "nutrientId": "niacin",
-      "amountPer100g": 0.4452083333333334,
+      "amountPer100g": 0.4655416666666667,
       "valueSource": "derived"
     },
     {
@@ -93092,49 +93092,49 @@
       "id": "e05c0aea-da95-52d9-b117-af9653778191",
       "foodId": "66b9c7ce-6cea-59b0-bb4a-b89d03d78a52",
       "nutrientId": "energy",
-      "amountPer100g": 120.95714285714286,
+      "amountPer100g": 122.5642857142857,
       "valueSource": "derived"
     },
     {
       "id": "17984c19-dace-544a-bb0e-2904beaf215a",
       "foodId": "66b9c7ce-6cea-59b0-bb4a-b89d03d78a52",
       "nutrientId": "protein",
-      "amountPer100g": 6.722214285714287,
+      "amountPer100g": 6.741500000000002,
       "valueSource": "derived"
     },
     {
       "id": "1d384b5f-b39f-5cd2-aac8-91171eb826bc",
       "foodId": "66b9c7ce-6cea-59b0-bb4a-b89d03d78a52",
       "nutrientId": "carbs",
-      "amountPer100g": 19.113857142857142,
+      "amountPer100g": 19.58635714285714,
       "valueSource": "derived"
     },
     {
       "id": "cabf2b4b-64c9-5e96-a2a3-2b370b5e83aa",
       "foodId": "66b9c7ce-6cea-59b0-bb4a-b89d03d78a52",
       "nutrientId": "fat",
-      "amountPer100g": 2.5655,
+      "amountPer100g": 2.5494285714285714,
       "valueSource": "derived"
     },
     {
       "id": "1d8aed96-d43d-59ba-bfd8-0118c989ada0",
       "foodId": "66b9c7ce-6cea-59b0-bb4a-b89d03d78a52",
       "nutrientId": "fibre",
-      "amountPer100g": 5.372142857142856,
+      "amountPer100g": 5.3078571428571415,
       "valueSource": "derived"
     },
     {
       "id": "ed6f693b-6318-55a4-958f-3b1da62aa57f",
       "foodId": "66b9c7ce-6cea-59b0-bb4a-b89d03d78a52",
       "nutrientId": "saturated_fat",
-      "amountPer100g": 1.829607142857143,
+      "amountPer100g": 1.8164285714285717,
       "valueSource": "derived"
     },
     {
       "id": "8921374a-c0f8-5dfb-8285-f2e65acda690",
       "foodId": "66b9c7ce-6cea-59b0-bb4a-b89d03d78a52",
       "nutrientId": "sugar",
-      "amountPer100g": 3.2838571428571424,
+      "amountPer100g": 3.3770714285714285,
       "valueSource": "derived"
     },
     {
@@ -93148,56 +93148,56 @@
       "id": "85cf08f1-b6c9-5c06-a56d-c1dc14e2b98b",
       "foodId": "66b9c7ce-6cea-59b0-bb4a-b89d03d78a52",
       "nutrientId": "potassium",
-      "amountPer100g": 441.4428571428571,
+      "amountPer100g": 444.97857142857146,
       "valueSource": "derived"
     },
     {
       "id": "911e1a85-34bf-51c2-86db-25e6078577a1",
       "foodId": "66b9c7ce-6cea-59b0-bb4a-b89d03d78a52",
       "nutrientId": "calcium",
-      "amountPer100g": 46.73571428571428,
+      "amountPer100g": 47.378571428571426,
       "valueSource": "derived"
     },
     {
       "id": "75a031f4-2514-5d68-830b-f6d6e3fc2396",
       "foodId": "66b9c7ce-6cea-59b0-bb4a-b89d03d78a52",
       "nutrientId": "iron",
-      "amountPer100g": 2.046357142857143,
+      "amountPer100g": 2.0656428571428567,
       "valueSource": "derived"
     },
     {
       "id": "1982c8b2-3b3f-54d3-8229-0847c0f8fd52",
       "foodId": "66b9c7ce-6cea-59b0-bb4a-b89d03d78a52",
       "nutrientId": "magnesium",
-      "amountPer100g": 58.071428571428584,
+      "amountPer100g": 58.39285714285716,
       "valueSource": "derived"
     },
     {
       "id": "532cbe3a-334c-55bc-89b8-6819ca0a2eca",
       "foodId": "66b9c7ce-6cea-59b0-bb4a-b89d03d78a52",
       "nutrientId": "zinc",
-      "amountPer100g": 0.8784285714285714,
+      "amountPer100g": 0.8880714285714287,
       "valueSource": "derived"
     },
     {
       "id": "bb019e87-88ab-5775-9e36-d14e7b9f3fe0",
       "foodId": "66b9c7ce-6cea-59b0-bb4a-b89d03d78a52",
       "nutrientId": "phosphorus",
-      "amountPer100g": 117.18571428571427,
+      "amountPer100g": 118.15,
       "valueSource": "derived"
     },
     {
       "id": "c600e2df-613b-5fd8-b491-1153d13bea54",
       "foodId": "66b9c7ce-6cea-59b0-bb4a-b89d03d78a52",
       "nutrientId": "vitamin_a",
-      "amountPer100g": 129.30714285714288,
+      "amountPer100g": 129.62857142857143,
       "valueSource": "derived"
     },
     {
       "id": "c6cb3975-8971-5480-9355-bbe67efcc085",
       "foodId": "66b9c7ce-6cea-59b0-bb4a-b89d03d78a52",
       "nutrientId": "vitamin_c",
-      "amountPer100g": 5.271428571428572,
+      "amountPer100g": 5.142857142857142,
       "valueSource": "derived"
     },
     {
@@ -93218,7 +93218,7 @@
       "id": "a25a94f1-d988-57ac-995c-2d81a0add611",
       "foodId": "66b9c7ce-6cea-59b0-bb4a-b89d03d78a52",
       "nutrientId": "vitamin_b6",
-      "amountPer100g": 0.14236428571428572,
+      "amountPer100g": 0.13882857142857144,
       "valueSource": "derived"
     },
     {
@@ -93232,28 +93232,28 @@
       "id": "7388e264-1830-5274-a77e-90b55d14ba96",
       "foodId": "66b9c7ce-6cea-59b0-bb4a-b89d03d78a52",
       "nutrientId": "folate",
-      "amountPer100g": 168.15000000000003,
+      "amountPer100g": 165.90000000000003,
       "valueSource": "derived"
     },
     {
       "id": "aec67fdd-5d9b-5def-bf40-91bb950738eb",
       "foodId": "66b9c7ce-6cea-59b0-bb4a-b89d03d78a52",
       "nutrientId": "thiamin",
-      "amountPer100g": 0.18645714285714285,
+      "amountPer100g": 0.18517142857142854,
       "valueSource": "derived"
     },
     {
       "id": "7fbbf099-83ee-5b8f-993b-c041c706bf63",
       "foodId": "66b9c7ce-6cea-59b0-bb4a-b89d03d78a52",
       "nutrientId": "riboflavin",
-      "amountPer100g": 0.0815857142857143,
+      "amountPer100g": 0.08415714285714287,
       "valueSource": "derived"
     },
     {
       "id": "61f39a3f-0941-599f-83f0-02f6386257a2",
       "foodId": "66b9c7ce-6cea-59b0-bb4a-b89d03d78a52",
       "nutrientId": "niacin",
-      "amountPer100g": 0.806857142857143,
+      "amountPer100g": 0.8264642857142858,
       "valueSource": "derived"
     },
     {
@@ -97796,49 +97796,49 @@
       "id": "e87ce153-3cb3-52c7-bcd7-a28b6ba2d0af",
       "foodId": "614b3f61-e3c8-53ec-b981-1b9b8ce3e5c4",
       "nutrientId": "energy",
-      "amountPer100g": 56.56923076923077,
+      "amountPer100g": 58.68461538461539,
       "valueSource": "derived"
     },
     {
       "id": "f1df6b59-26d4-53fb-80af-9e41bcc02a5a",
       "foodId": "614b3f61-e3c8-53ec-b981-1b9b8ce3e5c4",
       "nutrientId": "protein",
-      "amountPer100g": 2.187769230769231,
+      "amountPer100g": 2.213153846153847,
       "valueSource": "derived"
     },
     {
       "id": "2012b80f-52d3-521b-8f77-adc9c0982863",
       "foodId": "614b3f61-e3c8-53ec-b981-1b9b8ce3e5c4",
       "nutrientId": "carbs",
-      "amountPer100g": 4.196153846153846,
+      "amountPer100g": 4.818076923076923,
       "valueSource": "derived"
     },
     {
       "id": "1315380e-219b-5a45-b910-1fdeb7be1105",
       "foodId": "614b3f61-e3c8-53ec-b981-1b9b8ce3e5c4",
       "nutrientId": "fat",
-      "amountPer100g": 3.7959230769230774,
+      "amountPer100g": 3.774769230769231,
       "valueSource": "derived"
     },
     {
       "id": "d00d9c05-e0ed-5b17-bcc9-700a6207d3d1",
       "foodId": "614b3f61-e3c8-53ec-b981-1b9b8ce3e5c4",
       "nutrientId": "fibre",
-      "amountPer100g": 1.02,
+      "amountPer100g": 0.9353846153846155,
       "valueSource": "derived"
     },
     {
       "id": "e880ae57-a499-5732-96c5-dc196379db0a",
       "foodId": "614b3f61-e3c8-53ec-b981-1b9b8ce3e5c4",
       "nutrientId": "saturated_fat",
-      "amountPer100g": 2.7631230769230775,
+      "amountPer100g": 2.7457769230769236,
       "valueSource": "derived"
     },
     {
       "id": "1a3412ac-ecbc-5d05-b3c8-87288cff22e2",
       "foodId": "614b3f61-e3c8-53ec-b981-1b9b8ce3e5c4",
       "nutrientId": "sugar",
-      "amountPer100g": 3.0503076923076926,
+      "amountPer100g": 3.173,
       "valueSource": "derived"
     },
     {
@@ -97852,56 +97852,56 @@
       "id": "eee5eb59-54fa-553a-9755-2fa6c08ff04c",
       "foodId": "614b3f61-e3c8-53ec-b981-1b9b8ce3e5c4",
       "nutrientId": "potassium",
-      "amountPer100g": 165.46153846153845,
+      "amountPer100g": 170.1153846153846,
       "valueSource": "derived"
     },
     {
       "id": "1a84ba29-d8ae-52c5-a6e2-b5e5c2bbb6c0",
       "foodId": "614b3f61-e3c8-53ec-b981-1b9b8ce3e5c4",
       "nutrientId": "calcium",
-      "amountPer100g": 62.07692307692309,
+      "amountPer100g": 62.923076923076934,
       "valueSource": "derived"
     },
     {
       "id": "0817f618-ab1a-5e5e-ae9a-d450092b2f04",
       "foodId": "614b3f61-e3c8-53ec-b981-1b9b8ce3e5c4",
       "nutrientId": "iron",
-      "amountPer100g": 0.3897692307692308,
+      "amountPer100g": 0.41515384615384615,
       "valueSource": "derived"
     },
     {
       "id": "419c69e6-0ea6-5386-a0b5-91dfe6cbc85e",
       "foodId": "614b3f61-e3c8-53ec-b981-1b9b8ce3e5c4",
       "nutrientId": "magnesium",
-      "amountPer100g": 15.776923076923074,
+      "amountPer100g": 16.2,
       "valueSource": "derived"
     },
     {
       "id": "2733f43c-98c5-59ff-96f4-d58e179eeb3a",
       "foodId": "614b3f61-e3c8-53ec-b981-1b9b8ce3e5c4",
       "nutrientId": "zinc",
-      "amountPer100g": 0.4513846153846154,
+      "amountPer100g": 0.46407692307692305,
       "valueSource": "derived"
     },
     {
       "id": "614ddbf1-ca1a-5205-b359-57f3e890eb46",
       "foodId": "614b3f61-e3c8-53ec-b981-1b9b8ce3e5c4",
       "nutrientId": "phosphorus",
-      "amountPer100g": 63.86153846153846,
+      "amountPer100g": 65.13076923076923,
       "valueSource": "derived"
     },
     {
       "id": "8be308d7-a15b-572d-a8f4-ed65a40c921c",
       "foodId": "614b3f61-e3c8-53ec-b981-1b9b8ce3e5c4",
       "nutrientId": "vitamin_a",
-      "amountPer100g": 21.361538461538466,
+      "amountPer100g": 21.784615384615385,
       "valueSource": "derived"
     },
     {
       "id": "19140a62-298f-56e6-9948-2f891daf3794",
       "foodId": "614b3f61-e3c8-53ec-b981-1b9b8ce3e5c4",
       "nutrientId": "vitamin_c",
-      "amountPer100g": 4.311538461538461,
+      "amountPer100g": 4.142307692307692,
       "valueSource": "derived"
     },
     {
@@ -97922,7 +97922,7 @@
       "id": "39a48905-b127-5693-a755-9eddd5495683",
       "foodId": "614b3f61-e3c8-53ec-b981-1b9b8ce3e5c4",
       "nutrientId": "vitamin_b6",
-      "amountPer100g": 0.047069230769230766,
+      "amountPer100g": 0.04241538461538461,
       "valueSource": "derived"
     },
     {
@@ -97936,28 +97936,28 @@
       "id": "77d0bca1-76e1-5892-b480-b05bdef59ed6",
       "foodId": "614b3f61-e3c8-53ec-b981-1b9b8ce3e5c4",
       "nutrientId": "folate",
-      "amountPer100g": 13.338461538461537,
+      "amountPer100g": 10.376923076923077,
       "valueSource": "derived"
     },
     {
       "id": "62d8958d-da91-5003-80ba-7d84d35c0ef9",
       "foodId": "614b3f61-e3c8-53ec-b981-1b9b8ce3e5c4",
       "nutrientId": "thiamin",
-      "amountPer100g": 0.03787692307692308,
+      "amountPer100g": 0.036184615384615385,
       "valueSource": "derived"
     },
     {
       "id": "a8b6d404-5c90-58bd-a879-6c6b6c35a47a",
       "foodId": "614b3f61-e3c8-53ec-b981-1b9b8ce3e5c4",
       "nutrientId": "riboflavin",
-      "amountPer100g": 0.07832307692307693,
+      "amountPer100g": 0.08170769230769231,
       "valueSource": "derived"
     },
     {
       "id": "c101e730-a9ba-50f0-8302-916174cea26a",
       "foodId": "614b3f61-e3c8-53ec-b981-1b9b8ce3e5c4",
       "nutrientId": "niacin",
-      "amountPer100g": 0.15003846153846154,
+      "amountPer100g": 0.17584615384615387,
       "valueSource": "derived"
     },
     {
@@ -102332,49 +102332,49 @@
       "id": "c71432b3-1791-5cc0-8daf-6395f8e496e8",
       "foodId": "b7205322-7bbf-52a4-8914-8ef6bffe43fa",
       "nutrientId": "energy",
-      "amountPer100g": 22.44,
+      "amountPer100g": 24.19,
       "valueSource": "derived"
     },
     {
       "id": "dac4833a-3d04-55de-b8d3-200a5540e147",
       "foodId": "b7205322-7bbf-52a4-8914-8ef6bffe43fa",
       "nutrientId": "protein",
-      "amountPer100g": 0.95,
+      "amountPer100g": 0.9709999999999999,
       "valueSource": "derived"
     },
     {
       "id": "4278bae5-f802-50b5-ae13-5d757261a525",
       "foodId": "b7205322-7bbf-52a4-8914-8ef6bffe43fa",
       "nutrientId": "carbs",
-      "amountPer100g": 4.6885,
+      "amountPer100g": 5.203,
       "valueSource": "derived"
     },
     {
       "id": "0edd5c03-2e87-55a2-b66e-8f23ac00ec7d",
       "foodId": "b7205322-7bbf-52a4-8914-8ef6bffe43fa",
       "nutrientId": "fat",
-      "amountPer100g": 0.38630000000000003,
+      "amountPer100g": 0.3688,
       "valueSource": "derived"
     },
     {
       "id": "e04fc454-048a-5d2e-b496-d1580a227475",
       "foodId": "b7205322-7bbf-52a4-8914-8ef6bffe43fa",
       "nutrientId": "fibre",
-      "amountPer100g": 1.149,
+      "amountPer100g": 1.079,
       "valueSource": "derived"
     },
     {
       "id": "63dc232e-971d-577e-ac87-cb0d4c8382ff",
       "foodId": "b7205322-7bbf-52a4-8914-8ef6bffe43fa",
       "nutrientId": "saturated_fat",
-      "amountPer100g": 0.061869999999999994,
+      "amountPer100g": 0.04752000000000001,
       "valueSource": "derived"
     },
     {
       "id": "03aa009c-f458-502c-89a0-3c25fae84bea",
       "foodId": "b7205322-7bbf-52a4-8914-8ef6bffe43fa",
       "nutrientId": "sugar",
-      "amountPer100g": 2.2946,
+      "amountPer100g": 2.3960999999999997,
       "valueSource": "derived"
     },
     {
@@ -102388,56 +102388,56 @@
       "id": "237d5352-4933-5a7b-a2fc-83f265e67ef8",
       "foodId": "b7205322-7bbf-52a4-8914-8ef6bffe43fa",
       "nutrientId": "potassium",
-      "amountPer100g": 186.64,
+      "amountPer100g": 190.49,
       "valueSource": "derived"
     },
     {
       "id": "42931735-489b-5e2b-a4ee-1a143aac26a2",
       "foodId": "b7205322-7bbf-52a4-8914-8ef6bffe43fa",
       "nutrientId": "calcium",
-      "amountPer100g": 24.36,
+      "amountPer100g": 25.06,
       "valueSource": "derived"
     },
     {
       "id": "760e904b-b161-541a-acc5-354cc676cc93",
       "foodId": "b7205322-7bbf-52a4-8914-8ef6bffe43fa",
       "nutrientId": "iron",
-      "amountPer100g": 0.924,
+      "amountPer100g": 0.9450000000000001,
       "valueSource": "derived"
     },
     {
       "id": "2ab6e9f9-ddff-5b7b-8f2f-2c386de3029c",
       "foodId": "b7205322-7bbf-52a4-8914-8ef6bffe43fa",
       "nutrientId": "magnesium",
-      "amountPer100g": 14.249999999999998,
+      "amountPer100g": 14.6,
       "valueSource": "derived"
     },
     {
       "id": "cdc256e2-760f-5e1c-9b1c-1a0e5d5cd0b7",
       "foodId": "b7205322-7bbf-52a4-8914-8ef6bffe43fa",
       "nutrientId": "zinc",
-      "amountPer100g": 0.21100000000000002,
+      "amountPer100g": 0.22150000000000003,
       "valueSource": "derived"
     },
     {
       "id": "34387a1d-d04c-5f6c-b944-17310c16bb2f",
       "foodId": "b7205322-7bbf-52a4-8914-8ef6bffe43fa",
       "nutrientId": "phosphorus",
-      "amountPer100g": 27.18,
+      "amountPer100g": 28.230000000000004,
       "valueSource": "derived"
     },
     {
       "id": "eb5606ce-5a54-59c0-8b8c-549213c69979",
       "foodId": "b7205322-7bbf-52a4-8914-8ef6bffe43fa",
       "nutrientId": "vitamin_a",
-      "amountPer100g": 24.75,
+      "amountPer100g": 25.1,
       "valueSource": "derived"
     },
     {
       "id": "be117ccf-2676-5071-8cca-cc363f17a1a8",
       "foodId": "b7205322-7bbf-52a4-8914-8ef6bffe43fa",
       "nutrientId": "vitamin_c",
-      "amountPer100g": 9.532000000000002,
+      "amountPer100g": 9.392000000000001,
       "valueSource": "derived"
     },
     {
@@ -102458,7 +102458,7 @@
       "id": "0234e15e-f6d7-52ec-95b7-d711d6ea0826",
       "foodId": "b7205322-7bbf-52a4-8914-8ef6bffe43fa",
       "nutrientId": "vitamin_b6",
-      "amountPer100g": 0.07696999999999998,
+      "amountPer100g": 0.07311999999999999,
       "valueSource": "derived"
     },
     {
@@ -102472,28 +102472,28 @@
       "id": "fbb514b7-f0ab-590b-9e96-3cd34c4e543e",
       "foodId": "b7205322-7bbf-52a4-8914-8ef6bffe43fa",
       "nutrientId": "folate",
-      "amountPer100g": 16.16,
+      "amountPer100g": 13.71,
       "valueSource": "derived"
     },
     {
       "id": "043d15f9-9a67-5133-858c-b370a5a5bd47",
       "foodId": "b7205322-7bbf-52a4-8914-8ef6bffe43fa",
       "nutrientId": "thiamin",
-      "amountPer100g": 0.040639999999999996,
+      "amountPer100g": 0.03924,
       "valueSource": "derived"
     },
     {
       "id": "dd4e2765-fed8-5aec-919f-17b76d90da5b",
       "foodId": "b7205322-7bbf-52a4-8914-8ef6bffe43fa",
       "nutrientId": "riboflavin",
-      "amountPer100g": 0.02873,
+      "amountPer100g": 0.031529999999999996,
       "valueSource": "derived"
     },
     {
       "id": "e740bcfb-527e-5e39-ab3a-f1507055834f",
       "foodId": "b7205322-7bbf-52a4-8914-8ef6bffe43fa",
       "nutrientId": "niacin",
-      "amountPer100g": 0.29811,
+      "amountPer100g": 0.31946,
       "valueSource": "derived"
     },
     {
@@ -110396,49 +110396,49 @@
       "id": "6700ce82-3dd6-54c4-9b56-40914618235a",
       "foodId": "24fb87fb-1e3d-5965-a220-f6a068904d9d",
       "nutrientId": "energy",
-      "amountPer100g": 256.33333333333337,
+      "amountPer100g": 256.8888888888889,
       "valueSource": "derived"
     },
     {
       "id": "3d094e78-8276-5a12-878f-df753e7aafa3",
       "foodId": "24fb87fb-1e3d-5965-a220-f6a068904d9d",
       "nutrientId": "protein",
-      "amountPer100g": 11.836296296296297,
+      "amountPer100g": 11.842962962962963,
       "valueSource": "derived"
     },
     {
       "id": "6c248338-aec4-5ef2-a6e9-b8022d26f514",
       "foodId": "24fb87fb-1e3d-5965-a220-f6a068904d9d",
       "nutrientId": "carbs",
-      "amountPer100g": 20.912962962962965,
+      "amountPer100g": 21.076296296296295,
       "valueSource": "derived"
     },
     {
       "id": "65a3dd95-dcae-5b2a-ac45-5888f4a8009e",
       "foodId": "24fb87fb-1e3d-5965-a220-f6a068904d9d",
       "nutrientId": "fat",
-      "amountPer100g": 14.073703703703702,
+      "amountPer100g": 14.068148148148149,
       "valueSource": "derived"
     },
     {
       "id": "e7800b5f-e1b9-5834-874e-55a07b08ec5e",
       "foodId": "24fb87fb-1e3d-5965-a220-f6a068904d9d",
       "nutrientId": "fibre",
-      "amountPer100g": 4.3,
+      "amountPer100g": 4.277777777777778,
       "valueSource": "derived"
     },
     {
       "id": "58868701-d2fd-591d-8db2-094d173ec472",
       "foodId": "24fb87fb-1e3d-5965-a220-f6a068904d9d",
       "nutrientId": "saturated_fat",
-      "amountPer100g": 7.883185185185186,
+      "amountPer100g": 7.87862962962963,
       "valueSource": "derived"
     },
     {
       "id": "fb56310b-8d21-5c75-94c9-8cc0d4ec70fd",
       "foodId": "24fb87fb-1e3d-5965-a220-f6a068904d9d",
       "nutrientId": "sugar",
-      "amountPer100g": 2.67,
+      "amountPer100g": 2.702222222222222,
       "valueSource": "derived"
     },
     {
@@ -110452,56 +110452,56 @@
       "id": "0322a1c0-a3df-5ba4-aa8b-02218dbbbc85",
       "foodId": "24fb87fb-1e3d-5965-a220-f6a068904d9d",
       "nutrientId": "potassium",
-      "amountPer100g": 121.59259259259258,
+      "amountPer100g": 122.81481481481482,
       "valueSource": "derived"
     },
     {
       "id": "2b6ba340-ba38-5b81-ad3f-8d2a575e88dc",
       "foodId": "24fb87fb-1e3d-5965-a220-f6a068904d9d",
       "nutrientId": "calcium",
-      "amountPer100g": 517.0370370370371,
+      "amountPer100g": 517.2592592592594,
       "valueSource": "derived"
     },
     {
       "id": "b9fa6598-d1ea-5f3d-b5c7-09767ea0fb24",
       "foodId": "24fb87fb-1e3d-5965-a220-f6a068904d9d",
       "nutrientId": "iron",
-      "amountPer100g": 2.2759259259259257,
+      "amountPer100g": 2.2825925925925925,
       "valueSource": "derived"
     },
     {
       "id": "bd433fee-948d-5ce5-b5d3-cb3bbe91afb3",
       "foodId": "24fb87fb-1e3d-5965-a220-f6a068904d9d",
       "nutrientId": "magnesium",
-      "amountPer100g": 22.125925925925927,
+      "amountPer100g": 22.237037037037037,
       "valueSource": "derived"
     },
     {
       "id": "80b093f7-c2f1-594e-be9a-789dcedd7105",
       "foodId": "24fb87fb-1e3d-5965-a220-f6a068904d9d",
       "nutrientId": "zinc",
-      "amountPer100g": 1.5507407407407412,
+      "amountPer100g": 1.5540740740740744,
       "valueSource": "derived"
     },
     {
       "id": "a71dee03-9767-5ab5-b778-fcced473997b",
       "foodId": "24fb87fb-1e3d-5965-a220-f6a068904d9d",
       "nutrientId": "phosphorus",
-      "amountPer100g": 187.37037037037035,
+      "amountPer100g": 187.7037037037037,
       "valueSource": "derived"
     },
     {
       "id": "39e4b095-bad6-57a8-8452-af6fa9b9d5d5",
       "foodId": "24fb87fb-1e3d-5965-a220-f6a068904d9d",
       "nutrientId": "vitamin_a",
-      "amountPer100g": 124.07407407407408,
+      "amountPer100g": 124.18518518518522,
       "valueSource": "derived"
     },
     {
       "id": "cc07a619-4be6-57d6-8e77-bf0cfb4f6bfd",
       "foodId": "24fb87fb-1e3d-5965-a220-f6a068904d9d",
       "nutrientId": "vitamin_c",
-      "amountPer100g": 1.8777777777777778,
+      "amountPer100g": 1.8333333333333333,
       "valueSource": "derived"
     },
     {
@@ -110522,7 +110522,7 @@
       "id": "62a72647-0222-52b6-ba14-e64fa5ea8023",
       "foodId": "24fb87fb-1e3d-5965-a220-f6a068904d9d",
       "nutrientId": "vitamin_b6",
-      "amountPer100g": 0.07066666666666667,
+      "amountPer100g": 0.06944444444444445,
       "valueSource": "derived"
     },
     {
@@ -110536,28 +110536,28 @@
       "id": "5a0edc89-106c-5dc0-9eb9-7aa268e4c4d0",
       "foodId": "24fb87fb-1e3d-5965-a220-f6a068904d9d",
       "nutrientId": "folate",
-      "amountPer100g": 66.0,
+      "amountPer100g": 65.22222222222223,
       "valueSource": "derived"
     },
     {
       "id": "b7510320-b8d1-5d26-8266-8483c161fa67",
       "foodId": "24fb87fb-1e3d-5965-a220-f6a068904d9d",
       "nutrientId": "thiamin",
-      "amountPer100g": 0.24299999999999994,
+      "amountPer100g": 0.24255555555555552,
       "valueSource": "derived"
     },
     {
       "id": "80069b79-27fa-539b-af49-7742831fd16e",
       "foodId": "24fb87fb-1e3d-5965-a220-f6a068904d9d",
       "nutrientId": "riboflavin",
-      "amountPer100g": 0.2501481481481482,
+      "amountPer100g": 0.25103703703703706,
       "valueSource": "derived"
     },
     {
       "id": "6c37e4ef-6228-58e9-b3cb-0ace859efa9c",
       "foodId": "24fb87fb-1e3d-5965-a220-f6a068904d9d",
       "nutrientId": "niacin",
-      "amountPer100g": 2.0670740740740743,
+      "amountPer100g": 2.073851851851852,
       "valueSource": "derived"
     },
     {
@@ -111068,49 +111068,49 @@
       "id": "44ae6b94-6bb2-5594-94a5-0eb0f14d17f8",
       "foodId": "2e8505ef-55e0-5d01-8bd0-f1b5de87e5de",
       "nutrientId": "energy",
-      "amountPer100g": 184.93333333333334,
+      "amountPer100g": 186.97037037037038,
       "valueSource": "derived"
     },
     {
       "id": "d32b6207-895d-5195-a440-dea6a872aa7b",
       "foodId": "2e8505ef-55e0-5d01-8bd0-f1b5de87e5de",
       "nutrientId": "protein",
-      "amountPer100g": 5.9065925925925935,
+      "amountPer100g": 5.931037037037036,
       "valueSource": "derived"
     },
     {
       "id": "3d0f8a15-44e5-5698-be9c-4873bafba05f",
       "foodId": "2e8505ef-55e0-5d01-8bd0-f1b5de87e5de",
       "nutrientId": "carbs",
-      "amountPer100g": 21.607481481481482,
+      "amountPer100g": 22.206370370370372,
       "valueSource": "derived"
     },
     {
       "id": "55e878fb-eb1a-5a55-a83c-e947fda65d8b",
       "foodId": "2e8505ef-55e0-5d01-8bd0-f1b5de87e5de",
       "nutrientId": "fat",
-      "amountPer100g": 8.640962962962963,
+      "amountPer100g": 8.620592592592592,
       "valueSource": "derived"
     },
     {
       "id": "998afbea-f69c-5389-a7db-7c604d515dba",
       "foodId": "2e8505ef-55e0-5d01-8bd0-f1b5de87e5de",
       "nutrientId": "fibre",
-      "amountPer100g": 4.561481481481481,
+      "amountPer100g": 4.4799999999999995,
       "valueSource": "derived"
     },
     {
       "id": "bc5e60fa-6f59-5887-bd20-9f937edb6796",
       "foodId": "2e8505ef-55e0-5d01-8bd0-f1b5de87e5de",
       "nutrientId": "saturated_fat",
-      "amountPer100g": 4.9196740740740745,
+      "amountPer100g": 4.902970370370371,
       "valueSource": "derived"
     },
     {
       "id": "6612cc2a-3bf7-5911-b65e-42ee87d5f6b1",
       "foodId": "2e8505ef-55e0-5d01-8bd0-f1b5de87e5de",
       "nutrientId": "sugar",
-      "amountPer100g": 3.2927407407407405,
+      "amountPer100g": 3.410888888888889,
       "valueSource": "derived"
     },
     {
@@ -111124,56 +111124,56 @@
       "id": "d4e5fbb4-56ba-5b9b-bc5e-963b795f4ce2",
       "foodId": "2e8505ef-55e0-5d01-8bd0-f1b5de87e5de",
       "nutrientId": "potassium",
-      "amountPer100g": 140.18518518518516,
+      "amountPer100g": 144.66666666666666,
       "valueSource": "derived"
     },
     {
       "id": "d17c9397-87e4-59ee-a1c7-0d1a173e9fd5",
       "foodId": "2e8505ef-55e0-5d01-8bd0-f1b5de87e5de",
       "nutrientId": "calcium",
-      "amountPer100g": 326.80740740740737,
+      "amountPer100g": 327.6222222222222,
       "valueSource": "derived"
     },
     {
       "id": "2cd9857e-9d73-5d62-914d-02163fb8818a",
       "foodId": "2e8505ef-55e0-5d01-8bd0-f1b5de87e5de",
       "nutrientId": "iron",
-      "amountPer100g": 2.350296296296296,
+      "amountPer100g": 2.3747407407407404,
       "valueSource": "derived"
     },
     {
       "id": "ed08e8e7-5dc4-58c0-aa3a-5f2ad87f8ca1",
       "foodId": "2e8505ef-55e0-5d01-8bd0-f1b5de87e5de",
       "nutrientId": "magnesium",
-      "amountPer100g": 18.985185185185188,
+      "amountPer100g": 19.392592592592596,
       "valueSource": "derived"
     },
     {
       "id": "126b5caa-c4f5-5fa5-beea-ac29452ff40a",
       "foodId": "2e8505ef-55e0-5d01-8bd0-f1b5de87e5de",
       "nutrientId": "zinc",
-      "amountPer100g": 0.5702962962962963,
+      "amountPer100g": 0.5825185185185184,
       "valueSource": "derived"
     },
     {
       "id": "6fa80abb-236d-52cf-8da6-2016e7a95a8b",
       "foodId": "2e8505ef-55e0-5d01-8bd0-f1b5de87e5de",
       "nutrientId": "phosphorus",
-      "amountPer100g": 70.65925925925926,
+      "amountPer100g": 71.88148148148149,
       "valueSource": "derived"
     },
     {
       "id": "78e3e3ca-e7e9-5547-99fb-31d1030acd94",
       "foodId": "2e8505ef-55e0-5d01-8bd0-f1b5de87e5de",
       "nutrientId": "vitamin_a",
-      "amountPer100g": 68.22962962962964,
+      "amountPer100g": 68.63703703703703,
       "valueSource": "derived"
     },
     {
       "id": "2a07a093-33fd-56bc-a61f-a3fac4d31daa",
       "foodId": "2e8505ef-55e0-5d01-8bd0-f1b5de87e5de",
       "nutrientId": "vitamin_c",
-      "amountPer100g": 1.3037037037037038,
+      "amountPer100g": 1.1407407407407408,
       "valueSource": "derived"
     },
     {
@@ -111194,7 +111194,7 @@
       "id": "ca1bc39c-ab08-520e-925f-03d4b75f74e6",
       "foodId": "2e8505ef-55e0-5d01-8bd0-f1b5de87e5de",
       "nutrientId": "vitamin_b6",
-      "amountPer100g": 0.06606666666666668,
+      "amountPer100g": 0.061585185185185194,
       "valueSource": "derived"
     },
     {
@@ -111208,28 +111208,28 @@
       "id": "b3acebf3-0f10-58a9-87ea-ad303b480092",
       "foodId": "2e8505ef-55e0-5d01-8bd0-f1b5de87e5de",
       "nutrientId": "folate",
-      "amountPer100g": 63.5851851851852,
+      "amountPer100g": 60.73333333333334,
       "valueSource": "derived"
     },
     {
       "id": "324388c3-6657-58c6-a16a-f33d9b950b23",
       "foodId": "2e8505ef-55e0-5d01-8bd0-f1b5de87e5de",
       "nutrientId": "thiamin",
-      "amountPer100g": 0.24334814814814815,
+      "amountPer100g": 0.2417185185185185,
       "valueSource": "derived"
     },
     {
       "id": "e53db6b4-e947-5a2b-932f-1f0a09eb375e",
       "foodId": "2e8505ef-55e0-5d01-8bd0-f1b5de87e5de",
       "nutrientId": "riboflavin",
-      "amountPer100g": 0.15677777777777777,
+      "amountPer100g": 0.16003703703703706,
       "valueSource": "derived"
     },
     {
       "id": "a7769e6d-69a8-5ca1-a5a1-994fc5980b16",
       "foodId": "2e8505ef-55e0-5d01-8bd0-f1b5de87e5de",
       "nutrientId": "niacin",
-      "amountPer100g": 2.0172296296296297,
+      "amountPer100g": 2.0420814814814814,
       "valueSource": "derived"
     },
     {
@@ -115100,42 +115100,42 @@
       "id": "1430683e-82f7-50ce-9025-253ac62ca987",
       "foodId": "68d07aff-69cb-542c-b6b8-96cae4511129",
       "nutrientId": "energy",
-      "amountPer100g": 166.60588235294117,
+      "amountPer100g": 167.0470588235294,
       "valueSource": "derived"
     },
     {
       "id": "55f3aa94-ff67-5070-8137-3282ab1caa72",
       "foodId": "68d07aff-69cb-542c-b6b8-96cae4511129",
       "nutrientId": "protein",
-      "amountPer100g": 2.8941176470588235,
+      "amountPer100g": 2.899411764705883,
       "valueSource": "derived"
     },
     {
       "id": "65eaa86c-33ad-5bff-951e-a4d075604f08",
       "foodId": "68d07aff-69cb-542c-b6b8-96cae4511129",
       "nutrientId": "carbs",
-      "amountPer100g": 13.774352941176474,
+      "amountPer100g": 13.904058823529411,
       "valueSource": "derived"
     },
     {
       "id": "95fb8a92-5bb6-5e39-9a30-317ea2353f4a",
       "foodId": "68d07aff-69cb-542c-b6b8-96cae4511129",
       "nutrientId": "fat",
-      "amountPer100g": 11.529529411764704,
+      "amountPer100g": 11.525117647058822,
       "valueSource": "derived"
     },
     {
       "id": "d5cb277e-a8e2-5c96-9aba-b21c384e92d7",
       "foodId": "68d07aff-69cb-542c-b6b8-96cae4511129",
       "nutrientId": "fibre",
-      "amountPer100g": 2.880000000000001,
+      "amountPer100g": 2.8623529411764705,
       "valueSource": "derived"
     },
     {
       "id": "087a28cb-aed2-5b21-a38b-2df1ff711ef2",
       "foodId": "68d07aff-69cb-542c-b6b8-96cae4511129",
       "nutrientId": "saturated_fat",
-      "amountPer100g": 1.73535294117647,
+      "amountPer100g": 1.7317352941176467,
       "valueSource": "derived"
     },
     {
@@ -115149,56 +115149,56 @@
       "id": "bd9bd06d-9963-5d9f-bcc0-094601524523",
       "foodId": "68d07aff-69cb-542c-b6b8-96cae4511129",
       "nutrientId": "potassium",
-      "amountPer100g": 328.25882352941176,
+      "amountPer100g": 329.22941176470584,
       "valueSource": "derived"
     },
     {
       "id": "a2893e67-0884-517c-b363-f28e44298b35",
       "foodId": "68d07aff-69cb-542c-b6b8-96cae4511129",
       "nutrientId": "calcium",
-      "amountPer100g": 43.841176470588245,
+      "amountPer100g": 44.01764705882353,
       "valueSource": "derived"
     },
     {
       "id": "71a365ad-7272-5c5c-a4fd-881fc9ad78bd",
       "foodId": "68d07aff-69cb-542c-b6b8-96cae4511129",
       "nutrientId": "iron",
-      "amountPer100g": 4.449529411764707,
+      "amountPer100g": 4.454823529411766,
       "valueSource": "derived"
     },
     {
       "id": "f8625c75-bd5e-5569-a906-bbfc5aab5be2",
       "foodId": "68d07aff-69cb-542c-b6b8-96cae4511129",
       "nutrientId": "magnesium",
-      "amountPer100g": 32.09411764705882,
+      "amountPer100g": 32.182352941176475,
       "valueSource": "derived"
     },
     {
       "id": "2882efbe-0117-5757-ab03-405136f6d3fd",
       "foodId": "68d07aff-69cb-542c-b6b8-96cae4511129",
       "nutrientId": "zinc",
-      "amountPer100g": 0.4994705882352941,
+      "amountPer100g": 0.5021176470588236,
       "valueSource": "derived"
     },
     {
       "id": "b6d9868e-cd3a-5f3f-831e-760439552f1f",
       "foodId": "68d07aff-69cb-542c-b6b8-96cae4511129",
       "nutrientId": "phosphorus",
-      "amountPer100g": 64.31764705882352,
+      "amountPer100g": 64.58235294117645,
       "valueSource": "derived"
     },
     {
       "id": "6a08b016-04f2-5171-a0b3-8331cf9daecd",
       "foodId": "68d07aff-69cb-542c-b6b8-96cae4511129",
       "nutrientId": "vitamin_a",
-      "amountPer100g": 2.8176470588235287,
+      "amountPer100g": 2.9058823529411764,
       "valueSource": "derived"
     },
     {
       "id": "f4e39fe2-8c97-5a5e-bf60-20a3a26b7e83",
       "foodId": "68d07aff-69cb-542c-b6b8-96cae4511129",
       "nutrientId": "vitamin_c",
-      "amountPer100g": 4.62,
+      "amountPer100g": 4.584705882352941,
       "valueSource": "derived"
     },
     {
@@ -115212,7 +115212,7 @@
       "id": "864e3cfb-223a-50c1-aa25-8900573faf4e",
       "foodId": "68d07aff-69cb-542c-b6b8-96cae4511129",
       "nutrientId": "vitamin_b6",
-      "amountPer100g": 0.1889470588235294,
+      "amountPer100g": 0.1879764705882353,
       "valueSource": "derived"
     },
     {
@@ -115226,35 +115226,35 @@
       "id": "6fa67774-835c-5e9f-aaf9-3d13815846c1",
       "foodId": "68d07aff-69cb-542c-b6b8-96cae4511129",
       "nutrientId": "folate",
-      "amountPer100g": 14.294117647058824,
+      "amountPer100g": 13.676470588235295,
       "valueSource": "derived"
     },
     {
       "id": "0b434e50-e273-5420-b4a3-0b577d8a0b6d",
       "foodId": "68d07aff-69cb-542c-b6b8-96cae4511129",
       "nutrientId": "thiamin",
-      "amountPer100g": 0.04942941176470588,
+      "amountPer100g": 0.0490764705882353,
       "valueSource": "derived"
     },
     {
       "id": "b0932e30-4e9e-54f1-8659-add2a7a15942",
       "foodId": "68d07aff-69cb-542c-b6b8-96cae4511129",
       "nutrientId": "riboflavin",
-      "amountPer100g": 0.03882352941176471,
+      "amountPer100g": 0.03952941176470588,
       "valueSource": "derived"
     },
     {
       "id": "3136ce5f-b187-5b3e-ac48-abe1197c85b4",
       "foodId": "68d07aff-69cb-542c-b6b8-96cae4511129",
       "nutrientId": "niacin",
-      "amountPer100g": 0.9582352941176471,
+      "amountPer100g": 0.9636176470588235,
       "valueSource": "derived"
     },
     {
       "id": "b29cf5cc-fc0c-5d1f-aabc-773de2c6694f",
       "foodId": "68d07aff-69cb-542c-b6b8-96cae4511129",
       "nutrientId": "sugar",
-      "amountPer100g": 0.7398823529411765,
+      "amountPer100g": 0.765470588235294,
       "valueSource": "derived"
     },
     {
@@ -115268,49 +115268,49 @@
       "id": "425dea53-46e7-5d7c-ad9a-924803faf93e",
       "foodId": "fc7dc472-34e0-5495-adaf-3246b6b79021",
       "nutrientId": "energy",
-      "amountPer100g": 138.70522152777778,
+      "amountPer100g": 139.3996659722222,
       "valueSource": "derived"
     },
     {
       "id": "eac745dd-a42b-5235-8c21-a79ed3a5b795",
       "foodId": "fc7dc472-34e0-5495-adaf-3246b6b79021",
       "nutrientId": "protein",
-      "amountPer100g": 14.282652777777777,
+      "amountPer100g": 14.29098611111111,
       "valueSource": "derived"
     },
     {
       "id": "96d24e80-9a1d-5c00-8306-629aab8ff16d",
       "foodId": "fc7dc472-34e0-5495-adaf-3246b6b79021",
       "nutrientId": "carbs",
-      "amountPer100g": 2.0897569444444444,
+      "amountPer100g": 2.293923611111111,
       "valueSource": "derived"
     },
     {
       "id": "9afff910-3ebd-5952-8667-58d1df3c4663",
       "foodId": "fc7dc472-34e0-5495-adaf-3246b6b79021",
       "nutrientId": "fat",
-      "amountPer100g": 7.913284722222222,
+      "amountPer100g": 7.906340277777778,
       "valueSource": "derived"
     },
     {
       "id": "865315dc-92fb-57a1-8656-ce733d06d103",
       "foodId": "fc7dc472-34e0-5495-adaf-3246b6b79021",
       "nutrientId": "fibre",
-      "amountPer100g": 0.4127777777777778,
+      "amountPer100g": 0.385,
       "valueSource": "derived"
     },
     {
       "id": "a9043509-13bc-503c-918d-73aaa0bf7815",
       "foodId": "fc7dc472-34e0-5495-adaf-3246b6b79021",
       "nutrientId": "saturated_fat",
-      "amountPer100g": 1.4477055555555556,
+      "amountPer100g": 1.442011111111111,
       "valueSource": "derived"
     },
     {
       "id": "2c0c1f23-bcc2-5f76-b2dd-abd103cf0f21",
       "foodId": "fc7dc472-34e0-5495-adaf-3246b6b79021",
       "nutrientId": "sugar",
-      "amountPer100g": 0.6779999999999999,
+      "amountPer100g": 0.7182777777777776,
       "valueSource": "derived"
     },
     {
@@ -115324,56 +115324,56 @@
       "id": "02be0adc-aa81-578c-86c8-ee0939b54b50",
       "foodId": "fc7dc472-34e0-5495-adaf-3246b6b79021",
       "nutrientId": "potassium",
-      "amountPer100g": 204.625,
+      "amountPer100g": 206.15277777777777,
       "valueSource": "derived"
     },
     {
       "id": "d49bc9af-d7a1-57f3-994a-609cec358066",
       "foodId": "fc7dc472-34e0-5495-adaf-3246b6b79021",
       "nutrientId": "calcium",
-      "amountPer100g": 16.19666666666667,
+      "amountPer100g": 16.474444444444444,
       "valueSource": "derived"
     },
     {
       "id": "9aafc649-cb1d-508b-85ad-9b617400e5c4",
       "foodId": "fc7dc472-34e0-5495-adaf-3246b6b79021",
       "nutrientId": "iron",
-      "amountPer100g": 0.6122430555555556,
+      "amountPer100g": 0.620576388888889,
       "valueSource": "derived"
     },
     {
       "id": "6d13d88e-54e4-58ca-adad-587b22aa5f7e",
       "foodId": "fc7dc472-34e0-5495-adaf-3246b6b79021",
       "nutrientId": "magnesium",
-      "amountPer100g": 18.516027777777776,
+      "amountPer100g": 18.654916666666665,
       "valueSource": "derived"
     },
     {
       "id": "e2165c8f-d283-5a14-b5b4-36ff8f24af24",
       "foodId": "fc7dc472-34e0-5495-adaf-3246b6b79021",
       "nutrientId": "zinc",
-      "amountPer100g": 0.5463222222222222,
+      "amountPer100g": 0.5504888888888889,
       "valueSource": "derived"
     },
     {
       "id": "2fdefd04-3291-5c63-b5ba-2cdbe1b48fc0",
       "foodId": "fc7dc472-34e0-5495-adaf-3246b6b79021",
       "nutrientId": "phosphorus",
-      "amountPer100g": 114.16277777777779,
+      "amountPer100g": 114.57944444444446,
       "valueSource": "derived"
     },
     {
       "id": "b722f6b4-85c3-53a1-b937-a8663ffa0832",
       "foodId": "fc7dc472-34e0-5495-adaf-3246b6b79021",
       "nutrientId": "vitamin_a",
-      "amountPer100g": 10.538888888888888,
+      "amountPer100g": 10.677777777777777,
       "valueSource": "derived"
     },
     {
       "id": "c24be4c2-116f-5fc9-aa4c-19d37664b5ba",
       "foodId": "fc7dc472-34e0-5495-adaf-3246b6b79021",
       "nutrientId": "vitamin_c",
-      "amountPer100g": 3.4222222222222225,
+      "amountPer100g": 3.366666666666667,
       "valueSource": "derived"
     },
     {
@@ -115394,7 +115394,7 @@
       "id": "4073e484-d64f-50db-8c5d-5c8e460cca04",
       "foodId": "fc7dc472-34e0-5495-adaf-3246b6b79021",
       "nutrientId": "vitamin_b6",
-      "amountPer100g": 0.29622527777777774,
+      "amountPer100g": 0.29469749999999995,
       "valueSource": "derived"
     },
     {
@@ -115408,63 +115408,63 @@
       "id": "ea4f7346-cac6-5a98-aaa7-11946ac6c2db",
       "foodId": "fc7dc472-34e0-5495-adaf-3246b6b79021",
       "nutrientId": "folate",
-      "amountPer100g": 6.872222222222221,
+      "amountPer100g": 5.8999999999999995,
       "valueSource": "derived"
     },
     {
       "id": "c8429b2e-a149-5d79-a0dd-8b09fe344687",
       "foodId": "fc7dc472-34e0-5495-adaf-3246b6b79021",
       "nutrientId": "thiamin",
-      "amountPer100g": 0.05361833333333334,
+      "amountPer100g": 0.053062777777777785,
       "valueSource": "derived"
     },
     {
       "id": "2cca43c2-b344-5067-9356-fcd327591a24",
       "foodId": "fc7dc472-34e0-5495-adaf-3246b6b79021",
       "nutrientId": "riboflavin",
-      "amountPer100g": 0.05977777777777779,
+      "amountPer100g": 0.060888888888888895,
       "valueSource": "derived"
     },
     {
       "id": "ebb85034-8981-5e17-b338-179115ced32e",
       "foodId": "fc7dc472-34e0-5495-adaf-3246b6b79021",
       "nutrientId": "niacin",
-      "amountPer100g": 6.233030555555556,
+      "amountPer100g": 6.241502777777778,
       "valueSource": "derived"
     },
     {
       "id": "85ee7379-6ace-511a-9408-76984503f11d",
       "foodId": "38003114-ed4d-5e2e-907e-bb682e7e0642",
       "nutrientId": "energy",
-      "amountPer100g": 96.9231757352941,
+      "amountPer100g": 97.65846985294115,
       "valueSource": "derived"
     },
     {
       "id": "b2c2176b-a965-530d-92c5-468d3ee91862",
       "foodId": "38003114-ed4d-5e2e-907e-bb682e7e0642",
       "nutrientId": "protein",
-      "amountPer100g": 8.890573529411764,
+      "amountPer100g": 8.899397058823528,
       "valueSource": "derived"
     },
     {
       "id": "f6cf4708-a33f-56f9-bf2c-3b9921e7f2ac",
       "foodId": "38003114-ed4d-5e2e-907e-bb682e7e0642",
       "nutrientId": "carbs",
-      "amountPer100g": 2.237919117647059,
+      "amountPer100g": 2.4540955882352944,
       "valueSource": "derived"
     },
     {
       "id": "49b463fe-77a8-5719-9c2b-c21652a401bb",
       "foodId": "38003114-ed4d-5e2e-907e-bb682e7e0642",
       "nutrientId": "fat",
-      "amountPer100g": 5.792595588235295,
+      "amountPer100g": 5.785242647058824,
       "valueSource": "derived"
     },
     {
       "id": "adf1829d-4d9b-5bf6-94d1-f66de48c5179",
       "foodId": "38003114-ed4d-5e2e-907e-bb682e7e0642",
       "nutrientId": "saturated_fat",
-      "amountPer100g": 0.9498705882352939,
+      "amountPer100g": 0.9438411764705881,
       "valueSource": "derived"
     },
     {
@@ -115478,42 +115478,42 @@
       "id": "ceb0825a-6d32-5658-864c-51f0c146a1b1",
       "foodId": "38003114-ed4d-5e2e-907e-bb682e7e0642",
       "nutrientId": "potassium",
-      "amountPer100g": 173.48529411764704,
+      "amountPer100g": 175.10294117647055,
       "valueSource": "derived"
     },
     {
       "id": "a02e8490-b877-5fc4-987c-9829c76573f0",
       "foodId": "38003114-ed4d-5e2e-907e-bb682e7e0642",
       "nutrientId": "calcium",
-      "amountPer100g": 17.890588235294118,
+      "amountPer100g": 18.18470588235294,
       "valueSource": "derived"
     },
     {
       "id": "d88f855d-206c-5962-a9db-c95d92bab52d",
       "foodId": "38003114-ed4d-5e2e-907e-bb682e7e0642",
       "nutrientId": "iron",
-      "amountPer100g": 0.8919044117647058,
+      "amountPer100g": 0.9007279411764706,
       "valueSource": "derived"
     },
     {
       "id": "9d0d4910-8028-5444-bc31-566d039049fc",
       "foodId": "38003114-ed4d-5e2e-907e-bb682e7e0642",
       "nutrientId": "magnesium",
-      "amountPer100g": 15.95520588235294,
+      "amountPer100g": 16.102264705882355,
       "valueSource": "derived"
     },
     {
       "id": "b3057f47-1a79-5911-b4c2-609e4f7e1d71",
       "foodId": "38003114-ed4d-5e2e-907e-bb682e7e0642",
       "nutrientId": "zinc",
-      "amountPer100g": 0.3964,
+      "amountPer100g": 0.40081176470588237,
       "valueSource": "derived"
     },
     {
       "id": "f3afbae4-1184-58b5-a905-3073008da41b",
       "foodId": "38003114-ed4d-5e2e-907e-bb682e7e0642",
       "nutrientId": "phosphorus",
-      "amountPer100g": 73.65470588235293,
+      "amountPer100g": 74.09588235294117,
       "valueSource": "derived"
     },
     {
@@ -115527,7 +115527,7 @@
       "id": "b8d391d5-4505-51e1-9014-cfec1196653a",
       "foodId": "38003114-ed4d-5e2e-907e-bb682e7e0642",
       "nutrientId": "vitamin_b6",
-      "amountPer100g": 0.17233264705882356,
+      "amountPer100g": 0.17071500000000003,
       "valueSource": "derived"
     },
     {
@@ -115541,49 +115541,49 @@
       "id": "54464de4-2a80-5836-bbfa-3f4d45f5d259",
       "foodId": "38003114-ed4d-5e2e-907e-bb682e7e0642",
       "nutrientId": "thiamin",
-      "amountPer100g": 0.03689,
+      "amountPer100g": 0.03630176470588235,
       "valueSource": "derived"
     },
     {
       "id": "91c00990-db69-589e-b117-1632cf843864",
       "foodId": "38003114-ed4d-5e2e-907e-bb682e7e0642",
       "nutrientId": "riboflavin",
-      "amountPer100g": 0.045488235294117656,
+      "amountPer100g": 0.04666470588235295,
       "valueSource": "derived"
     },
     {
       "id": "3e9a01ac-38cc-539e-8ee8-c4a5ab432133",
       "foodId": "38003114-ed4d-5e2e-907e-bb682e7e0642",
       "nutrientId": "niacin",
-      "amountPer100g": 4.523444117647059,
+      "amountPer100g": 4.532414705882353,
       "valueSource": "derived"
     },
     {
       "id": "02edbe7f-279a-51e5-80de-8bbeacce0ce8",
       "foodId": "38003114-ed4d-5e2e-907e-bb682e7e0642",
       "nutrientId": "fibre",
-      "amountPer100g": 0.4370588235294117,
+      "amountPer100g": 0.4076470588235294,
       "valueSource": "derived"
     },
     {
       "id": "e47c6d39-96a1-5439-af7a-2847981e6c1b",
       "foodId": "38003114-ed4d-5e2e-907e-bb682e7e0642",
       "nutrientId": "sugar",
-      "amountPer100g": 0.7078235294117645,
+      "amountPer100g": 0.7504705882352941,
       "valueSource": "derived"
     },
     {
       "id": "460243b4-f314-5ac2-88d5-0f26fe336ba6",
       "foodId": "38003114-ed4d-5e2e-907e-bb682e7e0642",
       "nutrientId": "vitamin_a",
-      "amountPer100g": 8.052941176470588,
+      "amountPer100g": 8.200000000000001,
       "valueSource": "derived"
     },
     {
       "id": "0247edf3-ec82-5d24-bf79-47f7ae99cf68",
       "foodId": "38003114-ed4d-5e2e-907e-bb682e7e0642",
       "nutrientId": "vitamin_c",
-      "amountPer100g": 3.623529411764706,
+      "amountPer100g": 3.5647058823529414,
       "valueSource": "derived"
     },
     {
@@ -115597,7 +115597,7 @@
       "id": "d9a8169d-556c-5957-accf-34ff7efc92b9",
       "foodId": "38003114-ed4d-5e2e-907e-bb682e7e0642",
       "nutrientId": "folate",
-      "amountPer100g": 5.305882352941176,
+      "amountPer100g": 4.276470588235294,
       "valueSource": "derived"
     },
     {
@@ -124172,49 +124172,49 @@
       "id": "3fd77014-1d6a-5e81-a96e-2db53f6b5a6e",
       "foodId": "8c5435d1-a7e0-5b80-98ab-202fff432386",
       "nutrientId": "energy",
-      "amountPer100g": 143.3115185,
+      "amountPer100g": 143.9365185,
       "valueSource": "derived"
     },
     {
       "id": "967c9a99-483d-5a22-be1c-e0a56a074f56",
       "foodId": "8c5435d1-a7e0-5b80-98ab-202fff432386",
       "nutrientId": "protein",
-      "amountPer100g": 5.189075,
+      "amountPer100g": 5.196575,
       "valueSource": "derived"
     },
     {
       "id": "fbe63074-5905-5c84-81bb-6daa2d8c2564",
       "foodId": "8c5435d1-a7e0-5b80-98ab-202fff432386",
       "nutrientId": "carbs",
-      "amountPer100g": 15.9653625,
+      "amountPer100g": 16.1491125,
       "valueSource": "derived"
     },
     {
       "id": "373653b1-adae-5d56-98c4-05e41d2446c0",
       "foodId": "8c5435d1-a7e0-5b80-98ab-202fff432386",
       "nutrientId": "fat",
-      "amountPer100g": 6.6139875,
+      "amountPer100g": 6.607737500000001,
       "valueSource": "derived"
     },
     {
       "id": "8964e09b-0249-563b-b8a5-8d38a00e1e8d",
       "foodId": "8c5435d1-a7e0-5b80-98ab-202fff432386",
       "nutrientId": "fibre",
-      "amountPer100g": 1.3527375,
+      "amountPer100g": 1.3277375,
       "valueSource": "derived"
     },
     {
       "id": "e378d3d9-f8e2-5c68-a1c8-c6bb6f34a08c",
       "foodId": "8c5435d1-a7e0-5b80-98ab-202fff432386",
       "nutrientId": "saturated_fat",
-      "amountPer100g": 2.02197,
+      "amountPer100g": 2.016845,
       "valueSource": "derived"
     },
     {
       "id": "85f132aa-6cc4-5131-814e-b470bec880a0",
       "foodId": "8c5435d1-a7e0-5b80-98ab-202fff432386",
       "nutrientId": "sugar",
-      "amountPer100g": 0.882,
+      "amountPer100g": 0.91825,
       "valueSource": "derived"
     },
     {
@@ -124228,56 +124228,56 @@
       "id": "be6b0bed-4087-52a6-a94e-ca9afcd58cdb",
       "foodId": "8c5435d1-a7e0-5b80-98ab-202fff432386",
       "nutrientId": "potassium",
-      "amountPer100g": 103.52749999999999,
+      "amountPer100g": 104.9025,
       "valueSource": "derived"
     },
     {
       "id": "78981e64-b701-5b09-b53a-d7cfc51b86f3",
       "foodId": "8c5435d1-a7e0-5b80-98ab-202fff432386",
       "nutrientId": "calcium",
-      "amountPer100g": 63.782,
+      "amountPer100g": 64.032,
       "valueSource": "derived"
     },
     {
       "id": "1a1d7406-db68-5773-957d-e4a24ce8aef8",
       "foodId": "8c5435d1-a7e0-5b80-98ab-202fff432386",
       "nutrientId": "iron",
-      "amountPer100g": 0.9337125,
+      "amountPer100g": 0.9412125,
       "valueSource": "derived"
     },
     {
       "id": "205e579d-b0a0-5c53-a292-cbbe66ea0147",
       "foodId": "8c5435d1-a7e0-5b80-98ab-202fff432386",
       "nutrientId": "magnesium",
-      "amountPer100g": 14.770500000000004,
+      "amountPer100g": 14.895500000000004,
       "valueSource": "derived"
     },
     {
       "id": "399c39a8-eff0-534f-a5a2-5e6e6c9fb2f7",
       "foodId": "8c5435d1-a7e0-5b80-98ab-202fff432386",
       "nutrientId": "zinc",
-      "amountPer100g": 0.5988999999999999,
+      "amountPer100g": 0.6026499999999999,
       "valueSource": "derived"
     },
     {
       "id": "e407e5e5-9161-5fd7-9813-5f7513d452b8",
       "foodId": "8c5435d1-a7e0-5b80-98ab-202fff432386",
       "nutrientId": "phosphorus",
-      "amountPer100g": 70.19875,
+      "amountPer100g": 70.57375,
       "valueSource": "derived"
     },
     {
       "id": "1e4633dd-4f51-5551-967c-b1589bf76bc0",
       "foodId": "8c5435d1-a7e0-5b80-98ab-202fff432386",
       "nutrientId": "vitamin_a",
-      "amountPer100g": 25.72,
+      "amountPer100g": 25.845000000000002,
       "valueSource": "derived"
     },
     {
       "id": "f2d68e2f-748d-5854-ba13-d73c4fa4efac",
       "foodId": "8c5435d1-a7e0-5b80-98ab-202fff432386",
       "nutrientId": "vitamin_c",
-      "amountPer100g": 15.95125,
+      "amountPer100g": 15.901250000000001,
       "valueSource": "derived"
     },
     {
@@ -124298,7 +124298,7 @@
       "id": "96de8727-a8cd-5510-b35c-92a546f63a32",
       "foodId": "8c5435d1-a7e0-5b80-98ab-202fff432386",
       "nutrientId": "vitamin_b6",
-      "amountPer100g": 0.07684499999999998,
+      "amountPer100g": 0.07546999999999998,
       "valueSource": "derived"
     },
     {
@@ -124312,28 +124312,28 @@
       "id": "2ea29581-6556-5867-aed2-d86084924489",
       "foodId": "8c5435d1-a7e0-5b80-98ab-202fff432386",
       "nutrientId": "folate",
-      "amountPer100g": 40.82625,
+      "amountPer100g": 39.95125,
       "valueSource": "derived"
     },
     {
       "id": "1a408909-e483-5902-b0c9-ccbaf897b68a",
       "foodId": "8c5435d1-a7e0-5b80-98ab-202fff432386",
       "nutrientId": "thiamin",
-      "amountPer100g": 0.14138750000000003,
+      "amountPer100g": 0.14088750000000003,
       "valueSource": "derived"
     },
     {
       "id": "ffeb4411-b6a5-5726-936e-d378787a9e3d",
       "foodId": "8c5435d1-a7e0-5b80-98ab-202fff432386",
       "nutrientId": "riboflavin",
-      "amountPer100g": 0.10694375,
+      "amountPer100g": 0.10794375,
       "valueSource": "derived"
     },
     {
       "id": "5a809e43-c4ea-5f8a-85eb-c5d5e11db0e9",
       "foodId": "8c5435d1-a7e0-5b80-98ab-202fff432386",
       "nutrientId": "niacin",
-      "amountPer100g": 0.9473075,
+      "amountPer100g": 0.9549325,
       "valueSource": "derived"
     },
     {
@@ -143660,49 +143660,49 @@
       "id": "3272d850-c77b-51cb-8c33-9d0ccf822452",
       "foodId": "5b69f4d0-66c8-5f3c-8df1-6f3925297d3f",
       "nutrientId": "energy",
-      "amountPer100g": 61.58333333333332,
+      "amountPer100g": 62.416666666666664,
       "valueSource": "derived"
     },
     {
       "id": "d4329662-a8ec-52ba-be69-44620de76403",
       "foodId": "5b69f4d0-66c8-5f3c-8df1-6f3925297d3f",
       "nutrientId": "protein",
-      "amountPer100g": 3.3605000000000005,
+      "amountPer100g": 3.3705,
       "valueSource": "derived"
     },
     {
       "id": "35df6f01-8bb1-5d4a-ae90-4cbfa4573051",
       "foodId": "5b69f4d0-66c8-5f3c-8df1-6f3925297d3f",
       "nutrientId": "carbs",
-      "amountPer100g": 5.604500000000001,
+      "amountPer100g": 5.8495,
       "valueSource": "derived"
     },
     {
       "id": "6a1b7dc1-d4bf-5965-a9ca-a42c0b0960b9",
       "foodId": "5b69f4d0-66c8-5f3c-8df1-6f3925297d3f",
       "nutrientId": "fat",
-      "amountPer100g": 3.076,
+      "amountPer100g": 3.0676666666666668,
       "valueSource": "derived"
     },
     {
       "id": "9677331f-ab40-5fdd-b5a6-1b344b9c9015",
       "foodId": "5b69f4d0-66c8-5f3c-8df1-6f3925297d3f",
       "nutrientId": "fibre",
-      "amountPer100g": 0.43750000000000006,
+      "amountPer100g": 0.4041666666666667,
       "valueSource": "derived"
     },
     {
       "id": "0c672790-092b-5b57-b267-b02d61807ce6",
       "foodId": "5b69f4d0-66c8-5f3c-8df1-6f3925297d3f",
       "nutrientId": "saturated_fat",
-      "amountPer100g": 1.8624583333333338,
+      "amountPer100g": 1.8556250000000003,
       "valueSource": "derived"
     },
     {
       "id": "a1e0dcb1-fc00-5ca0-b90b-9ca594bca3aa",
       "foodId": "5b69f4d0-66c8-5f3c-8df1-6f3925297d3f",
       "nutrientId": "sugar",
-      "amountPer100g": 4.7212499999999995,
+      "amountPer100g": 4.769583333333333,
       "valueSource": "derived"
     },
     {
@@ -143716,56 +143716,56 @@
       "id": "dcd0974a-531f-5a1d-aaf2-f3e62096d578",
       "foodId": "5b69f4d0-66c8-5f3c-8df1-6f3925297d3f",
       "nutrientId": "potassium",
-      "amountPer100g": 199.925,
+      "amountPer100g": 201.75833333333335,
       "valueSource": "derived"
     },
     {
       "id": "65b2ce4a-dc6a-5a53-9702-70bbca22c611",
       "foodId": "5b69f4d0-66c8-5f3c-8df1-6f3925297d3f",
       "nutrientId": "calcium",
-      "amountPer100g": 118.91666666666667,
+      "amountPer100g": 119.25000000000001,
       "valueSource": "derived"
     },
     {
       "id": "812eee43-4dde-5f54-b5d4-d638b78d5c48",
       "foodId": "5b69f4d0-66c8-5f3c-8df1-6f3925297d3f",
       "nutrientId": "iron",
-      "amountPer100g": 0.6611666666666667,
+      "amountPer100g": 0.6711666666666667,
       "valueSource": "derived"
     },
     {
       "id": "93a8a3ed-aed9-5223-86e6-7a1c250da8ee",
       "foodId": "5b69f4d0-66c8-5f3c-8df1-6f3925297d3f",
       "nutrientId": "magnesium",
-      "amountPer100g": 16.558333333333334,
+      "amountPer100g": 16.725,
       "valueSource": "derived"
     },
     {
       "id": "5db176b0-8290-5afe-8205-c16e62d023bf",
       "foodId": "5b69f4d0-66c8-5f3c-8df1-6f3925297d3f",
       "nutrientId": "zinc",
-      "amountPer100g": 0.6054166666666667,
+      "amountPer100g": 0.6104166666666666,
       "valueSource": "derived"
     },
     {
       "id": "4a3885a5-8f2a-5ad4-b4eb-2703cc136eb3",
       "foodId": "5b69f4d0-66c8-5f3c-8df1-6f3925297d3f",
       "nutrientId": "phosphorus",
-      "amountPer100g": 93.69999999999999,
+      "amountPer100g": 94.19999999999999,
       "valueSource": "derived"
     },
     {
       "id": "7ff7bc2c-019a-566a-b8fd-7f1f00c499ee",
       "foodId": "5b69f4d0-66c8-5f3c-8df1-6f3925297d3f",
       "nutrientId": "vitamin_a",
-      "amountPer100g": 94.40833333333333,
+      "amountPer100g": 94.575,
       "valueSource": "derived"
     },
     {
       "id": "c03f063b-463a-5e9e-b08e-4342d9a1e706",
       "foodId": "5b69f4d0-66c8-5f3c-8df1-6f3925297d3f",
       "nutrientId": "vitamin_c",
-      "amountPer100g": 1.5266666666666666,
+      "amountPer100g": 1.4599999999999997,
       "valueSource": "derived"
     },
     {
@@ -143786,7 +143786,7 @@
       "id": "406d22be-b907-513a-8523-9b8556cbebc0",
       "foodId": "5b69f4d0-66c8-5f3c-8df1-6f3925297d3f",
       "nutrientId": "vitamin_b6",
-      "amountPer100g": 0.051625,
+      "amountPer100g": 0.04979166666666667,
       "valueSource": "derived"
     },
     {
@@ -143800,28 +143800,28 @@
       "id": "7c49d91d-7e4c-51c3-8d8e-4986d00f0425",
       "foodId": "5b69f4d0-66c8-5f3c-8df1-6f3925297d3f",
       "nutrientId": "folate",
-      "amountPer100g": 10.125,
+      "amountPer100g": 8.958333333333334,
       "valueSource": "derived"
     },
     {
       "id": "98519000-c8f9-5e46-86f9-f5931f039472",
       "foodId": "5b69f4d0-66c8-5f3c-8df1-6f3925297d3f",
       "nutrientId": "thiamin",
-      "amountPer100g": 0.041275000000000006,
+      "amountPer100g": 0.040608333333333343,
       "valueSource": "derived"
     },
     {
       "id": "e149f495-4a6d-5e78-aaaf-db6550452470",
       "foodId": "5b69f4d0-66c8-5f3c-8df1-6f3925297d3f",
       "nutrientId": "riboflavin",
-      "amountPer100g": 0.13597499999999998,
+      "amountPer100g": 0.1373083333333333,
       "valueSource": "derived"
     },
     {
       "id": "582bf497-3edc-5bb5-8e71-a7711d7f68e5",
       "foodId": "5b69f4d0-66c8-5f3c-8df1-6f3925297d3f",
       "nutrientId": "niacin",
-      "amountPer100g": 0.19186666666666666,
+      "amountPer100g": 0.20203333333333331,
       "valueSource": "derived"
     },
     {
@@ -157100,49 +157100,49 @@
       "id": "037ca2b2-0639-5ce2-a1de-eb031fd6e7cf",
       "foodId": "73234e8b-b17b-5248-83dc-b3d73595f164",
       "nutrientId": "energy",
-      "amountPer100g": 183.26153846153846,
+      "amountPer100g": 184.4153846153846,
       "valueSource": "derived"
     },
     {
       "id": "c062fa19-e8e9-5e5f-9cf2-6f01d3b144cc",
       "foodId": "73234e8b-b17b-5248-83dc-b3d73595f164",
       "nutrientId": "protein",
-      "amountPer100g": 6.278692307692308,
+      "amountPer100g": 6.292538461538462,
       "valueSource": "derived"
     },
     {
       "id": "56f779b9-2939-533e-8db1-7299792d977b",
       "foodId": "73234e8b-b17b-5248-83dc-b3d73595f164",
       "nutrientId": "carbs",
-      "amountPer100g": 26.70353846153846,
+      "amountPer100g": 27.042769230769224,
       "valueSource": "derived"
     },
     {
       "id": "dbe0b23d-16f5-5d5b-a40c-d674eec1e9bf",
       "foodId": "73234e8b-b17b-5248-83dc-b3d73595f164",
       "nutrientId": "fat",
-      "amountPer100g": 6.050153846153846,
+      "amountPer100g": 6.038615384615384,
       "valueSource": "derived"
     },
     {
       "id": "d0fe10e0-c583-540c-ba7d-be83b5085c87",
       "foodId": "73234e8b-b17b-5248-83dc-b3d73595f164",
       "nutrientId": "fibre",
-      "amountPer100g": 6.2069230769230765,
+      "amountPer100g": 6.1607692307692306,
       "valueSource": "derived"
     },
     {
       "id": "1f1bbf3c-6a2a-5caa-8271-8546606cc34c",
       "foodId": "73234e8b-b17b-5248-83dc-b3d73595f164",
       "nutrientId": "saturated_fat",
-      "amountPer100g": 1.1705846153846156,
+      "amountPer100g": 1.161123076923077,
       "valueSource": "derived"
     },
     {
       "id": "5e0ee107-2225-514b-8046-e705adc928e5",
       "foodId": "73234e8b-b17b-5248-83dc-b3d73595f164",
       "nutrientId": "sugar",
-      "amountPer100g": 3.8024615384615394,
+      "amountPer100g": 3.8693846153846154,
       "valueSource": "derived"
     },
     {
@@ -157156,56 +157156,56 @@
       "id": "50e3f605-d777-5c51-9a9e-9c3a9d788b61",
       "foodId": "73234e8b-b17b-5248-83dc-b3d73595f164",
       "nutrientId": "potassium",
-      "amountPer100g": 144.25384615384615,
+      "amountPer100g": 146.7923076923077,
       "valueSource": "derived"
     },
     {
       "id": "3e2d2b93-4bf1-54f0-88a6-90864bc25780",
       "foodId": "73234e8b-b17b-5248-83dc-b3d73595f164",
       "nutrientId": "calcium",
-      "amountPer100g": 383.5692307692308,
+      "amountPer100g": 384.03076923076924,
       "valueSource": "derived"
     },
     {
       "id": "564231e6-dd35-5f08-86c4-796cd7492625",
       "foodId": "73234e8b-b17b-5248-83dc-b3d73595f164",
       "nutrientId": "iron",
-      "amountPer100g": 3.016999999999999,
+      "amountPer100g": 3.0308461538461535,
       "valueSource": "derived"
     },
     {
       "id": "d1436c34-e4b2-596c-9776-b7a2ebae530b",
       "foodId": "73234e8b-b17b-5248-83dc-b3d73595f164",
       "nutrientId": "magnesium",
-      "amountPer100g": 22.469230769230773,
+      "amountPer100g": 22.7,
       "valueSource": "derived"
     },
     {
       "id": "a9c42f57-3f7e-5c77-8089-8a97e8c5f543",
       "foodId": "73234e8b-b17b-5248-83dc-b3d73595f164",
       "nutrientId": "zinc",
-      "amountPer100g": 0.6523846153846155,
+      "amountPer100g": 0.6593076923076924,
       "valueSource": "derived"
     },
     {
       "id": "d8d9cacb-8e76-5b98-892c-1522168ad652",
       "foodId": "73234e8b-b17b-5248-83dc-b3d73595f164",
       "nutrientId": "phosphorus",
-      "amountPer100g": 70.72307692307692,
+      "amountPer100g": 71.41538461538461,
       "valueSource": "derived"
     },
     {
       "id": "ab9032b0-63c9-5923-b905-852ab0f91da8",
       "foodId": "73234e8b-b17b-5248-83dc-b3d73595f164",
       "nutrientId": "vitamin_a",
-      "amountPer100g": 0.9384615384615383,
+      "amountPer100g": 1.1692307692307693,
       "valueSource": "derived"
     },
     {
       "id": "8146ff80-56e4-516c-9ce6-89d558444b93",
       "foodId": "73234e8b-b17b-5248-83dc-b3d73595f164",
       "nutrientId": "vitamin_c",
-      "amountPer100g": 3.376153846153846,
+      "amountPer100g": 3.283846153846154,
       "valueSource": "derived"
     },
     {
@@ -157226,7 +157226,7 @@
       "id": "9ac84319-7ef1-5f48-b9d9-84f99a20d476",
       "foodId": "73234e8b-b17b-5248-83dc-b3d73595f164",
       "nutrientId": "vitamin_b6",
-      "amountPer100g": 0.0766923076923077,
+      "amountPer100g": 0.07415384615384615,
       "valueSource": "derived"
     },
     {
@@ -157240,56 +157240,56 @@
       "id": "9fedbb60-6205-56a3-8c69-d87d2ff649bc",
       "foodId": "73234e8b-b17b-5248-83dc-b3d73595f164",
       "nutrientId": "folate",
-      "amountPer100g": 76.16923076923078,
+      "amountPer100g": 74.55384615384617,
       "valueSource": "derived"
     },
     {
       "id": "157c01e8-e76b-5ded-8b4a-7800baa0a342",
       "foodId": "73234e8b-b17b-5248-83dc-b3d73595f164",
       "nutrientId": "thiamin",
-      "amountPer100g": 0.2924769230769231,
+      "amountPer100g": 0.29155384615384616,
       "valueSource": "derived"
     },
     {
       "id": "d01ea4ce-6300-5582-80b0-d036e95d2a41",
       "foodId": "73234e8b-b17b-5248-83dc-b3d73595f164",
       "nutrientId": "riboflavin",
-      "amountPer100g": 0.1508846153846154,
+      "amountPer100g": 0.15273076923076923,
       "valueSource": "derived"
     },
     {
       "id": "c6343d9f-6286-529b-bf43-dbfc22ac8a75",
       "foodId": "73234e8b-b17b-5248-83dc-b3d73595f164",
       "nutrientId": "niacin",
-      "amountPer100g": 2.4788846153846156,
+      "amountPer100g": 2.4929615384615382,
       "valueSource": "derived"
     },
     {
       "id": "943912c9-176d-5571-81eb-030c5d119a78",
       "foodId": "f66740b0-ac9c-5050-9c1f-3765f057f824",
       "nutrientId": "energy",
-      "amountPer100g": 247.8769230769231,
+      "amountPer100g": 265.41538461538465,
       "valueSource": "derived"
     },
     {
       "id": "20503394-7cb0-5774-9170-97f3bf3ac884",
       "foodId": "f66740b0-ac9c-5050-9c1f-3765f057f824",
       "nutrientId": "protein",
-      "amountPer100g": 9.92946153846154,
+      "amountPer100g": 10.326384615384617,
       "valueSource": "derived"
     },
     {
       "id": "2d7bc33b-2088-52a5-bc6d-40e7eec6d154",
       "foodId": "f66740b0-ac9c-5050-9c1f-3765f057f824",
       "nutrientId": "carbs",
-      "amountPer100g": 28.219692307692306,
+      "amountPer100g": 27.308153846153843,
       "valueSource": "derived"
     },
     {
       "id": "bc8170fa-a730-53c8-b243-be52491f5dc2",
       "foodId": "f66740b0-ac9c-5050-9c1f-3765f057f824",
       "nutrientId": "fat",
-      "amountPer100g": 10.912461538461537,
+      "amountPer100g": 13.100153846153848,
       "valueSource": "derived"
     },
     {
@@ -157303,70 +157303,70 @@
       "id": "e2373a8f-a94f-50fb-99d6-937642f3de99",
       "foodId": "f66740b0-ac9c-5050-9c1f-3765f057f824",
       "nutrientId": "saturated_fat",
-      "amountPer100g": 4.228046153846154,
+      "amountPer100g": 5.319584615384615,
       "valueSource": "derived"
     },
     {
       "id": "7331fae4-313a-5d0d-8330-2a595fa6bec3",
       "foodId": "f66740b0-ac9c-5050-9c1f-3765f057f824",
       "nutrientId": "sugar",
-      "amountPer100g": 5.17323076923077,
+      "amountPer100g": 4.005538461538462,
       "valueSource": "derived"
     },
     {
       "id": "b71a21ce-62d3-563d-89a2-7bc20bef4a34",
       "foodId": "f66740b0-ac9c-5050-9c1f-3765f057f824",
       "nutrientId": "sodium",
-      "amountPer100g": 931.9769230769231,
+      "amountPer100g": 942.5923076923077,
       "valueSource": "derived"
     },
     {
       "id": "9b1131a6-3e2f-5b85-95e2-ba715d7e9e80",
       "foodId": "f66740b0-ac9c-5050-9c1f-3765f057f824",
       "nutrientId": "potassium",
-      "amountPer100g": 168.71538461538464,
+      "amountPer100g": 143.33076923076925,
       "valueSource": "derived"
     },
     {
       "id": "59acbaeb-4396-5dcb-a3e0-b3ef8f4b616c",
       "foodId": "f66740b0-ac9c-5050-9c1f-3765f057f824",
       "nutrientId": "calcium",
-      "amountPer100g": 510.0307692307692,
+      "amountPer100g": 621.4923076923077,
       "valueSource": "derived"
     },
     {
       "id": "89070955-5952-5ce1-a92d-573b05b65399",
       "foodId": "f66740b0-ac9c-5050-9c1f-3765f057f824",
       "nutrientId": "iron",
-      "amountPer100g": 3.042384615384615,
+      "amountPer100g": 3.1116153846153844,
       "valueSource": "derived"
     },
     {
       "id": "c590ec36-668e-5268-b8a5-5db7d805f3d9",
       "foodId": "f66740b0-ac9c-5050-9c1f-3765f057f824",
       "nutrientId": "magnesium",
-      "amountPer100g": 26.392307692307686,
+      "amountPer100g": 25.699999999999996,
       "valueSource": "derived"
     },
     {
       "id": "bab65702-e6ff-5828-b761-bf6744bf6f65",
       "foodId": "f66740b0-ac9c-5050-9c1f-3765f057f824",
       "nutrientId": "zinc",
-      "amountPer100g": 1.2108461538461537,
+      "amountPer100g": 1.1877692307692307,
       "valueSource": "derived"
     },
     {
       "id": "9696a893-b8a5-52d9-8724-105871b844d4",
       "foodId": "f66740b0-ac9c-5050-9c1f-3765f057f824",
       "nutrientId": "phosphorus",
-      "amountPer100g": 267.8,
+      "amountPer100g": 213.79999999999995,
       "valueSource": "derived"
     },
     {
       "id": "dbc4f961-4e8d-5c58-98e9-d88958c71f4c",
       "foodId": "f66740b0-ac9c-5050-9c1f-3765f057f824",
       "nutrientId": "vitamin_a",
-      "amountPer100g": 39.93846153846154,
+      "amountPer100g": 73.16923076923077,
       "valueSource": "derived"
     },
     {
@@ -157380,56 +157380,56 @@
       "id": "f713388c-663d-593d-ac87-483c12bf10c9",
       "foodId": "f66740b0-ac9c-5050-9c1f-3765f057f824",
       "nutrientId": "vitamin_d",
-      "amountPer100g": 0.0923076923076923,
+      "amountPer100g": 1.7307692307692308,
       "valueSource": "derived"
     },
     {
       "id": "cb326fb7-e8a8-5a50-ba36-4dd71b449d28",
       "foodId": "f66740b0-ac9c-5050-9c1f-3765f057f824",
       "nutrientId": "vitamin_e",
-      "amountPer100g": 1.3697692307692306,
+      "amountPer100g": 1.5105384615384616,
       "valueSource": "derived"
     },
     {
       "id": "2cdf6a53-69f0-5551-acbd-8fa623fc0abf",
       "foodId": "f66740b0-ac9c-5050-9c1f-3765f057f824",
       "nutrientId": "vitamin_b6",
-      "amountPer100g": 0.09192307692307693,
+      "amountPer100g": 0.0773846153846154,
       "valueSource": "derived"
     },
     {
       "id": "49de33fe-9f14-5b98-a09f-7c7f25910723",
       "foodId": "f66740b0-ac9c-5050-9c1f-3765f057f824",
       "nutrientId": "vitamin_b12",
-      "amountPer100g": 0.0923076923076923,
+      "amountPer100g": 0.34615384615384615,
       "valueSource": "derived"
     },
     {
       "id": "815a1a14-cf11-5d56-904d-cb4f20b6e484",
       "foodId": "f66740b0-ac9c-5050-9c1f-3765f057f824",
       "nutrientId": "folate",
-      "amountPer100g": 74.55384615384617,
+      "amountPer100g": 74.78461538461539,
       "valueSource": "derived"
     },
     {
       "id": "06519d3f-109a-55e9-87a7-4493da727778",
       "foodId": "f66740b0-ac9c-5050-9c1f-3765f057f824",
       "nutrientId": "thiamin",
-      "amountPer100g": 0.29640000000000005,
+      "amountPer100g": 0.2887846153846154,
       "valueSource": "derived"
     },
     {
       "id": "7f14ebb2-6810-51d0-bc84-c99f00fc527f",
       "foodId": "f66740b0-ac9c-5050-9c1f-3765f057f824",
       "nutrientId": "riboflavin",
-      "amountPer100g": 0.2445769230769231,
+      "amountPer100g": 0.19911538461538464,
       "valueSource": "derived"
     },
     {
       "id": "0c35c30b-9951-58ce-8f78-c9d8249c5606",
       "foodId": "f66740b0-ac9c-5050-9c1f-3765f057f824",
       "nutrientId": "niacin",
-      "amountPer100g": 2.500576923076923,
+      "amountPer100g": 2.487884615384616,
       "valueSource": "derived"
     },
     {
@@ -168349,42 +168349,42 @@
       "id": "c5f11888-2fdc-571a-b258-cddfb85bce83",
       "foodId": "81f09a5b-e708-5661-acd6-678e74e4d7c3",
       "nutrientId": "energy",
-      "amountPer100g": 119.80555555555557,
+      "amountPer100g": 120.77777777777779,
       "valueSource": "derived"
     },
     {
       "id": "c06c9dc0-77fe-5cc6-994c-01de406cd00b",
       "foodId": "81f09a5b-e708-5661-acd6-678e74e4d7c3",
       "nutrientId": "protein",
-      "amountPer100g": 5.717888888888888,
+      "amountPer100g": 5.729555555555555,
       "valueSource": "derived"
     },
     {
       "id": "3a3e199c-ba62-5a2e-ad73-a6214652dce0",
       "foodId": "81f09a5b-e708-5661-acd6-678e74e4d7c3",
       "nutrientId": "carbs",
-      "amountPer100g": 17.78838888888889,
+      "amountPer100g": 18.07422222222222,
       "valueSource": "derived"
     },
     {
       "id": "9c48420e-ccf5-5227-8ed8-d0ef925df0ca",
       "foodId": "81f09a5b-e708-5661-acd6-678e74e4d7c3",
       "nutrientId": "fat",
-      "amountPer100g": 3.3301111111111115,
+      "amountPer100g": 3.3203888888888886,
       "valueSource": "derived"
     },
     {
       "id": "32dd9f2f-9d70-5eee-9c37-35692b4b6afa",
       "foodId": "81f09a5b-e708-5661-acd6-678e74e4d7c3",
       "nutrientId": "fibre",
-      "amountPer100g": 4.217222222222222,
+      "amountPer100g": 4.178333333333333,
       "valueSource": "derived"
     },
     {
       "id": "e657f4c2-9a94-52da-88a5-204257fc5648",
       "foodId": "81f09a5b-e708-5661-acd6-678e74e4d7c3",
       "nutrientId": "saturated_fat",
-      "amountPer100g": 1.8391055555555555,
+      "amountPer100g": 1.8311333333333335,
       "valueSource": "derived"
     },
     {
@@ -168398,56 +168398,56 @@
       "id": "a4d118bd-cc55-5ccd-8648-ec5a079285c5",
       "foodId": "81f09a5b-e708-5661-acd6-678e74e4d7c3",
       "nutrientId": "potassium",
-      "amountPer100g": 420.4777777777777,
+      "amountPer100g": 422.6166666666666,
       "valueSource": "derived"
     },
     {
       "id": "9d46757c-8a0b-597b-86c7-fa359adb38a0",
       "foodId": "81f09a5b-e708-5661-acd6-678e74e4d7c3",
       "nutrientId": "calcium",
-      "amountPer100g": 43.22777777777779,
+      "amountPer100g": 43.616666666666674,
       "valueSource": "derived"
     },
     {
       "id": "6d75b4b8-ce42-52ad-9e31-9e372e57af82",
       "foodId": "81f09a5b-e708-5661-acd6-678e74e4d7c3",
       "nutrientId": "iron",
-      "amountPer100g": 1.9994999999999998,
+      "amountPer100g": 2.011166666666666,
       "valueSource": "derived"
     },
     {
       "id": "0e1d797d-8e3d-523b-a268-ac08aaa639c1",
       "foodId": "81f09a5b-e708-5661-acd6-678e74e4d7c3",
       "nutrientId": "magnesium",
-      "amountPer100g": 50.7611111111111,
+      "amountPer100g": 50.95555555555554,
       "valueSource": "derived"
     },
     {
       "id": "eb63f812-7219-5cdf-81b9-a98e370cdea1",
       "foodId": "81f09a5b-e708-5661-acd6-678e74e4d7c3",
       "nutrientId": "zinc",
-      "amountPer100g": 0.7707222222222221,
+      "amountPer100g": 0.7765555555555554,
       "valueSource": "derived"
     },
     {
       "id": "b4a2adbc-1c8e-5e3c-96ca-064e9d233b5e",
       "foodId": "81f09a5b-e708-5661-acd6-678e74e4d7c3",
       "nutrientId": "phosphorus",
-      "amountPer100g": 100.46666666666665,
+      "amountPer100g": 101.05000000000001,
       "valueSource": "derived"
     },
     {
       "id": "b048fc7a-1307-542d-9d85-00083a9e7065",
       "foodId": "81f09a5b-e708-5661-acd6-678e74e4d7c3",
       "nutrientId": "vitamin_a",
-      "amountPer100g": 30.533333333333335,
+      "amountPer100g": 30.72777777777778,
       "valueSource": "derived"
     },
     {
       "id": "02d716fa-459f-5671-b13e-58022c3d2776",
       "foodId": "81f09a5b-e708-5661-acd6-678e74e4d7c3",
       "nutrientId": "vitamin_c",
-      "amountPer100g": 3.5338888888888884,
+      "amountPer100g": 3.4561111111111114,
       "valueSource": "derived"
     },
     {
@@ -168461,7 +168461,7 @@
       "id": "c934b749-3dad-5c27-94c3-e09fd075079c",
       "foodId": "81f09a5b-e708-5661-acd6-678e74e4d7c3",
       "nutrientId": "vitamin_b6",
-      "amountPer100g": 0.10209999999999998,
+      "amountPer100g": 0.09996111111111111,
       "valueSource": "derived"
     },
     {
@@ -168475,35 +168475,35 @@
       "id": "a376c2dd-57a5-55dc-abbd-c5e3a90e8558",
       "foodId": "81f09a5b-e708-5661-acd6-678e74e4d7c3",
       "nutrientId": "folate",
-      "amountPer100g": 113.27222222222221,
+      "amountPer100g": 111.9111111111111,
       "valueSource": "derived"
     },
     {
       "id": "38064fb6-24b6-5b7b-a98d-b84e2c0fc438",
       "foodId": "81f09a5b-e708-5661-acd6-678e74e4d7c3",
       "nutrientId": "thiamin",
-      "amountPer100g": 0.16963888888888892,
+      "amountPer100g": 0.16886111111111116,
       "valueSource": "derived"
     },
     {
       "id": "bd326379-4176-5943-9c45-c5f823cbc2d0",
       "foodId": "81f09a5b-e708-5661-acd6-678e74e4d7c3",
       "nutrientId": "riboflavin",
-      "amountPer100g": 0.05662222222222223,
+      "amountPer100g": 0.05817777777777779,
       "valueSource": "derived"
     },
     {
       "id": "6db76444-d3c4-5db9-acaf-3a5ebbc30beb",
       "foodId": "81f09a5b-e708-5661-acd6-678e74e4d7c3",
       "nutrientId": "niacin",
-      "amountPer100g": 0.8261500000000002,
+      "amountPer100g": 0.8380111111111113,
       "valueSource": "derived"
     },
     {
       "id": "18b6bda4-e64f-53b8-b3af-d3cd9c6a903f",
       "foodId": "81f09a5b-e708-5661-acd6-678e74e4d7c3",
       "nutrientId": "sugar",
-      "amountPer100g": 1.0879444444444444,
+      "amountPer100g": 1.1443333333333334,
       "valueSource": "derived"
     },
     {
@@ -174061,49 +174061,49 @@
       "id": "9de7fa6a-6c59-56c9-89e4-35e2d49aea5d",
       "foodId": "29a4d4d4-2d95-528d-9d3a-18868932f78f",
       "nutrientId": "energy",
-      "amountPer100g": 35.16666666666667,
+      "amountPer100g": 38.5,
       "valueSource": "derived"
     },
     {
       "id": "a8e89a27-6274-56d7-9e04-ba043bbb1d9c",
       "foodId": "29a4d4d4-2d95-528d-9d3a-18868932f78f",
       "nutrientId": "protein",
-      "amountPer100g": 1.7870000000000001,
+      "amountPer100g": 1.8270000000000002,
       "valueSource": "derived"
     },
     {
       "id": "d4ff8ab2-8087-5680-b8a2-58ffdafa42fd",
       "foodId": "29a4d4d4-2d95-528d-9d3a-18868932f78f",
       "nutrientId": "carbs",
-      "amountPer100g": 6.698666666666668,
+      "amountPer100g": 7.678666666666668,
       "valueSource": "derived"
     },
     {
       "id": "0e249a80-130d-5fa8-a332-a8ab81af2e95",
       "foodId": "29a4d4d4-2d95-528d-9d3a-18868932f78f",
       "nutrientId": "fat",
-      "amountPer100g": 0.9289999999999999,
+      "amountPer100g": 0.8956666666666666,
       "valueSource": "derived"
     },
     {
       "id": "43dbd12b-1b53-5fd6-be7c-a8d7e7d3fdd3",
       "foodId": "29a4d4d4-2d95-528d-9d3a-18868932f78f",
       "nutrientId": "fibre",
-      "amountPer100g": 1.4166666666666665,
+      "amountPer100g": 1.2833333333333334,
       "valueSource": "derived"
     },
     {
       "id": "3c3025ee-9757-524d-a4f0-31c2213be349",
       "foodId": "29a4d4d4-2d95-528d-9d3a-18868932f78f",
       "nutrientId": "saturated_fat",
-      "amountPer100g": 0.11156666666666668,
+      "amountPer100g": 0.08423333333333334,
       "valueSource": "derived"
     },
     {
       "id": "048c5447-a405-5dd0-9b5e-24a7860ae4d4",
       "foodId": "29a4d4d4-2d95-528d-9d3a-18868932f78f",
       "nutrientId": "sugar",
-      "amountPer100g": 3.0349999999999997,
+      "amountPer100g": 3.228333333333333,
       "valueSource": "derived"
     },
     {
@@ -174117,56 +174117,56 @@
       "id": "58e342a6-0464-564b-8228-5c518cd04885",
       "foodId": "29a4d4d4-2d95-528d-9d3a-18868932f78f",
       "nutrientId": "potassium",
-      "amountPer100g": 286.5333333333333,
+      "amountPer100g": 293.86666666666656,
       "valueSource": "derived"
     },
     {
       "id": "dafb9fb0-2876-57fe-b2db-efc478400f99",
       "foodId": "29a4d4d4-2d95-528d-9d3a-18868932f78f",
       "nutrientId": "calcium",
-      "amountPer100g": 48.36666666666666,
+      "amountPer100g": 49.7,
       "valueSource": "derived"
     },
     {
       "id": "94436dfa-966a-5ea5-ae72-10491a23b536",
       "foodId": "29a4d4d4-2d95-528d-9d3a-18868932f78f",
       "nutrientId": "iron",
-      "amountPer100g": 2.8496666666666663,
+      "amountPer100g": 2.8896666666666664,
       "valueSource": "derived"
     },
     {
       "id": "9692f57d-9c5b-56cc-b0ab-c26651afc62d",
       "foodId": "29a4d4d4-2d95-528d-9d3a-18868932f78f",
       "nutrientId": "magnesium",
-      "amountPer100g": 30.233333333333334,
+      "amountPer100g": 30.9,
       "valueSource": "derived"
     },
     {
       "id": "797e6e56-6763-5143-bd8a-f6641e0c1a84",
       "foodId": "29a4d4d4-2d95-528d-9d3a-18868932f78f",
       "nutrientId": "zinc",
-      "amountPer100g": 0.3966666666666667,
+      "amountPer100g": 0.4166666666666667,
       "valueSource": "derived"
     },
     {
       "id": "66cb7f72-1e77-5ff7-b431-cbcdfd344c8a",
       "foodId": "29a4d4d4-2d95-528d-9d3a-18868932f78f",
       "nutrientId": "phosphorus",
-      "amountPer100g": 49.03333333333333,
+      "amountPer100g": 51.03333333333333,
       "valueSource": "derived"
     },
     {
       "id": "bfaa4eb2-11d7-5c9b-aa41-11a4e94fa565",
       "foodId": "29a4d4d4-2d95-528d-9d3a-18868932f78f",
       "nutrientId": "vitamin_a",
-      "amountPer100g": 28.4,
+      "amountPer100g": 29.06666666666667,
       "valueSource": "derived"
     },
     {
       "id": "fa98bc61-c8f7-54f8-b627-6b34012777d0",
       "foodId": "29a4d4d4-2d95-528d-9d3a-18868932f78f",
       "nutrientId": "vitamin_c",
-      "amountPer100g": 99.39000000000001,
+      "amountPer100g": 99.12333333333333,
       "valueSource": "derived"
     },
     {
@@ -174187,7 +174187,7 @@
       "id": "30dce9f4-c18a-5fa8-b381-d7fad45578ae",
       "foodId": "29a4d4d4-2d95-528d-9d3a-18868932f78f",
       "nutrientId": "vitamin_b6",
-      "amountPer100g": 0.1597,
+      "amountPer100g": 0.15236666666666668,
       "valueSource": "derived"
     },
     {
@@ -174201,28 +174201,28 @@
       "id": "ae841538-de29-55db-950b-6182bd983170",
       "foodId": "29a4d4d4-2d95-528d-9d3a-18868932f78f",
       "nutrientId": "folate",
-      "amountPer100g": 18.866666666666664,
+      "amountPer100g": 14.2,
       "valueSource": "derived"
     },
     {
       "id": "d7ced8ae-abdf-5f1b-85fd-4b885e77d8e7",
       "foodId": "29a4d4d4-2d95-528d-9d3a-18868932f78f",
       "nutrientId": "thiamin",
-      "amountPer100g": 0.07760000000000002,
+      "amountPer100g": 0.07493333333333332,
       "valueSource": "derived"
     },
     {
       "id": "6e5f0863-cbdc-5f28-aaf6-fc0d3e827def",
       "foodId": "29a4d4d4-2d95-528d-9d3a-18868932f78f",
       "nutrientId": "riboflavin",
-      "amountPer100g": 0.06356666666666667,
+      "amountPer100g": 0.0689,
       "valueSource": "derived"
     },
     {
       "id": "559d0c08-8f30-54ba-a418-ad4c12f3f2b5",
       "foodId": "29a4d4d4-2d95-528d-9d3a-18868932f78f",
       "nutrientId": "niacin",
-      "amountPer100g": 0.5573,
+      "amountPer100g": 0.5979666666666666,
       "valueSource": "derived"
     },
     {
@@ -185646,49 +185646,49 @@
       "id": "e0547258-8c66-5ee6-8440-129103eb08d0",
       "foodId": "ee744170-ed28-5964-8f74-8c70212012f4",
       "nutrientId": "energy",
-      "amountPer100g": 29.5,
+      "amountPer100g": 32.83333333333333,
       "valueSource": "derived"
     },
     {
       "id": "58189eb1-36b3-57b6-82b2-a8b4d55c0ca1",
       "foodId": "ee744170-ed28-5964-8f74-8c70212012f4",
       "nutrientId": "protein",
-      "amountPer100g": 1.8303333333333331,
+      "amountPer100g": 1.8703333333333332,
       "valueSource": "derived"
     },
     {
       "id": "fd844f74-2d07-5f11-94fe-e2ee7f51ec66",
       "foodId": "ee744170-ed28-5964-8f74-8c70212012f4",
       "nutrientId": "carbs",
-      "amountPer100g": 4.768666666666667,
+      "amountPer100g": 5.748666666666667,
       "valueSource": "derived"
     },
     {
       "id": "ddc45a7a-eab3-539f-a3d9-5c3f7c97999f",
       "foodId": "ee744170-ed28-5964-8f74-8c70212012f4",
       "nutrientId": "fat",
-      "amountPer100g": 1.035666666666667,
+      "amountPer100g": 1.0023333333333333,
       "valueSource": "derived"
     },
     {
       "id": "eb8457c9-abba-5a45-9001-cf145b4e4dce",
       "foodId": "ee744170-ed28-5964-8f74-8c70212012f4",
       "nutrientId": "fibre",
-      "amountPer100g": 1.8500000000000003,
+      "amountPer100g": 1.7166666666666668,
       "valueSource": "derived"
     },
     {
       "id": "d28c8ad4-b8a2-5d28-b219-02db61160d83",
       "foodId": "ee744170-ed28-5964-8f74-8c70212012f4",
       "nutrientId": "saturated_fat",
-      "amountPer100g": 0.10923333333333334,
+      "amountPer100g": 0.0819,
       "valueSource": "derived"
     },
     {
       "id": "dba407c5-a93a-5ede-aaac-6f194f0453c6",
       "foodId": "ee744170-ed28-5964-8f74-8c70212012f4",
       "nutrientId": "sugar",
-      "amountPer100g": 1.625,
+      "amountPer100g": 1.818333333333333,
       "valueSource": "derived"
     },
     {
@@ -185702,56 +185702,56 @@
       "id": "79885af1-4c54-5688-a8c6-d5890a615be0",
       "foodId": "ee744170-ed28-5964-8f74-8c70212012f4",
       "nutrientId": "potassium",
-      "amountPer100g": 346.8666666666666,
+      "amountPer100g": 354.2,
       "valueSource": "derived"
     },
     {
       "id": "b3040f12-f773-529a-b017-3f4423b03d12",
       "foodId": "ee744170-ed28-5964-8f74-8c70212012f4",
       "nutrientId": "calcium",
-      "amountPer100g": 64.7,
+      "amountPer100g": 66.03333333333333,
       "valueSource": "derived"
     },
     {
       "id": "09694d5d-6d1f-5d2d-8e54-76967f5c7afb",
       "foodId": "ee744170-ed28-5964-8f74-8c70212012f4",
       "nutrientId": "iron",
-      "amountPer100g": 3.0396666666666667,
+      "amountPer100g": 3.0796666666666663,
       "valueSource": "derived"
     },
     {
       "id": "a45cab01-c361-5cac-bb69-5aafbf21f752",
       "foodId": "ee744170-ed28-5964-8f74-8c70212012f4",
       "nutrientId": "magnesium",
-      "amountPer100g": 30.566666666666663,
+      "amountPer100g": 31.23333333333333,
       "valueSource": "derived"
     },
     {
       "id": "a4280f86-1193-5c0c-8ae2-3f58c10f56b2",
       "foodId": "ee744170-ed28-5964-8f74-8c70212012f4",
       "nutrientId": "zinc",
-      "amountPer100g": 0.4633333333333334,
+      "amountPer100g": 0.48333333333333334,
       "valueSource": "derived"
     },
     {
       "id": "88467faa-135b-552c-b85c-f49911ee2269",
       "foodId": "ee744170-ed28-5964-8f74-8c70212012f4",
       "nutrientId": "phosphorus",
-      "amountPer100g": 49.7,
+      "amountPer100g": 51.7,
       "valueSource": "derived"
     },
     {
       "id": "ed52e418-7b34-5ce0-86b4-94a7fcd34e42",
       "foodId": "ee744170-ed28-5964-8f74-8c70212012f4",
       "nutrientId": "vitamin_a",
-      "amountPer100g": 121.06666666666668,
+      "amountPer100g": 121.73333333333333,
       "valueSource": "derived"
     },
     {
       "id": "20cff8a0-6cdc-51f9-bc45-486a254d145c",
       "foodId": "ee744170-ed28-5964-8f74-8c70212012f4",
       "nutrientId": "vitamin_c",
-      "amountPer100g": 27.55666666666666,
+      "amountPer100g": 27.29,
       "valueSource": "derived"
     },
     {
@@ -185772,7 +185772,7 @@
       "id": "69eae690-8eee-598c-ada3-d7b1f1687087",
       "foodId": "ee744170-ed28-5964-8f74-8c70212012f4",
       "nutrientId": "vitamin_b6",
-      "amountPer100g": 0.11670000000000001,
+      "amountPer100g": 0.10936666666666667,
       "valueSource": "derived"
     },
     {
@@ -185786,28 +185786,28 @@
       "id": "89c16529-78ae-57d8-85db-6c154098f79a",
       "foodId": "ee744170-ed28-5964-8f74-8c70212012f4",
       "nutrientId": "folate",
-      "amountPer100g": 31.86666666666667,
+      "amountPer100g": 27.200000000000003,
       "valueSource": "derived"
     },
     {
       "id": "dddf2f97-ffdd-5df5-9e06-41000750fe5b",
       "foodId": "ee744170-ed28-5964-8f74-8c70212012f4",
       "nutrientId": "thiamin",
-      "amountPer100g": 0.06993333333333333,
+      "amountPer100g": 0.06726666666666667,
       "valueSource": "derived"
     },
     {
       "id": "6c774797-d415-5f01-b531-e7045c213938",
       "foodId": "ee744170-ed28-5964-8f74-8c70212012f4",
       "nutrientId": "riboflavin",
-      "amountPer100g": 0.08756666666666667,
+      "amountPer100g": 0.0929,
       "valueSource": "derived"
     },
     {
       "id": "22d6bd72-bc52-573f-846d-a9b747350981",
       "foodId": "ee744170-ed28-5964-8f74-8c70212012f4",
       "nutrientId": "niacin",
-      "amountPer100g": 0.6119666666666667,
+      "amountPer100g": 0.6526333333333333,
       "valueSource": "derived"
     },
     {
@@ -195054,49 +195054,49 @@
       "id": "fba0a96e-4790-5c13-937b-ded4ca43c817",
       "foodId": "5527b9d8-bafc-525d-a157-38ce4f19520f",
       "nutrientId": "energy",
-      "amountPer100g": 62.33846153846153,
+      "amountPer100g": 65.03076923076922,
       "valueSource": "derived"
     },
     {
       "id": "b2da3bcf-e7b1-5dad-904a-293831e64ee8",
       "foodId": "5527b9d8-bafc-525d-a157-38ce4f19520f",
       "nutrientId": "protein",
-      "amountPer100g": 0.9233076923076922,
+      "amountPer100g": 0.9556153846153846,
       "valueSource": "derived"
     },
     {
       "id": "50c7ebb4-a5cc-5bbb-a2d9-b8ffbda35fda",
       "foodId": "5527b9d8-bafc-525d-a157-38ce4f19520f",
       "nutrientId": "carbs",
-      "amountPer100g": 4.622000000000001,
+      "amountPer100g": 5.413538461538462,
       "valueSource": "derived"
     },
     {
       "id": "04d97135-6f23-5fbc-ba12-964941c283a4",
       "foodId": "5527b9d8-bafc-525d-a157-38ce4f19520f",
       "nutrientId": "fat",
-      "amountPer100g": 4.987846153846154,
+      "amountPer100g": 4.960923076923077,
       "valueSource": "derived"
     },
     {
       "id": "2b31eb07-483a-5343-8487-c3722cb9323e",
       "foodId": "5527b9d8-bafc-525d-a157-38ce4f19520f",
       "nutrientId": "fibre",
-      "amountPer100g": 1.7453846153846153,
+      "amountPer100g": 1.6376923076923078,
       "valueSource": "derived"
     },
     {
       "id": "8f9b5cf0-f14b-56c9-a295-c11cd1b01105",
       "foodId": "5527b9d8-bafc-525d-a157-38ce4f19520f",
       "nutrientId": "saturated_fat",
-      "amountPer100g": 0.8618153846153846,
+      "amountPer100g": 0.8397384615384615,
       "valueSource": "derived"
     },
     {
       "id": "00f4ece5-8de8-5b67-af8f-80ada037fbcc",
       "foodId": "5527b9d8-bafc-525d-a157-38ce4f19520f",
       "nutrientId": "sugar",
-      "amountPer100g": 2.1416923076923076,
+      "amountPer100g": 2.297846153846154,
       "valueSource": "derived"
     },
     {
@@ -195110,56 +195110,56 @@
       "id": "bdadc903-c4a3-581b-bd01-f6b186ae4069",
       "foodId": "5527b9d8-bafc-525d-a157-38ce4f19520f",
       "nutrientId": "potassium",
-      "amountPer100g": 172.40769230769232,
+      "amountPer100g": 178.33076923076925,
       "valueSource": "derived"
     },
     {
       "id": "94de3cdc-b98a-5244-92d9-ba77d1910fab",
       "foodId": "5527b9d8-bafc-525d-a157-38ce4f19520f",
       "nutrientId": "calcium",
-      "amountPer100g": 21.876923076923074,
+      "amountPer100g": 22.95384615384615,
       "valueSource": "derived"
     },
     {
       "id": "2726d155-5edf-5646-98c1-006a78f59358",
       "foodId": "5527b9d8-bafc-525d-a157-38ce4f19520f",
       "nutrientId": "iron",
-      "amountPer100g": 0.5139230769230769,
+      "amountPer100g": 0.5462307692307693,
       "valueSource": "derived"
     },
     {
       "id": "d3234f37-8861-5df3-8edf-302d9445bb2a",
       "foodId": "5527b9d8-bafc-525d-a157-38ce4f19520f",
       "nutrientId": "magnesium",
-      "amountPer100g": 14.700000000000003,
+      "amountPer100g": 15.238461538461538,
       "valueSource": "derived"
     },
     {
       "id": "2311f44b-253b-5136-8a25-748ef3318013",
       "foodId": "5527b9d8-bafc-525d-a157-38ce4f19520f",
       "nutrientId": "zinc",
-      "amountPer100g": 0.2323846153846154,
+      "amountPer100g": 0.24853846153846154,
       "valueSource": "derived"
     },
     {
       "id": "8736cd9c-0e89-50af-841f-0e843d325359",
       "foodId": "5527b9d8-bafc-525d-a157-38ce4f19520f",
       "nutrientId": "phosphorus",
-      "amountPer100g": 27.26153846153846,
+      "amountPer100g": 28.876923076923077,
       "valueSource": "derived"
     },
     {
       "id": "0d29e881-77e4-52f0-848f-d7c3fc7d91f2",
       "foodId": "5527b9d8-bafc-525d-a157-38ce4f19520f",
       "nutrientId": "vitamin_a",
-      "amountPer100g": 11.86153846153846,
+      "amountPer100g": 12.400000000000002,
       "valueSource": "derived"
     },
     {
       "id": "6454eabb-0040-5198-9252-3d8fd62b16f8",
       "foodId": "5527b9d8-bafc-525d-a157-38ce4f19520f",
       "nutrientId": "vitamin_c",
-      "amountPer100g": 7.522307692307692,
+      "amountPer100g": 7.306923076923077,
       "valueSource": "derived"
     },
     {
@@ -195180,7 +195180,7 @@
       "id": "e318e194-fb36-5b66-8d99-6c659203d0a2",
       "foodId": "5527b9d8-bafc-525d-a157-38ce4f19520f",
       "nutrientId": "vitamin_b6",
-      "amountPer100g": 0.06776923076923076,
+      "amountPer100g": 0.061846153846153856,
       "valueSource": "derived"
     },
     {
@@ -195194,28 +195194,28 @@
       "id": "a96dc2b5-ecb6-589c-bd33-4184c449d44c",
       "foodId": "5527b9d8-bafc-525d-a157-38ce4f19520f",
       "nutrientId": "folate",
-      "amountPer100g": 15.553846153846157,
+      "amountPer100g": 11.784615384615385,
       "valueSource": "derived"
     },
     {
       "id": "c4d9e530-59be-54ca-bc08-4c74ed924a11",
       "foodId": "5527b9d8-bafc-525d-a157-38ce4f19520f",
       "nutrientId": "thiamin",
-      "amountPer100g": 0.03593846153846154,
+      "amountPer100g": 0.033784615384615385,
       "valueSource": "derived"
     },
     {
       "id": "46fb3e6c-5b63-5728-8d35-70b1d7cbcfc3",
       "foodId": "5527b9d8-bafc-525d-a157-38ce4f19520f",
       "nutrientId": "riboflavin",
-      "amountPer100g": 0.02565384615384616,
+      "amountPer100g": 0.02996153846153846,
       "valueSource": "derived"
     },
     {
       "id": "60f200d4-ef03-5359-be1c-ffb5b733ffaa",
       "foodId": "5527b9d8-bafc-525d-a157-38ce4f19520f",
       "nutrientId": "niacin",
-      "amountPer100g": 0.22849999999999998,
+      "amountPer100g": 0.26134615384615384,
       "valueSource": "derived"
     },
     {
@@ -208151,49 +208151,49 @@
       "id": "2eee6556-caa0-5745-ae65-01c92f1f3735",
       "foodId": "cd1114ef-464b-5905-97e0-0ab30814c4e4",
       "nutrientId": "energy",
-      "amountPer100g": 87.66666666666666,
+      "amountPer100g": 88.49999999999999,
       "valueSource": "derived"
     },
     {
       "id": "0c44aa0f-bd23-5f38-b1bf-2ded5bf74e84",
       "foodId": "cd1114ef-464b-5905-97e0-0ab30814c4e4",
       "nutrientId": "protein",
-      "amountPer100g": 3.5604999999999998,
+      "amountPer100g": 3.5705,
       "valueSource": "derived"
     },
     {
       "id": "5e260ad9-b9d3-5226-ad92-56bfc01cee39",
       "foodId": "cd1114ef-464b-5905-97e0-0ab30814c4e4",
       "nutrientId": "carbs",
-      "amountPer100g": 6.075333333333334,
+      "amountPer100g": 6.320333333333333,
       "valueSource": "derived"
     },
     {
       "id": "c2e8b2c2-5413-5e54-94dd-793a0f07cf6d",
       "foodId": "cd1114ef-464b-5905-97e0-0ab30814c4e4",
       "nutrientId": "fat",
-      "amountPer100g": 5.846833333333333,
+      "amountPer100g": 5.8385,
       "valueSource": "derived"
     },
     {
       "id": "6ba80f75-1d19-5445-8cc0-b978e61a8843",
       "foodId": "cd1114ef-464b-5905-97e0-0ab30814c4e4",
       "nutrientId": "fibre",
-      "amountPer100g": 0.9541666666666667,
+      "amountPer100g": 0.9208333333333334,
       "valueSource": "derived"
     },
     {
       "id": "b35fbc3d-6191-5bf9-b4e6-f4193c191f75",
       "foodId": "cd1114ef-464b-5905-97e0-0ab30814c4e4",
       "nutrientId": "saturated_fat",
-      "amountPer100g": 4.334625,
+      "amountPer100g": 4.327791666666667,
       "valueSource": "derived"
     },
     {
       "id": "16610da2-fc9e-58b6-959d-80e5888d0ff3",
       "foodId": "cd1114ef-464b-5905-97e0-0ab30814c4e4",
       "nutrientId": "sugar",
-      "amountPer100g": 4.845416666666667,
+      "amountPer100g": 4.89375,
       "valueSource": "derived"
     },
     {
@@ -208207,56 +208207,56 @@
       "id": "82018b1d-2711-55f6-84b0-780d410dc369",
       "foodId": "cd1114ef-464b-5905-97e0-0ab30814c4e4",
       "nutrientId": "potassium",
-      "amountPer100g": 202.92499999999998,
+      "amountPer100g": 204.75833333333333,
       "valueSource": "derived"
     },
     {
       "id": "b22e6973-b734-5ce2-871e-7985d0b9cce5",
       "foodId": "cd1114ef-464b-5905-97e0-0ab30814c4e4",
       "nutrientId": "calcium",
-      "amountPer100g": 117.33333333333333,
+      "amountPer100g": 117.66666666666667,
       "valueSource": "derived"
     },
     {
       "id": "b5e22a85-a01e-517d-a00c-16f110bb72d1",
       "foodId": "cd1114ef-464b-5905-97e0-0ab30814c4e4",
       "nutrientId": "iron",
-      "amountPer100g": 0.8386666666666666,
+      "amountPer100g": 0.8486666666666667,
       "valueSource": "derived"
     },
     {
       "id": "8ae83e2c-2c08-5b7c-9c92-b314c8152798",
       "foodId": "cd1114ef-464b-5905-97e0-0ab30814c4e4",
       "nutrientId": "magnesium",
-      "amountPer100g": 18.224999999999998,
+      "amountPer100g": 18.391666666666666,
       "valueSource": "derived"
     },
     {
       "id": "d72ca6d6-5e48-5417-8282-db9b1ea17deb",
       "foodId": "cd1114ef-464b-5905-97e0-0ab30814c4e4",
       "nutrientId": "zinc",
-      "amountPer100g": 0.6770833333333334,
+      "amountPer100g": 0.6820833333333334,
       "valueSource": "derived"
     },
     {
       "id": "ed59017c-a59e-55ba-b09f-2590f3e48058",
       "foodId": "cd1114ef-464b-5905-97e0-0ab30814c4e4",
       "nutrientId": "phosphorus",
-      "amountPer100g": 100.2,
+      "amountPer100g": 100.69999999999999,
       "valueSource": "derived"
     },
     {
       "id": "59a351d2-0cd8-53c0-b4e5-f218c965b667",
       "foodId": "cd1114ef-464b-5905-97e0-0ab30814c4e4",
       "nutrientId": "vitamin_a",
-      "amountPer100g": 24.825000000000003,
+      "amountPer100g": 24.991666666666667,
       "valueSource": "derived"
     },
     {
       "id": "6950e3ee-939d-556b-8079-737dc77d9ea8",
       "foodId": "cd1114ef-464b-5905-97e0-0ab30814c4e4",
       "nutrientId": "vitamin_c",
-      "amountPer100g": 1.31,
+      "amountPer100g": 1.2433333333333332,
       "valueSource": "derived"
     },
     {
@@ -208277,7 +208277,7 @@
       "id": "e3eb37d5-14dd-5dd0-a2e4-601c092b2bfa",
       "foodId": "cd1114ef-464b-5905-97e0-0ab30814c4e4",
       "nutrientId": "vitamin_b6",
-      "amountPer100g": 0.044625,
+      "amountPer100g": 0.042791666666666665,
       "valueSource": "derived"
     },
     {
@@ -208291,28 +208291,28 @@
       "id": "c9a01dac-4a75-5f74-b388-92641d149edf",
       "foodId": "cd1114ef-464b-5905-97e0-0ab30814c4e4",
       "nutrientId": "folate",
-      "amountPer100g": 10.708333333333332,
+      "amountPer100g": 9.541666666666666,
       "valueSource": "derived"
     },
     {
       "id": "e7effe15-23cb-5189-9130-410f4aef1cbc",
       "foodId": "cd1114ef-464b-5905-97e0-0ab30814c4e4",
       "nutrientId": "thiamin",
-      "amountPer100g": 0.041275000000000006,
+      "amountPer100g": 0.040608333333333343,
       "valueSource": "derived"
     },
     {
       "id": "30558396-97e5-5617-aa13-253972d2cc72",
       "foodId": "cd1114ef-464b-5905-97e0-0ab30814c4e4",
       "nutrientId": "riboflavin",
-      "amountPer100g": 0.13280833333333333,
+      "amountPer100g": 0.13414166666666666,
       "valueSource": "derived"
     },
     {
       "id": "ace2df42-5aa1-5e04-92ab-1f9e664f2fc6",
       "foodId": "cd1114ef-464b-5905-97e0-0ab30814c4e4",
       "nutrientId": "niacin",
-      "amountPer100g": 0.15494999999999998,
+      "amountPer100g": 0.16511666666666663,
       "valueSource": "derived"
     },
     {
@@ -226295,49 +226295,49 @@
       "id": "855a092f-821d-5d59-b623-88766390901c",
       "foodId": "13e39b72-7236-5f7e-8083-061203d12b25",
       "nutrientId": "energy",
-      "amountPer100g": 134.42455830769228,
+      "amountPer100g": 137.116866,
       "valueSource": "derived"
     },
     {
       "id": "337a5887-b4c9-58f6-89e6-7247377825c0",
       "foodId": "13e39b72-7236-5f7e-8083-061203d12b25",
       "nutrientId": "protein",
-      "amountPer100g": 3.9332307692307693,
+      "amountPer100g": 3.9655384615384612,
       "valueSource": "derived"
     },
     {
       "id": "fa138767-e58d-5f52-9415-a32df8dce9fe",
       "foodId": "13e39b72-7236-5f7e-8083-061203d12b25",
       "nutrientId": "carbs",
-      "amountPer100g": 7.393261538461539,
+      "amountPer100g": 8.184800000000001,
       "valueSource": "derived"
     },
     {
       "id": "81bd5c2d-7866-571a-8c94-9b242182e87b",
       "foodId": "13e39b72-7236-5f7e-8083-061203d12b25",
       "nutrientId": "fat",
-      "amountPer100g": 10.934307692307693,
+      "amountPer100g": 10.907384615384617,
       "valueSource": "derived"
     },
     {
       "id": "91f4de5b-0f95-5f64-8de4-6bd592f8d336",
       "foodId": "13e39b72-7236-5f7e-8083-061203d12b25",
       "nutrientId": "fibre",
-      "amountPer100g": 2.5780923076923075,
+      "amountPer100g": 2.4703999999999997,
       "valueSource": "derived"
     },
     {
       "id": "b44f5d86-cf91-551b-8508-db95dce6b05e",
       "foodId": "13e39b72-7236-5f7e-8083-061203d12b25",
       "nutrientId": "saturated_fat",
-      "amountPer100g": 0.8553538461538461,
+      "amountPer100g": 0.8332769230769232,
       "valueSource": "derived"
     },
     {
       "id": "6460741c-5edb-548a-80c1-30fa383c9599",
       "foodId": "13e39b72-7236-5f7e-8083-061203d12b25",
       "nutrientId": "sugar",
-      "amountPer100g": 1.5347692307692307,
+      "amountPer100g": 1.690923076923077,
       "valueSource": "derived"
     },
     {
@@ -226351,56 +226351,56 @@
       "id": "e18a9ddb-7415-51af-a259-b7f6a71ad2ef",
       "foodId": "13e39b72-7236-5f7e-8083-061203d12b25",
       "nutrientId": "potassium",
-      "amountPer100g": 205.72153846153847,
+      "amountPer100g": 211.64461538461538,
       "valueSource": "derived"
     },
     {
       "id": "ca1a01c1-0aaf-5ba3-9e31-c00149311cd5",
       "foodId": "13e39b72-7236-5f7e-8083-061203d12b25",
       "nutrientId": "calcium",
-      "amountPer100g": 26.371846153846157,
+      "amountPer100g": 27.448769230769233,
       "valueSource": "derived"
     },
     {
       "id": "e95b8c75-b5a6-5b66-8471-56dd771e9d05",
       "foodId": "13e39b72-7236-5f7e-8083-061203d12b25",
       "nutrientId": "iron",
-      "amountPer100g": 0.6667846153846154,
+      "amountPer100g": 0.6990923076923078,
       "valueSource": "derived"
     },
     {
       "id": "dce19534-fb06-57ab-b7a8-ffa7c843dea1",
       "foodId": "13e39b72-7236-5f7e-8083-061203d12b25",
       "nutrientId": "magnesium",
-      "amountPer100g": 37.04307692307692,
+      "amountPer100g": 37.58153846153846,
       "valueSource": "derived"
     },
     {
       "id": "12eadd1f-de76-5601-a37c-225507e4b7a3",
       "foodId": "13e39b72-7236-5f7e-8083-061203d12b25",
       "nutrientId": "zinc",
-      "amountPer100g": 0.578076923076923,
+      "amountPer100g": 0.5942307692307692,
       "valueSource": "derived"
     },
     {
       "id": "f5d19abb-75a8-5f48-b2e0-81c63eac15c8",
       "foodId": "13e39b72-7236-5f7e-8083-061203d12b25",
       "nutrientId": "phosphorus",
-      "amountPer100g": 74.39384615384616,
+      "amountPer100g": 76.00923076923077,
       "valueSource": "derived"
     },
     {
       "id": "db9fb835-6dd9-53b5-9b82-8218e8a81842",
       "foodId": "13e39b72-7236-5f7e-8083-061203d12b25",
       "nutrientId": "vitamin_a",
-      "amountPer100g": 2.169230769230769,
+      "amountPer100g": 2.707692307692308,
       "valueSource": "derived"
     },
     {
       "id": "2891bd93-68d0-59c0-acaa-81f9e046bedc",
       "foodId": "13e39b72-7236-5f7e-8083-061203d12b25",
       "nutrientId": "vitamin_c",
-      "amountPer100g": 4.360769230769232,
+      "amountPer100g": 4.145384615384615,
       "valueSource": "derived"
     },
     {
@@ -226421,7 +226421,7 @@
       "id": "9fdee18f-408c-59b6-842e-a0eb26d004a8",
       "foodId": "13e39b72-7236-5f7e-8083-061203d12b25",
       "nutrientId": "vitamin_b6",
-      "amountPer100g": 0.04930769230769231,
+      "amountPer100g": 0.04338461538461538,
       "valueSource": "derived"
     },
     {
@@ -226435,28 +226435,28 @@
       "id": "71d28786-8e5b-58de-97ab-99d1642f854d",
       "foodId": "13e39b72-7236-5f7e-8083-061203d12b25",
       "nutrientId": "folate",
-      "amountPer100g": 12.092307692307694,
+      "amountPer100g": 8.323076923076924,
       "valueSource": "derived"
     },
     {
       "id": "4b2e00ce-8b66-54da-957d-096d0f496884",
       "foodId": "13e39b72-7236-5f7e-8083-061203d12b25",
       "nutrientId": "thiamin",
-      "amountPer100g": 0.027400000000000004,
+      "amountPer100g": 0.02524615384615385,
       "valueSource": "derived"
     },
     {
       "id": "6d552ca3-41e6-5dfb-bfec-21aaeaae5f9a",
       "foodId": "13e39b72-7236-5f7e-8083-061203d12b25",
       "nutrientId": "riboflavin",
-      "amountPer100g": 0.021269230769230773,
+      "amountPer100g": 0.02557692307692308,
       "valueSource": "derived"
     },
     {
       "id": "a3a2401f-2d88-52e2-a414-791fbacb147d",
       "foodId": "13e39b72-7236-5f7e-8083-061203d12b25",
       "nutrientId": "niacin",
-      "amountPer100g": 0.09142307692307691,
+      "amountPer100g": 0.12426923076923077,
       "valueSource": "derived"
     },
     {
@@ -243256,42 +243256,42 @@
       "id": "ef8dcf2e-ffc0-5e2c-b86d-5d08ce79dd94",
       "foodId": "d2a54161-090b-5c96-bd58-205e8e71ac1f",
       "nutrientId": "energy",
-      "amountPer100g": 119.80555555555557,
+      "amountPer100g": 120.77777777777779,
       "valueSource": "derived"
     },
     {
       "id": "be4c8e7a-aef1-5699-8fc3-2a6e53a17629",
       "foodId": "d2a54161-090b-5c96-bd58-205e8e71ac1f",
       "nutrientId": "protein",
-      "amountPer100g": 5.717888888888888,
+      "amountPer100g": 5.729555555555555,
       "valueSource": "derived"
     },
     {
       "id": "e7587b25-649f-5205-a1b4-ebed385e292d",
       "foodId": "d2a54161-090b-5c96-bd58-205e8e71ac1f",
       "nutrientId": "carbs",
-      "amountPer100g": 17.78838888888889,
+      "amountPer100g": 18.07422222222222,
       "valueSource": "derived"
     },
     {
       "id": "d9db1188-8ed9-5d8d-8c5c-22a0bfab28f1",
       "foodId": "d2a54161-090b-5c96-bd58-205e8e71ac1f",
       "nutrientId": "fat",
-      "amountPer100g": 3.3301111111111115,
+      "amountPer100g": 3.3203888888888886,
       "valueSource": "derived"
     },
     {
       "id": "1974bfd2-2dd0-574e-aff1-82f92dd02144",
       "foodId": "d2a54161-090b-5c96-bd58-205e8e71ac1f",
       "nutrientId": "fibre",
-      "amountPer100g": 4.217222222222222,
+      "amountPer100g": 4.178333333333333,
       "valueSource": "derived"
     },
     {
       "id": "ce2f64b7-d041-5437-bd7c-bb7ac2b3efa4",
       "foodId": "d2a54161-090b-5c96-bd58-205e8e71ac1f",
       "nutrientId": "saturated_fat",
-      "amountPer100g": 1.8391055555555555,
+      "amountPer100g": 1.8311333333333335,
       "valueSource": "derived"
     },
     {
@@ -243305,56 +243305,56 @@
       "id": "1aa03db2-af41-5ff6-98e0-632a4a20902d",
       "foodId": "d2a54161-090b-5c96-bd58-205e8e71ac1f",
       "nutrientId": "potassium",
-      "amountPer100g": 420.4777777777777,
+      "amountPer100g": 422.6166666666666,
       "valueSource": "derived"
     },
     {
       "id": "26bc178b-9b96-5ea7-8939-fe70eefa597d",
       "foodId": "d2a54161-090b-5c96-bd58-205e8e71ac1f",
       "nutrientId": "calcium",
-      "amountPer100g": 43.22777777777779,
+      "amountPer100g": 43.616666666666674,
       "valueSource": "derived"
     },
     {
       "id": "150ddc07-acfc-566b-ace4-69a5aca95e5d",
       "foodId": "d2a54161-090b-5c96-bd58-205e8e71ac1f",
       "nutrientId": "iron",
-      "amountPer100g": 1.9994999999999998,
+      "amountPer100g": 2.011166666666666,
       "valueSource": "derived"
     },
     {
       "id": "06b2a2ae-b070-5a3f-a159-782f8ff6872e",
       "foodId": "d2a54161-090b-5c96-bd58-205e8e71ac1f",
       "nutrientId": "magnesium",
-      "amountPer100g": 50.7611111111111,
+      "amountPer100g": 50.95555555555554,
       "valueSource": "derived"
     },
     {
       "id": "37dec6cf-30e7-52da-9fd1-68d3f9664cd9",
       "foodId": "d2a54161-090b-5c96-bd58-205e8e71ac1f",
       "nutrientId": "zinc",
-      "amountPer100g": 0.7707222222222221,
+      "amountPer100g": 0.7765555555555554,
       "valueSource": "derived"
     },
     {
       "id": "a2501e27-ed9d-5d84-8d22-1ec4f0cab19b",
       "foodId": "d2a54161-090b-5c96-bd58-205e8e71ac1f",
       "nutrientId": "phosphorus",
-      "amountPer100g": 100.46666666666665,
+      "amountPer100g": 101.05000000000001,
       "valueSource": "derived"
     },
     {
       "id": "96d1a18d-566c-5418-92b1-98b3aadbacfa",
       "foodId": "d2a54161-090b-5c96-bd58-205e8e71ac1f",
       "nutrientId": "vitamin_a",
-      "amountPer100g": 30.533333333333335,
+      "amountPer100g": 30.72777777777778,
       "valueSource": "derived"
     },
     {
       "id": "0568767e-ec9e-5840-bc41-7e9b3042eaec",
       "foodId": "d2a54161-090b-5c96-bd58-205e8e71ac1f",
       "nutrientId": "vitamin_c",
-      "amountPer100g": 3.5338888888888884,
+      "amountPer100g": 3.4561111111111114,
       "valueSource": "derived"
     },
     {
@@ -243368,7 +243368,7 @@
       "id": "45933bd5-c5a0-5f43-ae63-8dbcbd910799",
       "foodId": "d2a54161-090b-5c96-bd58-205e8e71ac1f",
       "nutrientId": "vitamin_b6",
-      "amountPer100g": 0.10209999999999998,
+      "amountPer100g": 0.09996111111111111,
       "valueSource": "derived"
     },
     {
@@ -243382,35 +243382,35 @@
       "id": "afa63bbe-70c4-50d5-be78-0511779c011a",
       "foodId": "d2a54161-090b-5c96-bd58-205e8e71ac1f",
       "nutrientId": "folate",
-      "amountPer100g": 113.27222222222221,
+      "amountPer100g": 111.9111111111111,
       "valueSource": "derived"
     },
     {
       "id": "c3e67fa1-e966-502a-a999-45b1628b6295",
       "foodId": "d2a54161-090b-5c96-bd58-205e8e71ac1f",
       "nutrientId": "thiamin",
-      "amountPer100g": 0.16963888888888892,
+      "amountPer100g": 0.16886111111111116,
       "valueSource": "derived"
     },
     {
       "id": "aa66a633-8974-5d50-b961-4600884290c7",
       "foodId": "d2a54161-090b-5c96-bd58-205e8e71ac1f",
       "nutrientId": "riboflavin",
-      "amountPer100g": 0.05662222222222223,
+      "amountPer100g": 0.05817777777777779,
       "valueSource": "derived"
     },
     {
       "id": "3018dde3-55c2-5cd8-827b-1b452c6bcc76",
       "foodId": "d2a54161-090b-5c96-bd58-205e8e71ac1f",
       "nutrientId": "niacin",
-      "amountPer100g": 0.8261500000000002,
+      "amountPer100g": 0.8380111111111113,
       "valueSource": "derived"
     },
     {
       "id": "e3178899-7c88-5848-9f0d-cbd083512316",
       "foodId": "d2a54161-090b-5c96-bd58-205e8e71ac1f",
       "nutrientId": "sugar",
-      "amountPer100g": 1.0879444444444444,
+      "amountPer100g": 1.1443333333333334,
       "valueSource": "derived"
     },
     {
@@ -261274,49 +261274,49 @@
       "id": "39e03249-7764-5637-9036-e234a1e836f7",
       "foodId": "ad66add3-cf60-552c-be71-7d34f0901296",
       "nutrientId": "energy",
-      "amountPer100g": 48.25,
+      "amountPer100g": 49.5,
       "valueSource": "derived"
     },
     {
       "id": "484aaa0b-fb61-5ff5-8135-6b08cd8b5a4c",
       "foodId": "ad66add3-cf60-552c-be71-7d34f0901296",
       "nutrientId": "protein",
-      "amountPer100g": 2.7500000000000004,
+      "amountPer100g": 2.765,
       "valueSource": "derived"
     },
     {
       "id": "4a2704c1-f238-56e7-b29e-6d33435aa31e",
       "foodId": "ad66add3-cf60-552c-be71-7d34f0901296",
       "nutrientId": "carbs",
-      "amountPer100g": 4.035,
+      "amountPer100g": 4.4025,
       "valueSource": "derived"
     },
     {
       "id": "32bd6ad9-6483-55c3-8448-bd17ff4d6772",
       "foodId": "ad66add3-cf60-552c-be71-7d34f0901296",
       "nutrientId": "fat",
-      "amountPer100g": 2.4775,
+      "amountPer100g": 2.465,
       "valueSource": "derived"
     },
     {
       "id": "900cc329-4339-5fc8-a27c-0f1d41f35720",
       "foodId": "ad66add3-cf60-552c-be71-7d34f0901296",
       "nutrientId": "fibre",
-      "amountPer100g": 0.17500000000000002,
+      "amountPer100g": 0.125,
       "valueSource": "derived"
     },
     {
       "id": "ecb8b108-67ef-59fb-bc57-930306bc5878",
       "foodId": "ad66add3-cf60-552c-be71-7d34f0901296",
       "nutrientId": "saturated_fat",
-      "amountPer100g": 1.5915000000000001,
+      "amountPer100g": 1.58125,
       "valueSource": "derived"
     },
     {
       "id": "621f7744-b858-51f9-a19a-4eda85802efb",
       "foodId": "ad66add3-cf60-552c-be71-7d34f0901296",
       "nutrientId": "sugar",
-      "amountPer100g": 3.84,
+      "amountPer100g": 3.9125,
       "valueSource": "derived"
     },
     {
@@ -261330,56 +261330,56 @@
       "id": "c93e9402-dad8-5c79-bb15-58230b599f00",
       "foodId": "ad66add3-cf60-552c-be71-7d34f0901296",
       "nutrientId": "potassium",
-      "amountPer100g": 150.25000000000003,
+      "amountPer100g": 153.0,
       "valueSource": "derived"
     },
     {
       "id": "ad132945-8781-52fb-8a21-1b451543411d",
       "foodId": "ad66add3-cf60-552c-be71-7d34f0901296",
       "nutrientId": "calcium",
-      "amountPer100g": 94.25000000000001,
+      "amountPer100g": 94.75,
       "valueSource": "derived"
     },
     {
       "id": "6355dec2-2d91-5e2a-bde9-6dbfb4490038",
       "foodId": "ad66add3-cf60-552c-be71-7d34f0901296",
       "nutrientId": "iron",
-      "amountPer100g": 0.0925,
+      "amountPer100g": 0.1075,
       "valueSource": "derived"
     },
     {
       "id": "a5bda564-8de4-5b5b-b08c-0bfe01bd190f",
       "foodId": "ad66add3-cf60-552c-be71-7d34f0901296",
       "nutrientId": "magnesium",
-      "amountPer100g": 12.000000000000002,
+      "amountPer100g": 12.250000000000002,
       "valueSource": "derived"
     },
     {
       "id": "0470495e-b56d-58f1-abe8-bfdbe5435adb",
       "foodId": "ad66add3-cf60-552c-be71-7d34f0901296",
       "nutrientId": "zinc",
-      "amountPer100g": 0.48499999999999993,
+      "amountPer100g": 0.4925,
       "valueSource": "derived"
     },
     {
       "id": "4f5fd402-e849-59a5-8f45-cb219d828a6a",
       "foodId": "ad66add3-cf60-552c-be71-7d34f0901296",
       "nutrientId": "phosphorus",
-      "amountPer100g": 76.5,
+      "amountPer100g": 77.25000000000001,
       "valueSource": "derived"
     },
     {
       "id": "cfc3f914-0671-5843-953e-6da4b59b4843",
       "foodId": "ad66add3-cf60-552c-be71-7d34f0901296",
       "nutrientId": "vitamin_a",
-      "amountPer100g": 21.25,
+      "amountPer100g": 21.5,
       "valueSource": "derived"
     },
     {
       "id": "fcc2b9bd-42cf-5348-858e-f498dbedf547",
       "foodId": "ad66add3-cf60-552c-be71-7d34f0901296",
       "nutrientId": "vitamin_c",
-      "amountPer100g": 1.175,
+      "amountPer100g": 1.0750000000000002,
       "valueSource": "derived"
     },
     {
@@ -261400,7 +261400,7 @@
       "id": "ad24c72b-3093-507c-8d02-4d542de3e73c",
       "foodId": "ad66add3-cf60-552c-be71-7d34f0901296",
       "nutrientId": "vitamin_b6",
-      "amountPer100g": 0.03675,
+      "amountPer100g": 0.034,
       "valueSource": "derived"
     },
     {
@@ -261414,28 +261414,28 @@
       "id": "18c43813-4e3f-5101-a68c-c3dc9abf0674",
       "foodId": "ad66add3-cf60-552c-be71-7d34f0901296",
       "nutrientId": "folate",
-      "amountPer100g": 8.75,
+      "amountPer100g": 7.000000000000001,
       "valueSource": "derived"
     },
     {
       "id": "7db021e2-5763-5b19-983e-c787c1fd4eb8",
       "foodId": "ad66add3-cf60-552c-be71-7d34f0901296",
       "nutrientId": "thiamin",
-      "amountPer100g": 0.029500000000000002,
+      "amountPer100g": 0.028499999999999998,
       "valueSource": "derived"
     },
     {
       "id": "465dfcfd-ab43-576c-9e9c-6ecbc0cde91b",
       "foodId": "ad66add3-cf60-552c-be71-7d34f0901296",
       "nutrientId": "riboflavin",
-      "amountPer100g": 0.11275,
+      "amountPer100g": 0.11474999999999999,
       "valueSource": "derived"
     },
     {
       "id": "c0e1b58e-7e66-5c98-9299-1460de5c3abe",
       "foodId": "ad66add3-cf60-552c-be71-7d34f0901296",
       "nutrientId": "niacin",
-      "amountPer100g": 0.0655,
+      "amountPer100g": 0.08074999999999999,
       "valueSource": "derived"
     },
     {
@@ -284619,28 +284619,28 @@
       "id": "f2a49266-cb1a-584f-9b2a-dc3557cf5eea",
       "foodId": "ec150451-112b-5956-9ea4-2a65b16a9c50",
       "nutrientId": "energy",
-      "amountPer100g": 190.97857142857146,
+      "amountPer100g": 195.04999999999998,
       "valueSource": "derived"
     },
     {
       "id": "6b443eb2-a7d7-506c-a9e2-783c7ee52818",
       "foodId": "ec150451-112b-5956-9ea4-2a65b16a9c50",
       "nutrientId": "protein",
-      "amountPer100g": 6.411607142857142,
+      "amountPer100g": 6.50375,
       "valueSource": "derived"
     },
     {
       "id": "b4e07501-fedf-5551-b8fd-a67657b849e6",
       "foodId": "ec150451-112b-5956-9ea4-2a65b16a9c50",
       "nutrientId": "carbs",
-      "amountPer100g": 26.51417857142857,
+      "amountPer100g": 26.302571428571426,
       "valueSource": "derived"
     },
     {
       "id": "f62ff7db-12b2-5cc3-b6db-ad0fc26bf2ef",
       "foodId": "ec150451-112b-5956-9ea4-2a65b16a9c50",
       "nutrientId": "fat",
-      "amountPer100g": 6.451321428571427,
+      "amountPer100g": 6.959178571428572,
       "valueSource": "derived"
     },
     {
@@ -284654,70 +284654,70 @@
       "id": "d1fde0d1-bcb9-5ce8-9bcc-fe17831aea70",
       "foodId": "ec150451-112b-5956-9ea4-2a65b16a9c50",
       "nutrientId": "saturated_fat",
-      "amountPer100g": 3.7972535714285716,
+      "amountPer100g": 4.0506464285714285,
       "valueSource": "derived"
     },
     {
       "id": "874f34b8-338b-5ca1-9e64-4ece56f6e72a",
       "foodId": "ec150451-112b-5956-9ea4-2a65b16a9c50",
       "nutrientId": "sugar",
-      "amountPer100g": 1.1672142857142858,
+      "amountPer100g": 0.8961428571428574,
       "valueSource": "derived"
     },
     {
       "id": "ac9c414d-1771-5efa-bcd1-412149cf1f43",
       "foodId": "ec150451-112b-5956-9ea4-2a65b16a9c50",
       "nutrientId": "sodium",
-      "amountPer100g": 132.68214285714285,
+      "amountPer100g": 135.14642857142857,
       "valueSource": "derived"
     },
     {
       "id": "f20dbe4f-08d0-590b-9f26-1726de6f496e",
       "foodId": "ec150451-112b-5956-9ea4-2a65b16a9c50",
       "nutrientId": "potassium",
-      "amountPer100g": 145.8142857142857,
+      "amountPer100g": 139.92142857142855,
       "valueSource": "derived"
     },
     {
       "id": "71f7d024-b0d9-5b3b-b802-80f03a5b06fc",
       "foodId": "ec150451-112b-5956-9ea4-2a65b16a9c50",
       "nutrientId": "calcium",
-      "amountPer100g": 90.38571428571429,
+      "amountPer100g": 116.26071428571427,
       "valueSource": "derived"
     },
     {
       "id": "e2745b13-ad25-5aaf-af93-a2bd86d0548e",
       "foodId": "ec150451-112b-5956-9ea4-2a65b16a9c50",
       "nutrientId": "iron",
-      "amountPer100g": 1.127107142857143,
+      "amountPer100g": 1.1431785714285716,
       "valueSource": "derived"
     },
     {
       "id": "4c291e62-8be3-51eb-ae77-fa7fb36eef82",
       "foodId": "ec150451-112b-5956-9ea4-2a65b16a9c50",
       "nutrientId": "magnesium",
-      "amountPer100g": 22.667857142857144,
+      "amountPer100g": 22.50714285714286,
       "valueSource": "derived"
     },
     {
       "id": "fd142344-1587-5efc-b495-5b27f9cce0ce",
       "foodId": "ec150451-112b-5956-9ea4-2a65b16a9c50",
       "nutrientId": "zinc",
-      "amountPer100g": 0.7504642857142857,
+      "amountPer100g": 0.7451071428571429,
       "valueSource": "derived"
     },
     {
       "id": "c7a65053-27bb-51ef-98ea-d91d313ad678",
       "foodId": "ec150451-112b-5956-9ea4-2a65b16a9c50",
       "nutrientId": "phosphorus",
-      "amountPer100g": 149.04642857142855,
+      "amountPer100g": 136.51071428571427,
       "valueSource": "derived"
     },
     {
       "id": "a461401f-dcf8-5f27-a447-4e32fede354a",
       "foodId": "ec150451-112b-5956-9ea4-2a65b16a9c50",
       "nutrientId": "vitamin_a",
-      "amountPer100g": 52.29642857142858,
+      "amountPer100g": 60.01071428571427,
       "valueSource": "derived"
     },
     {
@@ -284731,56 +284731,56 @@
       "id": "aba01e82-c0bb-565b-b6ee-9c2e3cb5a924",
       "foodId": "ec150451-112b-5956-9ea4-2a65b16a9c50",
       "nutrientId": "vitamin_d",
-      "amountPer100g": 0.43285714285714283,
+      "amountPer100g": 0.8132142857142857,
       "valueSource": "derived"
     },
     {
       "id": "c9eb392a-4832-5058-b1e5-3abbf6e7f60f",
       "foodId": "ec150451-112b-5956-9ea4-2a65b16a9c50",
       "nutrientId": "vitamin_e",
-      "amountPer100g": 0.16460714285714284,
+      "amountPer100g": 0.1972857142857143,
       "valueSource": "derived"
     },
     {
       "id": "aab31880-4a52-53c4-8374-3ba23d5ec166",
       "foodId": "ec150451-112b-5956-9ea4-2a65b16a9c50",
       "nutrientId": "vitamin_b6",
-      "amountPer100g": 0.07468214285714285,
+      "amountPer100g": 0.07130714285714285,
       "valueSource": "derived"
     },
     {
       "id": "6d960c50-a60c-524e-aceb-96319e964aed",
       "foodId": "ec150451-112b-5956-9ea4-2a65b16a9c50",
       "nutrientId": "vitamin_b12",
-      "amountPer100g": 0.2601428571428572,
+      "amountPer100g": 0.31907142857142856,
       "valueSource": "derived"
     },
     {
       "id": "0fcfc0b6-06ae-5de8-a522-f0600fb8055d",
       "foodId": "ec150451-112b-5956-9ea4-2a65b16a9c50",
       "nutrientId": "folate",
-      "amountPer100g": 74.75357142857145,
+      "amountPer100g": 74.80714285714286,
       "valueSource": "derived"
     },
     {
       "id": "edbb87f2-9216-596f-a13e-515e545b88fa",
       "foodId": "ec150451-112b-5956-9ea4-2a65b16a9c50",
       "nutrientId": "thiamin",
-      "amountPer100g": 0.3093928571428572,
+      "amountPer100g": 0.30762500000000004,
       "valueSource": "derived"
     },
     {
       "id": "2a48b54a-0d7b-52c4-9daa-f174d8e37e10",
       "foodId": "ec150451-112b-5956-9ea4-2a65b16a9c50",
       "nutrientId": "riboflavin",
-      "amountPer100g": 0.21561785714285714,
+      "amountPer100g": 0.20506428571428573,
       "valueSource": "derived"
     },
     {
       "id": "544ad22f-56a2-50ff-b719-a1ad3d043cdc",
       "foodId": "ec150451-112b-5956-9ea4-2a65b16a9c50",
       "nutrientId": "niacin",
-      "amountPer100g": 2.3152464285714287,
+      "amountPer100g": 2.3123,
       "valueSource": "derived"
     },
     {
