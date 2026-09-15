@@ -1,0 +1,17 @@
+{
+  "query": "nuts almonds [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 170567,
+      "description": "Nuts, almonds"
+    },
+    {
+      "fdcId": 170160,
+      "description": "Nuts, almond paste"
+    },
+    {
+      "fdcId": 170568,
+      "description": "Nuts, almonds, blanched"
+    }
+  ]
+}

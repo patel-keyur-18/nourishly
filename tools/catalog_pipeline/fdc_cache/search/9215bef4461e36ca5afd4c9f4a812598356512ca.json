@@ -1,0 +1,17 @@
+{
+  "query": "oil peanut salad or cooking [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 171410,
+      "description": "Oil, peanut, salad or cooking"
+    },
+    {
+      "fdcId": 171024,
+      "description": "Oil, cottonseed, salad or cooking"
+    },
+    {
+      "fdcId": 171413,
+      "description": "Oil, olive, salad or cooking"
+    }
+  ]
+}

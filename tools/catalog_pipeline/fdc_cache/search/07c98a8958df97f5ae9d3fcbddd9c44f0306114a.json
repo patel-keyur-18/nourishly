@@ -1,0 +1,17 @@
+{
+  "query": "sugars brown [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 168833,
+      "description": "Sugars, brown"
+    },
+    {
+      "fdcId": 170675,
+      "description": "Sweeteners, sugar substitute, granulated, brown"
+    },
+    {
+      "fdcId": 172801,
+      "description": "Toaster pastries, brown-sugar-cinnamon"
+    }
+  ]
+}

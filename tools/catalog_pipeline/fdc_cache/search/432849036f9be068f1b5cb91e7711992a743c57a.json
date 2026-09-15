@@ -1,0 +1,17 @@
+{
+  "query": "bananas raw [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 173944,
+      "description": "Bananas, raw"
+    },
+    {
+      "fdcId": 1105073,
+      "description": "Bananas, overripe, raw"
+    },
+    {
+      "fdcId": 169394,
+      "description": "Pepper, banana, raw"
+    }
+  ]
+}

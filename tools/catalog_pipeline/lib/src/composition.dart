@@ -40,12 +40,30 @@ sealed class Composition {
 /// multi-ingredient recipe. [hint] is the rest of the text, a search hint
 /// for [FdcClient] (e.g. "rice white long-grain cooked").
 final class UsdaLookup extends Composition {
-  const UsdaLookup(this.hint);
+  const UsdaLookup(this.hint, {this.fdcId});
 
+  /// The search terms, when there is no [fdcId]: the descriptor a curator
+  /// wrote after `USDA`, named the way FoodData Central names the food.
+  ///
+  /// With an [fdcId] it is documentation rather than a query — it says in
+  /// words which record the number is, so a reader of the table does not
+  /// have to look it up.
   final String hint;
 
+  /// The FoodData Central id this row is **pinned** to, from a
+  /// composition reading `USDA #170393 potatoes flesh and skin raw`.
+  ///
+  /// A pin removes the search from the decision. FDC's ranking is what
+  /// put salt on `Butter, salted`, rice on `Potatoes, au gratin` and
+  /// spinach on spinach souffle, and because the search reran on every
+  /// fetch, every fetch was a fresh chance to pick wrong. A row that
+  /// names its id is settled: the same record comes back for as long as
+  /// the id exists, and no later run can quietly change what a dish is
+  /// made of.
+  final int? fdcId;
+
   @override
-  String toString() => 'UsdaLookup($hint)';
+  String toString() => 'UsdaLookup(${fdcId == null ? '' : '#$fdcId '}$hint)';
 }
 
 /// A recipe: quantified ingredients plus whatever couldn't be quantified
@@ -80,6 +98,10 @@ final class NeedsManualReview extends Composition {
 }
 
 final _usdaPrefix = RegExp(r'^USDA\b', caseSensitive: false);
+
+/// `USDA #170393 potatoes flesh and skin raw` — the leading `#<digits>`
+/// that pins a row to one FoodData Central record.
+final _pinnedFdcId = RegExp(r'^#(?<id>\d+)\s*');
 final _explicitSelfReference = RegExp(
   r'^(As above|Above)\b',
   caseSensitive: false,
@@ -144,7 +166,15 @@ class CompositionParser {
         .trim();
 
     if (_usdaPrefix.hasMatch(text)) {
-      return UsdaLookup(text.replaceFirst(_usdaPrefix, '').trim());
+      final rest = text.replaceFirst(_usdaPrefix, '').trim();
+      final pin = _pinnedFdcId.firstMatch(rest);
+      if (pin != null) {
+        return UsdaLookup(
+          rest.replaceFirst(_pinnedFdcId, '').trim(),
+          fdcId: int.parse(pin.namedGroup('id')!),
+        );
+      }
+      return UsdaLookup(rest);
     }
 
     if (_explicitSelfReference.hasMatch(text)) {

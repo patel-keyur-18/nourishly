@@ -12,7 +12,7 @@ The part of this household's cooking that belongs to no regional tradition: past
 
 | Food | Also | Serving | g | Composition |
 |---|---|---|---|---|
-| Pasta, dry | penne, spaghetti, macaroni, fusilli | 100 g | 100 | USDA pasta dry enriched |
+| Pasta, dry | penne, spaghetti, macaroni, fusilli | 100 g | 100 | USDA #169736 pasta dry enriched |
 | Millet pasta, dry | jowar pasta, sorghum pasta | 100 g | 100 | Jowar flour 100 g — 100% jowar, no wheat |
 | Millet vermicelli, raw | jowar semiya, millet semiya, millet shavige | 50 g | 50 | Jowar flour 50 g — 100% jowar, no wheat |
 

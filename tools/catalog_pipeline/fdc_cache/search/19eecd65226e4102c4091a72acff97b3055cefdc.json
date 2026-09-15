@@ -1,0 +1,17 @@
+{
+  "query": "flour rice white [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 790214,
+      "description": "Flour, rice, white, unenriched"
+    },
+    {
+      "fdcId": 169714,
+      "description": "Rice flour, white, unenriched"
+    },
+    {
+      "fdcId": 1104812,
+      "description": "Flour, rice, brown"
+    }
+  ]
+}

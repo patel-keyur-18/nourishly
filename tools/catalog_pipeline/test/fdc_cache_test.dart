@@ -123,24 +123,30 @@ void main() {
   });
 
   group('CachingFdcSource', () {
-    test('only the best match is detailed, not every candidate', () async {
-      // Detailing all three hits would treble the cost of the cold run
-      // that populates the cache, to store foods nothing ever reads.
-      final live = _FakeLive({
-        1001: _food(1001, 'Toor dal'),
-        1002: _food(1002, 'Toor dal, other'),
-        1003: _food(1003, 'Toor dal, third'),
-      });
-      final source = CachingFdcSource(
-        cache: cache,
-        mode: FdcCacheMode.refreshMissing,
-        live: live,
-      );
-      final foods = await source.search('toor dal', pageSize: 3);
-      expect(live.details, [1001]);
-      expect(foods.single.fdcId, 1001);
-      expect(cache.readFood(1002), isNull);
-    });
+    test(
+      'a search details nothing — it returns candidates to choose from',
+      () async {
+        // Reversed deliberately. This used to detail `foods.first` and
+        // throw the rest away, which left the caller unable to look past
+        // whatever FDC ranked first. Now the search is cheap and the
+        // caller spends the one details call on the candidate it accepts.
+        final live = _FakeLive({
+          1001: _food(1001, 'Toor dal'),
+          1002: _food(1002, 'Toor dal, other'),
+          1003: _food(1003, 'Toor dal, third'),
+        });
+        final source = CachingFdcSource(
+          cache: cache,
+          mode: FdcCacheMode.refreshMissing,
+          live: live,
+        );
+        final foods = await source.search('toor dal', pageSize: 3);
+
+        expect(live.details, isEmpty, reason: 'search must not detail');
+        expect(foods.map((f) => f.fdcId), [1001, 1002, 1003]);
+        expect(cache.readFood(1001), isNull);
+      },
+    );
 
     test('an empty search is cached too, so it is asked only once', () async {
       final live = _FakeLive(const {});
@@ -223,48 +229,132 @@ void main() {
       expect(offline.hits, greaterThan(0));
     });
 
-    test('refreshAll re-fetches even when the cache has the answer', () async {
-      final live = _FakeLive({1001: _food(1001, 'Toor dal')});
-      await CachingFdcSource(
-        cache: cache,
-        mode: FdcCacheMode.refreshMissing,
-        live: live,
-      ).search('toor dal', pageSize: 3);
-
-      final live2 = _FakeLive({1001: _food(1001, 'Toor dal, revised')});
-      await CachingFdcSource(
-        cache: cache,
-        mode: FdcCacheMode.refreshAll,
-        live: live2,
-      ).search('toor dal', pageSize: 3);
-      expect(live2.searches, ['toor dal']);
-      expect(cache.readFood(1001)!.description, 'Toor dal, revised');
-    });
-
     test(
-      'a search hit whose food record is missing is an error, not a miss',
+      'refreshAll re-runs the search even when the cache has an answer',
       () async {
-        // Silently treating this as "no match" would drop a dish from the
-        // catalog for a reason nobody could see.
-        cache.writeSearch(
+        final live = _FakeLive({1001: _food(1001, 'Toor dal')});
+        await CachingFdcSource(
+          cache: cache,
+          mode: FdcCacheMode.refreshMissing,
+          live: live,
+        ).search('toor dal', pageSize: 3);
+
+        final live2 = _FakeLive({1001: _food(1001, 'Toor dal, revised')});
+        await CachingFdcSource(
+          cache: cache,
+          mode: FdcCacheMode.refreshAll,
+          live: live2,
+        ).search('toor dal', pageSize: 3);
+
+        expect(live2.searches, ['toor dal']);
+        final cached = cache.readSearch(
           FdcCache.searchKey(
-            'ghost',
+            'toor dal',
             pageSize: 3,
             dataType: FdcClient.preferredDataTypes,
           ),
-          label: 'ghost [${FdcClient.preferredDataTypes}]',
-          fdcIds: [4242],
+        )!;
+        expect(cached.single.description, 'Toor dal, revised');
+      },
+    );
+
+    test('a cached candidate that was never detailed is a miss, not an '
+        'error', () async {
+      // The cache keeps every candidate a search returned but details
+      // none of them — the caller decides which is worth a details call.
+      // So a candidate with no food record is the normal case now, and
+      // in cacheOnly mode the honest answer is "not cached", not a
+      // corruption error.
+      cache.writeSearch(
+        FdcCache.searchKey(
+          'ghost',
+          pageSize: 3,
+          dataType: FdcClient.preferredDataTypes,
+        ),
+        label: 'ghost [${FdcClient.preferredDataTypes}]',
+        candidates: const [FdcCandidate(fdcId: 4242, description: 'Ghost')],
+      );
+      final source = CachingFdcSource(
+        cache: cache,
+        mode: FdcCacheMode.cacheOnly,
+      );
+
+      // The search itself answers from cache, carrying the description
+      // the caller needs to sieve on.
+      final found = await source.search('ghost', pageSize: 3);
+      expect(found.single.description, 'Ghost');
+
+      // Detailing it is what is not cached.
+      await expectLater(source.getDetails(4242), throwsA(isA<FdcCacheMiss>()));
+    });
+
+    test(
+      'a legacy entry is read through its food record, not re-fetched',
+      () async {
+        // The committed cache holds several hundred searches written before
+        // descriptions were kept. That format always detailed the one
+        // candidate it stored, so the description survives in the food
+        // record and the entry stays usable.
+        final live = _FakeLive({1001: _food(1001, 'Toor dal')});
+        final key = FdcCache.searchKey(
+          'toor dal',
+          pageSize: 3,
+          dataType: FdcClient.preferredDataTypes,
         );
-        final source = CachingFdcSource(
+        await CachingFdcSource(
+          cache: cache,
+          mode: FdcCacheMode.refreshMissing,
+          live: live,
+        ).getDetails(1001);
+        Directory('${cache.directory.path}/search').createSync(recursive: true);
+        File('${cache.directory.path}/search/$key.json').writeAsStringSync(
+          jsonEncode({
+            'query': 'toor dal [x]',
+            'fdcIds': [1001],
+          }),
+        );
+
+        final offline = CachingFdcSource(
           cache: cache,
           mode: FdcCacheMode.cacheOnly,
         );
-        await expectLater(
-          source.search('ghost', pageSize: 3),
-          throwsA(isA<StateError>()),
-        );
+        final found = await offline.search('toor dal', pageSize: 3);
+        expect(found.single.description, 'Toor dal');
       },
     );
+
+    test('every candidate is kept, in FDC ranking order', () async {
+      // Keeping only the winner left the run unable to see past whatever
+      // FDC ranked first, which is how a proximate-less `Oil, peanut`
+      // became the household's cooking fat.
+      final live = _FakeLive({
+        1: _food(1, 'Butter, salted'),
+        2: _food(2, 'Salt, table'),
+      });
+      final source = CachingFdcSource(
+        cache: cache,
+        mode: FdcCacheMode.refreshMissing,
+        live: live,
+      );
+
+      final found = await source.search('salt', pageSize: 3);
+      expect(found.map((f) => f.description), [
+        'Butter, salted',
+        'Salt, table',
+      ]);
+
+      final cached = cache.readSearch(
+        FdcCache.searchKey(
+          'salt',
+          pageSize: 3,
+          dataType: FdcClient.preferredDataTypes,
+        ),
+      )!;
+      expect(cached.map((c) => c.description), [
+        'Butter, salted',
+        'Salt, table',
+      ]);
+    });
 
     test('index.json records what resolved to what, sorted', () async {
       final live = _FakeLive({1001: _food(1001, 'Toor dal')});

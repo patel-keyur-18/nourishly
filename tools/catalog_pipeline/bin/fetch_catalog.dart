@@ -55,6 +55,17 @@ String _sanitizeQuery(String s) =>
 /// the English/US term for a regional name (Rajma -> kidney beans,
 /// Jaggery has no FDC entry at all, Matki -> moth bean) lives. Every
 /// candidate is sanitized the same way; no per-entry special-casing.
+/// Everything that identifies the food a row means, for
+/// [describesSameFood]: the row's own name, its `Also` synonyms, and the
+/// curator's `USDA` hint. The hint matters most — `Toor dal` and `Pigeon
+/// peas` share no word at all, and the hint is what says they are the
+/// same food.
+List<String> _matchTerms(CatalogSourceEntry entry, UsdaLookup lookup) => [
+  entry.foodName,
+  ...entry.alsoNames,
+  lookup.hint,
+];
+
 List<String> _queryCandidates(CatalogSourceEntry entry, UsdaLookup lookup) {
   final hint = lookup.hint.trim();
   final raw = [
@@ -71,11 +82,41 @@ List<String> _queryCandidates(CatalogSourceEntry entry, UsdaLookup lookup) {
   return result;
 }
 
-/// Searches FDC for the first of [queries] that returns a hit, trying
-/// [FdcClient.preferredDataTypes] (measured Foundation/SR Legacy data,
-/// §19.11's preferred quality tier) before falling back to any data type
-/// — catches items like jaggery that simply aren't in the restricted set.
-Future<FdcFood?> _searchFdc(FdcSource client, List<String> queries) async {
+/// Searches FDC for the first of [queries] that returns an **acceptable**
+/// hit, trying [FdcClient.preferredDataTypes] (measured Foundation/SR
+/// Legacy data, §19.11's preferred quality tier) before falling back to
+/// any data type — which catches items like jaggery that simply aren't in
+/// the restricted set.
+///
+/// Acceptable is the new part, and it is why [terms] is here. This used to
+/// take `candidates.first` and ask nothing of it, which put 33 ingredient
+/// rows on the wrong food: salt on `Butter, salted`, rice on `Potatoes, au
+/// gratin`, garam masala on a branded soup. Every one of them matched
+/// *something*, so nothing ever failed and all of them shipped marked
+/// `verified`.
+///
+/// A candidate is now dropped when it names a different food
+/// ([describesSameFood]) or carries no proximates at all
+/// ([hasProximates]) — the specialised Foundation analyses behind
+/// groundnut oil's zero calories. Dropping one moves the search on to the
+/// next query in the ladder (the hint, then the row name, then each
+/// `Also` synonym) and then to the unrestricted data types. A row where
+/// nothing survives resolves to null and is reported as a curation gap,
+/// which is the honest outcome: §0.2 would rather name a missing food
+/// than invent one.
+Future<FdcFood?> _searchFdc(
+  FdcSource client,
+  List<String> queries, {
+  required List<String> terms,
+  required Map<String, double> Function(FdcFood) nutrientsOf,
+  required List<RejectedMatch> rejected,
+  int? pinnedFdcId,
+}) async {
+  // A pinned row does not search at all. The id *is* the decision, made
+  // once by a person and recorded in the table, so there is nothing for
+  // FDC's ranking to get wrong on this or any later run.
+  if (pinnedFdcId != null) return client.getDetails(pinnedFdcId);
+
   for (final dataType in [FdcClient.preferredDataTypes, null]) {
     for (final query in queries) {
       final candidates = await client.search(
@@ -83,12 +124,57 @@ Future<FdcFood?> _searchFdc(FdcSource client, List<String> queries) async {
         pageSize: 3,
         dataType: dataType,
       );
-      if (candidates.isNotEmpty) {
+      for (final candidate in candidates) {
+        if (!describesSameFood(candidate.description, terms)) {
+          rejected.add(
+            RejectedMatch(
+              query: query,
+              food: candidate,
+              reason: 'names a different food',
+            ),
+          );
+          continue;
+        }
+        // A record that names the food in another form — an oil pressed
+        // from it, its leaves, a frozen or toasted version — is skipped
+        // so the next candidate gets a turn. This is a gate rather than a
+        // warning because the right record is usually sitting directly
+        // behind the wrong one: `sweet potato raw unprepared` returned
+        // frozen puffs, then the real thing; `bread white commercially
+        // prepared` returned the toasted loaf, then the plain one.
+        //
+        // A row that means the form says so in its hint, and is not
+        // stopped: ghee names butter *oil*, breadcrumbs name dry grated
+        // *bread*.
+        final form = differentForm(candidate.description, terms);
+        if (form.isNotEmpty) {
+          rejected.add(
+            RejectedMatch(
+              query: query,
+              food: candidate,
+              reason:
+                  'is another form of the food (${form.join(', ')}) — name '
+                  'the form in the hint if it is the one you mean',
+            ),
+          );
+          continue;
+        }
         // Full detail fetch: search results sometimes carry an
-        // abbreviated nutrient panel compared to the food's own record.
-        return client.getDetails(candidates.first.fdcId);
+        // abbreviated nutrient panel compared to the food's own record,
+        // so the proximates check has to run on the detailed record.
+        final detail = await client.getDetails(candidate.fdcId);
+        if (!hasProximates(nutrientsOf(detail))) {
+          rejected.add(
+            RejectedMatch(
+              query: query,
+              food: detail,
+              reason: 'carries no energy, protein, fat or carbohydrate',
+            ),
+          );
+          continue;
+        }
+        return detail;
       }
-      await Future<void>.delayed(const Duration(milliseconds: 150));
     }
   }
   return null;
@@ -160,6 +246,10 @@ class IngredientResolver {
   final FdcNormalizer normalizer;
   final CatalogIndex index;
 
+  /// Candidates refused by [describesSameFood] or [hasProximates], kept so
+  /// the run can say what it turned down rather than only what it found.
+  final rejected = <RejectedMatch>[];
+
   /// Normalized ingredient name -> result, shared across every recipe so a
   /// common ingredient (rice, toor dal, groundnut oil) is only looked up
   /// once no matter how many dishes use it.
@@ -206,6 +296,10 @@ class IngredientResolver {
       final food = await _searchFdc(
         client,
         _queryCandidates(row.entry, composition),
+        terms: _matchTerms(row.entry, composition),
+        nutrientsOf: _nutrients,
+        rejected: rejected,
+        pinnedFdcId: composition.fdcId,
       );
       if (food != null) {
         return IngredientSource(
@@ -253,7 +347,6 @@ class IngredientResolver {
           pieceGrams: source.pieceGrams,
         ),
       );
-      await Future<void>.delayed(const Duration(milliseconds: 150));
     }
 
     final yieldResult = resolveRecipeYield(
@@ -272,6 +365,9 @@ class IngredientResolver {
     for (final m in normalizer.normalize(food).matches)
       m.nutrient.id: m.amountPer100g,
   };
+
+  /// [_nutrients] for callers outside this class.
+  Map<String, double> nutrientsOf(FdcFood food) => _nutrients(food);
 }
 
 Future<void> main(List<String> args) async {
@@ -356,6 +452,7 @@ Future<void> main(List<String> args) async {
 
   final resolved = <Map<String, dynamic>>[];
   final failures = <String>[];
+
   var done = 0;
 
   for (final (entry, lookup) in lookups) {
@@ -363,13 +460,24 @@ Future<void> main(List<String> args) async {
     final queries = _queryCandidates(entry, lookup);
     stdout.writeln(
       '[$done/${lookups.length + recipes.length}] ${entry.foodName} '
-      '(trying: ${queries.join(' / ')})',
+      '${lookup.fdcId != null ? '(pinned #${lookup.fdcId})' : '(trying: ${queries.join(' / ')})'}',
     );
 
     try {
-      final detail = await _searchFdc(client, queries);
+      final detail = await _searchFdc(
+        client,
+        queries,
+        terms: _matchTerms(entry, lookup),
+        nutrientsOf: resolver.nutrientsOf,
+        rejected: resolver.rejected,
+        pinnedFdcId: lookup.fdcId,
+      );
       if (detail == null) {
-        failures.add('${entry.foodName}: no FDC match for any of $queries');
+        failures.add(
+          '${entry.foodName}: no FDC match for any of $queries. '
+          'Give the row a `USDA <descriptor>` hint that names the food as '
+          'FoodData Central does.',
+        );
         continue;
       }
 
@@ -408,7 +516,6 @@ Future<void> main(List<String> args) async {
     // A light pause between requests — polite to a free government API,
     // and keeps well inside even the DEMO_KEY's 30/hour limit if that's
     // what's set.
-    await Future<void>.delayed(const Duration(milliseconds: 150));
   }
 
   for (final (entry, recipe) in recipes) {
@@ -475,8 +582,6 @@ Future<void> main(List<String> args) async {
         'fdcDataType': source.food?.dataType,
         'nutrientsPer100g': source.nutrientsPer100g,
       });
-
-      await Future<void>.delayed(const Duration(milliseconds: 150));
     }
 
     if (missingIngredient) continue;
@@ -544,7 +649,19 @@ Future<void> main(List<String> args) async {
   stdout.writeln('Resolved: ${resolved.length}');
   stdout.writeln('Failed:   ${failures.length}');
   stdout.writeln('Yield warnings: $warned (see yieldWarning in the JSON)');
+  stdout.writeln('Rejected matches: ${resolver.rejected.length}');
   stdout.writeln('Wrote ${outFile.path}');
+
+  if (resolver.rejected.isNotEmpty) {
+    // Printed in full, not counted. Each line is a search result the run
+    // refused, and reading them is how a bad `USDA` hint gets found: a
+    // row whose every candidate was refused is a row that needs a better
+    // descriptor, not a row FoodData Central has never heard of.
+    stdout.writeln('\nRefused candidates (the search moved on):');
+    for (final r in resolver.rejected) {
+      stdout.writeln('  - $r');
+    }
+  }
   if (failures.isNotEmpty) {
     stdout.writeln('\nFailures:');
     for (final f in failures) {

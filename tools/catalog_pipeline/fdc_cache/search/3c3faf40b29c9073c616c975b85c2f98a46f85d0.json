@@ -1,0 +1,17 @@
+{
+  "query": "cookies graham crackers plain or honey includes cinnamon [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 174957,
+      "description": "Cookies, graham crackers, plain or honey (includes cinnamon)"
+    },
+    {
+      "fdcId": 174083,
+      "description": "Cookies, graham crackers, plain or honey, lowfat"
+    },
+    {
+      "fdcId": 167940,
+      "description": "Cinnamon buns, frosted (includes honey buns)"
+    }
+  ]
+}

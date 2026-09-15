@@ -1,0 +1,17 @@
+{
+  "query": "drumstick pods raw [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 170483,
+      "description": "Drumstick pods, raw"
+    },
+    {
+      "fdcId": 168416,
+      "description": "Drumstick leaves, raw"
+    },
+    {
+      "fdcId": 168532,
+      "description": "Drumstick pods, cooked, boiled, drained, with salt"
+    }
+  ]
+}

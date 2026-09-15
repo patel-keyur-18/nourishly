@@ -1,0 +1,17 @@
+{
+  "query": "chicken broilers or fryers breast meat only roasted [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 171477,
+      "description": "Chicken, broilers or fryers, breast, meat only, cooked, roasted"
+    },
+    {
+      "fdcId": 171054,
+      "description": "Chicken, broilers or fryers, meat only, cooked, roasted"
+    },
+    {
+      "fdcId": 171078,
+      "description": "Chicken, broilers or fryers, breast, meat only, cooked, fried"
+    }
+  ]
+}

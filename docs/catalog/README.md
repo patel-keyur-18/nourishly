@@ -1,6 +1,6 @@
 # Nourishly Food Catalog Specification
 
-*Revision 0.2 · 2026-09-15 · [Architecture index](../architecture/README.md) · [Personal-Use Scope](../architecture/00-scope.md)*
+*Revision 0.3 · 2026-09-15 · [Architecture index](../architecture/README.md) · [Personal-Use Scope](../architecture/00-scope.md)*
 
 The curated food list for the household catalog, covering **Gujarat, Tamil Nadu and Karnataka** plus the pan-Indian staples all three share, and the everyday North Indian, rice and non-regional cooking this household actually does.
 
@@ -125,6 +125,148 @@ There used to be one more step: search FoodData Central for the raw ingredient s
 Everything else is settled in `ingredientTargets` with the closest sensible row, because this is a household tracker: `oil/ghee` means oil, a 3 g tempering is mostly oil, a coconut filling is mostly coconut, and a sambar podi is a spice blend. Being a little off on 5 g of powder changes nothing anyone would do about it. The rule that stays is the narrow one — a name maps to a row **someone chose**, never to whatever a text search returned.
 
 All recipe rows resolve every ingredient, and a test asserts it. When a new row does not, run `--suggest` and paste the line it prints, saying which row and why; give the ingredient a row of its own only if it is a genuinely distinct food (that is where `Pav`, `Broken wheat`, `Hung curd` and `Colocasia leaves` came from).
+
+## 0.3c The `USDA` hint, and why a bare `USDA` is not enough
+
+A row whose composition is `USDA <descriptor>` is looked up in FoodData
+Central. The descriptor is not decoration: **it is the query**, and
+without it the pipeline searches the row's own name, which is an Indian
+name for a food USDA catalogues under an American one.
+
+Measured against the shipped catalog, that put 33 ingredient rows on the
+wrong food. Every one of them matched *something*, so nothing failed and
+all of them shipped marked `verified`:
+
+| Row | What it was sourced from | Recipes affected |
+|---|---|---|
+| Salt | `Butter, salted` | 999 |
+| Groundnut oil | `Oil, peanut` — 90 nutrients, no proximates | 787 |
+| Garam masala | `SMART SOUP, Indian Bean Masala` | 238 |
+| Green chilli | `Asparagus, green, raw` | 171 |
+| Rice, white, raw | `Potatoes, au gratin, home-prepared` | 129 |
+| Potato | `Bread, potato` | 79 |
+
+So: **write the descriptor the way FoodData Central names the food.**
+`USDA potatoes flesh and skin raw`, not `USDA`. A trailing ` — note`
+after a spaced em-dash is a curator's note and is not part of the query.
+
+Two mechanical guards back this up, in `fdc_match.dart`:
+
+- **A candidate that names a different food is refused.** One identifying
+  word must be shared between the result and the row's name, synonyms or
+  hint — plurals allowed, preparation words and colours ignored. The
+  search then moves on to the next query and the next data type.
+- **A candidate carrying no energy, protein, fat or carbohydrate is
+  refused.** Some FDC Foundation records are specialised analyses — a
+  fatty-acid profile, a mineral panel — with dozens of nutrients and no
+  proximates. `Oil, peanut` is one.
+
+Refusing a candidate moves the search on to the next one FDC returned,
+then to the next query in the ladder, then to the unrestricted data
+types. The cache keeps every candidate's id and description for that
+reason — descriptions arrive free with the search, and the one details
+call is spent on whichever candidate is accepted.
+
+Both guards are a floor, not a judge. They will not catch a wrong record
+that happens to contain the food's name (`Bread, potato` for potato), and
+they are not meant to: the hint is what gets the right record, and the
+guards stop the obviously wrong one from being summed in silence.
+
+**A record that names the right food in the wrong form is refused too.**
+`Fish oil, sardine` really is sardine and `Drumstick leaves` really is
+drumstick, so the first guard passes both; a second one reads the words
+that describe a *form* — oil, leaves, salted, sticks, toasted, frozen,
+dehydrated, puffs — and refuses a record carrying one the row does not.
+
+This began as a warning and became a gate once the evidence came in: the
+right record is usually sitting directly behind the wrong one. `sweet
+potato raw unprepared` returns frozen puffs, then the real thing;
+`bread white commercially prepared` returns the toasted loaf, then the
+plain one. Refusing the first simply takes the second.
+
+**A row that means the form says so in its hint**, and is not stopped:
+ghee names butter *oil*, breadcrumbs name dry grated *bread*. That makes
+acknowledging a form a one-word edit, and it keeps the refusal list worth
+reading — a list that always has eight known-fine lines in it is a list
+nobody reads.
+
+The same words are ignored when deciding whether two names agree, unless
+the row itself used one. `Asparagus, frozen, unprepared` once answered a
+search for sweet potato on the word "unprepared" alone, and `Drumstick
+leaves` answered both curry leaves and mint leaves on "leaves"; but Pav's
+hint says `bread white commercially prepared`, so for that row "bread" is
+the identity and not noise.
+
+**A food FoodData Central does not measure gets the nearest food that it
+does, named on the row.** Jaggery's only FDC record carries zero
+nutrients, so the row reads `USDA sugars brown — no FDC record for gur
+carries nutrients at all`. That is a sourced number with its reasoning
+attached, which §0.2 allows; an invented one it does not. A row where
+nothing survives resolves to nothing and is reported as a curation gap,
+per §0.2 — a named missing food beats an invented one. `fetch_catalog`
+prints every refused candidate.
+
+### Pinning: `USDA #170393 potatoes flesh and skin raw`
+
+A row that names an FDC id **does not search**. The id is the decision,
+made once by a person and written into the table, and `fetch_catalog`
+asks for that record directly.
+
+This is what finally closes the class of bug the two guards above only
+narrow. FDC's ranking put salt on `Butter, salted`, rice on `Potatoes, au
+gratin`, spinach on spinach *souffle* and sweet potato on frozen *puffs*
+— and because the search reran on every fetch, every fetch was a fresh
+chance to pick wrong on a row nobody had touched. A pinned row cannot
+drift: the same record comes back for as long as the id exists.
+
+The descriptor stays after the pin. It is no longer a query, but it is
+what makes the table readable — a reader should not have to look up
+170393 to see that it is a raw potato — and `--check` and `preview_fdc`
+still read it.
+
+```
+dart run tools/catalog_pipeline/bin/pin_fdc_ids.dart          # preview
+dart run tools/catalog_pipeline/bin/pin_fdc_ids.dart --write  # apply
+```
+
+Run it after a fetch you are happy with: it reads the ids that fetch
+chose out of `build/catalog_seed_draft.json` and writes them into the
+tables, leaving each descriptor and curator note as written. It is
+idempotent, and it reports separately when a pin *changes*, because a
+pin only changes if someone changed it.
+
+**Re-pointing a pinned row is a deliberate edit**, which is the point:
+change the id, and `--check` plus the lock will show exactly which dishes
+moved.
+
+### Checking a hint without spending a fetch
+
+`fetch_catalog` needs an API key, and used to take about twenty-five
+minutes however little it actually fetched — it slept 150 ms after every
+ingredient it resolved, cached or not, which on a warm run was thousands
+of sleeps for zero requests. The throttle now lives in the caching layer
+and fires only when a call reaches the network, so a fully cached run
+finishes in about four seconds.
+
+Even so, checking a hint by fetching is the slow way round.
+
+`preview_fdc.dart` ends that. The cache stores every candidate a search
+returned along with its description, so the decision the real run makes —
+walk the query ladder, refuse a different food or another form, take the
+first survivor — can be replayed offline against the committed cache:
+
+```
+dart run tools/catalog_pipeline/bin/preview_fdc.dart          # the summary
+dart run tools/catalog_pipeline/bin/preview_fdc.dart --all    # every row
+```
+
+It reports three things: rows that would resolve and to what, rows whose
+hint the cache has never been asked (a fetch will answer them), and rows
+where every cached candidate was refused (the hint needs work). **Read
+`--all` before spending a fetch.** Most wrong matches are not caught by
+either guard — `Spinach` resolving to spinach *souffle*, `Orange` to
+orange-fleshed *sweet potato*, `Rajma` to the *liquid from stewed* kidney
+beans — and no rule finds those. A person reading 230 lines does.
 
 ## 0.4 Column meanings
 

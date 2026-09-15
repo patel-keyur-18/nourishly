@@ -104,4 +104,37 @@ void main() {
       },
     );
   });
+
+  group('a pinned FDC id', () {
+    test('is read off the composition and leaves the descriptor behind', () {
+      final result = parser.parse('USDA #170393 carrots raw');
+      expect(result, isA<UsdaLookup>());
+      final lookup = result as UsdaLookup;
+      expect(lookup.fdcId, 170393);
+      expect(lookup.hint, 'carrots raw');
+    });
+
+    test('a row without one is unpinned, not pinned to zero', () {
+      expect((parser.parse('USDA carrots raw') as UsdaLookup).fdcId, isNull);
+    });
+
+    test('keeps working with a curator note after the descriptor', () {
+      // The note is stripped by the em-dash rule; the pin must survive it.
+      final lookup = parser.parse(
+        'USDA #173468 salt table — **the sodium source**',
+      ) as UsdaLookup;
+      expect(lookup.fdcId, 173468);
+      expect(lookup.hint, 'salt table');
+    });
+
+    test('a bare pin with no descriptor is still a pin', () {
+      final lookup = parser.parse('USDA #170393') as UsdaLookup;
+      expect(lookup.fdcId, 170393);
+      expect(lookup.hint, isEmpty);
+    });
+
+    test('a hash that is not a leading id is left alone', () {
+      expect((parser.parse('USDA grade #1 syrup') as UsdaLookup).fdcId, isNull);
+    });
+  });
 }

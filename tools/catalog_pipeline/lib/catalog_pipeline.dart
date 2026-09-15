@@ -11,6 +11,7 @@ export 'src/csv_source_parser.dart';
 export 'src/cuisine_tags.dart';
 export 'src/fdc_cache.dart';
 export 'src/fdc_client.dart';
+export 'src/fdc_match.dart';
 export 'src/fdc_models.dart';
 export 'src/fdc_source.dart';
 export 'src/ingredient_targets.dart';

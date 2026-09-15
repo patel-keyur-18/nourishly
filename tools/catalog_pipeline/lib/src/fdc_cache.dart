@@ -40,6 +40,18 @@ enum FdcCacheMode {
 }
 
 /// Thrown when [FdcCacheMode.cacheOnly] needs something the cache has not
+/// One search hit: the id, and the description FDC returned with it.
+///
+/// The description is the whole point — it is what lets the caller decide
+/// whether a candidate is even the right food before spending a details
+/// call on it.
+class FdcCandidate {
+  const FdcCandidate({required this.fdcId, required this.description});
+
+  final int fdcId;
+  final String description;
+}
+
 /// got. Carries the human description of the request so the operator
 /// knows exactly what a `--refresh-missing` run would fetch.
 class FdcCacheMiss implements Exception {
@@ -107,21 +119,64 @@ class FdcCache {
   static String searchLabel(String query, {required String? dataType}) =>
       '${query.toLowerCase().trim()} [${dataType ?? '*'}]';
 
-  List<int>? readSearch(String key) {
+  /// Every candidate a search returned, id and description, in FDC's own
+  /// ranking order. Null when the search is not cached.
+  ///
+  /// Descriptions are stored because the caller sieves on them
+  /// ([describesSameFood]) before deciding which candidate is worth a
+  /// details call. They arrive free in the search response, so keeping
+  /// them costs one line of JSON and saves the run from being stuck with
+  /// whatever FDC ranked first.
+  ///
+  /// An entry written before descriptions were kept holds ids only, and
+  /// is read through the food records instead — the older format always
+  /// detailed the one candidate it stored, so its description is already
+  /// on disk. That keeps a committed cache of several hundred searches
+  /// valid across the format change rather than re-asking FDC every
+  /// question it has already answered.
+  List<FdcCandidate>? readSearch(String key) {
     final file = File('${_searchDir.path}/$key.json');
     if (!file.existsSync()) return null;
     final json = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
-    return (json['fdcIds'] as List).cast<int>();
+
+    if (json['candidates'] case final List candidates) {
+      return [
+        for (final c in candidates.cast<Map<String, dynamic>>())
+          FdcCandidate(
+            fdcId: c['fdcId'] as int,
+            description: c['description'] as String,
+          ),
+      ];
+    }
+
+    final legacyIds = (json['fdcIds'] as List?)?.cast<int>();
+    if (legacyIds == null) return null;
+    final recovered = <FdcCandidate>[];
+    for (final id in legacyIds) {
+      final food = readFood(id);
+      // Its food record is the only place the description survives. Gone
+      // means the entry cannot be sieved, and a miss is the honest answer.
+      if (food == null) return null;
+      recovered.add(FdcCandidate(fdcId: id, description: food.description));
+    }
+    return recovered;
   }
 
   void writeSearch(
     String key, {
     required String label,
-    required List<int> fdcIds,
+    required List<FdcCandidate> candidates,
   }) {
     _searchDir.createSync(recursive: true);
-    File('${_searchDir.path}/$key.json')
-        .writeAsStringSync(_encode({'query': label, 'fdcIds': fdcIds}));
+    File('${_searchDir.path}/$key.json').writeAsStringSync(
+      _encode({
+        'query': label,
+        'candidates': [
+          for (final c in candidates)
+            {'fdcId': c.fdcId, 'description': c.description},
+        ],
+      }),
+    );
   }
 
   FdcFood? readFood(int fdcId) {
@@ -187,6 +242,27 @@ class CachingFdcSource implements FdcSource {
   /// recorded; an empty result is not a resolution.
   final resolutions = <String, ({int fdcId, String description})>{};
 
+  /// Spacing between consecutive **live** requests, to stay well inside
+  /// FoodData Central's rate limit.
+  ///
+  /// It lives here rather than in the caller because only this class
+  /// knows whether a call reached the network. `fetch_catalog` used to
+  /// sleep after every ingredient it resolved, cached or not, which on a
+  /// warm run was 8,879 sleeps for zero requests — around twenty minutes
+  /// of a twenty-five minute run spent waiting on nothing.
+  static const _spacing = Duration(milliseconds: 150);
+
+  DateTime? _lastRequest;
+
+  Future<void> _throttle() async {
+    final last = _lastRequest;
+    if (last != null) {
+      final since = DateTime.now().difference(last);
+      if (since < _spacing) await Future<void>.delayed(_spacing - since);
+    }
+    _lastRequest = DateTime.now();
+  }
+
   int _hits = 0;
   int _fetches = 0;
 
@@ -213,18 +289,16 @@ class CachingFdcSource implements FdcSource {
         // The ids are the cached answer; their details are cached under
         // their own ids. A search hit whose food records are missing is a
         // corrupt cache, not a miss to paper over.
-        final foods = <FdcFood>[];
-        for (final id in cached) {
-          final food = cache.readFood(id);
-          if (food == null) {
-            throw StateError(
-              'FDC cache is inconsistent: search "$label" resolved to '
-              'fdcId $id, but food/$id.json is missing. Re-run with '
-              '--refresh-all.',
-            );
-          }
-          foods.add(food);
-        }
+        final foods = [
+          for (final c in cached)
+            cache.readFood(c.fdcId) ??
+                FdcFood(
+                  fdcId: c.fdcId,
+                  description: c.description,
+                  dataType: 'unknown',
+                  nutrients: const [],
+                ),
+        ];
         _record(label, foods);
         return foods;
       }
@@ -234,6 +308,7 @@ class CachingFdcSource implements FdcSource {
       throw FdcCacheMiss('search "$label"');
     }
 
+    await _throttle();
     _fetches++;
     final foods = await live!.search(
       query,
@@ -243,21 +318,33 @@ class CachingFdcSource implements FdcSource {
     if (foods.isEmpty) {
       // A search that found nothing is still an answer, and caching it is
       // what stops every later run re-asking FDC the same dead question.
-      cache.writeSearch(key, label: label, fdcIds: const []);
+      cache.writeSearch(key, label: label, candidates: const []);
       return const [];
     }
 
-    // Only the best match is materialised.
+    // Every candidate is kept; none is detailed here.
     //
-    // Search results carry an abbreviated nutrient panel, so a usable
-    // record has to come from the details endpoint — but detailing all
-    // three hits would treble the cost of the one cold run that populates
-    // this cache, to store two foods nothing reads. `fetch_catalog` takes
-    // `candidates.first` and discards the rest, so that is what is kept.
-    final best = await getDetails(foods.first.fdcId);
-    cache.writeSearch(key, label: label, fdcIds: [best.fdcId]);
-    _record(label, [best]);
-    return [best];
+    // This used to materialise `foods.first` and discard the rest, on the
+    // reasoning that `fetch_catalog` took the first hit anyway. It no
+    // longer does: a candidate that names a different food, or carries no
+    // proximates, is refused and the next one is tried. Storing only the
+    // winner left the run unable to see past whatever FDC happened to
+    // rank first — which is how `Oil, peanut` (90 nutrients, no macros)
+    // became the household's cooking fat.
+    //
+    // The cost of keeping them is a line of JSON each. Descriptions come
+    // back with the search, and the details call still happens exactly
+    // once, for the candidate the caller actually accepts.
+    cache.writeSearch(
+      key,
+      label: label,
+      candidates: [
+        for (final f in foods)
+          FdcCandidate(fdcId: f.fdcId, description: f.description),
+      ],
+    );
+    _record(label, foods);
+    return foods;
   }
 
   @override
@@ -274,6 +361,7 @@ class CachingFdcSource implements FdcSource {
       throw FdcCacheMiss('food details for fdcId $fdcId');
     }
 
+    await _throttle();
     _fetches++;
     final food = await live!.getDetails(fdcId);
     cache.writeFood(food);

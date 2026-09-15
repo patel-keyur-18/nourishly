@@ -1,0 +1,17 @@
+{
+  "query": "carrots raw [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 170393,
+      "description": "Carrots, raw"
+    },
+    {
+      "fdcId": 2258587,
+      "description": "Carrots, baby, raw"
+    },
+    {
+      "fdcId": 168568,
+      "description": "Carrots, baby, raw"
+    }
+  ]
+}
