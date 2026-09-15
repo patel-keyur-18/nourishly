@@ -161,10 +161,22 @@ Two mechanical guards back this up, in `fdc_match.dart`:
   fatty-acid profile, a mineral panel — with dozens of nutrients and no
   proximates. `Oil, peanut` is one.
 
-Both are a floor, not a judge. They will not catch a wrong record that
-happens to contain the food's name (`Bread, potato` for potato), and they
-are not meant to: the hint is what gets the right record, and the guards
-stop the obviously wrong one from being summed in silence. A row where
+Refusing a candidate moves the search on to the next one FDC returned,
+then to the next query in the ladder, then to the unrestricted data
+types. The cache keeps every candidate's id and description for that
+reason — descriptions arrive free with the search, and the one details
+call is spent on whichever candidate is accepted.
+
+Both guards are a floor, not a judge. They will not catch a wrong record
+that happens to contain the food's name (`Bread, potato` for potato), and
+they are not meant to: the hint is what gets the right record, and the
+guards stop the obviously wrong one from being summed in silence.
+
+**A food FoodData Central does not measure gets the nearest food that it
+does, named on the row.** Jaggery's only FDC record carries zero
+nutrients, so the row reads `USDA sugars brown — no FDC record for gur
+carries nutrients at all`. That is a sourced number with its reasoning
+attached, which §0.2 allows; an invented one it does not. A row where
 nothing survives resolves to nothing and is reported as a curation gap,
 per §0.2 — a named missing food beats an invented one. `fetch_catalog`
 prints every refused candidate.

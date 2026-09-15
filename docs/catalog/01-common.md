@@ -83,7 +83,7 @@ Raw entries feed recipes; cooked entries are logged directly.
 | **①** Ghee | tup, nei, tuppa | 1 tsp | 5 | USDA butter oil |
 | Butter | makhan, venna | 1 tsp | 5 | USDA |
 | Malai / fresh cream | — | 1 tbsp | 15 | USDA heavy cream |
-| Khoya / Mawa | — | 25 g | 25 | USDA condensed milk solids basis |
+| Khoya / Mawa | — | 25 g | 25 | USDA milk dry whole |
 | Cheese, processed | — | 1 slice | 20 | USDA |
 | Curd rice | thayir sadam, mosaranna | 1 katori | 180 | Rice cooked 120 g, curd 60 g, salt, tempering 3 g |
 
@@ -177,13 +177,13 @@ Raw weights; the pipeline applies cooking yield per dish.
 | Pumpkin seeds | pepita, kaddu ke beej | 1 tbsp | 10 | USDA seeds pumpkin and squash seed kernels dried |
 | Watermelon seeds | magaz, tarbooj ke beej | 1 tbsp | 10 | USDA seeds watermelon seed kernels dried |
 | Sunflower seeds | surajmukhi ke beej | 1 tbsp | 10 | USDA seeds sunflower seed kernels dried |
-| **①** Groundnut oil | sing tel, kadalai ennai | 1 tsp | 5 | USDA peanut oil |
-| Sunflower oil | — | 1 tsp | 5 | USDA |
+| **①** Groundnut oil | sing tel, kadalai ennai | 1 tsp | 5 | USDA oil peanut salad or cooking |
+| Sunflower oil | — | 1 tsp | 5 | USDA oil sunflower linoleic |
 | Coconut oil | — | 1 tsp | 5 | USDA |
 | Sesame oil | til tel, nallennai | 1 tsp | 5 | USDA |
 | Mustard oil | — | 1 tsp | 5 | USDA |
 | **①** Sugar | khand, sakkarai, sakkare | 1 tsp | 5 | USDA |
-| **①** Jaggery | gol, gud, vellam, bella | 1 tbsp | 15 | USDA |
+| **①** Jaggery | gol, gud, vellam, bella | 1 tbsp | 15 | USDA sugars brown — no FDC record for gur carries nutrients at all; brown sugar is the nearest measured food, molasses and all |
 | Honey | madh, thean | 1 tsp | 7 | USDA |
 | **①** Salt | mithu, uppu | 1 tsp | 6 | USDA salt table — **the sodium source that matters most** (§21.4 limit nutrient) |
 | Tamarind | aambli, puli, hunase | 10 g | 10 | USDA tamarinds raw |

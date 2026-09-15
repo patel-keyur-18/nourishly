@@ -119,7 +119,7 @@ Serving weights are the raw-ingredient convention of `01-common.md`: 100 g for a
 | Chilli sauce | chili sauce, hot sauce | 100 g | 100 | USDA hot chili sauce |
 | Tomato sauce | tomato ketchup, ketchup | 100 g | 100 | USDA catsup |
 | Vinegar | sirka | 100 g | 100 | USDA vinegar distilled |
-| Mayonnaise | mayo | 100 g | 100 | USDA mayonnaise regular |
+| Mayonnaise | mayo | 100 g | 100 | USDA salad dressing mayonnaise regular with salt |
 | Pesto | basil pesto | 100 g | 100 | USDA pesto sauce |
 | Vegetable stock | vegetable broth | 1 katori | 150 | USDA soup stock vegetable |
 | Chicken stock | chicken broth | 1 katori | 150 | USDA soup stock chicken home-prepared |
@@ -137,4 +137,4 @@ Serving weights are the raw-ingredient convention of `01-common.md`: 100 g for a
 | Sponge cake | plain cake | 100 g | 100 | USDA cake sponge commercially prepared |
 | Custard | custard powder, vanilla custard | 1 katori | 150 | USDA puddings vanilla ready-to-eat |
 | Biscuits, digestive | marie biscuit, digestive biscuit | 100 g | 100 | USDA cookies digestive |
-| Pepperoni | — | 100 g | 100 | USDA pepperoni pork beef |
+| Pepperoni | — | 100 g | 100 | USDA salami italian pork — FDC publishes no pepperoni with proximates; salami is the same cured pork-and-beef family |
