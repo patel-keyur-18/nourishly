@@ -1,0 +1,17 @@
+{
+  "query": "beans kidney red mature seeds raw [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 173744,
+      "description": "Beans, kidney, red, mature seeds, raw"
+    },
+    {
+      "fdcId": 173742,
+      "description": "Beans, kidney, california red, mature seeds, raw"
+    },
+    {
+      "fdcId": 175196,
+      "description": "Beans, kidney, royal red, mature seeds, raw"
+    }
+  ]
+}

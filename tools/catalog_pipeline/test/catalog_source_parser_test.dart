@@ -53,7 +53,7 @@ void main() {
     expect(rice.servingLabel, '1 katori');
     expect(rice.servingAmount, 150);
     expect(rice.section, 'Grains and breads');
-    expect(rice.rawComposition, 'USDA rice white long-grain cooked');
+    expect(rice.rawComposition, 'USDA #169708 rice white long-grain cooked');
   });
 
   test('a row with "—" for Also parses to an empty alt-names list', () {

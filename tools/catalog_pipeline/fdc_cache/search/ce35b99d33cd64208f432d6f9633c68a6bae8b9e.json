@@ -1,0 +1,17 @@
+{
+  "query": "cabbage raw [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 169975,
+      "description": "Cabbage, raw"
+    },
+    {
+      "fdcId": 2346407,
+      "description": "Cabbage, green, raw"
+    },
+    {
+      "fdcId": 169977,
+      "description": "Cabbage, red, raw"
+    }
+  ]
+}

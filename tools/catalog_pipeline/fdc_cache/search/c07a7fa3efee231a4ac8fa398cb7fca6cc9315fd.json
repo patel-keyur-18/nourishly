@@ -1,0 +1,17 @@
+{
+  "query": "oranges raw navels [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 746771,
+      "description": "Oranges, raw, navels"
+    },
+    {
+      "fdcId": 169917,
+      "description": "Oranges, raw, navels (Includes foods for USDA's Food Distribution Program)"
+    },
+    {
+      "fdcId": 169103,
+      "description": "Orange peel, raw"
+    }
+  ]
+}

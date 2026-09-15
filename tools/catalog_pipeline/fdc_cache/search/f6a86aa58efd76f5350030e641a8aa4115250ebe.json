@@ -1,0 +1,17 @@
+{
+  "query": "crustaceans shrimp mixed species raw [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 171972,
+      "description": "Crustaceans, shrimp, mixed species, canned"
+    },
+    {
+      "fdcId": 175169,
+      "description": "Crustaceans, crayfish, mixed species, farmed, raw"
+    },
+    {
+      "fdcId": 174206,
+      "description": "Crustaceans, crayfish, mixed species, wild, raw"
+    }
+  ]
+}

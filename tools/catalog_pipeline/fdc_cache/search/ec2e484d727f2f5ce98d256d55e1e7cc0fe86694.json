@@ -1,0 +1,17 @@
+{
+  "query": "rice white long-grain parboiled enriched cooked [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 169708,
+      "description": "Rice, white, long-grain, parboiled, enriched, cooked"
+    },
+    {
+      "fdcId": 169707,
+      "description": "Rice, white, long-grain, parboiled, enriched, dry"
+    },
+    {
+      "fdcId": 169759,
+      "description": "Rice, white, long-grain, parboiled, unenriched, cooked"
+    }
+  ]
+}

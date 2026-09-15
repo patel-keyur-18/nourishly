@@ -1,0 +1,17 @@
+{
+  "query": "butter salted [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 173410,
+      "description": "Butter, salted"
+    },
+    {
+      "fdcId": 790508,
+      "description": "Butter, stick, salted"
+    },
+    {
+      "fdcId": 173411,
+      "description": "Butter, whipped, with salt"
+    }
+  ]
+}

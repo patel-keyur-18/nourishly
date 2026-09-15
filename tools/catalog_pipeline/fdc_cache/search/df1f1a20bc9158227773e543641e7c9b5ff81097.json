@@ -1,0 +1,17 @@
+{
+  "query": "spearmint fresh [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 173475,
+      "description": "Spearmint, fresh"
+    },
+    {
+      "fdcId": 172239,
+      "description": "Spearmint, dried"
+    },
+    {
+      "fdcId": 172232,
+      "description": "Basil, fresh"
+    }
+  ]
+}

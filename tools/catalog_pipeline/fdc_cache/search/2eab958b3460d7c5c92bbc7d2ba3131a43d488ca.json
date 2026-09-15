@@ -1,0 +1,17 @@
+{
+  "query": "cheese pasteurized process american [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 171254,
+      "description": "Cheese spread, pasteurized process, American"
+    },
+    {
+      "fdcId": 169080,
+      "description": "Cheese, pasteurized process, American, low fat"
+    },
+    {
+      "fdcId": 170853,
+      "description": "Cheese, pasteurized process, American, fortified with vitamin D"
+    }
+  ]
+}
