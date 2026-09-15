@@ -95,7 +95,7 @@ Serving weights are the raw-ingredient convention of `01-common.md`: 100 g for a
 
 | Food | Also | Serving | g | Composition |
 |---|---|---|---|---|
-| Chicken, cooked | cooked chicken, roast chicken | 100 g | 100 | USDA chicken breast roasted |
+| Chicken, cooked | cooked chicken, roast chicken | 100 g | 100 | USDA chicken broilers or fryers breast meat only roasted — `chicken breast roasted` returned a deli roll |
 | Pork | — | 100 g | 100 | USDA pork fresh loin raw |
 | Beef, raw | beef mince, minced beef | 100 g | 100 | USDA beef ground raw |
 | Duck | — | 100 g | 100 | USDA duck meat raw |

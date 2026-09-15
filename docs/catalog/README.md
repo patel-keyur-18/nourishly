@@ -206,6 +206,30 @@ nothing survives resolves to nothing and is reported as a curation gap,
 per §0.2 — a named missing food beats an invented one. `fetch_catalog`
 prints every refused candidate.
 
+### Checking a hint without spending a fetch
+
+`fetch_catalog` takes about twenty-five minutes and needs an API key,
+which used to make every curation mistake cost a full round trip: run it,
+read the report, fix two rows, run it again.
+
+`preview_fdc.dart` ends that. The cache stores every candidate a search
+returned along with its description, so the decision the real run makes —
+walk the query ladder, refuse a different food or another form, take the
+first survivor — can be replayed offline against the committed cache:
+
+```
+dart run tools/catalog_pipeline/bin/preview_fdc.dart          # the summary
+dart run tools/catalog_pipeline/bin/preview_fdc.dart --all    # every row
+```
+
+It reports three things: rows that would resolve and to what, rows whose
+hint the cache has never been asked (a fetch will answer them), and rows
+where every cached candidate was refused (the hint needs work). **Read
+`--all` before spending a fetch.** Most wrong matches are not caught by
+either guard — `Spinach` resolving to spinach *souffle*, `Orange` to
+orange-fleshed *sweet potato*, `Rajma` to the *liquid from stewed* kidney
+beans — and no rule finds those. A person reading 230 lines does.
+
 ## 0.4 Column meanings
 
 | Column | Meaning |

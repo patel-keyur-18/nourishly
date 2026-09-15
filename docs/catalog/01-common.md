@@ -13,7 +13,7 @@ Foods common to Gujarati, Tamil and Kannadiga households. Tier 1 items are marke
 | **①** Rice, white, cooked | chawal, sadam, anna, bhaat | 1 katori | 150 | USDA rice white long-grain cooked |
 | **①** Rice, white, raw | — | 100 g | 100 | USDA rice white long-grain regular raw unenriched |
 | Rice, brown, cooked | — | 1 katori | 150 | USDA |
-| Rice, parboiled (idli rice), cooked | ukda chawal, puzhungal arisi | 1 katori | 150 | USDA parboiled |
+| Rice, parboiled (idli rice), cooked | ukda chawal, puzhungal arisi | 1 katori | 150 | USDA rice white long-grain parboiled enriched cooked — `parboiled` returned a *brown* branded rice |
 | **①** Rotli / Chapati | phulka, roti, poli | 1 piece | 40 | Wheat flour 32 g, water; no added fat |
 | Chapati with ghee | tupda rotli | 1 piece | 45 | Above + ghee 4 g |
 | **①** Bhakhri | — | 1 piece | 55 | Wheat flour 40 g, ghee 8 g, salt |
@@ -27,14 +27,14 @@ Foods common to Gujarati, Tamil and Kannadiga households. Tier 1 items are marke
 | Akki rotti | rice rotti | 1 piece | 75 | Rice flour 45 g, onion, coconut, oil 6 g |
 | Wheat flour, atta | gehu ka atta, godhuma maavu | 100 g | 100 | USDA whole wheat flour |
 | Refined flour, maida | maida, all-purpose flour | 100 g | 100 | USDA wheat flour white all-purpose enriched |
-| Rice flour | chawal ka atta, arisi maavu | 100 g | 100 | USDA |
+| Rice flour | chawal ka atta, arisi maavu | 100 g | 100 | USDA flour rice white — a bare `USDA` returned brown rice flour |
 | Ragi flour | nachni, finger millet | 100 g | 100 | USDA finger millet |
 | Jowar flour | sorghum | 100 g | 100 | USDA sorghum |
 | Bajra flour | pearl millet | 100 g | 100 | USDA pearl millet |
 | Semolina, rava | sooji, sajjige | 100 g | 100 | USDA semolina |
 | Poha, raw | raw poha, aval, flattened rice | 50 g | 50 | USDA rice white long-grain regular raw — poha is flattened rice, and FDC measures no separate record for it |
 | Oats, rolled | jai, oatmeal, rolled oats | 40 g | 40 | USDA cereals oats regular and quick unenriched dry |
-| Vermicelli, raw | semiya, shavige, sevai | 50 g | 50 | USDA |
+| Vermicelli, raw | semiya, shavige, sevai | 50 g | 50 | USDA pasta dry enriched — a bare `USDA` returned *soy* vermicelli; semiya is wheat |
 | Bread, white | — | 1 slice | 25 | USDA |
 | Pav | ladi pav, bun | 1 piece | 45 | USDA bread white commercially prepared |
 | Broken wheat | dalia, fada, godhi nucchu, samba rava | 100 g | 100 | USDA bulgur dry |
@@ -56,7 +56,7 @@ Raw entries feed recipes; cooked entries are logged directly.
 | **①** Urad dal, raw | ulundhu, uddina bele | 100 g | 100 | USDA urad dal black gram mature seeds raw — FDC does not carry urad; this resolves to pigeon peas, within 2 kcal and 3 g protein |
 | Chana, whole (kabuli) | chickpea, chole | 100 g | 100 | USDA chickpeas garbanzo beans bengal gram mature seeds raw |
 | Chana, whole (kala) | brown chana | 100 g | 100 | USDA chickpeas garbanzo beans bengal gram mature seeds raw |
-| Rajma | kidney beans | 100 g | 100 | USDA |
+| Rajma | kidney beans | 100 g | 100 | USDA beans kidney red mature seeds raw — a bare `USDA` returned the stewing liquid |
 | Chawli / Lobia | black-eyed pea, alasande | 100 g | 100 | USDA cowpeas common blackeyes mature seeds raw |
 | Green moong, whole | — | 100 g | 100 | USDA mung beans mature seeds raw |
 | Matki | moth bean | 100 g | 100 | USDA moth beans mature seeds raw — FDC does not carry moth bean; this resolves to adzuki, the nearest measured small bean |
@@ -81,10 +81,10 @@ Raw entries feed recipes; cooked entries are logged directly.
 | **①** Buttermilk | chaas, mor, majjige | 1 glass | 200 | Curd 50 g + water 150 ml, salt, cumin |
 | **①** Paneer | panir, cottage cheese | 50 g | 50 | USDA paneer/queso fresco |
 | **①** Ghee | tup, nei, tuppa | 1 tsp | 5 | USDA butter oil anhydrous |
-| Butter | makhan, venna | 1 tsp | 5 | USDA |
+| Butter | makhan, venna | 1 tsp | 5 | USDA butter salted — a bare `USDA` returned clarified butter, which is the Ghee row |
 | Malai / fresh cream | — | 1 tbsp | 15 | USDA heavy cream |
 | Khoya / Mawa | — | 25 g | 25 | USDA milk dry whole |
-| Cheese, processed | — | 1 slice | 20 | USDA |
+| Cheese, processed | — | 1 slice | 20 | USDA cheese pasteurized process american — a bare `USDA` returned the pimento variety |
 | Curd rice | thayir sadam, mosaranna | 1 katori | 180 | Rice cooked 120 g, curd 60 g, salt, tempering 3 g |
 
 ---
@@ -97,27 +97,27 @@ Raw weights; the pipeline applies cooking yield per dish.
 |---|---|---|---|---|
 | **①** Potato | bataka, urulaikizhangu, aloo | 1 medium | 100 | USDA potatoes flesh and skin raw |
 | **①** Onion | dungri, vengayam, eerulli | 1 medium | 80 | USDA |
-| **①** Tomato | tameta, thakkali | 1 medium | 80 | USDA |
+| **①** Tomato | tameta, thakkali | 1 medium | 80 | USDA tomatoes red ripe raw year round average — a bare `USDA` returned tomato powder |
 | **①** Brinjal | ringan, kathirikai, badanekai | 1 medium | 80 | USDA eggplant raw |
 | **①** Okra | bhindi, vendakkai, bendekai | 100 g | 100 | USDA |
 | **①** Cauliflower | phool gobi, cauliflower | 100 g | 100 | USDA |
-| **①** Cabbage | kobi, muttaikose | 100 g | 100 | USDA |
+| **①** Cabbage | kobi, muttaikose | 100 g | 100 | USDA cabbage raw — a bare `USDA` returned kimchi |
 | **①** Carrot | gajar | 1 medium | 60 | USDA carrots raw |
 | Bottle gourd | dudhi, lauki, sorekayi | 100 g | 100 | USDA calabash |
 | Ridge gourd | turiya, peerkangai, heerekayi | 100 g | 100 | USDA |
-| Ivy gourd | tindora, kovakkai, tondekayi | 100 g | 100 | USDA |
+| Ivy gourd | tindora, kovakkai, tondekayi | 100 g | 100 | USDA gourd white-flowered calabash raw — FDC has no tindora; the calabash is the nearest measured gourd |
 | Bitter gourd | karela, pavakkai, hagalakayi | 100 g | 100 | USDA |
-| Snake gourd | padwal, pudalangai | 100 g | 100 | USDA |
-| Ash gourd | petha, kumbalanga, boodhkumbalakai | 100 g | 100 | USDA wax gourd |
+| Snake gourd | padwal, pudalangai | 100 g | 100 | USDA gourd white-flowered calabash raw — FDC has no padwal; the calabash is its close relative |
+| Ash gourd | petha, kumbalanga, boodhkumbalakai | 100 g | 100 | USDA gourd white-flowered calabash raw — FDC has no ash gourd; the calabash is the nearest measured gourd |
 | Pumpkin | kaddu, parangikai, kumbalakayi | 100 g | 100 | USDA |
 | Cluster beans | guvar, kothavarangai | 100 g | 100 | USDA beans snap green raw — FDC has no guvar; snap beans are the nearest measured pod |
 | Field beans | valor, papdi, surti papdi, avarekai | 100 g | 100 | USDA hyacinth beans |
-| French beans | fansi, beans | 100 g | 100 | USDA green beans |
+| French beans | fansi, beans | 100 g | 100 | USDA beans snap green raw — `green beans` returned the *microwaved* record |
 | Drumstick | saragvo, murungakkai, nuggekayi | 1 piece | 50 | USDA drumstick pods raw — a bare `USDA` returned the leaves, which are a separate row |
 | **①** Green peas | vatana, pattani | 1 katori | 100 | USDA |
 | Capsicum | simla mirch, kudaimilagai | 1 medium | 80 | USDA bell pepper |
 | Mushroom | khumb, button mushroom, kaalan | 100 g | 100 | USDA mushrooms white raw |
-| Cucumber | kakdi, vellarikkai | 1 medium | 100 | USDA |
+| Cucumber | kakdi, vellarikkai | 1 medium | 100 | USDA cucumber with peel raw |
 | Radish | mooli, mullangi | 1 medium | 80 | USDA |
 | Beetroot | beets | 1 medium | 80 | USDA |
 | Yam | suran, senaikizhangu, suvarnagadde | 100 g | 100 | USDA |
@@ -126,7 +126,7 @@ Raw weights; the pipeline applies cooking yield per dish.
 | Sweet potato | shakarkand, sarkaraivalli | 1 medium | 100 | USDA sweet potato raw unprepared |
 | Raw banana | kacha kela, vazhaikkai, balekayi | 1 medium | 100 | USDA plantains green raw |
 | Raw mango | keri, mangai | 50 g | 50 | USDA |
-| **①** Spinach | palak, keerai, palak soppu | 100 g | 100 | USDA |
+| **①** Spinach | palak, keerai, palak soppu | 100 g | 100 | USDA spinach raw — a bare `USDA` returned spinach souffle |
 | Fenugreek leaves | methi, venthaya keerai, menthya soppu | 50 g | 50 | USDA spinach raw — FDC has no methi leaf; spinach is the nearest measured leafy green |
 | Amaranth leaves | tandaljo, mulai keerai, dantina soppu | 100 g | 100 | USDA amaranth leaves |
 | Coriander leaves | kothmir, kothamalli, kottambari | 10 g | 10 | USDA cilantro |
@@ -151,7 +151,7 @@ Raw weights; the pipeline applies cooking yield per dish.
 | Lemon | nimbu, elumichai, nimbehannu | 1 medium | 60 | USDA lemon juice raw — recipes measure lemon as juice (95 of them, ~7 ml each), so juice is the form to sum from |
 | Papaya | papaiya, pappali | 1 katori | 150 | USDA |
 | Guava | jamphal, koyya, sibe | 1 medium | 100 | USDA guavas common raw |
-| Orange / Sweet lime | santara, mosambi | 1 medium | 130 | USDA |
+| Orange / Sweet lime | santara, mosambi | 1 medium | 130 | USDA oranges raw navels — a bare `USDA` returned *sweet potatoes*, orange flesh |
 | Chikoo | sapota | 1 medium | 80 | USDA sapodilla |
 | Pomegranate | dadam, mathulai, dalimbe | 1 katori | 120 | USDA |
 | Watermelon | tarbuch, tharbooj | 1 slice | 200 | USDA |
@@ -182,7 +182,7 @@ Raw weights; the pipeline applies cooking yield per dish.
 | Coconut oil | — | 1 tsp | 5 | USDA |
 | Sesame oil | til tel, nallennai | 1 tsp | 5 | USDA |
 | Mustard oil | — | 1 tsp | 5 | USDA |
-| **①** Sugar | khand, sakkarai, sakkare | 1 tsp | 5 | USDA |
+| **①** Sugar | khand, sakkarai, sakkare | 1 tsp | 5 | USDA sugars granulated — a bare `USDA` returned turbinado |
 | **①** Jaggery | gol, gud, vellam, bella | 1 tbsp | 15 | USDA sugars brown — no FDC record for gur carries nutrients at all; brown sugar is the nearest measured food, molasses and all |
 | Honey | madh, thean | 1 tsp | 7 | USDA |
 | **①** Salt | mithu, uppu | 1 tsp | 6 | USDA salt table — **the sodium source that matters most** (§21.4 limit nutrient) |
@@ -237,7 +237,7 @@ Raw weights; the pipeline applies cooking yield per dish.
 | Fish, pomfret | paplet, vavval | 100 g | 100 | USDA fish flatfish flounder and sole species raw — FDC has no pomfret; a flat lean white fish is the nearest it measures |
 | Fish, seer / kingfish | surmai, vanjaram, anjal | 100 g | 100 | USDA fish mackerel king raw — `mackerel basis` returned *salted* mackerel, 305 kcal |
 | Fish, sardine | mathi, bootai | 100 g | 100 | USDA fish sardine atlantic canned in oil drained solids with bone — a bare `USDA` returned sardine *oil*, 902 kcal |
-| Prawns | jhinga, eral, sigadi | 100 g | 100 | USDA shrimp |
+| Prawns | jhinga, eral, sigadi | 100 g | 100 | USDA crustaceans shrimp mixed species raw — `shrimp` returned the cooked record |
 
 ---
 
