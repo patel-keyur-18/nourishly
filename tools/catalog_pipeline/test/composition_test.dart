@@ -48,6 +48,32 @@ void main() {
       expect(recipe.unquantifiedNotes, isEmpty);
     });
 
+    test('reads a counted ingredient as a piece quantity', () {
+      final result = parser.parse('Egg 2 pieces, onion 25 g, oil 6 g');
+      expect(result, isA<Recipe>());
+      expect(
+        (result as Recipe).ingredients.first,
+        const RecipeIngredient('Egg', 2, 'pieces'),
+      );
+    });
+
+    test('a counted first segment is a recipe, not a reference to another '
+        'dish', () {
+      expect(parser.parse('Egg 2 pieces, salt 2 g'), isA<Recipe>());
+    });
+
+    test(
+      'a segment that states both a count and a weight keeps the weight',
+      () {
+        final recipe =
+            parser.parse('Moth beans 70 g, pav 1 piece 60 g') as Recipe;
+        expect(
+          recipe.ingredients.last,
+          const RecipeIngredient('pav 1 piece', 60, 'g'),
+        );
+      },
+    );
+
     test('recognizes tumbler as a household raw-measure unit', () {
       final result = parser.parse(
         'Rice 3 tumbler, urad dal 1 tumbler, fenugreek',

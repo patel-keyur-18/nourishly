@@ -17,9 +17,25 @@
       "fdcId": 174988,
       "description": "Croissants, apple"
     },
+    "apricots dried [Foundation,SR Legacy]": {
+      "fdcId": 173941,
+      "description": "Apricots, dried, sulfured, uncooked"
+    },
+    "bamboo shoots raw [Foundation,SR Legacy]": {
+      "fdcId": 169210,
+      "description": "Bamboo shoots, raw"
+    },
     "banana [Foundation,SR Legacy]": {
       "fdcId": 173945,
       "description": "Bananas, dehydrated, or banana powder"
+    },
+    "basil fresh [Foundation,SR Legacy]": {
+      "fdcId": 172232,
+      "description": "Basil, fresh"
+    },
+    "beef ground raw [Foundation,SR Legacy]": {
+      "fdcId": 168608,
+      "description": "Beef, grass-fed, ground, raw"
     },
     "beets [Foundation,SR Legacy]": {
       "fdcId": 2685576,
@@ -37,6 +53,10 @@
       "fdcId": 2644282,
       "description": "Chickpeas, (garbanzo beans, bengal gram), dry"
     },
+    "bread crumbs dry grated [Foundation,SR Legacy]": {
+      "fdcId": 174928,
+      "description": "Bread, crumbs, dry, grated, plain"
+    },
     "bread white commercially prepared roll [Foundation,SR Legacy]": {
       "fdcId": 174925,
       "description": "Bread, white, commercially prepared, toasted"
@@ -44,6 +64,10 @@
     "bread, white [Foundation,SR Legacy]": {
       "fdcId": 167532,
       "description": "Bread, white wheat"
+    },
+    "broccoli raw [Foundation,SR Legacy]": {
+      "fdcId": 747447,
+      "description": "Broccoli, raw"
     },
     "bulgur dry [Foundation,SR Legacy]": {
       "fdcId": 170688,
@@ -61,6 +85,10 @@
       "fdcId": 170392,
       "description": "Cabbage, kimchi"
     },
+    "cake sponge commercially prepared [Foundation,SR Legacy]": {
+      "fdcId": 172706,
+      "description": "Cake, sponge, commercially prepared"
+    },
     "calabash [Foundation,SR Legacy]": {
       "fdcId": 169232,
       "description": "Gourd, white-flowered (calabash), raw"
@@ -73,9 +101,25 @@
       "fdcId": 2515374,
       "description": "Nuts, cashew nuts, raw"
     },
+    "cassava raw [Foundation,SR Legacy]": {
+      "fdcId": 169985,
+      "description": "Cassava, raw"
+    },
+    "catsup [Foundation,SR Legacy]": {
+      "fdcId": 168556,
+      "description": "Catsup"
+    },
     "cauliflower [Foundation,SR Legacy]": {
       "fdcId": 2685573,
       "description": "Cauliflower, raw"
+    },
+    "cereals ready-to-eat corn flakes [Foundation,SR Legacy]": {
+      "fdcId": 174648,
+      "description": "Cereals ready-to-eat, RALSTON Corn Flakes"
+    },
+    "cereals ready-to-eat muesli [Foundation,SR Legacy]": {
+      "fdcId": 169075,
+      "description": "Cereals ready-to-eat, ALPEN"
     },
     "cereals ready-to-eat rice puffed [Foundation,SR Legacy]": {
       "fdcId": 173912,
@@ -89,9 +133,33 @@
       "fdcId": 2512378,
       "description": "Buckwheat, whole grain"
     },
+    "cheese cheddar [Foundation,SR Legacy]": {
+      "fdcId": 328637,
+      "description": "Cheese, cheddar"
+    },
+    "cheese cream [Foundation,SR Legacy]": {
+      "fdcId": 173418,
+      "description": "Cheese, cream"
+    },
+    "cheese mozzarella whole milk [Foundation,SR Legacy]": {
+      "fdcId": 170845,
+      "description": "Cheese, mozzarella, whole milk"
+    },
+    "cheese parmesan grated [Foundation,SR Legacy]": {
+      "fdcId": 171247,
+      "description": "Cheese, parmesan, grated"
+    },
+    "cheese ricotta whole milk [Foundation,SR Legacy]": {
+      "fdcId": 746766,
+      "description": "Cheese, ricotta, whole milk"
+    },
     "cheese, processed [Foundation,SR Legacy]": {
       "fdcId": 170854,
       "description": "Cheese, pasteurized process, pimento"
+    },
+    "chicken breast roasted [Foundation,SR Legacy]": {
+      "fdcId": 174608,
+      "description": "Chicken breast, roll, oven-roasted"
     },
     "chicken broiler [Foundation,SR Legacy]": {
       "fdcId": 171524,
@@ -101,9 +169,17 @@
       "fdcId": 174288,
       "description": "Chickpea flour (besan)"
     },
+    "chickpeas cooked [Foundation,SR Legacy]": {
+      "fdcId": 173799,
+      "description": "Chickpeas (garbanzo beans, bengal gram), mature seeds, cooked, boiled, with salt"
+    },
     "chickpeas split [Foundation,SR Legacy]": {
       "fdcId": 174288,
       "description": "Chickpea flour (besan)"
+    },
+    "chocolate dark 70-85% cacao [Foundation,SR Legacy]": {
+      "fdcId": 170273,
+      "description": "Chocolate, dark, 70-85% cacao solids"
     },
     "cilantro [Foundation,SR Legacy]": {
       "fdcId": 169997,
@@ -112,6 +188,10 @@
     "cluster beans [Foundation,SR Legacy]": {
       "fdcId": 169330,
       "description": "Broccoli, flower clusters, raw"
+    },
+    "cocoa dry powder unsweetened [Foundation,SR Legacy]": {
+      "fdcId": 169593,
+      "description": "Cocoa, dry powder, unsweetened"
     },
     "coconut meat raw [Foundation,SR Legacy]": {
       "fdcId": 170169,
@@ -133,6 +213,10 @@
       "fdcId": 171881,
       "description": "Beverages, coffee, brewed, breakfast blend"
     },
+    "coffee instant powder [Foundation,SR Legacy]": {
+      "fdcId": 174133,
+      "description": "Beverages, coffee, instant, decaffeinated, powder"
+    },
     "cola [Foundation,SR Legacy]": {
       "fdcId": 175093,
       "description": "Beverages, carbonated, cola, fast-food cola"
@@ -141,13 +225,33 @@
       "fdcId": 2758990,
       "description": "Sweetened condensed milk"
     },
+    "cookies digestive [Foundation,SR Legacy]": {
+      "fdcId": 170975,
+      "description": "Babyfood, cookies"
+    },
     "coriander powder [Foundation,SR Legacy]": {
       "fdcId": 170922,
       "description": "Spices, coriander seed"
     },
+    "corn flour whole grain yellow [Foundation,SR Legacy]": {
+      "fdcId": 170290,
+      "description": "Corn flour, whole-grain, yellow"
+    },
+    "corn sweet yellow raw [Foundation,SR Legacy]": {
+      "fdcId": 169998,
+      "description": "Corn, sweet, yellow, raw"
+    },
+    "cornstarch [Foundation,SR Legacy]": {
+      "fdcId": 169698,
+      "description": "Cornstarch"
+    },
     "cowpeas [Foundation,SR Legacy]": {
       "fdcId": 169224,
       "description": "Cowpeas, leafy tips, raw"
+    },
+    "crab blue raw [Foundation,SR Legacy]": {
+      "fdcId": 174204,
+      "description": "Crustaceans, crab, blue, raw"
     },
     "cucumber [Foundation,SR Legacy]": {
       "fdcId": 169225,
@@ -161,6 +265,10 @@
       "fdcId": 2259792,
       "description": "Buttermilk, low fat"
     },
+    "curry leaves [Foundation,SR Legacy]": {
+      "fdcId": 168416,
+      "description": "Drumstick leaves, raw"
+    },
     "dates [Foundation,SR Legacy]": {
       "fdcId": 168191,
       "description": "Dates, medjool"
@@ -172,6 +280,14 @@
     "drumstick [Foundation,SR Legacy]": {
       "fdcId": 168416,
       "description": "Drumstick leaves, raw"
+    },
+    "drumstick leaves raw [Foundation,SR Legacy]": {
+      "fdcId": 168416,
+      "description": "Drumstick leaves, raw"
+    },
+    "duck meat raw [Foundation,SR Legacy]": {
+      "fdcId": 172408,
+      "description": "Duck, domesticated, meat and skin, raw"
     },
     "egg, boiled [Foundation,SR Legacy]": {
       "fdcId": 173424,
@@ -189,6 +305,26 @@
       "fdcId": 172023,
       "description": "Millet flour"
     },
+    "fish anchovy raw [Foundation,SR Legacy]": {
+      "fdcId": 174182,
+      "description": "Fish, anchovy, european, raw"
+    },
+    "fish carp raw [Foundation,SR Legacy]": {
+      "fdcId": 171952,
+      "description": "Fish, carp, raw"
+    },
+    "fish mackerel raw [Foundation,SR Legacy]": {
+      "fdcId": 175119,
+      "description": "Fish, mackerel, Atlantic, raw"
+    },
+    "fish shad american raw [Foundation,SR Legacy]": {
+      "fdcId": 173696,
+      "description": "Fish, shad, american, raw"
+    },
+    "fish tuna light canned in water drained [Foundation,SR Legacy]": {
+      "fdcId": 334194,
+      "description": "Fish, tuna, light, canned in water, drained solids"
+    },
     "fish, pomfret [Foundation,SR Legacy]": {
       "fdcId": 174195,
       "description": "Fish, fish sticks, frozen, prepared"
@@ -196,6 +332,10 @@
     "fish, sardine [Foundation,SR Legacy]": {
       "fdcId": 173578,
       "description": "Fish oil, sardine"
+    },
+    "fruit cocktail canned in juice [Foundation,SR Legacy]": {
+      "fdcId": 170063,
+      "description": "Vegetable juice cocktail, canned"
     },
     "garam masala [Foundation,SR Legacy]": {
       "fdcId": 171181,
@@ -205,9 +345,17 @@
       "fdcId": 1104647,
       "description": "Garlic, raw"
     },
+    "gelatins dry powder unsweetened [Foundation,SR Legacy]": {
+      "fdcId": 169599,
+      "description": "Gelatins, dry powder, unsweetened"
+    },
     "ginger [Foundation,SR Legacy]": {
       "fdcId": 169231,
       "description": "Ginger root, raw"
+    },
+    "gooseberries raw [Foundation,SR Legacy]": {
+      "fdcId": 173030,
+      "description": "Gooseberries, raw"
     },
     "grapes [Foundation,SR Legacy]": {
       "fdcId": 169393,
@@ -233,6 +381,10 @@
       "fdcId": 167528,
       "description": "Pastry, Pastelitos de Guava (guava pastries)"
     },
+    "gum arabic [Foundation,SR Legacy]": {
+      "fdcId": 168771,
+      "description": "Chewing gum"
+    },
     "heavy cream [Foundation,SR Legacy]": {
       "fdcId": 2346386,
       "description": "Cream, heavy"
@@ -240,6 +392,10 @@
     "honey [Foundation,SR Legacy]": {
       "fdcId": 169640,
       "description": "Honey"
+    },
+    "hot chili sauce [Foundation,SR Legacy]": {
+      "fdcId": 171605,
+      "description": "Sauce, chili, peppers, hot, immature green, canned"
     },
     "hyacinth beans [Foundation,SR Legacy]": {
       "fdcId": 175210,
@@ -257,6 +413,10 @@
       "fdcId": 2432940,
       "description": "JAGGERY (GUR)"
     },
+    "jams and preserves [Foundation,SR Legacy]": {
+      "fdcId": 169641,
+      "description": "Jams and preserves"
+    },
     "kidney beans [Foundation,SR Legacy]": {
       "fdcId": 169885,
       "description": "Beans, liquid from stewed kidney beans"
@@ -264,6 +424,18 @@
     "lamb goat [Foundation,SR Legacy]": {
       "fdcId": 172617,
       "description": "Lamb, New Zealand, imported, ground lamb, raw"
+    },
+    "lamb variety meats liver raw [Foundation,SR Legacy]": {
+      "fdcId": 172531,
+      "description": "Lamb, variety meats and by-products, liver, raw"
+    },
+    "leavening agents baking powder double-acting [Foundation,SR Legacy]": {
+      "fdcId": 172804,
+      "description": "Leavening agents, baking powder, double-acting, straight phosphate"
+    },
+    "leavening agents baking soda [Foundation,SR Legacy]": {
+      "fdcId": 175040,
+      "description": "Leavening agents, baking soda"
     },
     "lemon raw [Foundation,SR Legacy]": {
       "fdcId": 167747,
@@ -273,6 +445,14 @@
       "fdcId": 2644283,
       "description": "Lentils, dry"
     },
+    "lettuce iceberg raw [Foundation,SR Legacy]": {
+      "fdcId": 2346388,
+      "description": "Lettuce, iceberg, raw"
+    },
+    "lotus seeds dried [Foundation,SR Legacy]": {
+      "fdcId": 170149,
+      "description": "Seeds, lotus seeds, dried"
+    },
     "mackerel basis [Foundation,SR Legacy]": {
       "fdcId": 168149,
       "description": "Fish, mackerel, salted"
@@ -280,6 +460,14 @@
     "mango [Foundation,SR Legacy]": {
       "fdcId": 169910,
       "description": "Mangos, raw"
+    },
+    "mayonnaise regular [Foundation,SR Legacy]": {
+      "fdcId": 2758986,
+      "description": "Mayonnaise, Regular"
+    },
+    "milk dry whole [Foundation,SR Legacy]": {
+      "fdcId": 170876,
+      "description": "Milk, dry, whole, with added vitamin D"
     },
     "milk, buffalo, whole [Foundation,SR Legacy]": {
       "fdcId": 171280,
@@ -309,6 +497,14 @@
       "fdcId": 169251,
       "description": "Mushrooms, white, raw"
     },
+    "mussels blue raw [Foundation,SR Legacy]": {
+      "fdcId": 174216,
+      "description": "Mollusks, mussel, blue, raw"
+    },
+    "mustard greens raw [Foundation,SR Legacy]": {
+      "fdcId": 169256,
+      "description": "Mustard greens, raw"
+    },
     "mustard oil [Foundation,SR Legacy]": {
       "fdcId": 172337,
       "description": "Oil, mustard"
@@ -321,13 +517,25 @@
       "fdcId": 173576,
       "description": "Oil, oat"
     },
+    "oil olive salad or cooking [Foundation,SR Legacy]": {
+      "fdcId": 171413,
+      "description": "Oil, olive, salad or cooking"
+    },
     "okra [Foundation,SR Legacy]": {
       "fdcId": 169260,
       "description": "Okra, raw"
     },
+    "olives ripe canned [Foundation,SR Legacy]": {
+      "fdcId": 169095,
+      "description": "Olives, ripe, canned (jumbo-super colossal)"
+    },
     "onion [Foundation,SR Legacy]": {
       "fdcId": 170000,
       "description": "Onions, raw"
+    },
+    "onions spring or scallions raw [Foundation,SR Legacy]": {
+      "fdcId": 170005,
+      "description": "Onions, spring or scallions (includes tops and bulb), raw"
     },
     "orange sweet lime [Foundation,SR Legacy]": {
       "fdcId": 2346404,
@@ -345,6 +553,14 @@
       "fdcId": 173263,
       "description": "Rice, brown, parboiled, cooked, UNCLE BENS"
     },
+    "parsley fresh [Foundation,SR Legacy]": {
+      "fdcId": 170416,
+      "description": "Parsley, fresh"
+    },
+    "pasta cooked [Foundation,SR Legacy]": {
+      "fdcId": 169751,
+      "description": "Pasta, cooked, enriched, with added salt"
+    },
     "pasta dry enriched [Foundation,SR Legacy]": {
       "fdcId": 169736,
       "description": "Pasta, dry, enriched"
@@ -361,9 +577,37 @@
       "fdcId": 172023,
       "description": "Millet flour"
     },
+    "peas split mature seeds raw [Foundation,SR Legacy]": {
+      "fdcId": 172428,
+      "description": "Peas, green, split, mature seeds, raw"
+    },
+    "pepperoni pork beef [Foundation,SR Legacy]": {
+      "fdcId": 2759006,
+      "description": "Pepperoni, beef and pork, sliced"
+    },
+    "peppers hot chili red dried [Foundation,SR Legacy]": {
+      "fdcId": 170106,
+      "description": "Peppers, hot chili, red, raw"
+    },
+    "pesto sauce [Foundation,SR Legacy]": {
+      "fdcId": 171582,
+      "description": "Sauce, pesto, CLASSICO, basil pesto, ready-to-serve"
+    },
     "pigeon peas [Foundation,SR Legacy]": {
       "fdcId": 172436,
       "description": "Pigeon peas (red gram), mature seeds, raw"
+    },
+    "pigeon peas cooked [Foundation,SR Legacy]": {
+      "fdcId": 172472,
+      "description": "Pigeon peas (red gram), mature seeds, cooked, boiled, with salt"
+    },
+    "pigeon peas immature seeds raw [Foundation,SR Legacy]": {
+      "fdcId": 172436,
+      "description": "Pigeon peas (red gram), mature seeds, raw"
+    },
+    "pineapple raw [Foundation,SR Legacy]": {
+      "fdcId": 2346398,
+      "description": "Pineapple, raw"
     },
     "pistachio [Foundation,SR Legacy]": {
       "fdcId": 170184,
@@ -381,9 +625,21 @@
       "fdcId": 169134,
       "description": "Pomegranates, raw"
     },
+    "pork fresh loin raw [Foundation,SR Legacy]": {
+      "fdcId": 168312,
+      "description": "Pork, fresh, loin, tenderloin, separable lean and fat, raw"
+    },
     "potato [Foundation,SR Legacy]": {
       "fdcId": 167943,
       "description": "Bread, potato"
+    },
+    "potatoes boiled cooked without skin [Foundation,SR Legacy]": {
+      "fdcId": 170439,
+      "description": "Potatoes, boiled, cooked in skin, skin, without salt"
+    },
+    "puddings vanilla ready-to-eat [Foundation,SR Legacy]": {
+      "fdcId": 169608,
+      "description": "Puddings, vanilla, ready-to-eat"
     },
     "pumpkin [Foundation,SR Legacy]": {
       "fdcId": 168448,
@@ -405,6 +661,10 @@
       "fdcId": 167806,
       "description": "Baobab powder"
     },
+    "rice brown long-grain raw [Foundation,SR Legacy]": {
+      "fdcId": 2512380,
+      "description": "Rice, brown, long grain, unenriched, raw"
+    },
     "rice flakes [Foundation,SR Legacy]": {
       "fdcId": 170002,
       "description": "Onions, dehydrated flakes"
@@ -412,6 +672,10 @@
     "rice flour [Foundation,SR Legacy]": {
       "fdcId": 1104812,
       "description": "Flour, rice, brown"
+    },
+    "rice noodles dry [Foundation,SR Legacy]": {
+      "fdcId": 169742,
+      "description": "Rice noodles, dry"
     },
     "rice white long-grain cooked [Foundation,SR Legacy]": {
       "fdcId": 169708,
@@ -424,6 +688,10 @@
     "ridge gourd [Foundation,SR Legacy]": {
       "fdcId": 168414,
       "description": "Gourd, dishcloth (towelgourd), raw"
+    },
+    "roselle raw [Foundation,SR Legacy]": {
+      "fdcId": 168170,
+      "description": "Roselle, raw"
     },
     "salt [Foundation,SR Legacy]": {
       "fdcId": 173410,
@@ -465,6 +733,10 @@
       "fdcId": 170150,
       "description": "Seeds, sesame seeds, whole, dried"
     },
+    "shallots raw [Foundation,SR Legacy]": {
+      "fdcId": 170499,
+      "description": "Shallots, raw"
+    },
     "shrimp [Foundation,SR Legacy]": {
       "fdcId": 175180,
       "description": "Crustaceans, shrimp, cooked"
@@ -477,13 +749,69 @@
       "fdcId": 169716,
       "description": "Sorghum grain"
     },
+    "soup stock chicken home-prepared [Foundation,SR Legacy]": {
+      "fdcId": 172884,
+      "description": "Soup, stock, chicken, home-prepared"
+    },
+    "soup stock vegetable [Foundation,SR Legacy]": {
+      "fdcId": 172883,
+      "description": "Soup, stock, beef, home-prepared"
+    },
+    "soy protein concentrate [Foundation,SR Legacy]": {
+      "fdcId": 174301,
+      "description": "Soy protein concentrate, produced by acid wash"
+    },
+    "soy sauce made from soy and wheat [Foundation,SR Legacy]": {
+      "fdcId": 174277,
+      "description": "Soy sauce made from soy and wheat (shoyu)"
+    },
+    "spices bay leaf [Foundation,SR Legacy]": {
+      "fdcId": 170917,
+      "description": "Spices, bay leaf"
+    },
+    "spices cardamom [Foundation,SR Legacy]": {
+      "fdcId": 170919,
+      "description": "Spices, cardamom"
+    },
+    "spices cinnamon ground [Foundation,SR Legacy]": {
+      "fdcId": 171320,
+      "description": "Spices, cinnamon, ground"
+    },
+    "spices fennel seed [Foundation,SR Legacy]": {
+      "fdcId": 171323,
+      "description": "Spices, fennel seed"
+    },
+    "spices fenugreek seed [Foundation,SR Legacy]": {
+      "fdcId": 171324,
+      "description": "Spices, fenugreek seed"
+    },
+    "spices nutmeg ground [Foundation,SR Legacy]": {
+      "fdcId": 171326,
+      "description": "Spices, nutmeg, ground"
+    },
+    "spices oregano dried [Foundation,SR Legacy]": {
+      "fdcId": 171328,
+      "description": "Spices, oregano, dried"
+    },
     "spices pepper black [Foundation,SR Legacy]": {
       "fdcId": 170931,
       "description": "Spices, pepper, black"
     },
+    "spices poppy seed [Foundation,SR Legacy]": {
+      "fdcId": 171330,
+      "description": "Spices, poppy seed"
+    },
+    "spices saffron [Foundation,SR Legacy]": {
+      "fdcId": 170934,
+      "description": "Spices, saffron"
+    },
     "spinach [Foundation,SR Legacy]": {
       "fdcId": 170494,
       "description": "Spinach souffle"
+    },
+    "squash zucchini raw [Foundation,SR Legacy]": {
+      "fdcId": 168565,
+      "description": "Squash, zucchini, baby, raw"
     },
     "sugar [Foundation,SR Legacy]": {
       "fdcId": 170674,
@@ -509,6 +837,10 @@
       "fdcId": 170281,
       "description": "Candies, Tamarind"
     },
+    "tapioca pearl dry [Foundation,SR Legacy]": {
+      "fdcId": 169717,
+      "description": "Tapioca, pearl, dry"
+    },
     "taro [Foundation,SR Legacy]": {
       "fdcId": 169308,
       "description": "Taro, raw"
@@ -517,13 +849,29 @@
       "fdcId": 168487,
       "description": "Taro leaves, raw"
     },
+    "tea instant unsweetened powder [Foundation,SR Legacy]": {
+      "fdcId": 173230,
+      "description": "Beverages, tea, instant, unsweetened, powder"
+    },
+    "tofu raw firm [Foundation,SR Legacy]": {
+      "fdcId": 172475,
+      "description": "Tofu, raw, firm, prepared with calcium sulfate"
+    },
     "tomato [Foundation,SR Legacy]": {
       "fdcId": 170461,
       "description": "Tomato powder"
     },
+    "tomato puree canned [Foundation,SR Legacy]": {
+      "fdcId": 2685582,
+      "description": "Tomato, puree, canned"
+    },
     "turmeric [Foundation,SR Legacy]": {
       "fdcId": 172231,
       "description": "Spices, turmeric, ground"
+    },
+    "vanilla extract [Foundation,SR Legacy]": {
+      "fdcId": 173471,
+      "description": "Vanilla extract"
     },
     "vegetables mixed frozen unprepared [Foundation,SR Legacy]": {
       "fdcId": 170471,
@@ -532,6 +880,10 @@
     "vermicelli, raw [Foundation,SR Legacy]": {
       "fdcId": 169884,
       "description": "Vermicelli, made from soy"
+    },
+    "vinegar distilled [Foundation,SR Legacy]": {
+      "fdcId": 172237,
+      "description": "Vinegar, distilled"
     },
     "walnut [Foundation,SR Legacy]": {
       "fdcId": 171030,
@@ -560,6 +912,10 @@
     "yam [Foundation,SR Legacy]": {
       "fdcId": 170071,
       "description": "Yam, raw"
+    },
+    "yeast baker's active dry [Foundation,SR Legacy]": {
+      "fdcId": 175043,
+      "description": "Leavening agents, yeast, baker's, active dry"
     },
     "yogurt greek plain whole milk [Foundation,SR Legacy]": {
       "fdcId": 2259794,

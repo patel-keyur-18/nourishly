@@ -28,32 +28,13 @@ import 'package:catalog_pipeline/catalog_pipeline.dart';
 
 const _lockPath = 'docs/catalog/catalog.lock.json';
 
-/// Every `docs/catalog/*.md` table row, parsed and classified. Sorted by
-/// filename so two runs on two machines agree.
-({List<CatalogRow> rows, List<File> files}) _readCatalog(Directory dir) {
-  final files =
-      dir
-          .listSync()
-          .whereType<File>()
-          .where((f) => f.path.endsWith('.md') && !f.path.endsWith('README.md'))
-          .toList()
-        ..sort((a, b) => a.path.compareTo(b.path));
-
-  final parser = CatalogSourceParser();
-  final compositionParser = CompositionParser();
-  return (
-    rows: [
-      for (final file in files)
-        for (final entry in parser.parseFile(file))
-          CatalogRow(entry, compositionParser.parse(entry.rawComposition)),
-    ],
-    files: files,
-  );
-}
-
 /// Everything `--check` can object to. Collected in full rather than
 /// thrown at the first, so one run tells you everything to fix.
-List<String> _problems(List<CatalogRow> rows, CatalogIndex index) {
+List<String> _problems(
+  List<CatalogRow> rows,
+  CatalogIndex index,
+  Map<String, CatalogRow> supersededBy,
+) {
   final problems = <String>[];
 
   // 1. Key collisions. Keys are unique while no file repeats a name, so
@@ -86,15 +67,43 @@ List<String> _problems(List<CatalogRow> rows, CatalogIndex index) {
           '"$key", which has no entry in ingredientTargets. Run --suggest.',
         );
       } else if (index.lookup(key) == null) {
+        // The common way this happens now: a CSV described the same food
+        // and won, so the markdown row the target named is gone. Name the
+        // row that replaced it, because that is the fix.
+        final winner = supersededBy[target];
         problems.add(
-          'ingredient "$key" targets "$target", which is not a usable '
-          'catalog row.',
+          winner == null
+              ? 'ingredient "$key" targets "$target", which is not a usable '
+                    'catalog row.'
+              : 'ingredient "$key" targets "$target", which '
+                    '"${winner.entry.sourceFile}" superseded. Repoint it at '
+                    '"${winner.entry.key}" (${winner.entry.foodName}).',
         );
       }
     }
   }
 
-  // 3. Implausible yields. A row whose two weight columns imply a factor
+  // 3. A source file nobody has given a cuisine. Defaulting would file a
+  //    Bengali dish under whatever bucket came first, and nobody would
+  //    notice until they went looking for it.
+  final unclassified = <String>{};
+  for (final row in rows) {
+    if (cuisineFor(
+          sourceFile: row.entry.sourceFile,
+          section: row.entry.section,
+        ) ==
+        null) {
+      unclassified.add(row.entry.sourceFile);
+    }
+  }
+  for (final file in unclassified) {
+    problems.add(
+      'source file "$file" has no cuisine. Add it to _cuisineByCsv or '
+      '_cuisineByFile in cuisine_tags.dart.',
+    );
+  }
+
+  // 4. Implausible yields. A row whose two weight columns imply a factor
   //    outside the band is a curation typo, not something the pipeline
   //    should quietly paper over with a cooking-method constant.
   for (final row in rows) {
@@ -102,7 +111,14 @@ List<String> _problems(List<CatalogRow> rows, CatalogIndex index) {
     if (composition is! Recipe || composition.ingredients.isEmpty) continue;
     final result = resolveRecipeYield([
       for (final ingredient in composition.ingredients)
-        ResolvedIngredient(ingredient, const {}),
+        // Nutrients are not needed to check a yield, but a piece weight
+        // is: an ingredient stated as "Egg 2 pieces" has no grams without
+        // the row it resolves to.
+        ResolvedIngredient(
+          ingredient,
+          const {},
+          pieceGrams: index.pieceGramsForIngredient(ingredient.name),
+        ),
     ], servingGrams: row.entry.servingAmount);
     if (result.basis == YieldBasis.cookingMethod) {
       problems.add(
@@ -117,8 +133,15 @@ List<String> _problems(List<CatalogRow> rows, CatalogIndex index) {
   return problems;
 }
 
-int _runCheck(List<CatalogRow> rows, CatalogIndex index) {
-  final problems = _problems(rows, index);
+int _runCheck(CatalogSources catalog, CatalogIndex index) {
+  final rows = catalog.rows;
+  // Loser key -> the row that displaced it, so both a dangling target and
+  // a `[removed]` line can say what took the row's place instead of
+  // leaving the curator to work it out.
+  final supersededBy = {
+    for (final s in catalog.superseded) s.loser.entry.key: s.winner,
+  };
+  final problems = _problems(rows, index, supersededBy);
   final lockFile = File(_lockPath);
   final current = CatalogLock.fromRows(rows, index);
 
@@ -137,7 +160,14 @@ int _runCheck(List<CatalogRow> rows, CatalogIndex index) {
     final added = changes.where((c) => c.severity == 'added').length;
     if (added > 0) stdout.writeln('$added new row(s) — fine, that is the job.');
     for (final change in changes.where((c) => c.severity != 'added')) {
-      stdout.writeln('  $change');
+      final winner = supersededBy[change.key];
+      stdout.writeln(
+        winner == null
+            ? '  $change'
+            : '  $change Superseded by "${winner.entry.key}" '
+                  '(${winner.entry.foodName}) from '
+                  '${winner.entry.sourceFile}.',
+      );
       if (change.isBreaking) breaking++;
     }
   }
@@ -199,7 +229,7 @@ void _runSuggest(List<CatalogRow> rows, CatalogIndex index) {
 }
 
 void main(List<String> args) {
-  const known = ['--check', '--suggest', '--write-lock'];
+  const known = ['--check', '--suggest', '--write-lock', '--superseded'];
   final unknown = args.where((a) => !known.contains(a));
   if (unknown.isNotEmpty) {
     stderr.writeln('Unknown argument(s): ${unknown.join(', ')}');
@@ -215,11 +245,26 @@ void main(List<String> args) {
     exit(1);
   }
 
-  final catalog = _readCatalog(catalogDir);
+  final catalog = loadCatalogSources();
   final index = CatalogIndex(catalog.rows);
 
   if (args.contains('--suggest')) {
     _runSuggest(catalog.rows, index);
+    return;
+  }
+
+  if (args.contains('--superseded')) {
+    if (catalog.superseded.isEmpty) {
+      stdout.writeln('No food is described by more than one source.');
+      return;
+    }
+    stdout.writeln(
+      '${catalog.superseded.length} row(s) collapsed — one row per food, '
+      'highest-precedence source winning:\n',
+    );
+    for (final s in catalog.superseded) {
+      stdout.writeln('  $s');
+    }
     return;
   }
 
@@ -231,7 +276,7 @@ void main(List<String> args) {
   }
 
   if (args.contains('--check')) {
-    exit(_runCheck(catalog.rows, index));
+    exit(_runCheck(catalog, index));
   }
 
   // Default: the summary this tool has always printed.
@@ -241,11 +286,13 @@ void main(List<String> args) {
   var recipes = 0;
   final needsReview = <(CatalogSourceEntry, NeedsManualReview)>[];
 
-  for (final file in catalog.files) {
-    final rows = catalog.rows.where(
-      (r) => r.entry.sourceFile == file.uri.pathSegments.last,
-    );
-    stdout.writeln('${file.uri.pathSegments.last}: ${rows.length} rows');
+  final bySource = <String, List<CatalogRow>>{};
+  for (final row in catalog.rows) {
+    (bySource[row.entry.sourceFile] ??= []).add(row);
+  }
+  for (final source in bySource.keys) {
+    final rows = bySource[source]!;
+    stdout.writeln('$source: ${rows.length} rows');
     for (final row in rows) {
       total++;
       if (row.entry.isTier1) tier1++;
@@ -262,6 +309,7 @@ void main(List<String> args) {
 
   stdout.writeln('\n--- Summary ---');
   stdout.writeln('Total rows:         $total');
+  stdout.writeln('Collapsed dupes:    ${catalog.superseded.length}');
   stdout.writeln('Tier 1 (①):         $tier1');
   stdout.writeln('Direct USDA lookup: $usdaLookups');
   stdout.writeln('Recipes:            $recipes');

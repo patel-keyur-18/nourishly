@@ -38,12 +38,15 @@ enum CookingMethod {
 /// The band a real dish's yield factor can land in, used to sanity-check
 /// one derived from a stated cooked weight.
 ///
-/// The committed catalog spans 0.81x (khakhra and other dishes that dry
-/// out) to 12.5x (pepper rasam — 12 g of solids in a 150 g katori, the
-/// rest water the composition deliberately does not list because water has
-/// no nutrients). The band is wider than that on both sides: it is here to
-/// catch a mistyped weight, not to second-guess a real dish.
-const double minPlausibleYield = 0.5;
+/// The catalog spans 0.45x to 12.5x. The low end is the reduced-milk
+/// sweets the regional catalogs brought in — a payasam simmers 221 g of
+/// milk, rice and jaggery down to a 100 g katori, and the water it loses
+/// is the whole point of the dish. The high end is pepper rasam: 12 g of
+/// solids in a 150 g katori, the rest water the composition deliberately
+/// does not list because water has no nutrients. The band is wider than
+/// that on both sides: it is here to catch a mistyped weight, not to
+/// second-guess a real dish.
+const double minPlausibleYield = 0.4;
 const double maxPlausibleYield = 15.0;
 
 /// Where a [RecipeNutrition]'s yield factor came from.

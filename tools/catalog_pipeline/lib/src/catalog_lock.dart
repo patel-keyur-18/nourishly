@@ -141,7 +141,11 @@ class CatalogLock {
         };
         final result = resolveRecipeYield([
           for (final ingredient in composition.ingredients)
-            ResolvedIngredient(ingredient, const {}),
+            ResolvedIngredient(
+              ingredient,
+              const {},
+              pieceGrams: index.pieceGramsForIngredient(ingredient.name),
+            ),
         ], servingGrams: row.entry.servingAmount);
         rawGrams = result.rawIngredientGrams;
         yieldFactor = result.yieldFactor;

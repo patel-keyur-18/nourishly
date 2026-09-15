@@ -21,7 +21,7 @@
 // then skip it) or export it in a shell only you can read first.
 //
 // Recipe entries (composition = ingredients + grams) are resolved too.
-// Each ingredient is resolved through `_IngredientResolver`, which tries
+// Each ingredient is resolved through `IngredientResolver`, which tries
 // the catalog itself before FDC — the catalog is compositional, so an
 // ingredient is often another catalog row ("Bhel" lists `sev`, "Kothu
 // parotta" lists `Parotta`, "Mohanthal" lists `khoya`) that FDC has never
@@ -98,12 +98,13 @@ Future<FdcFood?> _searchFdc(FdcSource client, List<String> queries) async {
 /// from — an FDC food, or another catalog row resolved through its own
 /// recipe (in which case [catalogRow] names it and the values are already
 /// on a cooked basis).
-class _IngredientSource {
-  const _IngredientSource(
+class IngredientSource {
+  const IngredientSource(
     this.nutrientsPer100g, {
     this.food,
     this.catalogRow,
     this.catalogRowName,
+    this.pieceGrams,
   });
 
   final Map<String, double> nutrientsPer100g;
@@ -117,6 +118,12 @@ class _IngredientSource {
 
   /// That row's display name, carried only so the draft reads.
   final String? catalogRowName;
+
+  /// What one piece of that row weighs, from [pieceGramsFor] — the only
+  /// honest source of grams for an ingredient a recipe counts rather than
+  /// weighs ("Egg 2 pieces"). Null when the row's serving does not count
+  /// pieces, which makes `gramsForIngredient` say so instead of guessing.
+  final double? pieceGrams;
 }
 
 /// Resolves a recipe ingredient name to per-100g nutrients.
@@ -136,12 +143,14 @@ class _IngredientSource {
 ///    which is all this pipeline used to do.
 ///
 /// Recursion is memoized on the normalized name and guarded two ways: a
-/// `visiting` set (so a dish that transitively lists itself falls through
-/// to step 3 instead of looping) and a depth cap. A cycle bail is
-/// deliberately not cached — it is a fact about one call stack, not about
-/// the ingredient.
-class _IngredientResolver {
-  _IngredientResolver({
+/// `visiting` set of **row keys** (so a dish that transitively lists itself
+/// falls through to step 3 instead of looping) and a depth cap. Row keys,
+/// not names: a dish and the ingredient row it is cooked from share a name
+/// far more often than they are the same row, and guarding on the name
+/// mistook every such pair for a cycle. A cycle bail is deliberately not
+/// cached — it is a fact about one call stack, not about the ingredient.
+class IngredientResolver {
+  IngredientResolver({
     required this.client,
     required this.normalizer,
     required this.index,
@@ -154,21 +163,30 @@ class _IngredientResolver {
   /// Normalized ingredient name -> result, shared across every recipe so a
   /// common ingredient (rice, toor dal, groundnut oil) is only looked up
   /// once no matter how many dishes use it.
-  final _cache = <String, _IngredientSource?>{};
+  final _cache = <String, IngredientSource?>{};
 
   static const _maxDepth = 5;
 
-  Future<_IngredientSource?> resolve(String name, Set<String> visiting) async {
+  Future<IngredientSource?> resolve(String name, Set<String> visiting) async {
     final key = catalogKey(name);
     if (_cache.containsKey(key)) return _cache[key];
-    if (visiting.contains(key) || visiting.length >= _maxDepth) return null;
+    // Guard on the row the name *targets*, not on the name. A dish and the
+    // ingredient row it is made of routinely share a name — `Masoor dal`
+    // the dish is cooked from `Masoor dal` the raw pulse, which is the
+    // separate row `01:masoor-dal-raw` — and a name-keyed guard read that
+    // as a cycle and dropped the dish.
+    final rowKey = index.targetKeyFor(name);
+    if ((rowKey != null && visiting.contains(rowKey)) ||
+        visiting.length >= _maxDepth) {
+      return null;
+    }
 
     final source = await _resolveUncached(name, key, visiting);
     _cache[key] = source;
     return source;
   }
 
-  Future<_IngredientSource?> _resolveUncached(
+  Future<IngredientSource?> _resolveUncached(
     String name,
     String key,
     Set<String> visiting,
@@ -178,7 +196,7 @@ class _IngredientResolver {
     // the serving weight, so dropping the water would concentrate
     // everything else in the dish.
     if (waterIngredients.contains(key)) {
-      return const _IngredientSource({});
+      return const IngredientSource({});
     }
 
     final row = index.lookup(name);
@@ -189,9 +207,18 @@ class _IngredientResolver {
         client,
         _queryCandidates(row.entry, composition),
       );
-      if (food != null) return _IngredientSource(_nutrients(food), food: food);
+      if (food != null) {
+        return IngredientSource(
+          _nutrients(food),
+          food: food,
+          pieceGrams: pieceGramsFor(row.entry),
+        );
+      }
     } else if (row != null && composition is Recipe) {
-      final nested = await _resolveRecipe(row, composition, {...visiting, key});
+      final nested = await _resolveRecipe(row, composition, {
+        ...visiting,
+        row.entry.key,
+      });
       if (nested != null) return nested;
     }
 
@@ -203,12 +230,12 @@ class _IngredientResolver {
     // reported no failure while shipping the wrong food's nutrients under
     // a `verified` badge.
     //
-    // An ingredient that neither the catalog nor `ingredientAliases`
+    // An ingredient that neither the catalog nor `ingredientTargets`
     // resolves is a curation gap. Say so (§0.2: nothing is invented).
     return null;
   }
 
-  Future<_IngredientSource?> _resolveRecipe(
+  Future<IngredientSource?> _resolveRecipe(
     CatalogRow row,
     Recipe recipe,
     Set<String> visiting,
@@ -219,7 +246,13 @@ class _IngredientResolver {
     for (final ingredient in recipe.ingredients) {
       final source = await resolve(ingredient.name, visiting);
       if (source == null) return null;
-      parts.add(ResolvedIngredient(ingredient, source.nutrientsPer100g));
+      parts.add(
+        ResolvedIngredient(
+          ingredient,
+          source.nutrientsPer100g,
+          pieceGrams: source.pieceGrams,
+        ),
+      );
       await Future<void>.delayed(const Duration(milliseconds: 150));
     }
 
@@ -227,10 +260,11 @@ class _IngredientResolver {
       parts,
       servingGrams: row.entry.servingAmount,
     );
-    return _IngredientSource(
+    return IngredientSource(
       yieldResult.nutrientsPer100g,
       catalogRow: row.entry.key,
       catalogRowName: row.entry.foodName,
+      pieceGrams: pieceGramsFor(row.entry),
     );
   }
 
@@ -281,8 +315,6 @@ Future<void> main(List<String> args) async {
     exit(1);
   }
 
-  final sourceParser = CatalogSourceParser();
-  final compositionParser = CompositionParser();
   final client = CachingFdcSource(
     cache: FdcCache.defaultLocation(),
     mode: mode,
@@ -290,27 +322,16 @@ Future<void> main(List<String> args) async {
   );
   final normalizer = FdcNormalizer();
 
-  // Every parsed row, including the NeedsManualReview ones — they still
-  // occupy a name in the index, where they lose ties to a resolvable
-  // sibling ("Muthiya, fried" vs "Muthiya, steamed") rather than shadowing
-  // it.
-  final rows = <CatalogRow>[];
-  // Sorted, because `listSync` order is filesystem-defined: leaving it
-  // unsorted makes the draft's row order — and so the seed's — differ
-  // between machines for no reason.
-  final catalogFiles =
-      catalogDir
-          .listSync()
-          .whereType<File>()
-          .where((f) => f.path.endsWith('.md') && !f.path.endsWith('README.md'))
-          .toList()
-        ..sort((a, b) => a.path.compareTo(b.path));
-  for (final file in catalogFiles) {
-    for (final entry in sourceParser.parseFile(file)) {
-      rows.add(
-        CatalogRow(entry, compositionParser.parse(entry.rawComposition)),
-      );
-    }
+  // Every source — the regional CSVs and the markdown catalog — collapsed
+  // to one row per food, highest-precedence source winning
+  // (`catalog_sources.dart`).
+  final sources = loadCatalogSources();
+  final rows = sources.rows;
+  if (sources.superseded.isNotEmpty) {
+    stdout.writeln(
+      '${sources.superseded.length} duplicate food(s) collapsed; run '
+      'parse_catalog.dart --superseded to see which.',
+    );
   }
 
   final lookups = [
@@ -322,7 +343,7 @@ Future<void> main(List<String> args) async {
       if (row.composition case final Recipe c) (row.entry, c),
   ];
 
-  final resolver = _IngredientResolver(
+  final resolver = IngredientResolver(
     client: client,
     normalizer: normalizer,
     index: CatalogIndex(rows),
@@ -402,11 +423,9 @@ Future<void> main(List<String> args) async {
     var missingIngredient = false;
 
     for (final ingredient in recipe.ingredients) {
-      _IngredientSource? source;
+      IngredientSource? source;
       try {
-        source = await resolver.resolve(ingredient.name, {
-          catalogKey(entry.foodName),
-        });
+        source = await resolver.resolve(ingredient.name, {entry.key});
       } on FdcApiException catch (e) {
         failures.add(
           '${entry.foodName}: FDC request failed for ingredient '
@@ -426,20 +445,28 @@ Future<void> main(List<String> args) async {
       if (source == null) {
         failures.add(
           '${entry.foodName}: ingredient "${ingredient.name}" resolves to no '
-          'catalog row. Add a row for it, or map it in ingredientAliases.',
+          'catalog row. Add a row for it, or map it in ingredientTargets '
+          '(parse_catalog.dart --suggest writes the line).',
         );
         missingIngredient = true;
         break;
       }
 
       resolvedIngredients.add(
-        ResolvedIngredient(ingredient, source.nutrientsPer100g),
+        ResolvedIngredient(
+          ingredient,
+          source.nutrientsPer100g,
+          pieceGrams: source.pieceGrams,
+        ),
       );
       ingredientDetails.add({
         'name': ingredient.name,
         'amount': ingredient.amount,
         'unit': ingredient.unit,
-        'quantityGrams': gramsForIngredient(ingredient),
+        'quantityGrams': gramsForIngredient(
+          ingredient,
+          pieceGrams: source.pieceGrams,
+        ),
         'source': source.catalogRow != null ? 'catalog' : 'fdc',
         'catalogRow': source.catalogRow,
         'catalogRowName': source.catalogRowName,

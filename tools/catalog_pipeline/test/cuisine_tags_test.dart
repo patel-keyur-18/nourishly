@@ -199,4 +199,84 @@ void main() {
       }
     });
   });
+
+  group('regional CSVs', () {
+    test('a registered CSV gets its cuisine from the registry', () {
+      expect(
+        cuisineFor(
+          sourceFile: 'nourishly_west_bengal_food_catalog.csv',
+          section: 'West bengal food catalog',
+        ),
+        'bengali',
+      );
+    });
+
+    test('an unregistered CSV gets no cuisine, so --check can say so', () {
+      expect(
+        cuisineFor(
+          sourceFile: 'nourishly_assam_food_catalog.csv',
+          section: 'Assam food catalog',
+        ),
+        isNull,
+      );
+    });
+
+    test("a CSV's section is the file's own title and names no course", () {
+      expect(
+        courseFor(section: 'Kerala food catalog', isIngredient: false),
+        isNull,
+      );
+      expect(
+        courseFor(
+          section: 'Karnataka tamilnadu gujarat additions only',
+          isIngredient: false,
+        ),
+        isNull,
+      );
+    });
+
+    test('a CSV dish still carries its cuisine tag, prefixed', () {
+      expect(
+        cuisineTagsFor(
+          sourceFile: 'nourishly_kerala_food_catalog.csv',
+          section: 'Kerala food catalog',
+          isIngredient: false,
+        ),
+        ['cuisine:kerala'],
+      );
+    });
+  });
+
+  group('the regional pantry file', () {
+    test('its rows are pan-Indian by default', () {
+      expect(
+        cuisineFor(
+          sourceFile: '08-regional-pantry.md',
+          section: '1. Spices and aromatics',
+        ),
+        'pan-indian',
+      );
+    });
+
+    test('its western section is not', () {
+      expect(
+        cuisineFor(
+          sourceFile: '08-regional-pantry.md',
+          section: '6. Western pantry',
+        ),
+        'modern',
+      );
+    });
+
+    test('every row in it is an ingredient, whatever section it sits in', () {
+      expect(
+        cuisineTagsFor(
+          sourceFile: '08-regional-pantry.md',
+          section: '5. Meat, fish and seafood',
+          isIngredient: true,
+        ),
+        ['cuisine:pan-indian', 'course:ingredient'],
+      );
+    });
+  });
 }
