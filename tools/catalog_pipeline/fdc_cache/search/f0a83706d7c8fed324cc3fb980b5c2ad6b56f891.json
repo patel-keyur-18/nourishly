@@ -1,0 +1,17 @@
+{
+  "query": "salami italian pork [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 174603,
+      "description": "Salami, Italian, pork"
+    },
+    {
+      "fdcId": 172966,
+      "description": "Salami, Italian, pork and beef, dry, sliced, 50% less sodium"
+    },
+    {
+      "fdcId": 171616,
+      "description": "Beerwurst, beer salami, pork"
+    }
+  ]
+}
