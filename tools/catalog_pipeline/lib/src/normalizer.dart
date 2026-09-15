@@ -60,16 +60,25 @@ class FdcNormalizer {
     final matches = <NutrientMatch>[];
     final matchedNames = <String>{};
 
+    // `fdcNames` is a preference order, walked outermost: the first name
+    // the food actually carries wins, whatever order its nutrients happen
+    // to arrive in. This used to loop readings outermost, which silently
+    // let the response's ordering pick between two names the registry
+    // ranks — and `energy` now lists three, two of which disagree by up
+    // to 17% on vegetables.
     for (final def in nutrientRegistry) {
-      for (final reading in food.nutrients) {
-        if (def.fdcNames.contains(reading.name) &&
-            _canonicalUnit(reading.unit) == def.fdcUnit) {
-          matches.add(
-            NutrientMatch(nutrient: def, amountPer100g: reading.amountPer100g),
-          );
-          matchedNames.add(reading.name);
-          break;
-        }
+      for (final name in def.fdcNames) {
+        final reading = food.nutrients
+            .where(
+              (r) => r.name == name && _canonicalUnit(r.unit) == def.fdcUnit,
+            )
+            .firstOrNull;
+        if (reading == null) continue;
+        matches.add(
+          NutrientMatch(nutrient: def, amountPer100g: reading.amountPer100g),
+        );
+        matchedNames.add(reading.name);
+        break;
       }
     }
 

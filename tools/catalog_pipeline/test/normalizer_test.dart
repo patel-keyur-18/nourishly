@@ -145,4 +145,64 @@ void main() {
       expect(resolved.unmatchedFdcNutrients, ['Some Future Nutrient']);
     },
   );
+
+  group('Energy, which USDA reports under three different names', () {
+    double? energyOf(FdcFood food) => normalizer
+        .normalize(food)
+        .matches
+        .where((m) => m.nutrient.id == 'energy')
+        .map((m) => m.amountPer100g)
+        .firstOrNull;
+
+    FdcFood food(List<(String, double)> energies) => FdcFood.fromJson({
+      'fdcId': 1,
+      'description': 'Lentils, dry',
+      'foodNutrients': [
+        for (final (name, value) in energies)
+          {'nutrientName': name, 'unitName': 'KCAL', 'value': value},
+        {'nutrientName': 'Protein', 'unitName': 'G', 'value': 23.6},
+      ],
+    });
+
+    test('reads the Atwater names newer Foundation records use', () {
+      // The bug: 32 catalog foods shipped at 0 kcal with correct macros,
+      // because their FDC record drops plain `Energy` entirely.
+      expect(
+        energyOf(
+          food([
+            ('Energy (Atwater General Factors)', 360.285),
+            ('Energy (Atwater Specific Factors)', 350.9328),
+          ]),
+        ),
+        350.9328,
+      );
+    });
+
+    test('prefers Specific over General, whatever order they arrive in', () {
+      // They disagree by up to 17% on vegetables, and the response's
+      // ordering must not be what decides.
+      const general = ('Energy (Atwater General Factors)', 27.5923);
+      const specific = ('Energy (Atwater Specific Factors)', 22.85237775);
+      expect(energyOf(food([general, specific])), 22.85237775);
+      expect(energyOf(food([specific, general])), 22.85237775);
+    });
+
+    test('plain Energy still wins where a record carries it', () {
+      // SR Legacy's own `Energy` is already computed with Atwater
+      // specific factors, so the 189 foods that have it are unchanged.
+      expect(
+        energyOf(
+          food([
+            ('Energy', 352),
+            ('Energy (Atwater General Factors)', 360.285),
+          ]),
+        ),
+        352,
+      );
+    });
+
+    test('a record with no kcal energy stays absent, not zero (AP-4)', () {
+      expect(energyOf(food(const [])), isNull);
+    });
+  });
 }
