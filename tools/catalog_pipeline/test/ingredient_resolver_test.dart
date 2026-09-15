@@ -226,4 +226,35 @@ void main() {
       },
     );
   });
+
+  group('a pinned row', () {
+    test('fetches its record and never searches', () async {
+      // The guarantee the pin exists for: FDC's ranking put salt on
+      // `Butter, salted` and spinach on spinach souffle, and the search
+      // reran every fetch. A pinned row asks nothing.
+      final client = _ScriptedFdc({
+        'salt table': [
+          _food(1, 'Butter, salted', {'Energy': 717}),
+        ],
+        '#pinned': [
+          _food(173468, 'Salt, table', {'Energy': 0, 'Protein': 0}),
+        ],
+      });
+      final row = _row(
+        sourceFile: '01-common.md',
+        foodName: 'Salt',
+        composition: 'USDA #173468 salt table',
+      );
+      final resolver = IngredientResolver(
+        client: client,
+        normalizer: FdcNormalizer(),
+        index: CatalogIndex([row]),
+      );
+
+      final source = await resolver.resolve('Salt', <String>{});
+      expect(source?.food?.description, 'Salt, table');
+      expect(client.asked, isEmpty, reason: 'a pin must not search');
+      expect(resolver.rejected, isEmpty);
+    });
+  });
 }

@@ -67,6 +67,22 @@ void main(List<String> args) {
     final uncached = <String>[];
     _Resolved? hit;
 
+    // A pinned row asks FDC nothing. If its record is in the cache the
+    // answer is already known; if not, one details call will settle it.
+    if (lookup.fdcId case final id?) {
+      final food = cache.readFood(id);
+      if (food == null) {
+        unresolved[entry.foodName] = _Unresolved(const [], ['#$id (pinned)']);
+      } else {
+        resolved[entry.foodName] = _Resolved(
+          FdcCandidate(fdcId: id, description: food.description),
+          'pinned #$id',
+          const [],
+        );
+      }
+      continue;
+    }
+
     outer:
     for (final dataType in [FdcClient.preferredDataTypes, null]) {
       for (final query in queries) {

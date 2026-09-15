@@ -206,6 +206,39 @@ nothing survives resolves to nothing and is reported as a curation gap,
 per §0.2 — a named missing food beats an invented one. `fetch_catalog`
 prints every refused candidate.
 
+### Pinning: `USDA #170393 potatoes flesh and skin raw`
+
+A row that names an FDC id **does not search**. The id is the decision,
+made once by a person and written into the table, and `fetch_catalog`
+asks for that record directly.
+
+This is what finally closes the class of bug the two guards above only
+narrow. FDC's ranking put salt on `Butter, salted`, rice on `Potatoes, au
+gratin`, spinach on spinach *souffle* and sweet potato on frozen *puffs*
+— and because the search reran on every fetch, every fetch was a fresh
+chance to pick wrong on a row nobody had touched. A pinned row cannot
+drift: the same record comes back for as long as the id exists.
+
+The descriptor stays after the pin. It is no longer a query, but it is
+what makes the table readable — a reader should not have to look up
+170393 to see that it is a raw potato — and `--check` and `preview_fdc`
+still read it.
+
+```
+dart run tools/catalog_pipeline/bin/pin_fdc_ids.dart          # preview
+dart run tools/catalog_pipeline/bin/pin_fdc_ids.dart --write  # apply
+```
+
+Run it after a fetch you are happy with: it reads the ids that fetch
+chose out of `build/catalog_seed_draft.json` and writes them into the
+tables, leaving each descriptor and curator note as written. It is
+idempotent, and it reports separately when a pin *changes*, because a
+pin only changes if someone changed it.
+
+**Re-pointing a pinned row is a deliberate edit**, which is the point:
+change the id, and `--check` plus the lock will show exactly which dishes
+moved.
+
 ### Checking a hint without spending a fetch
 
 `fetch_catalog` takes about twenty-five minutes and needs an API key,

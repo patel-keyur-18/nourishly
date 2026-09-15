@@ -110,7 +110,13 @@ Future<FdcFood?> _searchFdc(
   required List<String> terms,
   required Map<String, double> Function(FdcFood) nutrientsOf,
   required List<RejectedMatch> rejected,
+  int? pinnedFdcId,
 }) async {
+  // A pinned row does not search at all. The id *is* the decision, made
+  // once by a person and recorded in the table, so there is nothing for
+  // FDC's ranking to get wrong on this or any later run.
+  if (pinnedFdcId != null) return client.getDetails(pinnedFdcId);
+
   for (final dataType in [FdcClient.preferredDataTypes, null]) {
     for (final query in queries) {
       final candidates = await client.search(
@@ -294,6 +300,7 @@ class IngredientResolver {
         terms: _matchTerms(row.entry, composition),
         nutrientsOf: _nutrients,
         rejected: rejected,
+        pinnedFdcId: composition.fdcId,
       );
       if (food != null) {
         return IngredientSource(
@@ -455,7 +462,7 @@ Future<void> main(List<String> args) async {
     final queries = _queryCandidates(entry, lookup);
     stdout.writeln(
       '[$done/${lookups.length + recipes.length}] ${entry.foodName} '
-      '(trying: ${queries.join(' / ')})',
+      '${lookup.fdcId != null ? '(pinned #${lookup.fdcId})' : '(trying: ${queries.join(' / ')})'}',
     );
 
     try {
@@ -465,6 +472,7 @@ Future<void> main(List<String> args) async {
         terms: _matchTerms(entry, lookup),
         nutrientsOf: resolver.nutrientsOf,
         rejected: resolver.rejected,
+        pinnedFdcId: lookup.fdcId,
       );
       if (detail == null) {
         failures.add(
