@@ -1,6 +1,6 @@
 # Nourishly Food Catalog Specification
 
-*Revision 0.2 · 2026-09-15 · [Architecture index](../architecture/README.md) · [Personal-Use Scope](../architecture/00-scope.md)*
+*Revision 0.3 · 2026-09-15 · [Architecture index](../architecture/README.md) · [Personal-Use Scope](../architecture/00-scope.md)*
 
 The curated food list for the household catalog, covering **Gujarat, Tamil Nadu and Karnataka** plus the pan-Indian staples all three share, and the everyday North Indian, rice and non-regional cooking this household actually does.
 
@@ -125,6 +125,49 @@ There used to be one more step: search FoodData Central for the raw ingredient s
 Everything else is settled in `ingredientTargets` with the closest sensible row, because this is a household tracker: `oil/ghee` means oil, a 3 g tempering is mostly oil, a coconut filling is mostly coconut, and a sambar podi is a spice blend. Being a little off on 5 g of powder changes nothing anyone would do about it. The rule that stays is the narrow one — a name maps to a row **someone chose**, never to whatever a text search returned.
 
 All recipe rows resolve every ingredient, and a test asserts it. When a new row does not, run `--suggest` and paste the line it prints, saying which row and why; give the ingredient a row of its own only if it is a genuinely distinct food (that is where `Pav`, `Broken wheat`, `Hung curd` and `Colocasia leaves` came from).
+
+## 0.3c The `USDA` hint, and why a bare `USDA` is not enough
+
+A row whose composition is `USDA <descriptor>` is looked up in FoodData
+Central. The descriptor is not decoration: **it is the query**, and
+without it the pipeline searches the row's own name, which is an Indian
+name for a food USDA catalogues under an American one.
+
+Measured against the shipped catalog, that put 33 ingredient rows on the
+wrong food. Every one of them matched *something*, so nothing failed and
+all of them shipped marked `verified`:
+
+| Row | What it was sourced from | Recipes affected |
+|---|---|---|
+| Salt | `Butter, salted` | 999 |
+| Groundnut oil | `Oil, peanut` — 90 nutrients, no proximates | 787 |
+| Garam masala | `SMART SOUP, Indian Bean Masala` | 238 |
+| Green chilli | `Asparagus, green, raw` | 171 |
+| Rice, white, raw | `Potatoes, au gratin, home-prepared` | 129 |
+| Potato | `Bread, potato` | 79 |
+
+So: **write the descriptor the way FoodData Central names the food.**
+`USDA potatoes flesh and skin raw`, not `USDA`. A trailing ` — note`
+after a spaced em-dash is a curator's note and is not part of the query.
+
+Two mechanical guards back this up, in `fdc_match.dart`:
+
+- **A candidate that names a different food is refused.** One identifying
+  word must be shared between the result and the row's name, synonyms or
+  hint — plurals allowed, preparation words and colours ignored. The
+  search then moves on to the next query and the next data type.
+- **A candidate carrying no energy, protein, fat or carbohydrate is
+  refused.** Some FDC Foundation records are specialised analyses — a
+  fatty-acid profile, a mineral panel — with dozens of nutrients and no
+  proximates. `Oil, peanut` is one.
+
+Both are a floor, not a judge. They will not catch a wrong record that
+happens to contain the food's name (`Bread, potato` for potato), and they
+are not meant to: the hint is what gets the right record, and the guards
+stop the obviously wrong one from being summed in silence. A row where
+nothing survives resolves to nothing and is reported as a curation gap,
+per §0.2 — a named missing food beats an invented one. `fetch_catalog`
+prints every refused candidate.
 
 ## 0.4 Column meanings
 

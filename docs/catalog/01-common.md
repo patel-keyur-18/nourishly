@@ -11,7 +11,7 @@ Foods common to Gujarati, Tamil and Kannadiga households. Tier 1 items are marke
 | Food | Also | Serving | g | Composition |
 |---|---|---|---|---|
 | **①** Rice, white, cooked | chawal, sadam, anna, bhaat | 1 katori | 150 | USDA rice white long-grain cooked |
-| **①** Rice, white, raw | — | 100 g | 100 | USDA, for recipe use |
+| **①** Rice, white, raw | — | 100 g | 100 | USDA rice white long-grain regular raw unenriched |
 | Rice, brown, cooked | — | 1 katori | 150 | USDA |
 | Rice, parboiled (idli rice), cooked | ukda chawal, puzhungal arisi | 1 katori | 150 | USDA parboiled |
 | **①** Rotli / Chapati | phulka, roti, poli | 1 piece | 40 | Wheat flour 32 g, water; no added fat |
@@ -32,8 +32,8 @@ Foods common to Gujarati, Tamil and Kannadiga households. Tier 1 items are marke
 | Jowar flour | sorghum | 100 g | 100 | USDA sorghum |
 | Bajra flour | pearl millet | 100 g | 100 | USDA pearl millet |
 | Semolina, rava | sooji, sajjige | 100 g | 100 | USDA semolina |
-| Poha, raw | raw poha, aval, flattened rice | 50 g | 50 | USDA rice flakes |
-| Oats, rolled | jai, oatmeal, rolled oats | 40 g | 40 | USDA oats |
+| Poha, raw | raw poha, aval, flattened rice | 50 g | 50 | USDA rice white long-grain regular raw |
+| Oats, rolled | jai, oatmeal, rolled oats | 40 g | 40 | USDA cereals oats regular and quick unenriched dry |
 | Vermicelli, raw | semiya, shavige, sevai | 50 g | 50 | USDA |
 | Bread, white | — | 1 slice | 25 | USDA |
 | Pav | ladi pav, bun | 1 piece | 45 | USDA bread white commercially prepared roll |
@@ -52,14 +52,14 @@ Raw entries feed recipes; cooked entries are logged directly.
 | **①** Toor dal, raw | arhar, tuvar, thuvaram paruppu, togari bele | 100 g | 100 | USDA pigeon peas |
 | **①** Moong dal, raw | mung, pasi paruppu, hesaru bele | 100 g | 100 | USDA mung beans |
 | **①** Masoor dal, raw | red lentil | 100 g | 100 | USDA lentils |
-| **①** Chana dal, raw | kadala paruppu, kadle bele | 100 g | 100 | USDA chickpeas split |
-| **①** Urad dal, raw | ulundhu, uddina bele | 100 g | 100 | USDA black gram |
-| Chana, whole (kabuli) | chickpea, chole | 100 g | 100 | USDA |
-| Chana, whole (kala) | brown chana | 100 g | 100 | USDA |
+| **①** Chana dal, raw | kadala paruppu, kadle bele | 100 g | 100 | USDA chickpeas garbanzo beans bengal gram mature seeds raw |
+| **①** Urad dal, raw | ulundhu, uddina bele | 100 g | 100 | USDA urad dal black gram mature seeds raw |
+| Chana, whole (kabuli) | chickpea, chole | 100 g | 100 | USDA chickpeas garbanzo beans bengal gram mature seeds raw |
+| Chana, whole (kala) | brown chana | 100 g | 100 | USDA chickpeas garbanzo beans bengal gram mature seeds raw |
 | Rajma | kidney beans | 100 g | 100 | USDA |
-| Chawli / Lobia | black-eyed pea, alasande | 100 g | 100 | USDA cowpeas |
-| Green moong, whole | — | 100 g | 100 | USDA |
-| Matki | moth bean | 100 g | 100 | USDA |
+| Chawli / Lobia | black-eyed pea, alasande | 100 g | 100 | USDA cowpeas common blackeyes mature seeds raw |
+| Green moong, whole | — | 100 g | 100 | USDA mung beans mature seeds raw |
+| Matki | moth bean | 100 g | 100 | USDA moth beans mature seeds raw |
 | Peanuts, raw | groundnut, shengdana, kadalai | 30 g | 30 | USDA |
 | **①** Dal, plain cooked (toor) | — | 1 katori | 150 | Toor dal 30 g raw, turmeric, salt, water |
 | **①** Sprouted moong | — | 1 katori | 100 | USDA mung sprouted |
@@ -72,12 +72,12 @@ Raw entries feed recipes; cooked entries are logged directly.
 | Food | Also | Serving | g/ml | Composition |
 |---|---|---|---|---|
 | **①** Milk, buffalo, whole | bhens nu doodh | 1 glass | 200 | USDA — note higher fat than cow |
-| **①** Milk, cow, whole | — | 1 glass | 200 | USDA whole milk |
+| **①** Milk, cow, whole | — | 1 glass | 200 | USDA milk whole 3.25% milkfat |
 | **①** Milk, toned | — | 1 glass | 200 | ~3% fat |
-| Milk, double-toned / skimmed | — | 1 glass | 200 | USDA |
+| Milk, double-toned / skimmed | — | 1 glass | 200 | USDA milk nonfat fluid |
 | **①** Curd, plain | dahi, thayir, mosaru | 1 katori | 150 | USDA plain whole-milk yoghurt |
 | Hung curd | chakka, drained curd | 1 katori | 100 | USDA yogurt Greek plain whole milk |
-| Curd, low-fat | — | 1 katori | 150 | USDA |
+| Curd, low-fat | — | 1 katori | 150 | USDA yogurt plain low fat |
 | **①** Buttermilk | chaas, mor, majjige | 1 glass | 200 | Curd 50 g + water 150 ml, salt, cumin |
 | **①** Paneer | panir, cottage cheese | 50 g | 50 | USDA paneer/queso fresco |
 | **①** Ghee | tup, nei, tuppa | 1 tsp | 5 | USDA butter oil |
@@ -95,10 +95,10 @@ Raw weights; the pipeline applies cooking yield per dish.
 
 | Food | Also | Serving | g | Composition |
 |---|---|---|---|---|
-| **①** Potato | bataka, urulaikizhangu, aloo | 1 medium | 100 | USDA |
+| **①** Potato | bataka, urulaikizhangu, aloo | 1 medium | 100 | USDA potatoes flesh and skin raw |
 | **①** Onion | dungri, vengayam, eerulli | 1 medium | 80 | USDA |
 | **①** Tomato | tameta, thakkali | 1 medium | 80 | USDA |
-| **①** Brinjal | ringan, kathirikai, badanekai | 1 medium | 80 | USDA eggplant |
+| **①** Brinjal | ringan, kathirikai, badanekai | 1 medium | 80 | USDA eggplant raw |
 | **①** Okra | bhindi, vendakkai, bendekai | 100 g | 100 | USDA |
 | **①** Cauliflower | phool gobi, cauliflower | 100 g | 100 | USDA |
 | **①** Cabbage | kobi, muttaikose | 100 g | 100 | USDA |
@@ -110,7 +110,7 @@ Raw weights; the pipeline applies cooking yield per dish.
 | Snake gourd | padwal, pudalangai | 100 g | 100 | USDA |
 | Ash gourd | petha, kumbalanga, boodhkumbalakai | 100 g | 100 | USDA wax gourd |
 | Pumpkin | kaddu, parangikai, kumbalakayi | 100 g | 100 | USDA |
-| Cluster beans | guvar, kothavarangai | 100 g | 100 | USDA |
+| Cluster beans | guvar, kothavarangai | 100 g | 100 | USDA beans snap green raw |
 | Field beans | valor, papdi, surti papdi, avarekai | 100 g | 100 | USDA hyacinth beans |
 | French beans | fansi, beans | 100 g | 100 | USDA green beans |
 | Drumstick | saragvo, murungakkai, nuggekayi | 1 piece | 50 | USDA |
@@ -124,17 +124,17 @@ Raw weights; the pipeline applies cooking yield per dish.
 | Colocasia | arbi, seppankizhangu, kesuvina gadde | 100 g | 100 | USDA taro |
 | Colocasia leaves | patra na paan, alu leaves, kesuvina ele | 100 g | 100 | USDA taro leaves raw |
 | Sweet potato | shakarkand, sarkaraivalli | 1 medium | 100 | USDA |
-| Raw banana | kacha kela, vazhaikkai, balekayi | 1 medium | 100 | USDA plantain |
+| Raw banana | kacha kela, vazhaikkai, balekayi | 1 medium | 100 | USDA plantains green raw |
 | Raw mango | keri, mangai | 50 g | 50 | USDA |
 | **①** Spinach | palak, keerai, palak soppu | 100 g | 100 | USDA |
-| Fenugreek leaves | methi, venthaya keerai, menthya soppu | 50 g | 50 | USDA |
+| Fenugreek leaves | methi, venthaya keerai, menthya soppu | 50 g | 50 | USDA spinach raw |
 | Amaranth leaves | tandaljo, mulai keerai, dantina soppu | 100 g | 100 | USDA amaranth leaves |
 | Coriander leaves | kothmir, kothamalli, kottambari | 10 g | 10 | USDA cilantro |
 | Mint leaves | fudino, pudina | 10 g | 10 | USDA |
 | **①** Coconut, fresh grated | kopru, thengai, thengina kayi | 2 tbsp | 20 | USDA coconut meat raw |
-| Coconut, dry | copra | 20 g | 20 | USDA dried |
-| Coconut milk | — | 100 ml | 100 | USDA |
-| **①** Green chilli | marcha, pachai milagai | 1 piece | 5 | USDA |
+| Coconut, dry | copra | 20 g | 20 | USDA nuts coconut meat dried desiccated not sweetened |
+| Coconut milk | — | 100 ml | 100 | USDA nuts coconut milk raw liquid expressed from grated meat and water |
+| **①** Green chilli | marcha, pachai milagai | 1 piece | 5 | USDA peppers hot chili green raw |
 | **①** Ginger | adu, inji, shunti | 5 g | 5 | USDA |
 | **①** Garlic | lasan, poondu, bellulli | 3 cloves | 9 | USDA |
 | **①** Mixed vegetables | mixed veg, vegetables, vegetable | 1 katori | 100 | USDA vegetables mixed frozen unprepared |
@@ -147,10 +147,10 @@ Raw weights; the pipeline applies cooking yield per dish.
 |---|---|---|---|---|
 | **①** Banana | kela, vazhaipazham, balehannu | 1 medium | 100 | USDA |
 | **①** Mango | keri, mampazham, mavinahannu | 1 medium | 200 | USDA |
-| **①** Apple | seb | 1 medium | 150 | USDA |
+| **①** Apple | seb | 1 medium | 150 | USDA apples raw with skin |
 | Lemon | nimbu, elumichai, nimbehannu | 1 medium | 60 | USDA lemon raw |
 | Papaya | papaiya, pappali | 1 katori | 150 | USDA |
-| Guava | jamphal, koyya, sibe | 1 medium | 100 | USDA |
+| Guava | jamphal, koyya, sibe | 1 medium | 100 | USDA guavas common raw |
 | Orange / Sweet lime | santara, mosambi | 1 medium | 130 | USDA |
 | Chikoo | sapota | 1 medium | 80 | USDA sapodilla |
 | Pomegranate | dadam, mathulai, dalimbe | 1 katori | 120 | USDA |
@@ -169,7 +169,7 @@ Raw weights; the pipeline applies cooking yield per dish.
 |---|---|---|---|---|
 | Almonds | badam | 5 pieces | 6 | USDA |
 | Cashew | kaju, mundiri, godambi | 5 pieces | 8 | USDA |
-| Walnut | akhrot | 2 halves | 8 | USDA |
+| Walnut | akhrot | 2 halves | 8 | USDA nuts walnuts english |
 | Pistachio | pista | 10 pieces | 8 | USDA |
 | Sesame seeds | til, ellu | 1 tbsp | 9 | USDA |
 | Flaxseed | alsi, agasi, ali vidai | 1 tbsp | 10 | USDA seeds flaxseed |
@@ -185,8 +185,8 @@ Raw weights; the pipeline applies cooking yield per dish.
 | **①** Sugar | khand, sakkarai, sakkare | 1 tsp | 5 | USDA |
 | **①** Jaggery | gol, gud, vellam, bella | 1 tbsp | 15 | USDA |
 | Honey | madh, thean | 1 tsp | 7 | USDA |
-| **①** Salt | mithu, uppu | 1 tsp | 6 | USDA — **the sodium source that matters most** (§21.4 limit nutrient) |
-| Tamarind | aambli, puli, hunase | 10 g | 10 | USDA |
+| **①** Salt | mithu, uppu | 1 tsp | 6 | USDA salt table — **the sodium source that matters most** (§21.4 limit nutrient) |
+| Tamarind | aambli, puli, hunase | 10 g | 10 | USDA tamarinds raw |
 | Papad, roasted | papadum, appalam, happala | 1 piece | 10 | Urad flour basis |
 | Papad, fried | — | 1 piece | 13 | Above + absorbed oil 3 g |
 | Pickle, mango | athanu, oorugai, uppinakai | 1 tbsp | 15 | Mango, oil 6 g, salt — **high sodium, flag it** |
@@ -196,9 +196,9 @@ Raw weights; the pipeline applies cooking yield per dish.
 | Cumin seeds | jeeru, jeeragam, jeerige | 1 tsp | 3 | USDA |
 | Coriander powder | dhana, malli podi | 1 tsp | 3 | USDA |
 | Turmeric | haldar, manjal, arishina | 1 tsp | 3 | USDA |
-| Red chilli powder | marcha powder, milagai podi | 1 tsp | 3 | USDA |
+| Red chilli powder | marcha powder, milagai podi | 1 tsp | 3 | USDA spices chili powder |
 | Black pepper | kali mirch, milagu, menasu | 1 tsp | 3 | USDA spices pepper black |
-| Garam masala | — | 1 tsp | 3 | USDA-based blend |
+| Garam masala | — | 1 tsp | 3 | USDA spices curry powder |
 
 ---
 
@@ -216,7 +216,7 @@ Raw weights; the pipeline applies cooking yield per dish.
 | **①** Buttermilk, spiced | chaas, neer mor, majjige | 1 glass | 200 | See §3 |
 | Lassi, sweet | — | 1 glass | 200 | Curd 120 g, sugar 15 g, water |
 | Coconut water | nariyal pani, elaneer | 1 piece | 250 | USDA |
-| Sugarcane juice | ganna, karumbu juice | 1 glass | 200 | USDA |
+| Sugarcane juice | ganna, karumbu juice | 1 glass | 200 | USDA sugarcane juice |
 | Lemon water, sweet | nimbu pani, elumichai | 1 glass | 200 | Lemon 15 ml, sugar 12 g, water |
 | Fruit juice, fresh | — | 1 glass | 200 | Per fruit |
 | Aerated drink | cold drink, soda | 1 bottle | 250 | USDA cola — **hydration fraction 1.0, but flag added sugar** |

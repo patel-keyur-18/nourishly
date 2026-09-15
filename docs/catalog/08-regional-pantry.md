@@ -49,7 +49,7 @@ Serving weights are the raw-ingredient convention of `01-common.md`: 100 g for a
 | Pineapple | ananas | 100 g | 100 | USDA pineapple raw |
 | Amla | indian gooseberry, nellikai, usirikaya | 100 g | 100 | USDA gooseberries raw |
 | Dried apricots | khubani | 100 g | 100 | USDA apricots dried |
-| Mixed fruit | fruit salad | 100 g | 100 | USDA fruit cocktail canned in juice |
+| Mixed fruit | fruit salad | 100 g | 100 | USDA fruit cocktail peach pineapple pear grape canned juice pack |
 | Olives | black olives | 100 g | 100 | USDA olives ripe canned |
 | Tomato puree | tomato paste, passata | 100 g | 100 | USDA tomato puree canned |
 

@@ -3,6 +3,47 @@ import 'package:test/test.dart';
 
 import '../bin/fetch_catalog.dart';
 
+/// Answers each query from a script, so a test can put a wrong food in
+/// front of the right one and see which the resolver takes.
+class _ScriptedFdc implements FdcSource {
+  _ScriptedFdc(this.byQuery);
+
+  final Map<String, List<FdcFood>> byQuery;
+  final asked = <String>[];
+
+  @override
+  Future<List<FdcFood>> search(
+    String query, {
+    int pageSize = 5,
+    String? dataType = FdcClient.preferredDataTypes,
+  }) async {
+    asked.add(query);
+    return byQuery[query] ?? const [];
+  }
+
+  @override
+  Future<FdcFood> getDetails(int fdcId) async =>
+      byQuery.values.expand((f) => f).firstWhere((f) => f.fdcId == fdcId);
+
+  @override
+  void close() {}
+}
+
+FdcFood _food(int id, String description, Map<String, double> nutrients) =>
+    FdcFood(
+      fdcId: id,
+      description: description,
+      dataType: 'SR Legacy',
+      nutrients: [
+        for (final e in nutrients.entries)
+          FdcNutrientReading(
+            name: e.key,
+            unit: e.key == 'Energy' ? 'KCAL' : 'G',
+            amountPer100g: e.value,
+          ),
+      ],
+    );
+
 /// Returns the same food for any search, so the test is about which rows
 /// the resolver reaches, not about FDC matching.
 class _FakeFdc implements FdcSource {
@@ -104,5 +145,85 @@ void main() {
     );
 
     expect(await resolver.resolve('Masoor dal', <String>{}), isNull);
+  });
+
+  group('a wrong search result is refused, not summed', () {
+    CatalogRow saltRow() => _row(
+      sourceFile: '01-common.md',
+      foodName: 'Salt',
+      composition: 'USDA salt table',
+    );
+
+    test('the candidate that names a different food is skipped', () async {
+      // What shipped: a search for salt returned `Butter, salted` first,
+      // the pipeline took it, and 999 recipes gained butter's 717 kcal
+      // and 81 g of fat. The hint query now finds the real record, and
+      // the butter is refused on the way past.
+      final client = _ScriptedFdc({
+        'salt table': [
+          _food(1, 'Butter, salted', {'Energy': 717, 'Total lipid (fat)': 81}),
+          _food(2, 'Salt, table', {'Energy': 0, 'Protein': 0}),
+        ],
+      });
+      final row = saltRow();
+      final resolver = IngredientResolver(
+        client: client,
+        normalizer: FdcNormalizer(),
+        index: CatalogIndex([row]),
+      );
+
+      final source = await resolver.resolve('Salt', <String>{});
+      expect(source?.food?.description, 'Salt, table');
+      expect(resolver.rejected, hasLength(1));
+      expect(resolver.rejected.single.reason, contains('different food'));
+    });
+
+    test('a record with no proximates is skipped', () async {
+      // `Oil, peanut` (Foundation): 90 nutrients, no macros. Taking it
+      // gave the default cooking fat no calories in 787 recipes.
+      final client = _ScriptedFdc({
+        'oil peanut salad or cooking': [
+          _food(1, 'Oil, peanut', {'Vitamin E': 15.2}),
+          _food(2, 'Oil, peanut, salad or cooking', {
+            'Energy': 884,
+            'Total lipid (fat)': 100,
+          }),
+        ],
+      });
+      final row = _row(
+        sourceFile: '01-common.md',
+        foodName: 'Groundnut oil',
+        composition: 'USDA oil peanut salad or cooking',
+      );
+      final resolver = IngredientResolver(
+        client: client,
+        normalizer: FdcNormalizer(),
+        index: CatalogIndex([row]),
+      );
+
+      final source = await resolver.resolve('Groundnut oil', <String>{});
+      expect(source?.food?.description, 'Oil, peanut, salad or cooking');
+      expect(resolver.rejected.single.reason, contains('no energy'));
+    });
+
+    test(
+      'a row where nothing survives resolves to null, not to a guess',
+      () async {
+        final client = _ScriptedFdc({
+          'salt table': [
+            _food(1, 'Butter, salted', {'Energy': 717}),
+          ],
+        });
+        final row = saltRow();
+        final resolver = IngredientResolver(
+          client: client,
+          normalizer: FdcNormalizer(),
+          index: CatalogIndex([row]),
+        );
+
+        expect(await resolver.resolve('Salt', <String>{}), isNull);
+        expect(resolver.rejected, isNotEmpty);
+      },
+    );
   });
 }
