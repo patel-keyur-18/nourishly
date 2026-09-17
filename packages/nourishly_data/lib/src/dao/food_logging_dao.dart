@@ -192,6 +192,14 @@ class FoodLoggingDao {
               _db.mealSlots,
               _db.mealSlots.id.equalsExp(_db.foodLogEntries.mealSlotId),
             ),
+            // I-2: a food that doesn't report energy has no row here, not
+            // a zero row — the outer join is what makes that distinction
+            // survive rather than collapsing it to 0 kcal.
+            leftOuterJoin(
+              _db.logEntryNutrients,
+              _db.logEntryNutrients.entryId.equalsExp(_db.foodLogEntries.id) &
+                  _db.logEntryNutrients.nutrientId.equals('energy'),
+            ),
           ])
           ..where(
             _db.foodLogEntries.ownerId.equals(ownerId) &
@@ -207,22 +215,26 @@ class FoodLoggingDao {
             entry: row.readTable(_db.foodLogEntries),
             foodName: row.readTable(_db.foodItems).canonicalName,
             mealSlotName: row.readTable(_db.mealSlots).displayName,
+            energyKcal: row.readTableOrNull(_db.logEntryNutrients)?.amount ?? 0,
           ),
       ],
     );
   }
 }
 
-/// A [FoodLogEntry] with the food and meal slot names already joined in —
-/// what a list screen needs, without an N+1 lookup per row.
+/// A [FoodLogEntry] with the food and meal slot names — and its logged
+/// energy — already joined in, what a list screen needs without an N+1
+/// lookup per row.
 class LoggedFood {
   const LoggedFood({
     required this.entry,
     required this.foodName,
     required this.mealSlotName,
+    required this.energyKcal,
   });
 
   final FoodLogEntry entry;
   final String foodName;
   final String mealSlotName;
+  final double energyKcal;
 }

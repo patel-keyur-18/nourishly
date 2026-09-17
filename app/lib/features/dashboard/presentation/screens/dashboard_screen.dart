@@ -78,6 +78,8 @@ class DashboardScreen extends ConsumerWidget {
                 MealsCard(summary: summary),
                 if (summary.hasAnything) ...[
                   const SizedBox(height: NourishlySpace.s3),
+                  const _DayLogLink(),
+                  const SizedBox(height: NourishlySpace.s3),
                   _ReportLink(summary: summary),
                 ],
               ],
@@ -90,6 +92,38 @@ class DashboardScreen extends ConsumerWidget {
 
   void _shiftDay(WidgetRef ref, int days) {
     ref.read(selectedDateProvider.notifier).shiftBy(days);
+  }
+}
+
+/// Design option C (chosen 2026-09-17): a way into today's entries to edit
+/// or delete one, right beside the link into the read-only report — gated
+/// the same way, since there's nothing to edit on an empty day either.
+class _DayLogLink extends StatelessWidget {
+  const _DayLogLink();
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.nourishlyColors;
+    final text = context.nourishlyText;
+    return NourishlyCard(
+      padding: EdgeInsets.zero,
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: NourishlySpace.s4,
+          vertical: NourishlySpace.s1,
+        ),
+        title: Text(
+          "Today's log",
+          style: text.body.copyWith(fontWeight: FontWeight.w600),
+        ),
+        subtitle: Text(
+          'Edit or remove what you logged',
+          style: text.caption.copyWith(color: colors.ink3),
+        ),
+        trailing: Icon(Icons.chevron_right_rounded, color: colors.ink3),
+        onTap: () => context.push('/today/log'),
+      ),
+    );
   }
 }
 
