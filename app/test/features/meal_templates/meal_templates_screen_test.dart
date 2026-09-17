@@ -100,6 +100,10 @@ void main() {
     expect(find.text('Usual lunch'), findsOneWidget);
     expect(find.textContaining('Dal'), findsOneWidget);
     expect(find.text('Lunch'), findsOneWidget);
+    // The meal-slot label is a plain chip, not StatusChip's reserved
+    // "unknown" grey — that colour means something specific elsewhere.
+    expect(find.byType(NourishlyChip), findsOneWidget);
+    expect(find.byType(StatusChip), findsNothing);
     // 2 x 150 g at 150 kcal/100g = 450 kcal, never used yet.
     expect(find.text('~450 kcal'), findsOneWidget);
     expect(find.textContaining('Used'), findsNothing);

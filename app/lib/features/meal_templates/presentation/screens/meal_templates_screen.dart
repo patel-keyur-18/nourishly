@@ -105,11 +105,7 @@ class _TemplateCard extends ConsumerWidget {
           Row(
             children: [
               Expanded(child: Text(template.name, style: text.heading)),
-              if (mealSlotName != null)
-                StatusChip(
-                  label: mealSlotName!,
-                  status: NourishlyStatus.unknown,
-                ),
+              if (mealSlotName != null) NourishlyChip(label: mealSlotName!),
             ],
           ),
           if (template.energyKcal != null || template.useCount > 0) ...[
