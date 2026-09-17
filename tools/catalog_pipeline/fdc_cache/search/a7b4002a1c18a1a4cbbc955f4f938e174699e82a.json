@@ -1,0 +1,17 @@
+{
+  "query": "bread whole-wheat commercially prepared [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 172688,
+      "description": "Bread, whole-wheat, commercially prepared"
+    },
+    {
+      "fdcId": 172689,
+      "description": "Bread, whole-wheat, commercially prepared, toasted"
+    },
+    {
+      "fdcId": 174077,
+      "description": "Bread, naan, whole wheat, commercially prepared, refrigerated"
+    }
+  ]
+}

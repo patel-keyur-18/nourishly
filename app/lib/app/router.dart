@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../features/dashboard/presentation/screens/dashboard_screen.dart';
 import '../features/data_backup/presentation/screens/data_backup_screen.dart';
 import '../features/food_logging/presentation/screens/custom_food_screen.dart';
+import '../features/food_logging/presentation/screens/day_log_screen.dart';
 import '../features/food_logging/presentation/screens/food_logging_screen.dart';
 import '../features/food_logging/presentation/screens/food_portion_screen.dart';
 import '../features/goals/presentation/screens/goals_screen.dart';
@@ -57,12 +58,16 @@ final GoRouter appRouter = GoRouter(
         child: FoodLoggingScreen(mealSlotId: state.uri.queryParameters['meal']),
       ),
       routes: [
+        // `?entryId=<id>` reuses this same screen to edit an
+        // already-logged entry (FR-M-05) rather than log a new one —
+        // reached from the day log's "Edit portion" action.
         GoRoute(
           path: 'food/:foodId',
           parentNavigatorKey: rootNavigatorKey,
           builder: (context, state) => FoodPortionScreen(
             foodId: state.pathParameters['foodId']!,
             initialMealSlotId: state.uri.queryParameters['meal'],
+            entryId: state.uri.queryParameters['entryId'],
           ),
         ),
         GoRoute(
@@ -117,6 +122,16 @@ final GoRouter appRouter = GoRouter(
                   path: 'report',
                   parentNavigatorKey: rootNavigatorKey,
                   builder: (context, state) => const DailyReportScreen(),
+                ),
+                // Design option C (chosen 2026-09-17): the day's entries in
+                // the order they were logged, with edit and delete. Pushed
+                // over the shell like `report`, for the same reason — a
+                // tab bar under a screen you're editing invites tapping
+                // away mid-edit.
+                GoRoute(
+                  path: 'log',
+                  parentNavigatorKey: rootNavigatorKey,
+                  builder: (context, state) => const DayLogScreen(),
                 ),
               ],
             ),

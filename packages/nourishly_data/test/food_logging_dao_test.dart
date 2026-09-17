@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:drift/drift.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nourishly_data/nourishly_data.dart';
 
@@ -115,4 +116,34 @@ void main() {
       expect(otherDay, isEmpty);
     },
   );
+
+  test('watchToday carries the entry\'s logged energy', () async {
+    final (foodId, servingId) = await rice();
+    final serving = await (db.select(
+      db.servingSizes,
+    )..where((s) => s.id.equals(servingId))).getSingle();
+    final rawEnergy = await (db.select(
+      db.foodNutrientValues,
+    )..where(
+      (v) => v.foodId.equals(foodId) & v.nutrientId.equals('energy'),
+    )).getSingle();
+
+    await dao.logFood(
+      ownerId: ownerId,
+      foodId: foodId,
+      servingId: servingId,
+      quantity: 1,
+      mealSlotId: mealSlotId,
+      logDate: DateTime(2026, 1, 1),
+    );
+
+    final today = await dao
+        .watchToday(ownerId: ownerId, logDate: DateTime(2026, 1, 1))
+        .first;
+
+    expect(
+      today.single.energyKcal,
+      closeTo(rawEnergy.amountPer100g * serving.grams / 100, 0.001),
+    );
+  });
 }

@@ -1,0 +1,17 @@
+{
+  "query": "avocados raw all commercial varieties [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 171705,
+      "description": "Avocados, raw, all commercial varieties"
+    },
+    {
+      "fdcId": 169097,
+      "description": "Oranges, raw, all commercial varieties"
+    },
+    {
+      "fdcId": 169124,
+      "description": "Pineapple, raw, all varieties"
+    }
+  ]
+}

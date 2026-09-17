@@ -165,22 +165,53 @@ class WaterVesselState extends State<WaterVessel>
                     ),
                   ),
                   Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        AnimatedBuilder(
-                          animation: _volume,
-                          builder: (context, child) => Text(
-                            (_volume.value / 1000).toStringAsFixed(2),
-                            style: text.numeral.copyWith(color: colors.ink),
-                          ),
+                    // The rising fill used to paint straight under the
+                    // ink-coloured numbers, and once the waterline passed
+                    // them the accent fill and the dark text had nowhere
+                    // near enough contrast to read. A solid readout —
+                    // the same surface-plus-hairline recipe as
+                    // [StatusChip] — keeps the numbers on their own
+                    // background no matter how full the vessel gets,
+                    // rather than trying to pick a text colour that
+                    // works against both glass and water.
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: colors.surface,
+                        borderRadius: BorderRadius.circular(
+                          NourishlyRadius.lg,
                         ),
-                        const SizedBox(height: NourishlySpace.s1),
-                        Text(
-                          'of ${(widget.goalMl / 1000).toStringAsFixed(1)} L',
-                          style: text.caption.copyWith(color: colors.ink2),
+                        border: Border.all(
+                          color: colors.line,
+                          width: NourishlyStroke.hairline,
                         ),
-                      ],
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: NourishlySpace.s2,
+                          vertical: NourishlySpace.s1,
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            AnimatedBuilder(
+                              animation: _volume,
+                              builder: (context, child) => Text(
+                                (_volume.value / 1000).toStringAsFixed(2),
+                                style: text.numeral.copyWith(
+                                  color: colors.ink,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: NourishlySpace.s1),
+                            Text(
+                              'of ${(widget.goalMl / 1000).toStringAsFixed(1)} L',
+                              style: text.caption.copyWith(
+                                color: colors.ink2,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ],

@@ -1,0 +1,17 @@
+{
+  "query": "ice creams vanilla [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 167575,
+      "description": "Ice creams, vanilla"
+    },
+    {
+      "fdcId": 167572,
+      "description": "Ice creams, vanilla, light"
+    },
+    {
+      "fdcId": 167573,
+      "description": "Ice creams, vanilla, rich"
+    }
+  ]
+}

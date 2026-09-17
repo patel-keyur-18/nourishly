@@ -12,11 +12,21 @@ import '../../../food_catalog/data/food_catalog_providers.dart';
 /// option A — serving chips + stepper) for one food, reached via
 /// `/log/food/:foodId`. Saves a real `FoodLogEntry`, the write path §14.9
 /// calls the highest-value thing to get right.
+///
+/// The same screen edits an existing entry when [entryId] is given
+/// (FR-M-05) — the day log's edit action opens this rather than a bare
+/// grams prompt, so changing what you logged looks exactly like logging
+/// it did. [FoodLoggingDao.updateEntry] rescales the frozen nutrient
+/// snapshot by the grams ratio, which is exact regardless of which
+/// serving produced the grams, so every downstream screen (all of them
+/// read through drift's reactive streams on the same tables) picks up
+/// the change with no extra invalidation.
 class FoodPortionScreen extends ConsumerStatefulWidget {
   const FoodPortionScreen({
     super.key,
     required this.foodId,
     this.initialMealSlotId,
+    this.entryId,
   });
 
   final String foodId;
@@ -24,6 +34,10 @@ class FoodPortionScreen extends ConsumerStatefulWidget {
   /// Preselected when the flow started from a meal row on the dashboard,
   /// so "Add breakfast" does not ask which meal at the end of it.
   final String? initialMealSlotId;
+
+  /// Present when editing an already-logged entry rather than adding a
+  /// new one.
+  final String? entryId;
 
   @override
   ConsumerState<FoodPortionScreen> createState() => _FoodPortionScreenState();
@@ -35,6 +49,8 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen> {
   String? _servingId;
   String? _mealSlotId;
   bool _saving = false;
+
+  bool get _editing => widget.entryId != null;
 
   @override
   void initState() {
@@ -52,6 +68,15 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen> {
               ..where((s) => s.foodId.equals(widget.foodId))
               ..orderBy([(s) => OrderingTerm.asc(s.sortOrder)]))
             .get();
+    final entryId = widget.entryId;
+    if (entryId != null) {
+      final entry = await (db.select(
+        db.foodLogEntries,
+      )..where((e) => e.id.equals(entryId))).getSingle();
+      _quantity = entry.quantity;
+      _servingId = entry.servingSizeId;
+      _mealSlotId = entry.mealSlotId;
+    }
     return (food, servings);
   }
 
@@ -59,29 +84,49 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen> {
     if (_servingId == null || _mealSlotId == null || _saving) return;
     setState(() => _saving = true);
 
-    final ownerId = await ref.read(defaultOwnerProvider.future);
-    await ref
-        .read(foodLoggingDaoProvider)
-        .logFood(
-          ownerId: ownerId,
-          foodId: widget.foodId,
-          servingId: _servingId!,
-          quantity: _quantity,
-          mealSlotId: _mealSlotId!,
-          logDate: ref.read(todayProvider),
-        );
+    final dao = ref.read(foodLoggingDaoProvider);
+    final entryId = widget.entryId;
+    if (entryId != null) {
+      await dao.updateEntry(
+        entryId: entryId,
+        quantity: _quantity,
+        servingId: _servingId,
+        mealSlotId: _mealSlotId,
+      );
+    } else {
+      final ownerId = await ref.read(defaultOwnerProvider.future);
+      await dao.logFood(
+        ownerId: ownerId,
+        foodId: widget.foodId,
+        servingId: _servingId!,
+        quantity: _quantity,
+        mealSlotId: _mealSlotId!,
+        logDate: ref.read(todayProvider),
+      );
+    }
 
     if (!mounted) return;
     final messenger = ScaffoldMessenger.of(context);
-    // Pop back through the portion screen and the /log modal to wherever
-    // the user was (§28.4: logging is a task, not a place). The loop stops
-    // at the shell, which is the one route with nothing under it — which is
-    // also why the flow has to be *pushed* over the shell rather than
-    // replacing it.
-    while (context.canPop()) {
+    if (_editing) {
+      // Reached directly from wherever the entry was listed (the day
+      // log), not through the `/log` search flow — one pop returns to
+      // that screen so the edit is immediately visible, rather than
+      // unwinding past it to the dashboard.
       context.pop();
+    } else {
+      // Pop back through the portion screen and the /log modal to
+      // wherever the user was (§28.4: logging is a task, not a place).
+      // The loop stops at the shell, which is the one route with nothing
+      // under it — which is also why the flow has to be *pushed* over
+      // the shell rather than replacing it.
+      while (context.canPop()) {
+        context.pop();
+      }
     }
-    showNourishlySnackOn(messenger, 'Added to your log.');
+    showNourishlySnackOn(
+      messenger,
+      _editing ? 'Changes saved.' : 'Added to your log.',
+    );
   }
 
   /// A catalog recipe can be forked into one of your own; your own
@@ -96,7 +141,7 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Add to log')),
+      appBar: AppBar(title: Text(_editing ? 'Edit entry' : 'Add to log')),
       body: FutureBuilder(
         future: _food,
         builder: (context, snapshot) {
@@ -151,6 +196,7 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen> {
               _SaveBar(
                 enabled: !_saving && _servingId != null && _mealSlotId != null,
                 saving: _saving,
+                editing: _editing,
                 onPressed: _save,
               ),
             ],
@@ -388,11 +434,13 @@ class _SaveBar extends StatelessWidget {
   const _SaveBar({
     required this.enabled,
     required this.saving,
+    required this.editing,
     required this.onPressed,
   });
 
   final bool enabled;
   final bool saving;
+  final bool editing;
   final VoidCallback onPressed;
 
   @override
@@ -411,7 +459,9 @@ class _SaveBar extends StatelessWidget {
           padding: const EdgeInsets.all(NourishlySpace.s4),
           child: FilledButton(
             onPressed: enabled ? onPressed : null,
-            child: Text(saving ? 'Saving…' : 'Add to log'),
+            child: Text(
+              saving ? 'Saving…' : (editing ? 'Save changes' : 'Add to log'),
+            ),
           ),
         ),
       ),

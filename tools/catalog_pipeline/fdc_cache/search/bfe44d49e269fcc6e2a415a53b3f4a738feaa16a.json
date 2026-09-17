@@ -1,0 +1,17 @@
+{
+  "query": "tortilla, wheat [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 2758996,
+      "description": "Tortilla, wheat flour, shelf stable"
+    },
+    {
+      "fdcId": 174081,
+      "description": "Tortillas, ready-to-bake or -fry, whole wheat"
+    },
+    {
+      "fdcId": 169724,
+      "description": "Wheat flour, white, tortilla mix, enriched"
+    }
+  ]
+}

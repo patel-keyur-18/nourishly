@@ -1,0 +1,17 @@
+{
+  "query": "sauce salsa ready to serve [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 746777,
+      "description": "Sauce, salsa, ready-to-serve"
+    },
+    {
+      "fdcId": 174524,
+      "description": "Sauce, salsa, ready-to-serve"
+    },
+    {
+      "fdcId": 171824,
+      "description": "Sauce, salsa, verde, ready-to-serve"
+    }
+  ]
+}

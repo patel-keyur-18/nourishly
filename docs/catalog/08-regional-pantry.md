@@ -1,6 +1,6 @@
 # Regional Pantry
 
-*[Catalog index](./README.md) · 89 items · Read [§0.2–0.3](./README.md) before using the gram weights*
+*[Catalog index](./README.md) · 105 items · Read [§0.2–0.3](./README.md) before using the gram weights*
 
 Ingredient rows the regional CSV catalogs need and the earlier files did not have. Every row here is a **direct USDA lookup** — a food, not a dish — because that is the only thing a recipe can be summed from (§0.2).
 
@@ -52,6 +52,9 @@ Serving weights are the raw-ingredient convention of `01-common.md`: 100 g for a
 | Mixed fruit | fruit salad | 100 g | 100 | USDA #174668 fruit cocktail peach pineapple pear grape canned juice pack |
 | Olives | black olives | 100 g | 100 | USDA #169095 olives ripe canned |
 | Tomato puree | tomato paste, passata | 100 g | 100 | USDA #2685582 tomato puree canned |
+| Avocado | makhanphal, butter fruit | 100 g | 100 | USDA #171705 avocados raw all commercial varieties |
+| Strawberry | — | 100 g | 100 | USDA #167762 strawberries raw |
+| Cherries | — | 100 g | 100 | USDA #171719 cherries sweet raw |
 
 ---
 
@@ -75,6 +78,14 @@ Serving weights are the raw-ingredient convention of `01-common.md`: 100 g for a
 | Muesli | — | 40 g | 40 | USDA #169075 cereals ready-to-eat muesli |
 | Soya chunks | soy nuggets, meal maker | 100 g | 100 | USDA #174301 soy protein concentrate |
 | Tofu | soya paneer, bean curd | 100 g | 100 | USDA #172475 tofu raw firm |
+| Millet, raw | barnyard millet, foxtail millet, little millet, samai, kangni, sama | 100 g | 100 | USDA #169702 millet raw — FDC measures one millet, not the barnyard/foxtail/little varieties the CSVs name separately |
+| Millet, cooked | cooked millet | 1 katori | 150 | USDA #168871 millet cooked |
+| Quinoa, raw | — | 100 g | 100 | USDA #168874 quinoa uncooked |
+| Quinoa, cooked | — | 1 katori | 150 | USDA #168917 quinoa cooked |
+| Bread, whole wheat | brown bread, atta bread, multigrain bread | 100 g | 100 | USDA #172688 bread whole-wheat commercially prepared |
+| Instant noodles, dry | maggi, instant masala noodles, cup noodles | 100 g | 100 | USDA #168905 noodles chinese chow mein — FDC publishes no instant noodle cake; `noodles instant dry` returned *rice* noodles, a different grain and almost no fat, and chow mein is the fried wheat noodle this actually is |
+| Taco shells | corn taco shells | 100 g | 100 | USDA #172800 taco shells baked |
+| Tortilla, wheat | wheat tortilla, flour tortilla, roti wrap | 100 g | 100 | USDA #174081 tortillas ready-to-bake or -fry whole wheat — the refined-flour tortilla FDC publishes (2758996) carries no proximates, so the whole-wheat one is the only measured wheat tortilla |
 
 ---
 
@@ -138,3 +149,8 @@ Serving weights are the raw-ingredient convention of `01-common.md`: 100 g for a
 | Custard | custard powder, vanilla custard | 1 katori | 150 | USDA #169608 puddings vanilla ready-to-eat |
 | Biscuits, digestive | marie biscuit, digestive biscuit | 100 g | 100 | USDA #174957 cookies graham crackers plain or honey includes cinnamon — FDC has no digestive; the graham cracker is the same semi-sweet wholemeal biscuit |
 | Pepperoni | — | 100 g | 100 | USDA #174603 salami italian pork — FDC publishes no pepperoni with proximates; salami is the same cured pork-and-beef family |
+| Peanut butter | — | 100 g | 100 | USDA #172470 peanut butter smooth style without salt |
+| Chocolate syrup | chocolate sauce | 100 g | 100 | USDA #174117 syrups chocolate |
+| Ice cream, vanilla | vanilla ice cream | 100 g | 100 | USDA #167575 ice creams vanilla |
+| Salsa | tomato salsa | 100 g | 100 | USDA #746777 sauce salsa ready to serve |
+| Whey protein | protein powder, whey isolate | 100 g | 100 | USDA #173177 whey protein powder isolate |

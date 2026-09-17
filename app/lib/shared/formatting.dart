@@ -84,6 +84,13 @@ String weekdayName(int weekday) => _weekdays[weekday - 1];
 /// The single letter under a bar in a week chart: M T W T F S S.
 String weekdayInitial(int weekday) => _weekdays[weekday - 1][0];
 
+/// "7:42 AM" — a logged-at timestamp, for the day log's timeline.
+String formatTime(DateTime time) {
+  final hour12 = time.hour % 12 == 0 ? 12 : time.hour % 12;
+  final minute = time.minute.toString().padLeft(2, '0');
+  return '$hour12:$minute ${time.hour < 12 ? 'AM' : 'PM'}';
+}
+
 String relativeDayLabel(DateTime date) {
   final now = DateTime.now();
   final today = DateTime(now.year, now.month, now.day);

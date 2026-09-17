@@ -1,0 +1,17 @@
+{
+  "query": "millet raw [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 169702,
+      "description": "Millet, raw"
+    },
+    {
+      "fdcId": 172023,
+      "description": "Millet flour"
+    },
+    {
+      "fdcId": 168871,
+      "description": "Millet, cooked"
+    }
+  ]
+}

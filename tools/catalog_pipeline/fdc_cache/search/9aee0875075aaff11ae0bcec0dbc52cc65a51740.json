@@ -1,0 +1,17 @@
+{
+  "query": "quinoa uncooked [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 168874,
+      "description": "Quinoa, uncooked"
+    },
+    {
+      "fdcId": 169745,
+      "description": "Spelt, uncooked"
+    },
+    {
+      "fdcId": 169747,
+      "description": "Teff, uncooked"
+    }
+  ]
+}

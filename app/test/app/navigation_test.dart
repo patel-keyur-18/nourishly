@@ -123,6 +123,10 @@ void main() {
     expect(find.text('Set up my profile'), findsOneWidget);
     expect(find.text('Skip for now'), findsOneWidget);
 
+    // A name entered on the welcome screen is saved even on the skip
+    // path — it isn't gated on finishing profile setup.
+    await tester.enterText(find.byType(TextField), 'Priya');
+
     // Skipping still counts as having seen it — §27.1 makes setup
     // optional, so asking again next launch would be nagging.
     await tester.tap(find.text('Skip for now'));
@@ -132,6 +136,10 @@ void main() {
     final ownerId = await ensureDefaultOwner(fresh);
     final preferences = await PreferencesDao(fresh).forOwner(ownerId);
     expect(preferences.onboardingSeen, isTrue);
+    final user = await (fresh.select(
+      fresh.users,
+    )..where((u) => u.id.equals(ownerId))).getSingle();
+    expect(user.displayName, 'Priya');
   });
 
   testWidgets('starts on Today with all four tabs and the centre action', (

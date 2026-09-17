@@ -56,6 +56,10 @@ const _cuisineByCsv = <String, String>{
   'nourishly_tamil_nadu_food_catalog.csv': 'tamil',
   'nourishly_telangana_food_catalog.csv': 'telugu',
   'nourishly_west_bengal_food_catalog.csv': 'bengali',
+  'nourishly_bread_bakery_and_sandwich_catalog.csv': 'pan-indian',
+  'nourishly_chaat_snacks_and_namkeen_catalog.csv': 'pan-indian',
+  'nourishly_healthy_breakfast_bowls_and_drinks_catalog.csv': 'pan-indian',
+  'nourishly_quick_meals_and_fusion_catalog.csv': 'pan-indian',
 };
 
 /// `<file>|<lowercased section>` -> cuisine, where a file spans several.
