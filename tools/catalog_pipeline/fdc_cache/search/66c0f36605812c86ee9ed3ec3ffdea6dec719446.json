@@ -1,0 +1,17 @@
+{
+  "query": "noodles instant dry [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 169742,
+      "description": "Rice noodles, dry"
+    },
+    {
+      "fdcId": 171588,
+      "description": "Gravy, brown instant, dry"
+    },
+    {
+      "fdcId": 171589,
+      "description": "Gravy, instant beef, dry"
+    }
+  ]
+}

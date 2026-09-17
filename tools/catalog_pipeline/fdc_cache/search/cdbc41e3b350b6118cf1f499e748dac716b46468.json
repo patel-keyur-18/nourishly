@@ -1,0 +1,17 @@
+{
+  "query": "quinoa cooked [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 168917,
+      "description": "Quinoa, cooked"
+    },
+    {
+      "fdcId": 168874,
+      "description": "Quinoa, uncooked"
+    },
+    {
+      "fdcId": 2512372,
+      "description": "Flour, quinoa"
+    }
+  ]
+}

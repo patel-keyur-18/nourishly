@@ -82,6 +82,7 @@ const ingredientTargets = <String, String>{
   'apple': '01:apple', // Apple
   'arborio rice': '01:rice-white-raw', // Rice, white, raw
   'ash gourd': '01:ash-gourd', // Ash gourd
+  'avocado': '08:avocado', // Avocado
   'baby corn':
       '08:sweet-corn', // Sweet corn — the immature ear of the same plant
   'baingan chokha': 'bihar-food-catalog:baingan-chokha', // Baingan chokha
@@ -91,6 +92,7 @@ const ingredientTargets = <String, String>{
   'bamboo shoots': '08:bamboo-shoots', // Bamboo shoots
   'banana': '01:banana', // Banana
   'banana blossom': '01:raw-banana', // Raw banana — the flower of the same plant; no FDC entry of its own
+  'barnyard millet': '08:millet-raw', // Millet, raw — FDC measures one millet, not the named varieties
   'basil': '08:basil', // Basil
   'basil seeds': '01:chia-seeds', // Chia seeds — sabja swells and eats like chia, which is the row the catalog measures
   'basmati rice': '01:rice-white-raw', // Rice, white, raw
@@ -101,6 +103,7 @@ const ingredientTargets = <String, String>{
   'beef': '08:beef-raw', // Beef, raw
   'beef mince': '08:beef-raw', // Beef, raw
   'beetroot': '01:beetroot', // Beetroot
+  'beetroot cooked': '01:beetroot', // Beetroot
   'bell pepper': '01:capsicum', // Capsicum
   'besan': '01:besan-gram-flour', // Besan, gram flour
   'besan dumplings': '01:besan-gram-flour', // Besan, gram flour
@@ -124,6 +127,7 @@ const ingredientTargets = <String, String>{
   'bombay duck fish': '01:fish-pomfret', // Fish, pomfret
   'boondi': '02:sev-thin', // Sev, thin — fried besan droplets, the same food as sev in a different shape
   'bottle gourd': '01:bottle-gourd', // Bottle gourd
+  'bottle gourd cooked': '01:bottle-gourd', // Bottle gourd
   'bottle gourd dumplings': '01:bottle-gourd', // Bottle gourd
   'bread': '01:bread-white', // Bread, white
   'bread croutons': '01:bread-white', // Bread, white
@@ -139,15 +143,18 @@ const ingredientTargets = <String, String>{
   'butter oil': '01:butter', // Butter
   'buttermilk': 'andhra-pradesh-food-catalog:buttermilk', // Buttermilk
   'cabbage': '01:cabbage', // Cabbage
+  'candied fruit': '08:jam', // Jam — sugar-soaked fruit peel; the preserve is the nearest measured sugared fruit
   'cannelloni pasta': '07:pasta-dry', // Pasta, dry
   'capsicum': '01:capsicum', // Capsicum
   'cardamom': '08:cardamom', // Cardamom
+  'carom seeds': '01:cumin-seeds', // Cumin seeds — carom seed: no FDC entry, and the nearest measured seed spice at the 1 g it is used in
   'carrot': '01:carrot', // Carrot
   'carrot cooked': '01:carrot', // Carrot
   'cashew': '01:cashew', // Cashew
   'cashews': '01:cashew', // Cashew
   'cauliflower': '01:cauliflower', // Cauliflower
   'cauliflower cooked': '01:cauliflower', // Cauliflower
+  'chaat masala': '01:garam-masala', // Garam masala — one of the catalog's named blends; garam masala is its measured mixed-spice row
   'chana dal': '01:chana-dal-raw', // Chana dal, raw
   'chana dal cake': '01:chana-dal-raw', // Chana dal, raw
   'chana dal-jaggery filling': '01:chana-dal-raw', // Chana dal, raw
@@ -155,6 +162,7 @@ const ingredientTargets = <String, String>{
   'chawli': '01:chawli-lobia', // Chawli / Lobia
   'cheddar cheese': '08:cheddar-cheese', // Cheddar cheese
   'cheese': '01:cheese-processed', // Cheese, processed
+  'cherries': '08:cherries', // Cherries
   'chhena': '01:paneer', // Paneer — chhena is paneer before it is pressed
   'chia seeds': '01:chia-seeds', // Chia seeds
   'chicken': '01:chicken-curry-cut-raw', // Chicken, curry cut, raw
@@ -162,6 +170,7 @@ const ingredientTargets = <String, String>{
   'chicken cooked': '08:chicken-cooked', // Chicken, cooked
   'chicken curry': 'indian-food-catalog:chicken-curry', // Chicken curry
   'chicken mince': '01:chicken-curry-cut-raw', // Chicken, curry cut, raw
+  'chicken mince cooked': '08:chicken-cooked', // Chicken, cooked
   'chicken stock': '08:chicken-stock', // Chicken stock
   'chicken wings': '01:chicken-curry-cut-raw', // Chicken, curry cut, raw
   'chickpeas': '01:chana-whole-kabuli', // Chana, whole (kabuli)
@@ -171,6 +180,8 @@ const ingredientTargets = <String, String>{
   'chili paste': '08:chilli-sauce', // Chilli sauce
   'chili powder': '01:red-chilli-powder', // Red chilli powder
   'chili sauce': '08:chilli-sauce', // Chilli sauce
+  'chocolate chips': '08:dark-chocolate', // Dark chocolate
+  'chocolate syrup': '08:chocolate-syrup', // Chocolate syrup
   'chutney': '01:green-chutney', // Green chutney
   'chutneys': '01:green-chutney', // Green chutney
   'ciabatta bread': '01:bread-white', // Bread, white
@@ -181,6 +192,7 @@ const ingredientTargets = <String, String>{
   'coconut filling': '01:coconut-fresh-grated', // Coconut, fresh grated
   'coconut milk': '01:coconut-milk', // Coconut milk
   'coconut oil': '01:coconut-oil', // Coconut oil
+  'coconut water': '01:coconut-water', // Coconut water
   'coconut-jaggery': '01:coconut-fresh-grated', // Coconut, fresh grated
   'coconut-jaggery filling': '01:coconut-fresh-grated', // Coconut, fresh grated
   'coffee': '08:coffee-powder', // Coffee powder
@@ -196,7 +208,9 @@ const ingredientTargets = <String, String>{
   'coriander seeds':
       '01:coriander-powder', // Coriander powder — the powder is the ground seed
   'corn flour': '08:corn-flour', // Corn flour
+  'corn taco shells': '08:taco-shells', // Taco shells
   'cornflakes': '08:cornflakes', // Cornflakes
+  'cornflakes crumbs': '08:cornflakes', // Cornflakes — crushed, which changes the shape and not the food
   'cornflour': '08:corn-flour', // Corn flour
   'cornmeal': '08:maize-flour', // Maize flour
   'country chicken curry': 'indian-food-catalog:chicken-curry', // Chicken curry
@@ -204,6 +218,7 @@ const ingredientTargets = <String, String>{
   'crab': '08:crab', // Crab
   'cream': '01:malai-fresh-cream', // Malai / fresh cream
   'cream cheese': '08:cream-cheese', // Cream cheese
+  'croissant': 'bread-bakery-and-sandwich-catalog:croissant', // Croissant
   'cucumber': '01:cucumber', // Cucumber
   'cucumber onion': '01:cucumber', // Cucumber
   'cumin': '01:cumin-seeds', // Cumin seeds
@@ -217,12 +232,14 @@ const ingredientTargets = <String, String>{
   'date palm jaggery': '01:jaggery', // Jaggery
   'dates': '01:dates', // Dates
   'decoction': '01:coffee-decoction', // Coffee decoction
+  'dehydrated vegetables': '01:mixed-vegetables', // Mixed vegetables — the dried sachet vegetables, as elsewhere in this map
   'dhokla': 'indian-food-catalog:dhokla', // Dhokla
   'digestive biscuits': '08:biscuits-digestive', // Biscuits, digestive
   'dosa': '03:dosa-plain', // Dosa, plain
   'dosa batter': '01:idli-rice-urad-batter', // Idli rice + urad batter
   'dried apricots': '08:dried-apricots', // Dried apricots
   'dried chili': '08:dried-red-chilli', // Dried red chilli
+  'dried fenugreek leaves': '01:fenugreek-leaves', // Fenugreek leaves — kasuri methi is the same leaf dried
   'dried peas cooked': '08:dried-peas', // Dried peas
   'dried red chili': '08:dried-red-chilli', // Dried red chilli
   'dried vegetables': '01:mixed-vegetables', // Mixed vegetables — sundried vathal, as elsewhere in this map
@@ -242,6 +259,7 @@ const ingredientTargets = <String, String>{
   'fafda': 'indian-food-catalog:fafda', // Fafda
   'farsan': '02:sev-thin', // Sev, thin
   'fennel': '08:fennel-seeds', // Fennel seeds
+  'fennel seeds': '08:fennel-seeds', // Fennel seeds
   'fenugreek': '08:fenugreek-seeds', // Fenugreek seeds
   'fenugreek dumpling': '02:muthiya-steamed', // Muthiya, steamed
   'fenugreek leaves': '01:fenugreek-leaves', // Fenugreek leaves
@@ -252,8 +270,11 @@ const ingredientTargets = <String, String>{
   'fish curry': 'indian-food-catalog:fish-curry', // Fish curry
   'fish head': '01:fish-seer-kingfish', // Fish, seer / kingfish
   'flattened rice': '01:poha-raw', // Poha, raw
+  'flattened roasted chickpeas': '01:chana-whole-kala', // Chana, whole (kala) — chana jor garam is the same dry chana, flattened and roasted
   'flaxseed': '01:flaxseed', // Flaxseed
   'fox nuts': '08:fox-nuts', // Fox nuts
+  'foxtail millet': '08:millet-raw', // Millet, raw — FDC measures one millet, not the named varieties
+  'foxtail millet cooked': '08:millet-cooked', // Millet, cooked
   'french beans': '01:french-beans', // French beans
   'fresh coconut': '01:coconut-fresh-grated', // Coconut, fresh grated
   'fresh mozzarella': '08:mozzarella-cheese', // Mozzarella cheese
@@ -271,6 +292,7 @@ const ingredientTargets = <String, String>{
   'ghee': '01:ghee', // Ghee
   'ghee oil': '01:ghee', // Ghee
   'ginger': '01:ginger', // Ginger
+  'glucose syrup': '01:sugar', // Sugar — glucose syrup at the 2 g a biscuit carries; FDC's corn syrup rows differ from it by less than the rounding
   'goat brain': '01:mutton-raw', // Mutton, raw
   'goat head meat': '01:mutton-raw', // Mutton, raw
   'goat intestine': '01:mutton-raw', // Mutton, raw
@@ -283,6 +305,7 @@ const ingredientTargets = <String, String>{
   'gouda cheese': '08:cheddar-cheese', // Cheddar cheese — a hard cheese used once, at cheddar's composition
   'gram flour': '01:besan-gram-flour', // Besan, gram flour
   'gram flour batter': '01:besan-gram-flour', // Besan, gram flour
+  'granola': '08:muesli', // Muesli — the same toasted oat-and-nut cereal
   'grated carrot': '01:carrot', // Carrot
   'grated coconut': '01:coconut-fresh-grated', // Coconut, fresh grated
   'green beans': '01:french-beans', // French beans
@@ -290,6 +313,7 @@ const ingredientTargets = <String, String>{
   'green chili': '01:green-chilli', // Green chilli
   'green gram': '01:green-moong-whole', // Green moong, whole
   'green peas': '01:green-peas', // Green peas
+  'green tea leaves': '08:tea-leaves', // Tea leaves — the same leaf, unoxidised; 2 g brewed and discarded
   'ground rice': '01:rice-flour', // Rice flour
   'groundnut oil': '01:groundnut-oil', // Groundnut oil
   'hilsa fish': '08:fish-hilsa', // Fish, hilsa
@@ -304,6 +328,9 @@ const ingredientTargets = <String, String>{
   'idli batter': '01:idli-rice-urad-batter', // Idli rice + urad batter
   'idli dosa batter': '01:idli-rice-urad-batter', // Idli rice + urad batter
   'idli rice': '01:rice-white-raw', // Rice, white, raw — the raw grain; the cooked parboiled row is a separate food
+  'instant masala noodles': '08:instant-noodles-dry', // Instant noodles, dry
+  'instant noodles': '08:instant-noodles-dry', // Instant noodles, dry
+  'instant noodles dry': '08:instant-noodles-dry', // Instant noodles, dry
   'italian bread': '01:bread-white', // Bread, white
   'ivy gourd': '01:ivy-gourd', // Ivy gourd
   'jaggery': '01:jaggery', // Jaggery
@@ -312,6 +339,8 @@ const ingredientTargets = <String, String>{
   'jelly': '08:jam', // Jam
   'jowar bhakri': 'indian-food-catalog:jowar-bhakri', // Jowar bhakri
   'jowar flour': '01:jowar-flour', // Jowar flour
+  'jowar rava':
+      '01:jowar-flour', // Jowar flour — the same sorghum grain, coarsely ground
   'kabuli chana': '01:chana-whole-kabuli', // Chana, whole (kabuli) — the white chickpea, not the brown `kala` row beside it
   'kachampuli': '01:tamarind', // Tamarind — the Coorg souring vinegar, as above
   'kachori': 'indian-food-catalog:kachori', // Kachori
@@ -338,13 +367,16 @@ const ingredientTargets = <String, String>{
   'lasagna sheets': '07:pasta-dry', // Pasta, dry
   'lemon': '01:lemon', // Lemon
   'lemon juice': '01:lemon', // Lemon
+  'lemongrass': '08:basil', // Basil — FDC has no lemongrass with proximates; the nearest measured fresh aromatic leaf at the 2 g steeped and discarded
   'lettuce': '08:lettuce', // Lettuce
   'lime': '01:lemon', // Lemon
   'lime juice': '01:lemon', // Lemon
   'litti': 'bihar-food-catalog:litti', // Litti
+  'little millet': '08:millet-raw', // Millet, raw — FDC measures one millet, not the named varieties
   'macaroni': '07:pasta-dry', // Pasta, dry
   'mackerel': '08:fish-mackerel', // Fish, mackerel
   'maize flour': '08:maize-flour', // Maize flour
+  'makhana': '08:fox-nuts', // Fox nuts
   'malabar spinach': '01:spinach', // Spinach
   'mango': '01:mango', // Mango
   'mango pulp': '01:mango', // Mango
@@ -358,6 +390,7 @@ const ingredientTargets = <String, String>{
   'methi greens': '01:fenugreek-leaves', // Fenugreek leaves
   'methi leaves': '01:fenugreek-leaves', // Fenugreek leaves
   'milk': '01:milk-cow-whole', // Milk, cow, whole
+  'milk bun': '01:pav', // Pav — the same soft ladi bun
   'milk powder': '08:milk-powder', // Milk powder
   'milk reduced': '01:milk-cow-whole', // Milk, cow, whole
   'milk solids': '01:khoya-mawa', // Khoya / Mawa
@@ -369,6 +402,7 @@ const ingredientTargets = <String, String>{
   'mint': '01:mint-leaves', // Mint leaves
   'mint chutney': 'indian-food-catalog:mint-chutney', // Mint chutney
   'mint leaves': '01:mint-leaves', // Mint leaves
+  'mixed berries': '08:strawberry', // Strawberry — FDC publishes no mixed-berry row; the berries differ from each other by less than the serving is guessed at
   'mixed dal': '01:toor-dal-raw', // Toor dal, raw
   'mixed dals': '01:toor-dal-raw', // Toor dal, raw
   'mixed fruit': '08:mixed-fruit', // Mixed fruit
@@ -382,6 +416,7 @@ const ingredientTargets = <String, String>{
   'moong chana dal': '01:moong-dal-raw', // Moong dal, raw
   'moong dal': '01:moong-dal-raw', // Moong dal, raw
   'moong dal soaked': '01:moong-dal-raw', // Moong dal, raw
+  'moong sprouts': '01:sprouted-moong', // Sprouted moong
   'moth bean flour': '01:matki', // Matki
   'moth beans': '01:matki', // Matki
   'mozzarella cheese': '08:mozzarella-cheese', // Mozzarella cheese
@@ -398,6 +433,7 @@ const ingredientTargets = <String, String>{
   'muthiya': '02:muthiya-steamed', // Muthiya, steamed
   'mutton': '01:mutton-raw', // Mutton, raw
   'mutton mince': '01:mutton-raw', // Mutton, raw
+  'mutton mince cooked': '01:mutton-raw', // Mutton, raw
   'mysore rasam powder': '01:garam-masala', // Garam masala — one of the catalog's named blends; garam masala is its measured mixed-spice row
   'neer dose': '04:neer-dose', // Neer dose
   'nigella seeds': '01:cumin-seeds', // Cumin seeds — kalonji: as above
@@ -412,6 +448,7 @@ const ingredientTargets = <String, String>{
   'onion': '01:onion', // Onion
   'onion pakora': 'andhra-pradesh-food-catalog:onion-pakora', // Onion pakora
   'onion tomato': '01:onion', // Onion
+  'orange': '01:orange-sweet-lime', // Orange / Sweet lime
   'oyster sauce': '08:soy-sauce', // Soy sauce
   'paneer': '01:paneer', // Paneer
   'papaya': '01:papaya', // Papaya
@@ -426,11 +463,16 @@ const ingredientTargets = <String, String>{
   'patra': 'indian-food-catalog:patra', // Patra
   'pav': '01:pav', // Pav
   'pav 1 piece': '01:pav', // Pav
+  'pav bhaji masala': '01:garam-masala', // Garam masala — one of the catalog's named blends; garam masala is its measured mixed-spice row
+  'pav bread': '01:pav', // Pav
+  'peach puree': '08:mixed-fruit', // Mixed fruit — the canned fruit row is peach-led, and this is 20 g of it in an iced tea
   'peanut': '01:peanuts-raw', // Peanuts, raw
+  'peanut butter': '08:peanut-butter', // Peanut butter
   'peanut powder': '01:peanuts-raw', // Peanuts, raw
   'peanut-coconut masala': '01:peanut-chutney', // Peanut chutney
   'peanuts': '01:peanuts-raw', // Peanuts, raw
   'peanuts cooked': '01:peanuts-raw', // Peanuts, raw
+  'peanuts roasted': '01:peanuts-raw', // Peanuts, raw
   'pearl millet': '01:bajra-flour', // Bajra flour
   'pearl millet flour': '01:bajra-flour', // Bajra flour
   'pearl spot fish': '01:fish-pomfret', // Fish, pomfret
@@ -439,6 +481,7 @@ const ingredientTargets = <String, String>{
   'penne pasta': '07:pasta-dry', // Pasta, dry
   'pepper': '01:black-pepper', // Black pepper
   'pepperoni': '08:pepperoni', // Pepperoni
+  'peri peri seasoning': '01:garam-masala', // Garam masala — one of the catalog's named blends; garam masala is its measured mixed-spice row
   'pesto': '08:pesto', // Pesto
   'pickle masala': '01:garam-masala', // Garam masala — one of the catalog's named blends; garam masala is its measured mixed-spice row
   'pineapple': '08:pineapple', // Pineapple
@@ -460,12 +503,15 @@ const ingredientTargets = <String, String>{
   'potato vada': '04:palya-potato', // Palya, potato
   'powdered sugar': '01:sugar', // Sugar
   'prawns': '01:prawns', // Prawns
+  'processed cheese': '01:cheese-processed', // Cheese, processed
   'puffed rice': '01:puffed-rice', // Puffed rice
   'puliyogare paste': '01:tamarind', // Tamarind
   'pumpkin': '01:pumpkin', // Pumpkin
   'pumpkin seeds': '01:pumpkin-seeds', // Pumpkin seeds
   'puri': 'andhra-pradesh-food-catalog:puri', // Puri
   'purple yam': '01:yam', // Yam
+  'quinoa': '08:quinoa-raw', // Quinoa, raw
+  'quinoa cooked': '08:quinoa-cooked', // Quinoa, cooked
   'radish': '01:radish', // Radish
   'ragi flour': '01:ragi-flour', // Ragi flour
   'ragi mudda':
@@ -476,6 +522,7 @@ const ingredientTargets = <String, String>{
   'rasam powder': '01:garam-masala', // Garam masala — one of the catalog's named blends; garam masala is its measured mixed-spice row
   'rava': '01:semolina-rava', // Semolina, rava
   'raw banana': '01:raw-banana', // Raw banana
+  'raw banana cooked': '01:raw-banana', // Raw banana
   'raw jackfruit': '01:jackfruit', // Jackfruit
   'raw mango': '01:raw-mango', // Raw mango
   'raw papaya': '01:papaya', // Papaya
@@ -511,7 +558,11 @@ const ingredientTargets = <String, String>{
   'roasted chickpeas': '01:chana-dal-raw', // Chana dal, raw
   'roasted coconut': '01:coconut-fresh-grated', // Coconut, fresh grated
   'roasted cumin': '01:cumin-seeds', // Cumin seeds
+  'roasted gram': '01:chana-dal-raw', // Chana dal, raw — putana/dalia is the same split gram, roasted
   'roasted gram flour': '01:besan-gram-flour', // Besan, gram flour
+  'roasted makhana':
+      'chaat-snacks-and-namkeen-catalog:roasted-makhana', // Roasted makhana
+  'roasted papad': 'indian-food-catalog:roasted-papad', // Roasted papad
   'roasted spices': '01:garam-masala', // Garam masala — one of the catalog's named blends; garam masala is its measured mixed-spice row
   'rohu fish': '08:fish-rohu', // Fish, rohu
   'rolled oats': '01:oats-rolled', // Oats, rolled
@@ -522,17 +573,20 @@ const ingredientTargets = <String, String>{
   'saffron': '08:saffron', // Saffron
   'sago': '08:sago', // Sago
   'salna': '03:salna', // Salna
+  'salsa': '08:salsa', // Salsa
   'salt': '01:salt', // Salt
   'sambar': 'indian-food-catalog:sambar', // Sambar
   'sambar podi': '01:garam-masala', // Garam masala
   'sambar powder': '01:garam-masala', // Garam masala — one of the catalog's named blends; garam masala is its measured mixed-spice row
   'sambar spice': '01:garam-masala', // Garam masala — one of the catalog's named blends; garam masala is its measured mixed-spice row
   'sambharo': '02:sambharo', // Sambharo
+  'sandwich masala': '01:garam-masala', // Garam masala — one of the catalog's named blends; garam masala is its measured mixed-spice row
   'sangri':
       '01:cluster-beans', // Cluster beans — the dried khejri pod, as above
   'sattu': '01:besan-gram-flour', // Besan, gram flour — roasted chana flour
   'sauces': '08:tomato-sauce', // Tomato sauce
   'schezwan sauce': '08:chilli-sauce', // Chilli sauce
+  'seasoning': '01:garam-masala', // Garam masala — one of the catalog's named blends; garam masala is its measured mixed-spice row
   'seer fish': '01:fish-seer-kingfish', // Fish, seer / kingfish
   'semolina': '01:semolina-rava', // Semolina, rava
   'semolina upma': 'andhra-pradesh-food-catalog:upma', // Upma
@@ -546,6 +600,7 @@ const ingredientTargets = <String, String>{
   'sorghum flour': '01:jowar-flour', // Jowar flour
   'sour curd': '01:curd-plain', // Curd, plain
   'soy sauce': '08:soy-sauce', // Soy sauce
+  'soya chaap': '08:soya-chunks', // Soya chunks — FDC has no chaap; the chunk is the same soy protein, before the maida wrap the stick adds
   'soya chunks': '08:soya-chunks', // Soya chunks
   'spaghetti': '07:pasta-dry', // Pasta, dry
   'spice mix': '01:garam-masala', // Garam masala — one of the catalog's named blends; garam masala is its measured mixed-spice row
@@ -557,6 +612,7 @@ const ingredientTargets = <String, String>{
   'spring onion': '08:spring-onion', // Spring onion
   'spring roll wrappers': '01:refined-flour-maida', // Refined flour, maida
   'sprouted moth beans': '01:matki', // Matki
+  'strawberry': '08:strawberry', // Strawberry
   'sugar': '01:sugar', // Sugar
   'sugar syrup': '01:sugar', // Sugar
   'sundried vathal': '01:mixed-vegetables', // Mixed vegetables
@@ -565,27 +621,36 @@ const ingredientTargets = <String, String>{
   'sweet corn': '08:sweet-corn', // Sweet corn
   'sweet corn cooked': '08:sweet-corn', // Sweet corn
   'sweet potato': '01:sweet-potato', // Sweet potato
+  'sweet potato cooked': '01:sweet-potato', // Sweet potato
+  'tahini': '01:sesame-seeds', // Sesame seeds — tahini is the seed ground, nothing added
   'tamarind': '01:tamarind', // Tamarind
   'tamarind chutney':
       'indian-food-catalog:tamarind-chutney', // Tamarind chutney
   'tamarind leaves': '01:tamarind', // Tamarind
   'tamarind paste': '01:tamarind', // Tamarind
   'tamarind pulp': '01:tamarind', // Tamarind
+  'tandoori masala': '01:garam-masala', // Garam masala — one of the catalog's named blends; garam masala is its measured mixed-spice row
+  'tapioca': '08:tapioca-root', // Tapioca root
   'tapioca cooked': '08:tapioca-root', // Tapioca root
   'taro leaves': '01:colocasia-leaves', // Colocasia leaves
+  'tastemaker': '01:garam-masala', // Garam masala — one of the catalog's named blends; garam masala is its measured mixed-spice row
   'tea infusion': '08:tea-leaves', // Tea leaves
   'tea leaves': '08:tea-leaves', // Tea leaves
   'tempering': '01:groundnut-oil', // Groundnut oil
   'tempering oil': '01:groundnut-oil', // Groundnut oil
   'tender coconut': '01:coconut-water', // Coconut water
+  'tender coconut flesh': '01:coconut-fresh-grated', // Coconut, fresh grated — FDC measures no tender coconut meat; the mature kernel is the only coconut flesh it publishes, and it is richer than the soft flesh this means
   'tikka seasoning': '01:garam-masala', // Garam masala — one of the catalog's named blends; garam masala is its measured mixed-spice row
   'tofu': '08:tofu', // Tofu
   'tomato': '01:tomato', // Tomato
   'tomato pesto': '08:pesto', // Pesto
+  'tomato pizza sauce': '08:tomato-puree', // Tomato puree — the sauce is seasoned puree, and the seasoning is under a gram
   'tomato puree': '08:tomato-puree', // Tomato puree
+  'tomato salsa': '08:salsa', // Salsa
   'tomato sauce': '08:tomato-sauce', // Tomato sauce
   'toor dal': '01:toor-dal-raw', // Toor dal, raw
   'toor dal cooked': '08:toor-dal-cooked', // Toor dal, cooked
+  'tulsi leaves': '08:basil', // Basil
   'tuna canned drained': '08:tuna-canned', // Tuna, canned
   'turmeric': '01:turmeric', // Turmeric
   'tuvar lilva': '08:tuvar-lilva', // Tuvar lilva
@@ -599,6 +664,8 @@ const ingredientTargets = <String, String>{
   'urad flour': '01:urad-dal-raw', // Urad dal, raw
   'vangi bath powder': '01:garam-masala', // Garam masala
   'vanilla': '08:vanilla-essence', // Vanilla essence
+  'vanilla cream': '01:malai-fresh-cream', // Malai / fresh cream — the biscuit filling is a sugared fat cream; fresh cream is the nearest measured one
+  'vanilla ice cream': '08:ice-cream-vanilla', // Ice cream, vanilla
   'vegetable': '01:mixed-vegetables', // Mixed vegetables
   'vegetable manchurian balls': 'common-international-food-catalog:vegetable-manchurian-dry', // Vegetable Manchurian dry
   'vegetable salna': '03:salna', // Salna
@@ -610,9 +677,13 @@ const ingredientTargets = <String, String>{
   'watermelon seeds': '01:watermelon-seeds', // Watermelon seeds
   'wheat extract': '01:wheat-flour-atta', // Wheat flour, atta
   'wheat flour': '01:wheat-flour-atta', // Wheat flour, atta
+  'wheat fryums':
+      '02:sev-thin', // Sev, thin — the nearest measured deep-fried dough snack
   'wheat milk': '01:wheat-flour-atta', // Wheat flour, atta — the starch pressed from soaked wheat, as 'wheat extract' elsewhere in this map
   'wheat noodles': '07:pasta-dry', // Pasta, dry
   'wheat noodles cooked': '08:pasta-cooked', // Pasta, cooked
+  'wheat tortilla': '08:tortilla-wheat', // Tortilla, wheat
+  'whey protein': '08:whey-protein', // Whey protein
   'whipped cream': '01:malai-fresh-cream', // Malai / fresh cream
   'white beans cooked': '01:rajma', // Rajma
   'white bread': '01:bread-white', // Bread, white
@@ -621,6 +692,7 @@ const ingredientTargets = <String, String>{
   'whole masoor': '01:masoor-dal-raw', // Masoor dal, raw
   'whole moong': '01:green-moong-whole', // Green moong, whole
   'whole spices': '01:garam-masala', // Garam masala — one of the catalog's named blends; garam masala is its measured mixed-spice row
+  'whole wheat bread': '08:bread-whole-wheat', // Bread, whole wheat
   'whole wheat dhokli': '01:wheat-flour-atta', // Wheat flour, atta
   'whole wheat flour': '01:wheat-flour-atta', // Wheat flour, atta
   'wood apple pulp': '01:custard-apple', // Custard apple — bel has no FDC entry; the nearest pulpy tropical fruit the catalog measures

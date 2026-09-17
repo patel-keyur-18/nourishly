@@ -1,0 +1,17 @@
+{
+  "query": "syrups chocolate [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 174117,
+      "description": "Beverages, chocolate syrup"
+    },
+    {
+      "fdcId": 170681,
+      "description": "Syrup, NESTLE, chocolate"
+    },
+    {
+      "fdcId": 168834,
+      "description": "Syrups, chocolate, HERSHEY'S Genuine Chocolate Flavored Lite Syrup"
+    }
+  ]
+}

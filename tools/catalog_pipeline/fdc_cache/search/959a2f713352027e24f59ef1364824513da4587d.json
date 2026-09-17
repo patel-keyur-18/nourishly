@@ -1,0 +1,17 @@
+{
+  "query": "peanut butter smooth style with salt [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 172470,
+      "description": "Peanut butter, smooth style, without salt"
+    },
+    {
+      "fdcId": 174266,
+      "description": "Peanut butter, smooth style, with salt (Includes foods for USDA's Food Distribution Program)"
+    },
+    {
+      "fdcId": 174265,
+      "description": "Peanut butter, chunk style, with salt"
+    }
+  ]
+}

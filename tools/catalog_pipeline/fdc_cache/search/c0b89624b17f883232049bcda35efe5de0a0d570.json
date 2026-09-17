@@ -1,0 +1,17 @@
+{
+  "query": "taco shells baked [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 172800,
+      "description": "Taco shells, baked"
+    },
+    {
+      "fdcId": 175067,
+      "description": "Taco shells, baked, without added salt"
+    },
+    {
+      "fdcId": 170689,
+      "description": "Fast foods, taco with beef, cheese and lettuce, hard shell"
+    }
+  ]
+}
