@@ -112,6 +112,12 @@ class _NourishlyAppState extends ConsumerState<NourishlyApp>
 
     return MaterialApp.router(
       title: 'Nourishly',
+      // Lets screens (e.g. FoodPortionScreen) use RestorationMixin to
+      // survive the engine being backgrounded and the OS reclaiming
+      // memory while the app process stays alive -- an interrupted food
+      // log entry keeps its serving/quantity/meal choices instead of
+      // resetting.
+      restorationScopeId: 'nourishly',
       debugShowCheckedModeBanner: false,
       theme: NourishlyTheme.light(),
       darkTheme: NourishlyTheme.dark(),

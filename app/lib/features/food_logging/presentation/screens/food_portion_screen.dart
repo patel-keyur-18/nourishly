@@ -44,20 +44,40 @@ class FoodPortionScreen extends ConsumerStatefulWidget {
   ConsumerState<FoodPortionScreen> createState() => _FoodPortionScreenState();
 }
 
-class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen> {
+class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen>
+    with RestorationMixin {
   late final Future<(FoodItem, List<ServingSize>, List<FoodNutrientValue>)>
   _food = _load();
-  double _quantity = 1;
-  String? _servingId;
-  String? _mealSlotId;
+  final RestorableDouble _quantity = RestorableDouble(1);
+  final RestorableStringN _servingId = RestorableStringN(null);
+  final RestorableStringN _mealSlotId = RestorableStringN(null);
   bool _saving = false;
 
   bool get _editing => widget.entryId != null;
 
   @override
-  void initState() {
-    super.initState();
-    _mealSlotId = widget.initialMealSlotId;
+  String? get restorationId => 'food_portion_${widget.foodId}';
+
+  @override
+  void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
+    registerForRestoration(_quantity, 'quantity');
+    registerForRestoration(_servingId, 'servingId');
+    registerForRestoration(_mealSlotId, 'mealSlotId');
+    // `initialRestore` is true on every fresh State object, restored or
+    // not (Flutter tracks it per-instance, not per-bucket) — it cannot
+    // tell "brand new" apart from "recreated with real prior data" here.
+    // `??=` is what actually does the right thing in both cases: a
+    // restored non-null selection is left alone, and only a genuinely
+    // empty one falls back to the widget's preselected slot.
+    _mealSlotId.value ??= widget.initialMealSlotId;
+  }
+
+  @override
+  void dispose() {
+    _quantity.dispose();
+    _servingId.dispose();
+    _mealSlotId.dispose();
+    super.dispose();
   }
 
   Future<(FoodItem, List<ServingSize>, List<FoodNutrientValue>)> _load() async {
@@ -78,15 +98,17 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen> {
       final entry = await (db.select(
         db.foodLogEntries,
       )..where((e) => e.id.equals(entryId))).getSingle();
-      _quantity = entry.quantity;
-      _servingId = entry.servingSizeId;
-      _mealSlotId = entry.mealSlotId;
+      _quantity.value = entry.quantity;
+      _servingId.value = entry.servingSizeId;
+      _mealSlotId.value = entry.mealSlotId;
     }
     return (food, servings, nutrientValues);
   }
 
   Future<void> _save() async {
-    if (_servingId == null || _mealSlotId == null || _saving) return;
+    if (_servingId.value == null || _mealSlotId.value == null || _saving) {
+      return;
+    }
     setState(() => _saving = true);
 
     final dao = ref.read(foodLoggingDaoProvider);
@@ -94,18 +116,18 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen> {
     if (entryId != null) {
       await dao.updateEntry(
         entryId: entryId,
-        quantity: _quantity,
-        servingId: _servingId,
-        mealSlotId: _mealSlotId,
+        quantity: _quantity.value,
+        servingId: _servingId.value,
+        mealSlotId: _mealSlotId.value,
       );
     } else {
       final ownerId = await ref.read(defaultOwnerProvider.future);
       await dao.logFood(
         ownerId: ownerId,
         foodId: widget.foodId,
-        servingId: _servingId!,
-        quantity: _quantity,
-        mealSlotId: _mealSlotId!,
+        servingId: _servingId.value!,
+        quantity: _quantity.value,
+        mealSlotId: _mealSlotId.value!,
         logDate: ref.read(todayProvider),
       );
     }
@@ -157,8 +179,10 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen> {
             return const Center(child: CircularProgressIndicator());
           }
           final (food, servings, nutrientValues) = snapshot.data!;
-          _servingId ??= servings.firstOrNull?.id;
-          final serving = servings.where((s) => s.id == _servingId).firstOrNull;
+          _servingId.value ??= servings.firstOrNull?.id;
+          final serving = servings
+              .where((s) => s.id == _servingId.value)
+              .firstOrNull;
 
           return Column(
             children: [
@@ -174,26 +198,28 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen> {
                     _FoodHeader(food: food),
                     _NutrientPreview(
                       values: nutrientValues,
-                      grams: (serving?.grams ?? 0) * _quantity,
+                      grams: (serving?.grams ?? 0) * _quantity.value,
                     ),
                     const NourishlySectionHeader(label: 'Serving'),
                     _ServingChips(
                       servings: servings,
-                      selectedId: _servingId,
-                      onSelected: (id) => setState(() => _servingId = id),
+                      selectedId: _servingId.value,
+                      onSelected: (id) =>
+                          setState(() => _servingId.value = id),
                     ),
                     const NourishlySectionHeader(label: 'Quantity'),
                     _QuantityStepper(
-                      quantity: _quantity,
+                      quantity: _quantity.value,
                       unitLabel: serving?.label ?? 'serving',
-                      grams: (serving?.grams ?? 0) * _quantity,
-                      onChanged: (q) => setState(() => _quantity = q),
+                      grams: (serving?.grams ?? 0) * _quantity.value,
+                      onChanged: (q) => setState(() => _quantity.value = q),
                     ),
                     const NourishlySectionHeader(label: 'Meal'),
                     _MealChips(
-                      selectedId: _mealSlotId,
-                      onSelected: (id) => setState(() => _mealSlotId = id),
-                      onDefault: (id) => _mealSlotId ??= id,
+                      selectedId: _mealSlotId.value,
+                      onSelected: (id) =>
+                          setState(() => _mealSlotId.value = id),
+                      onDefault: (id) => _mealSlotId.value ??= id,
                     ),
                     if (_canFork(food)) ...[
                       const SizedBox(height: NourishlySpace.s5),
@@ -203,7 +229,10 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen> {
                 ),
               ),
               _SaveBar(
-                enabled: !_saving && _servingId != null && _mealSlotId != null,
+                enabled:
+                    !_saving &&
+                    _servingId.value != null &&
+                    _mealSlotId.value != null,
                 saving: _saving,
                 editing: _editing,
                 onPressed: _save,

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nourishly/app/app.dart';
@@ -132,5 +133,25 @@ void main() {
   testWidgets('the stale Phase 3 sentence is gone', (tester) async {
     await pumpPortion(tester);
     expect(find.textContaining('Phase 3 aggregation'), findsNothing);
+  });
+
+  testWidgets('quantity survives a simulated state restoration', (
+    tester,
+  ) async {
+    await pumpPortion(tester);
+
+    await tester.tap(find.byIcon(Icons.add_circle_outline_rounded));
+    await tester.pumpAndSettle();
+    // Default 1 → 1.5 after one tap.
+    expect(find.text('1.5'), findsOneWidget);
+
+    // Destroys and recreates the whole widget tree from restoration data,
+    // the way a real engine restart after the OS reclaims a backgrounded
+    // app does — a plain StatefulWidget field resets to its initializer
+    // here; only RestorationMixin-registered state survives this.
+    await tester.restartAndRestore();
+    await tester.pumpAndSettle();
+
+    expect(find.text('1.5'), findsOneWidget);
   });
 }

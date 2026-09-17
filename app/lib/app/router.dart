@@ -42,6 +42,12 @@ final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>(
 /// …) arrives with the features that need it.
 final GoRouter appRouter = GoRouter(
   navigatorKey: rootNavigatorKey,
+  // Without this, the Navigator go_router builds internally has no
+  // restoration scope of its own, so no pushed screen (e.g.
+  // FoodPortionScreen) ever receives a restoration bucket to register
+  // against — RestorationMixin.bucket stays null and nothing survives a
+  // backgrounding interruption, regardless of what the screen itself does.
+  restorationScopeId: 'nourishly-router',
   initialLocation: '/today',
   routes: [
     GoRoute(
