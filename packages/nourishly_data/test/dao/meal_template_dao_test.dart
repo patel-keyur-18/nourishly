@@ -39,6 +39,17 @@ void main() {
             sortOrder: 1,
           ),
         );
+    await db
+        .into(db.foodNutrientValues)
+        .insert(
+          FoodNutrientValuesCompanion.insert(
+            id: 'fnv-dal-energy',
+            foodId: 'food-dal',
+            nutrientId: 'energy',
+            amountPer100g: 150,
+            valueSource: 'measured',
+          ),
+        );
   });
 
   tearDown(() => db.close());
@@ -67,6 +78,83 @@ void main() {
       expect(templates.single.defaultMealSlotId, 'slot-lunch');
       expect(templates.single.items.single.foodName, 'Dal');
       expect(templates.single.items.single.quantity, 2);
+      // 2 x 150 g at 150 kcal/100g = 450 kcal.
+      expect(templates.single.energyKcal, 450);
+      expect(templates.single.useCount, 0);
+      expect(templates.single.lastUsedAt, isNull);
+    },
+  );
+
+  test(
+    'an item missing a serving contributes no energy, but does not '
+    'zero the rest — the total simply omits it',
+    () async {
+      await db
+          .into(db.foodItems)
+          .insert(
+            FoodItemsCompanion.insert(
+              id: 'food-mystery',
+              kind: 'ingredient',
+              canonicalName: 'Mystery side',
+              qualityTier: 'user',
+              provenanceSource: 'user',
+            ),
+          );
+      final dao = MealTemplateDao(db);
+      await dao.createFromEntries(
+        ownerId: ownerId,
+        name: 'Lunch plus a guess',
+        defaultMealSlotId: 'slot-lunch',
+        items: const [
+          MealTemplateItemInput(
+            foodId: 'food-dal',
+            servingSizeId: 'serving-dal-katori',
+            quantity: 1,
+          ),
+          MealTemplateItemInput(
+            foodId: 'food-mystery',
+            servingSizeId: null,
+            quantity: 1,
+          ),
+        ],
+      );
+
+      final templates = await dao.templatesFor(ownerId);
+      // 1 x 150 g at 150 kcal/100g = 225 kcal from the dal alone.
+      expect(templates.single.energyKcal, 225);
+    },
+  );
+
+  test(
+    'a template with no computable energy anywhere reports null, not 0',
+    () async {
+      await db
+          .into(db.foodItems)
+          .insert(
+            FoodItemsCompanion.insert(
+              id: 'food-mystery',
+              kind: 'ingredient',
+              canonicalName: 'Mystery side',
+              qualityTier: 'user',
+              provenanceSource: 'user',
+            ),
+          );
+      final dao = MealTemplateDao(db);
+      await dao.createFromEntries(
+        ownerId: ownerId,
+        name: 'All unknown',
+        defaultMealSlotId: 'slot-lunch',
+        items: const [
+          MealTemplateItemInput(
+            foodId: 'food-mystery',
+            servingSizeId: null,
+            quantity: 1,
+          ),
+        ],
+      );
+
+      final templates = await dao.templatesFor(ownerId);
+      expect(templates.single.energyKcal, isNull);
     },
   );
 

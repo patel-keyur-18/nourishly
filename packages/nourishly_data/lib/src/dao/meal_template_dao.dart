@@ -44,12 +44,23 @@ class SavedMealTemplate {
     required this.name,
     required this.defaultMealSlotId,
     required this.items,
+    required this.energyKcal,
+    required this.useCount,
+    required this.lastUsedAt,
   });
 
   final String id;
   final String name;
   final String? defaultMealSlotId;
   final List<MealTemplateItemDetail> items;
+
+  /// The sum of `energy` across items whose serving grams and energy value
+  /// are both known. Null when none of the items have enough to compute
+  /// anything — a household choosing between two templates gets a real
+  /// number or nothing, never a total quietly missing part of the meal.
+  final double? energyKcal;
+  final int useCount;
+  final DateTime? lastUsedAt;
 }
 
 /// A saved set of foods a profile logs together often (screen 7, "cards
@@ -101,10 +112,32 @@ class MealTemplateDao {
           )..where((s) => s.id.isIn(servingIds))).get();
     final servingById = {for (final s in servings) s.id: s};
 
+    final energyValues = foodIds.isEmpty
+        ? <FoodNutrientValue>[]
+        : await (_db.select(_db.foodNutrientValues)..where(
+            (v) => v.foodId.isIn(foodIds) & v.nutrientId.equals('energy'),
+          )).get();
+    final energyPer100gByFood = {
+      for (final v in energyValues) v.foodId: v.amountPer100g,
+    };
+
+    double? energyKcal;
+    for (final item in items) {
+      final grams = item.servingSizeId == null
+          ? null
+          : servingById[item.servingSizeId]?.grams;
+      final energyPer100g = energyPer100gByFood[item.foodId];
+      if (grams == null || energyPer100g == null) continue;
+      energyKcal = (energyKcal ?? 0) + energyPer100g * grams * item.quantity / 100;
+    }
+
     return SavedMealTemplate(
       id: template.id,
       name: template.name,
       defaultMealSlotId: template.defaultMealSlotId,
+      energyKcal: energyKcal,
+      useCount: template.useCount,
+      lastUsedAt: template.lastUsedAt,
       items: [
         for (final item in items)
           MealTemplateItemDetail(

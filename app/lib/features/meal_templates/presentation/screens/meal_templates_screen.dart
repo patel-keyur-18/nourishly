@@ -112,6 +112,19 @@ class _TemplateCard extends ConsumerWidget {
                 ),
             ],
           ),
+          if (template.energyKcal != null || template.useCount > 0) ...[
+            const SizedBox(height: NourishlySpace.s1),
+            Text(
+              [
+                if (template.energyKcal != null)
+                  '~${template.energyKcal!.round()} kcal',
+                if (template.useCount > 0)
+                  'Used ${template.useCount} '
+                      'time${template.useCount == 1 ? '' : 's'}',
+              ].join(' · '),
+              style: text.caption.copyWith(color: colors.ink3),
+            ),
+          ],
           const SizedBox(height: NourishlySpace.s2),
           for (final item in template.items)
             Padding(

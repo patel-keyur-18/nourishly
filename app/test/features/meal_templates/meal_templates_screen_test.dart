@@ -51,6 +51,17 @@ void main() {
             sortOrder: 1,
           ),
         );
+    await db
+        .into(db.foodNutrientValues)
+        .insert(
+          FoodNutrientValuesCompanion.insert(
+            id: 'fnv-dal-energy',
+            foodId: 'food-dal',
+            nutrientId: 'energy',
+            amountPer100g: 150,
+            valueSource: 'measured',
+          ),
+        );
     await MealTemplateDao(db).createFromEntries(
       ownerId: ownerId,
       name: 'Usual lunch',
@@ -89,6 +100,21 @@ void main() {
     expect(find.text('Usual lunch'), findsOneWidget);
     expect(find.textContaining('Dal'), findsOneWidget);
     expect(find.text('Lunch'), findsOneWidget);
+    // 2 x 150 g at 150 kcal/100g = 450 kcal, never used yet.
+    expect(find.text('~450 kcal'), findsOneWidget);
+    expect(find.textContaining('Used'), findsNothing);
+  });
+
+  testWidgets('use count appears on the card after logging it once', (
+    tester,
+  ) async {
+    await pumpTemplates(tester);
+    await tester.tap(find.text('Log this meal'));
+    await tester.pumpAndSettle();
+    await tester.pump(nourishlySnackDuration + const Duration(seconds: 1));
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('Used 1 time'), findsOneWidget);
   });
 
   testWidgets('Log this meal creates a food log entry for today', (
