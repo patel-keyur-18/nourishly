@@ -87,6 +87,47 @@ class StatusChip extends StatelessWidget {
   }
 }
 
+/// The prototype's `.chip` — a plain label, no status meaning attached.
+///
+/// [StatusChip]'s dot and colours mean something specific everywhere else
+/// in the app (ok/low/high/unknown); reusing [NourishlyStatus.unknown]'s
+/// grey for a plain label like a meal-slot tag dilutes that. Use this
+/// instead for a tag, category, or any other non-status label.
+class NourishlyChip extends StatelessWidget {
+  const NourishlyChip({super.key, required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.nourishlyColors;
+    final text = context.nourishlyText;
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: colors.surface2,
+        borderRadius: BorderRadius.circular(NourishlyRadius.pill),
+        border: Border.all(color: colors.line, width: NourishlyStroke.hairline),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: NourishlySpace.s3,
+          vertical: NourishlySpace.s1 + 2,
+        ),
+        child: Text(
+          label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: text.caption.copyWith(
+            color: colors.ink2,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 /// The prototype's `.qb` — a quick-add pill (e.g. `+250 ml`).
 class QuickAddButton extends StatelessWidget {
   const QuickAddButton({

@@ -157,8 +157,7 @@ class _BrowseByCuisine extends ConsumerWidget {
       return const _Message(
         icon: Icons.search_rounded,
         title: 'Search for a food to log',
-        subtitle:
-            'Recents, favourites and meal templates arrive in a later phase.',
+        subtitle: 'Recents and favourites arrive in a later phase.',
       );
     }
 
@@ -172,6 +171,23 @@ class _BrowseByCuisine extends ConsumerWidget {
         NourishlySpace.s9,
       ),
       children: [
+        NourishlyCard(
+          onTap: () => context.push('/templates'),
+          child: Row(
+            children: [
+              Icon(Icons.repeat_rounded, color: colors.accent, size: 20),
+              const SizedBox(width: NourishlySpace.s3),
+              Expanded(
+                child: Text(
+                  'Log from a saved meal template',
+                  style: text.label.copyWith(color: colors.accent),
+                ),
+              ),
+              Icon(Icons.chevron_right_rounded, color: colors.accent, size: 18),
+            ],
+          ),
+        ),
+        const SizedBox(height: NourishlySpace.s3),
         Text(
           'Or browse by cuisine',
           style: text.caption.copyWith(color: colors.ink3),

@@ -7,6 +7,7 @@ import 'package:nourishly_ui/nourishly_ui.dart';
 
 import '../../../../app/providers.dart';
 import '../../../food_catalog/data/food_catalog_providers.dart';
+import '../../../profile/data/profile_providers.dart';
 
 /// Serving picker, quantity stepper, and meal slot (prototype screen 6,
 /// option A — serving chips + stepper) for one food, reached via
@@ -43,22 +44,43 @@ class FoodPortionScreen extends ConsumerStatefulWidget {
   ConsumerState<FoodPortionScreen> createState() => _FoodPortionScreenState();
 }
 
-class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen> {
-  late final Future<(FoodItem, List<ServingSize>)> _food = _load();
-  double _quantity = 1;
-  String? _servingId;
-  String? _mealSlotId;
+class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen>
+    with RestorationMixin {
+  late final Future<(FoodItem, List<ServingSize>, List<FoodNutrientValue>)>
+  _food = _load();
+  final RestorableDouble _quantity = RestorableDouble(1);
+  final RestorableStringN _servingId = RestorableStringN(null);
+  final RestorableStringN _mealSlotId = RestorableStringN(null);
   bool _saving = false;
 
   bool get _editing => widget.entryId != null;
 
   @override
-  void initState() {
-    super.initState();
-    _mealSlotId = widget.initialMealSlotId;
+  String? get restorationId => 'food_portion_${widget.foodId}';
+
+  @override
+  void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
+    registerForRestoration(_quantity, 'quantity');
+    registerForRestoration(_servingId, 'servingId');
+    registerForRestoration(_mealSlotId, 'mealSlotId');
+    // `initialRestore` is true on every fresh State object, restored or
+    // not (Flutter tracks it per-instance, not per-bucket) — it cannot
+    // tell "brand new" apart from "recreated with real prior data" here.
+    // `??=` is what actually does the right thing in both cases: a
+    // restored non-null selection is left alone, and only a genuinely
+    // empty one falls back to the widget's preselected slot.
+    _mealSlotId.value ??= widget.initialMealSlotId;
   }
 
-  Future<(FoodItem, List<ServingSize>)> _load() async {
+  @override
+  void dispose() {
+    _quantity.dispose();
+    _servingId.dispose();
+    _mealSlotId.dispose();
+    super.dispose();
+  }
+
+  Future<(FoodItem, List<ServingSize>, List<FoodNutrientValue>)> _load() async {
     final db = ref.read(nourishlyDatabaseProvider);
     final food = await (db.select(
       db.foodItems,
@@ -68,20 +90,25 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen> {
               ..where((s) => s.foodId.equals(widget.foodId))
               ..orderBy([(s) => OrderingTerm.asc(s.sortOrder)]))
             .get();
+    final nutrientValues = await (db.select(
+      db.foodNutrientValues,
+    )..where((v) => v.foodId.equals(widget.foodId))).get();
     final entryId = widget.entryId;
     if (entryId != null) {
       final entry = await (db.select(
         db.foodLogEntries,
       )..where((e) => e.id.equals(entryId))).getSingle();
-      _quantity = entry.quantity;
-      _servingId = entry.servingSizeId;
-      _mealSlotId = entry.mealSlotId;
+      _quantity.value = entry.quantity;
+      _servingId.value = entry.servingSizeId;
+      _mealSlotId.value = entry.mealSlotId;
     }
-    return (food, servings);
+    return (food, servings, nutrientValues);
   }
 
   Future<void> _save() async {
-    if (_servingId == null || _mealSlotId == null || _saving) return;
+    if (_servingId.value == null || _mealSlotId.value == null || _saving) {
+      return;
+    }
     setState(() => _saving = true);
 
     final dao = ref.read(foodLoggingDaoProvider);
@@ -89,18 +116,18 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen> {
     if (entryId != null) {
       await dao.updateEntry(
         entryId: entryId,
-        quantity: _quantity,
-        servingId: _servingId,
-        mealSlotId: _mealSlotId,
+        quantity: _quantity.value,
+        servingId: _servingId.value,
+        mealSlotId: _mealSlotId.value,
       );
     } else {
       final ownerId = await ref.read(defaultOwnerProvider.future);
       await dao.logFood(
         ownerId: ownerId,
         foodId: widget.foodId,
-        servingId: _servingId!,
-        quantity: _quantity,
-        mealSlotId: _mealSlotId!,
+        servingId: _servingId.value!,
+        quantity: _quantity.value,
+        mealSlotId: _mealSlotId.value!,
         logDate: ref.read(todayProvider),
       );
     }
@@ -151,9 +178,11 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen> {
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           }
-          final (food, servings) = snapshot.data!;
-          _servingId ??= servings.firstOrNull?.id;
-          final serving = servings.where((s) => s.id == _servingId).firstOrNull;
+          final (food, servings, nutrientValues) = snapshot.data!;
+          _servingId.value ??= servings.firstOrNull?.id;
+          final serving = servings
+              .where((s) => s.id == _servingId.value)
+              .firstOrNull;
 
           return Column(
             children: [
@@ -167,24 +196,29 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen> {
                   ),
                   children: [
                     _FoodHeader(food: food),
+                    _NutrientPreview(
+                      values: nutrientValues,
+                      grams: (serving?.grams ?? 0) * _quantity.value,
+                    ),
                     const NourishlySectionHeader(label: 'Serving'),
                     _ServingChips(
                       servings: servings,
-                      selectedId: _servingId,
-                      onSelected: (id) => setState(() => _servingId = id),
+                      selectedId: _servingId.value,
+                      onSelected: (id) => setState(() => _servingId.value = id),
                     ),
                     const NourishlySectionHeader(label: 'Quantity'),
                     _QuantityStepper(
-                      quantity: _quantity,
+                      quantity: _quantity.value,
                       unitLabel: serving?.label ?? 'serving',
-                      grams: (serving?.grams ?? 0) * _quantity,
-                      onChanged: (q) => setState(() => _quantity = q),
+                      grams: (serving?.grams ?? 0) * _quantity.value,
+                      onChanged: (q) => setState(() => _quantity.value = q),
                     ),
                     const NourishlySectionHeader(label: 'Meal'),
                     _MealChips(
-                      selectedId: _mealSlotId,
-                      onSelected: (id) => setState(() => _mealSlotId = id),
-                      onDefault: (id) => _mealSlotId ??= id,
+                      selectedId: _mealSlotId.value,
+                      onSelected: (id) =>
+                          setState(() => _mealSlotId.value = id),
+                      onDefault: (id) => _mealSlotId.value ??= id,
                     ),
                     if (_canFork(food)) ...[
                       const SizedBox(height: NourishlySpace.s5),
@@ -194,7 +228,10 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen> {
                 ),
               ),
               _SaveBar(
-                enabled: !_saving && _servingId != null && _mealSlotId != null,
+                enabled:
+                    !_saving &&
+                    _servingId.value != null &&
+                    _mealSlotId.value != null,
                 saving: _saving,
                 editing: _editing,
                 onPressed: _save,
@@ -214,7 +251,6 @@ class _FoodHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.nourishlyColors;
     final text = context.nourishlyText;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -236,14 +272,67 @@ class _FoodHeader extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: NourishlySpace.s2),
-        Text(
-          'Per-serving nutrients arrive with Phase 3 aggregation — this '
-          'screen records what you ate, exactly as logged.',
-          style: text.caption.copyWith(color: colors.ink3),
-        ),
       ],
     );
+  }
+}
+
+/// The four core macros plus energy, computed for the currently selected
+/// serving × quantity (AP-4: a nutrient with no [FoodNutrientValue] row
+/// for this food renders as "—", never 0 — mirrors
+/// `daily_report_screen.dart`'s `_NutrientRow`).
+class _NutrientPreview extends ConsumerWidget {
+  const _NutrientPreview({required this.values, required this.grams});
+
+  final List<FoodNutrientValue> values;
+  final double grams;
+
+  static const _tracked = ['energy', 'protein', 'carbs', 'fat', 'fibre'];
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colors = context.nourishlyColors;
+    final text = context.nourishlyText;
+    final labelsAsync = ref.watch(nutrientLabelsProvider);
+    final labels = labelsAsync.value ?? const <String, Nutrient>{};
+    final byNutrient = {for (final v in values) v.nutrientId: v};
+
+    return NourishlyCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          for (final id in _tracked)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 3),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    labels[id]?.displayName ?? id,
+                    style: text.caption.copyWith(color: colors.ink3),
+                  ),
+                  Text(
+                    _amount(byNutrient[id], labels[id], grams),
+                    style: text.body.copyWith(fontWeight: FontWeight.w700),
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  static String _amount(
+    FoodNutrientValue? value,
+    Nutrient? nutrient,
+    double grams,
+  ) {
+    if (value == null) return '—';
+    final amount = value.amountPer100g * grams / 100;
+    final unit = nutrient?.canonicalUnit ?? '';
+    final precision = nutrient?.displayPrecision ?? 0;
+    return '${amount.toStringAsFixed(precision)} $unit'.trim();
   }
 }
 

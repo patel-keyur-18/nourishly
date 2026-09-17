@@ -8,6 +8,7 @@ import '../features/food_logging/presentation/screens/day_log_screen.dart';
 import '../features/food_logging/presentation/screens/food_logging_screen.dart';
 import '../features/food_logging/presentation/screens/food_portion_screen.dart';
 import '../features/goals/presentation/screens/goals_screen.dart';
+import '../features/meal_templates/presentation/screens/meal_templates_screen.dart';
 import '../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../features/profile/presentation/screens/profile_screen.dart';
 import '../features/profile/presentation/screens/profile_setup_screen.dart';
@@ -41,6 +42,12 @@ final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>(
 /// …) arrives with the features that need it.
 final GoRouter appRouter = GoRouter(
   navigatorKey: rootNavigatorKey,
+  // Without this, the Navigator go_router builds internally has no
+  // restoration scope of its own, so no pushed screen (e.g.
+  // FoodPortionScreen) ever receives a restoration bucket to register
+  // against — RestorationMixin.bucket stays null and nothing survives a
+  // backgrounding interruption, regardless of what the screen itself does.
+  restorationScopeId: 'nourishly-router',
   initialLocation: '/today',
   routes: [
     GoRoute(
@@ -103,6 +110,12 @@ final GoRouter appRouter = GoRouter(
               RecipeBuilderScreen(foodId: state.pathParameters['foodId']!),
         ),
       ],
+    ),
+    // Over the shell, like `/recipes` — reached from the add-food flow.
+    GoRoute(
+      path: '/templates',
+      parentNavigatorKey: rootNavigatorKey,
+      builder: (context, state) => const MealTemplatesScreen(),
     ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) =>

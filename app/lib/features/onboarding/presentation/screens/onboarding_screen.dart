@@ -94,9 +94,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   const SizedBox(height: NourishlySpace.s6),
                   for (final (icon, label) in _promises)
                     Padding(
-                      padding: const EdgeInsets.only(
-                        bottom: NourishlySpace.s3,
-                      ),
+                      padding: const EdgeInsets.only(bottom: NourishlySpace.s3),
                       child: Row(
                         children: [
                           Icon(icon, size: 18, color: colors.accent),
@@ -130,8 +128,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   SizedBox(
                     width: double.infinity,
                     child: FilledButton(
-                      onPressed: () =>
-                          _dismiss('/profile/setup?from=welcome'),
+                      onPressed: () => _dismiss('/profile/setup?from=welcome'),
                       child: const Text('Set up my profile'),
                     ),
                   ),

@@ -122,11 +122,11 @@ void main() {
     final serving = await (db.select(
       db.servingSizes,
     )..where((s) => s.id.equals(servingId))).getSingle();
-    final rawEnergy = await (db.select(
-      db.foodNutrientValues,
-    )..where(
-      (v) => v.foodId.equals(foodId) & v.nutrientId.equals('energy'),
-    )).getSingle();
+    final rawEnergy =
+        await (db.select(db.foodNutrientValues)..where(
+              (v) => v.foodId.equals(foodId) & v.nutrientId.equals('energy'),
+            ))
+            .getSingle();
 
     await dao.logFood(
       ownerId: ownerId,

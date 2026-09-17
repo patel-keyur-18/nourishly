@@ -177,9 +177,7 @@ class WaterVesselState extends State<WaterVessel>
                     child: DecoratedBox(
                       decoration: BoxDecoration(
                         color: colors.surface,
-                        borderRadius: BorderRadius.circular(
-                          NourishlyRadius.lg,
-                        ),
+                        borderRadius: BorderRadius.circular(NourishlyRadius.lg),
                         border: Border.all(
                           color: colors.line,
                           width: NourishlyStroke.hairline,
@@ -197,17 +195,13 @@ class WaterVesselState extends State<WaterVessel>
                               animation: _volume,
                               builder: (context, child) => Text(
                                 (_volume.value / 1000).toStringAsFixed(2),
-                                style: text.numeral.copyWith(
-                                  color: colors.ink,
-                                ),
+                                style: text.numeral.copyWith(color: colors.ink),
                               ),
                             ),
                             const SizedBox(height: NourishlySpace.s1),
                             Text(
                               'of ${(widget.goalMl / 1000).toStringAsFixed(1)} L',
-                              style: text.caption.copyWith(
-                                color: colors.ink2,
-                              ),
+                              style: text.caption.copyWith(color: colors.ink2),
                             ),
                           ],
                         ),

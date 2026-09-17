@@ -150,7 +150,7 @@ void main() {
     expect(find.byType(DashboardScreen), findsOneWidget);
     expect(navLabel('Insights'), findsOneWidget);
     expect(navLabel('Water'), findsOneWidget);
-    expect(navLabel('Profile'), findsOneWidget);
+    expect(navLabel('Settings'), findsOneWidget);
     expect(find.byIcon(Icons.add_rounded), findsOneWidget);
   });
 
@@ -190,12 +190,12 @@ void main() {
     },
   );
 
-  testWidgets('Profile tab opens Settings, which pushes to Goals', (
+  testWidgets('Settings tab opens Settings, which pushes to Goals', (
     tester,
   ) async {
     await pumpApp(tester);
 
-    await tester.tap(navLabel('Profile'));
+    await tester.tap(navLabel('Settings'));
     await tester.pumpAndSettle();
     expect(find.byType(SettingsScreen), findsOneWidget);
     // Prototype 13A's app bar and its three groups. "Goals & targets" is
@@ -215,7 +215,7 @@ void main() {
   ) async {
     await pumpApp(tester);
 
-    await tester.tap(navLabel('Profile'));
+    await tester.tap(navLabel('Settings'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Your recipes'));
     await tester.pumpAndSettle();

@@ -6,6 +6,7 @@ import 'package:nourishly_ui/nourishly_ui.dart';
 
 import '../../../../app/providers.dart';
 import '../../../../shared/formatting.dart';
+import '../../../meal_templates/data/meal_template_providers.dart';
 
 /// Today's entries in the order they were logged (design option C, chosen
 /// 2026-09-17) — not in the original 13-screen set. The dashboard's meal
@@ -29,9 +30,25 @@ class _DayLogScreenState extends ConsumerState<DayLogScreen> {
   Widget build(BuildContext context) {
     final date = ref.watch(todayProvider);
     final loggedAsync = ref.watch(todayFoodLogProvider);
+    // Read here, not just inside the .when() below, so the action is
+    // available regardless of the By-time/By-meal toggle — "Save as
+    // template" used to only exist inside the By-meal view, which a
+    // first-timer on the default By-time view had no reason to find.
+    final entries = loggedAsync.value ?? const <LoggedFood>[];
 
     return Scaffold(
-      appBar: AppBar(title: Text(formatLongDate(date))),
+      appBar: AppBar(
+        title: Text(formatLongDate(date)),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.bookmark_add_outlined),
+            tooltip: 'Save a meal as a template',
+            onPressed: entries.isEmpty
+                ? null
+                : () => _pickMealToSaveAsTemplate(context, ref, entries),
+          ),
+        ],
+      ),
       body: loggedAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, _) => Center(child: Text('$error')),
@@ -260,7 +277,20 @@ class _ByMealList extends ConsumerWidget {
         ),
         children: [
           for (final slot in slots) ...[
-            NourishlySectionHeader(label: slot.displayName),
+            Builder(
+              builder: (context) {
+                final slotEntries = entries
+                    .where((e) => e.entry.mealSlotId == slot.id)
+                    .toList();
+                return NourishlySectionHeader(
+                  label: slot.displayName,
+                  actionLabel: slotEntries.isEmpty ? null : 'Save as template',
+                  onActionPressed: slotEntries.isEmpty
+                      ? null
+                      : () => _saveAsTemplate(context, ref, slot, slotEntries),
+                );
+              },
+            ),
             for (final food in entries.where(
               (e) => e.entry.mealSlotId == slot.id,
             ))
@@ -419,6 +449,79 @@ Future<void> _showEntryActions(
       ),
     ),
   );
+}
+
+/// The AppBar action's entry point — available in both the By-time and
+/// By-meal views. Picks a meal slot from today's entries (mirroring
+/// [_reassignMeal]'s slot-picker sheet), then hands off to
+/// [_saveAsTemplate] exactly as the By-meal view's inline action does.
+Future<void> _pickMealToSaveAsTemplate(
+  BuildContext context,
+  WidgetRef ref,
+  List<LoggedFood> entries,
+) async {
+  final slots = await ref.read(mealSlotsProvider.future);
+  final withEntries = [
+    for (final slot in slots)
+      if (entries.any((e) => e.entry.mealSlotId == slot.id)) slot,
+  ];
+  if (withEntries.isEmpty || !context.mounted) return;
+
+  final chosen = await showNourishlyOptions<String>(
+    context: context,
+    title: 'Save which meal as a template?',
+    options: [
+      for (final slot in withEntries)
+        NourishlyOption(value: slot.id, label: slot.displayName),
+    ],
+  );
+  if (chosen == null || !context.mounted) return;
+
+  final slot = withEntries.firstWhere((s) => s.id == chosen);
+  final slotEntries = entries
+      .where((e) => e.entry.mealSlotId == chosen)
+      .toList();
+  await _saveAsTemplate(context, ref, slot, slotEntries);
+}
+
+Future<void> _saveAsTemplate(
+  BuildContext context,
+  WidgetRef ref,
+  MealSlot slot,
+  List<LoggedFood> entries,
+) async {
+  final name = await showNourishlyPrompt(
+    context: context,
+    title: 'Save as template',
+    message:
+        '${entries.length} item${entries.length == 1 ? '' : 's'} from '
+        '${slot.displayName} will be saved as "${slot.displayName}" — you '
+        'can rename it.',
+    initialValue: slot.displayName,
+    label: 'Template name',
+  );
+  if (name == null || !context.mounted) return;
+
+  final messenger = ScaffoldMessenger.of(context);
+  final ownerId = await ref.read(defaultOwnerProvider.future);
+  await ref
+      .read(mealTemplateDaoProvider)
+      .createFromEntries(
+        ownerId: ownerId,
+        name: name,
+        defaultMealSlotId: slot.id,
+        items: [
+          for (final food in entries)
+            MealTemplateItemInput(
+              foodId: food.entry.foodId,
+              servingSizeId: food.entry.servingSizeId,
+              quantity: food.entry.quantity,
+            ),
+        ],
+      );
+  ref.read(mealTemplateRevisionProvider.notifier).bump();
+  if (!context.mounted) return;
+  showNourishlySnackOn(messenger, 'Saved "$name" as a template.');
 }
 
 Future<void> _deleteEntry(
