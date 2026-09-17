@@ -22,17 +22,33 @@ class CustomFoodScreen extends ConsumerStatefulWidget {
   ConsumerState<CustomFoodScreen> createState() => _CustomFoodScreenState();
 }
 
-class _CustomFoodScreenState extends ConsumerState<CustomFoodScreen> {
+class _CustomFoodScreenState extends ConsumerState<CustomFoodScreen>
+    with RestorationMixin {
   final _formKey = GlobalKey<FormState>();
-  late final _name = TextEditingController(text: widget.initialName ?? '');
-  final _servingLabel = TextEditingController(text: '1 serving');
-  final _grams = TextEditingController();
-  final _energy = TextEditingController();
-  final _protein = TextEditingController();
-  final _carbs = TextEditingController();
-  final _fat = TextEditingController();
-  final _fibre = TextEditingController();
+  late final _name = RestorableTextEditingController(text: widget.initialName);
+  final _servingLabel = RestorableTextEditingController(text: '1 serving');
+  final _grams = RestorableTextEditingController();
+  final _energy = RestorableTextEditingController();
+  final _protein = RestorableTextEditingController();
+  final _carbs = RestorableTextEditingController();
+  final _fat = RestorableTextEditingController();
+  final _fibre = RestorableTextEditingController();
   bool _saving = false;
+
+  @override
+  String? get restorationId => 'custom_food';
+
+  @override
+  void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
+    registerForRestoration(_name, 'name');
+    registerForRestoration(_servingLabel, 'servingLabel');
+    registerForRestoration(_grams, 'grams');
+    registerForRestoration(_energy, 'energy');
+    registerForRestoration(_protein, 'protein');
+    registerForRestoration(_carbs, 'carbs');
+    registerForRestoration(_fat, 'fat');
+    registerForRestoration(_fibre, 'fibre');
+  }
 
   @override
   void dispose() {
@@ -71,11 +87,11 @@ class _CustomFoodScreenState extends ConsumerState<CustomFoodScreen> {
           .read(customFoodDaoProvider)
           .createCustomFood(
             ownerId: ownerId,
-            name: _name.text.trim(),
-            servingLabel: _servingLabel.text.trim().isEmpty
+            name: _name.value.text.trim(),
+            servingLabel: _servingLabel.value.text.trim().isEmpty
                 ? '1 serving'
-                : _servingLabel.text.trim(),
-            servingGrams: _value(_grams)!,
+                : _servingLabel.value.text.trim(),
+            servingGrams: _value(_grams.value)!,
             nutrientsPerServing: {
               for (final (id, controller) in [
                 ('energy', _energy),
@@ -84,7 +100,7 @@ class _CustomFoodScreenState extends ConsumerState<CustomFoodScreen> {
                 ('fat', _fat),
                 ('fibre', _fibre),
               ])
-                id: ?_value(controller),
+                id: ?_value(controller.value),
             },
           );
 
@@ -125,7 +141,7 @@ class _CustomFoodScreenState extends ConsumerState<CustomFoodScreen> {
                 ),
                 children: [
                   _Field(
-                    controller: _name,
+                    controller: _name.value,
                     label: 'Name',
                     hint: 'Mummy\'s dal',
                     textCapitalization: TextCapitalization.sentences,
@@ -140,7 +156,7 @@ class _CustomFoodScreenState extends ConsumerState<CustomFoodScreen> {
                       Expanded(
                         flex: 3,
                         child: _Field(
-                          controller: _servingLabel,
+                          controller: _servingLabel.value,
                           label: 'Called',
                           hint: '1 katori',
                         ),
@@ -149,7 +165,7 @@ class _CustomFoodScreenState extends ConsumerState<CustomFoodScreen> {
                       Expanded(
                         flex: 2,
                         child: _Field(
-                          controller: _grams,
+                          controller: _grams.value,
                           label: 'Weighs (g)',
                           hint: '150',
                           numeric: true,
@@ -172,7 +188,7 @@ class _CustomFoodScreenState extends ConsumerState<CustomFoodScreen> {
                   ),
                   const SizedBox(height: NourishlySpace.s3),
                   _Field(
-                    controller: _energy,
+                    controller: _energy.value,
                     label: 'Energy (kcal)',
                     numeric: true,
                   ),
@@ -181,7 +197,7 @@ class _CustomFoodScreenState extends ConsumerState<CustomFoodScreen> {
                     children: [
                       Expanded(
                         child: _Field(
-                          controller: _protein,
+                          controller: _protein.value,
                           label: 'Protein (g)',
                           numeric: true,
                         ),
@@ -189,7 +205,7 @@ class _CustomFoodScreenState extends ConsumerState<CustomFoodScreen> {
                       const SizedBox(width: NourishlySpace.s3),
                       Expanded(
                         child: _Field(
-                          controller: _carbs,
+                          controller: _carbs.value,
                           label: 'Carbs (g)',
                           numeric: true,
                         ),
@@ -201,7 +217,7 @@ class _CustomFoodScreenState extends ConsumerState<CustomFoodScreen> {
                     children: [
                       Expanded(
                         child: _Field(
-                          controller: _fat,
+                          controller: _fat.value,
                           label: 'Fat (g)',
                           numeric: true,
                         ),
@@ -209,7 +225,7 @@ class _CustomFoodScreenState extends ConsumerState<CustomFoodScreen> {
                       const SizedBox(width: NourishlySpace.s3),
                       Expanded(
                         child: _Field(
-                          controller: _fibre,
+                          controller: _fibre.value,
                           label: 'Fibre (g)',
                           numeric: true,
                         ),
