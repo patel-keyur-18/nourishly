@@ -4,6 +4,7 @@ import 'package:nourishly_data/nourishly_data.dart';
 import 'package:nourishly_ui/nourishly_ui.dart';
 
 import '../../../../app/providers.dart';
+import '../../../profile/data/profile_providers.dart';
 
 /// Hydration logging (prototype screen 8, option A — fill visual).
 ///
@@ -13,11 +14,13 @@ import '../../../../app/providers.dart';
 class WaterScreen extends ConsumerWidget {
   const WaterScreen({super.key});
 
-  /// A placeholder daily goal so the fill visual has a proportion to show.
-  /// Real per-profile hydration targets are derived in Phase 3 (§27.12);
-  /// this is labelled as a default in the UI rather than presented as a
-  /// derived target.
-  static const double defaultGoalMl = 2600;
+  /// Used only when no derived or manual water target exists yet (no
+  /// profile set up) — so the fill visual still has a proportion to show.
+  /// Whenever a real target exists ([DaySummary.waterTargetMl], the same
+  /// field `WaterCard` on the dashboard and the Goals screen both read),
+  /// that value is used instead, so this screen never disagrees with the
+  /// rest of the app about what "today's target" means.
+  static const double fallbackGoalMl = 2600;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -25,7 +28,12 @@ class WaterScreen extends ConsumerWidget {
     final text = context.nourishlyText;
     final entriesAsync = ref.watch(todayWaterLogProvider);
     final totalMl = ref.watch(todayWaterTotalProvider);
-    final percent = ((totalMl / defaultGoalMl) * 100).clamp(0, 999).round();
+    final summary = ref
+        .watch(daySummaryProvider(ref.watch(todayProvider)))
+        .value;
+    final goalMl = summary?.waterTargetMl ?? fallbackGoalMl;
+    final isDerived = summary?.waterTargetMl != null;
+    final percent = ((totalMl / goalMl) * 100).clamp(0, 999).round();
 
     return Scaffold(
       body: SafeArea(
@@ -57,7 +65,9 @@ class WaterScreen extends ConsumerWidget {
                   const SizedBox(width: NourishlySpace.s2),
                   Flexible(
                     child: StatusChip(
-                      label: '$percent% of default',
+                      label: isDerived
+                          ? '$percent% of target'
+                          : '$percent% of default',
                       status: percent >= 100
                           ? NourishlyStatus.ok
                           : NourishlyStatus.low,
@@ -73,7 +83,7 @@ class WaterScreen extends ConsumerWidget {
                 ),
                 child: Column(
                   children: [
-                    WaterVessel(totalMl: totalMl, goalMl: defaultGoalMl),
+                    WaterVessel(totalMl: totalMl, goalMl: goalMl),
                     const SizedBox(height: NourishlySpace.s4),
                     Row(
                       children: [
