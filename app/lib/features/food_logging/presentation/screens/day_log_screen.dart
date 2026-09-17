@@ -30,9 +30,25 @@ class _DayLogScreenState extends ConsumerState<DayLogScreen> {
   Widget build(BuildContext context) {
     final date = ref.watch(todayProvider);
     final loggedAsync = ref.watch(todayFoodLogProvider);
+    // Read here, not just inside the .when() below, so the action is
+    // available regardless of the By-time/By-meal toggle — "Save as
+    // template" used to only exist inside the By-meal view, which a
+    // first-timer on the default By-time view had no reason to find.
+    final entries = loggedAsync.value ?? const <LoggedFood>[];
 
     return Scaffold(
-      appBar: AppBar(title: Text(formatLongDate(date))),
+      appBar: AppBar(
+        title: Text(formatLongDate(date)),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.bookmark_add_outlined),
+            tooltip: 'Save a meal as a template',
+            onPressed: entries.isEmpty
+                ? null
+                : () => _pickMealToSaveAsTemplate(context, ref, entries),
+          ),
+        ],
+      ),
       body: loggedAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, _) => Center(child: Text('$error')),
@@ -433,6 +449,39 @@ Future<void> _showEntryActions(
       ),
     ),
   );
+}
+
+/// The AppBar action's entry point — available in both the By-time and
+/// By-meal views. Picks a meal slot from today's entries (mirroring
+/// [_reassignMeal]'s slot-picker sheet), then hands off to
+/// [_saveAsTemplate] exactly as the By-meal view's inline action does.
+Future<void> _pickMealToSaveAsTemplate(
+  BuildContext context,
+  WidgetRef ref,
+  List<LoggedFood> entries,
+) async {
+  final slots = await ref.read(mealSlotsProvider.future);
+  final withEntries = [
+    for (final slot in slots)
+      if (entries.any((e) => e.entry.mealSlotId == slot.id)) slot,
+  ];
+  if (withEntries.isEmpty || !context.mounted) return;
+
+  final chosen = await showNourishlyOptions<String>(
+    context: context,
+    title: 'Save which meal as a template?',
+    options: [
+      for (final slot in withEntries)
+        NourishlyOption(value: slot.id, label: slot.displayName),
+    ],
+  );
+  if (chosen == null || !context.mounted) return;
+
+  final slot = withEntries.firstWhere((s) => s.id == chosen);
+  final slotEntries = entries
+      .where((e) => e.entry.mealSlotId == chosen)
+      .toList();
+  await _saveAsTemplate(context, ref, slot, slotEntries);
 }
 
 Future<void> _saveAsTemplate(
