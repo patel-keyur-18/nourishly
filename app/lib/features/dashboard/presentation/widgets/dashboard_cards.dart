@@ -486,7 +486,12 @@ class FocusNutrientsCard extends ConsumerWidget {
           value: nutrient.amount,
           target: nutrient.targetAmount!,
           unit: nutrient.unit,
-          color: colors.statusUnknown,
+          color: switch (nutrient.status) {
+            NutrientStatus.within => colors.statusOk,
+            NutrientStatus.below => colors.statusLow,
+            NutrientStatus.above => colors.statusHigh,
+            NutrientStatus.insufficientData => colors.statusUnknown,
+          },
         ),
       );
     }
