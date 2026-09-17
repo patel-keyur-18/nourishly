@@ -8,6 +8,7 @@ import '../features/food_logging/presentation/screens/day_log_screen.dart';
 import '../features/food_logging/presentation/screens/food_logging_screen.dart';
 import '../features/food_logging/presentation/screens/food_portion_screen.dart';
 import '../features/goals/presentation/screens/goals_screen.dart';
+import '../features/meal_templates/presentation/screens/meal_templates_screen.dart';
 import '../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../features/profile/presentation/screens/profile_screen.dart';
 import '../features/profile/presentation/screens/profile_setup_screen.dart';
@@ -103,6 +104,12 @@ final GoRouter appRouter = GoRouter(
               RecipeBuilderScreen(foodId: state.pathParameters['foodId']!),
         ),
       ],
+    ),
+    // Over the shell, like `/recipes` — reached from the add-food flow.
+    GoRoute(
+      path: '/templates',
+      parentNavigatorKey: rootNavigatorKey,
+      builder: (context, state) => const MealTemplatesScreen(),
     ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) =>

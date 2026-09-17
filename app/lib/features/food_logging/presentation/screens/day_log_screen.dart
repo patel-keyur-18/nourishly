@@ -6,6 +6,7 @@ import 'package:nourishly_ui/nourishly_ui.dart';
 
 import '../../../../app/providers.dart';
 import '../../../../shared/formatting.dart';
+import '../../../meal_templates/data/meal_template_providers.dart';
 
 /// Today's entries in the order they were logged (design option C, chosen
 /// 2026-09-17) — not in the original 13-screen set. The dashboard's meal
@@ -260,7 +261,20 @@ class _ByMealList extends ConsumerWidget {
         ),
         children: [
           for (final slot in slots) ...[
-            NourishlySectionHeader(label: slot.displayName),
+            Builder(
+              builder: (context) {
+                final slotEntries = entries
+                    .where((e) => e.entry.mealSlotId == slot.id)
+                    .toList();
+                return NourishlySectionHeader(
+                  label: slot.displayName,
+                  actionLabel: slotEntries.isEmpty ? null : 'Save as template',
+                  onActionPressed: slotEntries.isEmpty
+                      ? null
+                      : () => _saveAsTemplate(context, ref, slot, slotEntries),
+                );
+              },
+            ),
             for (final food in entries.where(
               (e) => e.entry.mealSlotId == slot.id,
             ))
@@ -419,6 +433,46 @@ Future<void> _showEntryActions(
       ),
     ),
   );
+}
+
+Future<void> _saveAsTemplate(
+  BuildContext context,
+  WidgetRef ref,
+  MealSlot slot,
+  List<LoggedFood> entries,
+) async {
+  final name = await showNourishlyPrompt(
+    context: context,
+    title: 'Save as template',
+    message:
+        '${entries.length} item${entries.length == 1 ? '' : 's'} from '
+        '${slot.displayName} will be saved as "${slot.displayName}" — you '
+        'can rename it.',
+    initialValue: slot.displayName,
+    label: 'Template name',
+  );
+  if (name == null || !context.mounted) return;
+
+  final messenger = ScaffoldMessenger.of(context);
+  final ownerId = await ref.read(defaultOwnerProvider.future);
+  await ref
+      .read(mealTemplateDaoProvider)
+      .createFromEntries(
+        ownerId: ownerId,
+        name: name,
+        defaultMealSlotId: slot.id,
+        items: [
+          for (final food in entries)
+            MealTemplateItemInput(
+              foodId: food.entry.foodId,
+              servingSizeId: food.entry.servingSizeId,
+              quantity: food.entry.quantity,
+            ),
+        ],
+      );
+  ref.read(mealTemplateRevisionProvider.notifier).bump();
+  if (!context.mounted) return;
+  showNourishlySnackOn(messenger, 'Saved "$name" as a template.');
 }
 
 Future<void> _deleteEntry(
