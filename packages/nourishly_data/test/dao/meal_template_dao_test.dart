@@ -85,45 +85,42 @@ void main() {
     },
   );
 
-  test(
-    'an item missing a serving contributes no energy, but does not '
-    'zero the rest — the total simply omits it',
-    () async {
-      await db
-          .into(db.foodItems)
-          .insert(
-            FoodItemsCompanion.insert(
-              id: 'food-mystery',
-              kind: 'ingredient',
-              canonicalName: 'Mystery side',
-              qualityTier: 'user',
-              provenanceSource: 'user',
-            ),
-          );
-      final dao = MealTemplateDao(db);
-      await dao.createFromEntries(
-        ownerId: ownerId,
-        name: 'Lunch plus a guess',
-        defaultMealSlotId: 'slot-lunch',
-        items: const [
-          MealTemplateItemInput(
-            foodId: 'food-dal',
-            servingSizeId: 'serving-dal-katori',
-            quantity: 1,
+  test('an item missing a serving contributes no energy, but does not '
+      'zero the rest — the total simply omits it', () async {
+    await db
+        .into(db.foodItems)
+        .insert(
+          FoodItemsCompanion.insert(
+            id: 'food-mystery',
+            kind: 'ingredient',
+            canonicalName: 'Mystery side',
+            qualityTier: 'user',
+            provenanceSource: 'user',
           ),
-          MealTemplateItemInput(
-            foodId: 'food-mystery',
-            servingSizeId: null,
-            quantity: 1,
-          ),
-        ],
-      );
+        );
+    final dao = MealTemplateDao(db);
+    await dao.createFromEntries(
+      ownerId: ownerId,
+      name: 'Lunch plus a guess',
+      defaultMealSlotId: 'slot-lunch',
+      items: const [
+        MealTemplateItemInput(
+          foodId: 'food-dal',
+          servingSizeId: 'serving-dal-katori',
+          quantity: 1,
+        ),
+        MealTemplateItemInput(
+          foodId: 'food-mystery',
+          servingSizeId: null,
+          quantity: 1,
+        ),
+      ],
+    );
 
-      final templates = await dao.templatesFor(ownerId);
-      // 1 x 150 g at 150 kcal/100g = 225 kcal from the dal alone.
-      expect(templates.single.energyKcal, 225);
-    },
-  );
+    final templates = await dao.templatesFor(ownerId);
+    // 1 x 150 g at 150 kcal/100g = 225 kcal from the dal alone.
+    expect(templates.single.energyKcal, 225);
+  });
 
   test(
     'a template with no computable energy anywhere reports null, not 0',

@@ -31,46 +31,41 @@ void main() {
 
   tearDown(() => db.close());
 
-  testWidgets(
-    'a route-supplied name prefills, and typed fields survive a '
-    'simulated state restoration',
-    (tester) async {
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            nourishlyDatabaseProvider.overrideWithValue(db),
-            catalogReadyProvider.overrideWith((ref) async {}),
-            clockProvider.overrideWithValue(FakeClock(now)),
-            reminderSchedulerProvider.overrideWithValue(
-              NoopReminderScheduler(),
-            ),
-          ],
-          child: const NourishlyApp(),
-        ),
-      );
-      await tester.pump();
-      appRouter.go('/log/new?name=Bhinda%20nu%20shaak');
-      await tester.pumpAndSettle();
+  testWidgets('a route-supplied name prefills, and typed fields survive a '
+      'simulated state restoration', (tester) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          nourishlyDatabaseProvider.overrideWithValue(db),
+          catalogReadyProvider.overrideWith((ref) async {}),
+          clockProvider.overrideWithValue(FakeClock(now)),
+          reminderSchedulerProvider.overrideWithValue(NoopReminderScheduler()),
+        ],
+        child: const NourishlyApp(),
+      ),
+    );
+    await tester.pump();
+    appRouter.go('/log/new?name=Bhinda%20nu%20shaak');
+    await tester.pumpAndSettle();
 
-      // The failed-search escape hatch prefills the name from the query.
-      expect(find.text('Bhinda nu shaak'), findsOneWidget);
+    // The failed-search escape hatch prefills the name from the query.
+    expect(find.text('Bhinda nu shaak'), findsOneWidget);
 
-      final fields = find.byType(TextFormField);
-      await tester.enterText(fields.at(2), '180');
-      await tester.enterText(fields.at(3), '220');
-      await tester.pump();
-      expect(find.text('180'), findsOneWidget);
-      expect(find.text('220'), findsOneWidget);
+    final fields = find.byType(TextFormField);
+    await tester.enterText(fields.at(2), '180');
+    await tester.enterText(fields.at(3), '220');
+    await tester.pump();
+    expect(find.text('180'), findsOneWidget);
+    expect(find.text('220'), findsOneWidget);
 
-      // Destroys and recreates the whole widget tree from restoration
-      // data — see food_portion_screen_test.dart for why this, not
-      // restoreFrom, is the real test of RestorationMixin.
-      await tester.restartAndRestore();
-      await tester.pumpAndSettle();
+    // Destroys and recreates the whole widget tree from restoration
+    // data — see food_portion_screen_test.dart for why this, not
+    // restoreFrom, is the real test of RestorationMixin.
+    await tester.restartAndRestore();
+    await tester.pumpAndSettle();
 
-      expect(find.text('Bhinda nu shaak'), findsOneWidget);
-      expect(find.text('180'), findsOneWidget);
-      expect(find.text('220'), findsOneWidget);
-    },
-  );
+    expect(find.text('Bhinda nu shaak'), findsOneWidget);
+    expect(find.text('180'), findsOneWidget);
+    expect(find.text('220'), findsOneWidget);
+  });
 }

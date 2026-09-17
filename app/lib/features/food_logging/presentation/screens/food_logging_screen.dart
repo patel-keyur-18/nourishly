@@ -183,11 +183,7 @@ class _BrowseByCuisine extends ConsumerWidget {
                   style: text.label.copyWith(color: colors.accent),
                 ),
               ),
-              Icon(
-                Icons.chevron_right_rounded,
-                color: colors.accent,
-                size: 18,
-              ),
+              Icon(Icons.chevron_right_rounded, color: colors.accent, size: 18),
             ],
           ),
         ),

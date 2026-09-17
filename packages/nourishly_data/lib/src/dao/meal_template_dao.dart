@@ -115,8 +115,9 @@ class MealTemplateDao {
     final energyValues = foodIds.isEmpty
         ? <FoodNutrientValue>[]
         : await (_db.select(_db.foodNutrientValues)..where(
-            (v) => v.foodId.isIn(foodIds) & v.nutrientId.equals('energy'),
-          )).get();
+                (v) => v.foodId.isIn(foodIds) & v.nutrientId.equals('energy'),
+              ))
+              .get();
     final energyPer100gByFood = {
       for (final v in energyValues) v.foodId: v.amountPer100g,
     };
@@ -128,7 +129,8 @@ class MealTemplateDao {
           : servingById[item.servingSizeId]?.grams;
       final energyPer100g = energyPer100gByFood[item.foodId];
       if (grams == null || energyPer100g == null) continue;
-      energyKcal = (energyKcal ?? 0) + energyPer100g * grams * item.quantity / 100;
+      energyKcal =
+          (energyKcal ?? 0) + energyPer100g * grams * item.quantity / 100;
     }
 
     return SavedMealTemplate(
@@ -265,10 +267,7 @@ class MealTemplateDao {
   /// Soft-deletes the template. Meals already logged from it are untouched
   /// — they never referenced it in the first place.
   Future<void> deleteTemplate(String templateId) async {
-    await (_db.update(
-      _db.mealTemplates,
-    )..where((t) => t.id.equals(templateId))).write(
-      MealTemplatesCompanion(deletedAt: Value(DateTime.now())),
-    );
+    await (_db.update(_db.mealTemplates)..where((t) => t.id.equals(templateId)))
+        .write(MealTemplatesCompanion(deletedAt: Value(DateTime.now())));
   }
 }

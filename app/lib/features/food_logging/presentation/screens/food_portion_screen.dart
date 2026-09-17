@@ -204,8 +204,7 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen>
                     _ServingChips(
                       servings: servings,
                       selectedId: _servingId.value,
-                      onSelected: (id) =>
-                          setState(() => _servingId.value = id),
+                      onSelected: (id) => setState(() => _servingId.value = id),
                     ),
                     const NourishlySectionHeader(label: 'Quantity'),
                     _QuantityStepper(

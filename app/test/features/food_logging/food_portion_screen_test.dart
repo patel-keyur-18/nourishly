@@ -114,9 +114,7 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  testWidgets('shows computed energy for the selected serving', (
-    tester,
-  ) async {
+  testWidgets('shows computed energy for the selected serving', (tester) async {
     await pumpPortion(tester);
     // 1 katori (200 g) at 120 kcal/100g = 240 kcal.
     expect(find.textContaining('240'), findsWidgets);

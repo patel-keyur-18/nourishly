@@ -136,8 +136,9 @@ void main() {
     // logFood stamps `loggedAt` with DateTime.now() internally, so both
     // entries land within the same millisecond in a fast test run — push
     // the oats entry earlier so timeline order is actually under test.
-    await (db.update(db.foodLogEntries)
-      ..where((e) => e.id.equals(oatsEntryId))).write(
+    await (db.update(
+      db.foodLogEntries,
+    )..where((e) => e.id.equals(oatsEntryId))).write(
       FoodLogEntriesCompanion(
         loggedAt: Value(DateTime.now().subtract(const Duration(hours: 4))),
       ),
@@ -277,46 +278,48 @@ void main() {
     },
   );
 
-  testWidgets(
-    'Save as template is reachable from the default By-time view',
-    (tester) async {
-      final oatsServing = await seedFood('Oats', kcalPer100g: 380);
-      final today = DateTime.now();
-      await dao.logFood(
-        ownerId: ownerId,
-        foodId: (await (db.select(
-          db.servingSizes,
-        )..where((s) => s.id.equals(oatsServing))).getSingle()).foodId,
-        servingId: oatsServing,
-        quantity: 1,
-        mealSlotId: breakfastId,
-        logDate: DateTime(today.year, today.month, today.day),
-      );
+  testWidgets('Save as template is reachable from the default By-time view', (
+    tester,
+  ) async {
+    final oatsServing = await seedFood('Oats', kcalPer100g: 380);
+    final today = DateTime.now();
+    await dao.logFood(
+      ownerId: ownerId,
+      foodId: (await (db.select(
+        db.servingSizes,
+      )..where((s) => s.id.equals(oatsServing))).getSingle()).foodId,
+      servingId: oatsServing,
+      quantity: 1,
+      mealSlotId: breakfastId,
+      logDate: DateTime(today.year, today.month, today.day),
+    );
 
-      await pumpToDayLog(tester);
-      // Default view, never tapped "By meal".
-      expect(find.text('By time'), findsOneWidget);
+    await pumpToDayLog(tester);
+    // Default view, never tapped "By meal".
+    expect(find.text('By time'), findsOneWidget);
 
-      await tester.tap(find.byIcon(Icons.bookmark_add_outlined));
-      await tester.pumpAndSettle();
-      expect(find.text('Save which meal as a template?'), findsOneWidget);
+    await tester.tap(find.byIcon(Icons.bookmark_add_outlined));
+    await tester.pumpAndSettle();
+    expect(find.text('Save which meal as a template?'), findsOneWidget);
 
-      // Two matches: the entry's own meal chip behind the sheet, and the
-      // sheet's option row — the option row is added last.
-      await tester.tap(find.text('Breakfast').last);
-      await tester.pumpAndSettle();
-      expect(find.text('Save as template'), findsOneWidget);
+    // Two matches: the entry's own meal chip behind the sheet, and the
+    // sheet's option row — the option row is added last.
+    await tester.tap(find.text('Breakfast').last);
+    await tester.pumpAndSettle();
+    expect(find.text('Save as template'), findsOneWidget);
 
-      await tester.tap(find.text('Save'));
-      await tester.pumpAndSettle();
-      expect(find.textContaining('Saved "Breakfast" as a template'), findsOneWidget);
+    await tester.tap(find.text('Save'));
+    await tester.pumpAndSettle();
+    expect(
+      find.textContaining('Saved "Breakfast" as a template'),
+      findsOneWidget,
+    );
 
-      final templates = await MealTemplateDao(db).templatesFor(ownerId);
-      expect(templates, hasLength(1));
-      expect(templates.single.items.single.foodName, 'Oats');
+    final templates = await MealTemplateDao(db).templatesFor(ownerId);
+    expect(templates, hasLength(1));
+    expect(templates.single.items.single.foodName, 'Oats');
 
-      await tester.pump(nourishlySnackDuration + const Duration(seconds: 1));
-      await tester.pumpAndSettle();
-    },
-  );
+    await tester.pump(nourishlySnackDuration + const Duration(seconds: 1));
+    await tester.pumpAndSettle();
+  });
 }
