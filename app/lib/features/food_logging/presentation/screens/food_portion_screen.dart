@@ -7,6 +7,7 @@ import 'package:nourishly_ui/nourishly_ui.dart';
 
 import '../../../../app/providers.dart';
 import '../../../food_catalog/data/food_catalog_providers.dart';
+import '../../../profile/data/profile_providers.dart';
 
 /// Serving picker, quantity stepper, and meal slot (prototype screen 6,
 /// option A — serving chips + stepper) for one food, reached via
@@ -44,7 +45,8 @@ class FoodPortionScreen extends ConsumerStatefulWidget {
 }
 
 class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen> {
-  late final Future<(FoodItem, List<ServingSize>)> _food = _load();
+  late final Future<(FoodItem, List<ServingSize>, List<FoodNutrientValue>)>
+  _food = _load();
   double _quantity = 1;
   String? _servingId;
   String? _mealSlotId;
@@ -58,7 +60,7 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen> {
     _mealSlotId = widget.initialMealSlotId;
   }
 
-  Future<(FoodItem, List<ServingSize>)> _load() async {
+  Future<(FoodItem, List<ServingSize>, List<FoodNutrientValue>)> _load() async {
     final db = ref.read(nourishlyDatabaseProvider);
     final food = await (db.select(
       db.foodItems,
@@ -68,6 +70,9 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen> {
               ..where((s) => s.foodId.equals(widget.foodId))
               ..orderBy([(s) => OrderingTerm.asc(s.sortOrder)]))
             .get();
+    final nutrientValues = await (db.select(
+      db.foodNutrientValues,
+    )..where((v) => v.foodId.equals(widget.foodId))).get();
     final entryId = widget.entryId;
     if (entryId != null) {
       final entry = await (db.select(
@@ -77,7 +82,7 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen> {
       _servingId = entry.servingSizeId;
       _mealSlotId = entry.mealSlotId;
     }
-    return (food, servings);
+    return (food, servings, nutrientValues);
   }
 
   Future<void> _save() async {
@@ -151,7 +156,7 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen> {
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           }
-          final (food, servings) = snapshot.data!;
+          final (food, servings, nutrientValues) = snapshot.data!;
           _servingId ??= servings.firstOrNull?.id;
           final serving = servings.where((s) => s.id == _servingId).firstOrNull;
 
@@ -167,6 +172,10 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen> {
                   ),
                   children: [
                     _FoodHeader(food: food),
+                    _NutrientPreview(
+                      values: nutrientValues,
+                      grams: (serving?.grams ?? 0) * _quantity,
+                    ),
                     const NourishlySectionHeader(label: 'Serving'),
                     _ServingChips(
                       servings: servings,
@@ -214,7 +223,6 @@ class _FoodHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.nourishlyColors;
     final text = context.nourishlyText;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -236,14 +244,67 @@ class _FoodHeader extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: NourishlySpace.s2),
-        Text(
-          'Per-serving nutrients arrive with Phase 3 aggregation — this '
-          'screen records what you ate, exactly as logged.',
-          style: text.caption.copyWith(color: colors.ink3),
-        ),
       ],
     );
+  }
+}
+
+/// The four core macros plus energy, computed for the currently selected
+/// serving × quantity (AP-4: a nutrient with no [FoodNutrientValue] row
+/// for this food renders as "—", never 0 — mirrors
+/// `daily_report_screen.dart`'s `_NutrientRow`).
+class _NutrientPreview extends ConsumerWidget {
+  const _NutrientPreview({required this.values, required this.grams});
+
+  final List<FoodNutrientValue> values;
+  final double grams;
+
+  static const _tracked = ['energy', 'protein', 'carbs', 'fat', 'fibre'];
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colors = context.nourishlyColors;
+    final text = context.nourishlyText;
+    final labelsAsync = ref.watch(nutrientLabelsProvider);
+    final labels = labelsAsync.value ?? const <String, Nutrient>{};
+    final byNutrient = {for (final v in values) v.nutrientId: v};
+
+    return NourishlyCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          for (final id in _tracked)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 3),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    labels[id]?.displayName ?? id,
+                    style: text.caption.copyWith(color: colors.ink3),
+                  ),
+                  Text(
+                    _amount(byNutrient[id], labels[id], grams),
+                    style: text.body.copyWith(fontWeight: FontWeight.w700),
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  static String _amount(
+    FoodNutrientValue? value,
+    Nutrient? nutrient,
+    double grams,
+  ) {
+    if (value == null) return '—';
+    final amount = value.amountPer100g * grams / 100;
+    final unit = nutrient?.canonicalUnit ?? '';
+    final precision = nutrient?.displayPrecision ?? 0;
+    return '${amount.toStringAsFixed(precision)} $unit'.trim();
   }
 }
 
