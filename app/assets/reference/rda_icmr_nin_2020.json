@@ -1,5 +1,5 @@
 {
-  "rulesetVersion": "1.0.0",
+  "rulesetVersion": "1.1.0",
   "region": "IN",
   "sourceCitation": "ICMR-NIN, Nutrient Requirements for Indians, 2020 (RDA/EAR report)",
   "reviewStatus": "pending_review",
@@ -14,7 +14,32 @@
     "they are derived per-profile in target_derivation.dart rather than looked up here.",
     "One adult band (19+) rather than 19-59 and 60+: ICMR's adult recommendations for these",
     "nutrients are given against a reference body weight, and inventing a second band would",
-    "imply a distinction this transcription cannot support."
+    "imply a distinction this transcription cannot support.",
+    "",
+    "1.1.0 adds the pregnancy and lactation rows below. The version bump is what makes them",
+    "reach a device that already has 1.0.0 — the importer skips a version it already holds,",
+    "so adding a row without bumping this ships nothing but a fresh install.",
+    "",
+    "PREGNANCY AND LACTATION (added with the week planner). Only the nutrients whose",
+    "requirement actually changes carry a lifestage row. Everything else falls back to the",
+    "adult row of the same age and sex, which ProfileDao.referencesFor does explicitly — so",
+    "the absence of a row here means 'unchanged', never 'no target'.",
+    "",
+    "THESE FIGURES NEED CHECKING AGAINST THE REPORT BEFORE ANYONE RELIES ON THEM. They carry",
+    "the same pending_review status as the adult values above and are transcribed at the same",
+    "confidence. Specifically unresolved, and deliberately left without a row rather than",
+    "guessed at: calcium, zinc, vitamin A, vitamin C, vitamin D, thiamin, riboflavin, niacin,",
+    "vitamin B6, magnesium and vitamin E in pregnancy and lactation. Each of those currently",
+    "falls back to its adult value, which is a defensible default and is not a claim that",
+    "ICMR states the same number.",
+    "",
+    "Iron in pregnancy is LOWER than the non-pregnant adult female value, not higher. That is",
+    "what ICMR-NIN 2020 states, and it is not a transcription error: menstrual losses stop.",
+    "It is called out here because it is the one number a reviewer will assume is wrong.",
+    "",
+    "Energy and protein increments are not in this file. They are additions to a number",
+    "derived per-profile, so they live in target_derivation.dart with saturated fat and sugar,",
+    "for the same reason: a table keyed by age and sex cannot express 'plus 350'."
   ],
   "references": [
     {"nutrientId": "calcium", "sex": null, "ageMin": 19, "ageMax": 120, "rdaAmount": 1000, "unit": "mg"},
@@ -54,6 +79,27 @@
 
     {"nutrientId": "vitamin_b6", "sex": null, "ageMin": 19, "ageMax": 120, "rdaAmount": 1.9, "unit": "mg"},
     {"nutrientId": "vitamin_b12", "sex": null, "ageMin": 19, "ageMax": 120, "rdaAmount": 2.2, "unit": "ug"},
-    {"nutrientId": "folate", "sex": null, "ageMin": 19, "ageMax": 120, "rdaAmount": 300, "upperLimit": 1000, "unit": "ug"}
+    {"nutrientId": "folate", "sex": null, "ageMin": 19, "ageMax": 120, "rdaAmount": 300, "upperLimit": 1000, "unit": "ug"},
+
+    {"nutrientId": "iron", "lifestage": "pregnant_t1", "sex": "female", "ageMin": 19, "ageMax": 120, "rdaAmount": 27, "upperLimit": 45, "unit": "mg"},
+    {"nutrientId": "iron", "lifestage": "pregnant_t2", "sex": "female", "ageMin": 19, "ageMax": 120, "rdaAmount": 27, "upperLimit": 45, "unit": "mg"},
+    {"nutrientId": "iron", "lifestage": "pregnant_t3", "sex": "female", "ageMin": 19, "ageMax": 120, "rdaAmount": 27, "upperLimit": 45, "unit": "mg"},
+
+    {"nutrientId": "folate", "lifestage": "pregnant_t1", "sex": null, "ageMin": 19, "ageMax": 120, "rdaAmount": 570, "upperLimit": 1000, "unit": "ug"},
+    {"nutrientId": "folate", "lifestage": "pregnant_t2", "sex": null, "ageMin": 19, "ageMax": 120, "rdaAmount": 570, "upperLimit": 1000, "unit": "ug"},
+    {"nutrientId": "folate", "lifestage": "pregnant_t3", "sex": null, "ageMin": 19, "ageMax": 120, "rdaAmount": 570, "upperLimit": 1000, "unit": "ug"},
+
+    {"nutrientId": "vitamin_b12", "lifestage": "pregnant_t1", "sex": null, "ageMin": 19, "ageMax": 120, "rdaAmount": 2.45, "unit": "ug"},
+    {"nutrientId": "vitamin_b12", "lifestage": "pregnant_t2", "sex": null, "ageMin": 19, "ageMax": 120, "rdaAmount": 2.45, "unit": "ug"},
+    {"nutrientId": "vitamin_b12", "lifestage": "pregnant_t3", "sex": null, "ageMin": 19, "ageMax": 120, "rdaAmount": 2.45, "unit": "ug"},
+
+    {"nutrientId": "iron", "lifestage": "lactating_0_6", "sex": "female", "ageMin": 19, "ageMax": 120, "rdaAmount": 23, "upperLimit": 45, "unit": "mg"},
+    {"nutrientId": "iron", "lifestage": "lactating_7_12", "sex": "female", "ageMin": 19, "ageMax": 120, "rdaAmount": 23, "upperLimit": 45, "unit": "mg"},
+
+    {"nutrientId": "folate", "lifestage": "lactating_0_6", "sex": null, "ageMin": 19, "ageMax": 120, "rdaAmount": 330, "upperLimit": 1000, "unit": "ug"},
+    {"nutrientId": "folate", "lifestage": "lactating_7_12", "sex": null, "ageMin": 19, "ageMax": 120, "rdaAmount": 330, "upperLimit": 1000, "unit": "ug"},
+
+    {"nutrientId": "vitamin_b12", "lifestage": "lactating_0_6", "sex": null, "ageMin": 19, "ageMax": 120, "rdaAmount": 3.0, "unit": "ug"},
+    {"nutrientId": "vitamin_b12", "lifestage": "lactating_7_12", "sex": null, "ageMin": 19, "ageMax": 120, "rdaAmount": 3.0, "unit": "ug"}
   ]
 }

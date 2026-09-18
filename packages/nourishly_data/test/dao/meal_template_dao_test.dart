@@ -198,7 +198,10 @@ void main() {
       expect(entries.single.mealSlotId, 'slot-lunch');
       expect(entries.single.quantity, 2);
       expect(entries.single.gramsConsumed, 300);
-      expect(entries.single.source, 'manual');
+      // `template`, not `manual`: the source column exists to say where an
+      // entry came from, and "somebody typed this in" is not what happened.
+      expect(entries.single.source, 'template');
+      expect(entries.single.status, logStatusLogged);
 
       final updated = await (db.select(
         db.mealTemplates,

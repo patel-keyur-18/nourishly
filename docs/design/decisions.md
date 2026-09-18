@@ -172,6 +172,59 @@ had no duration set anywhere, queued messages behind each other, and — in
 the cases where Flutter suppresses its own dismiss timer — left "Removed
 200 ml" on screen until something else came along.
 
+## Screens 14 and 15 — the week plan
+
+*Decided 2026-09-18, after the enhancement proposal was approved.*
+
+Two screens the original 13 did not have, because the original 13 could
+only describe the past and the present. The whole feature is one
+distinction: **intended** versus **consumed**.
+
+| # | Screen | Chosen | Not chosen |
+|---|---|---|---|
+| 14 | Week plan | **B — Day rail + agenda** | A — 7 × 4 week grid · C — Continuous scroll |
+| 15 | Confirming a plan | **A — Inline on Today** | B — End-of-day sheet |
+
+**14B** is the only one of the three with room for the per-day projection
+card, and that card is the reason the screen exists: seeing on Sunday that
+Tuesday lands short on iron is what makes a plan worth keeping. A is a
+genuinely better overview and is worth revisiting as a later "whole week"
+toggle, but it cannot carry a dish called *methi na gota*. C is the
+cheapest to build and has nowhere to put the projection.
+
+**15A** puts the planned meal in the day where the meal belongs, dashed
+until confirmed, with *Ate it / Change / Skip*. B was rejected as the only
+surface: one pass at 21:30 asks you to remember a portion nine hours
+later, which is the recall problem the app exists to remove. B's sheet is
+still worth adding later, reached from the end-of-day reminder, as a
+catch-up for whatever is unconfirmed at night.
+
+### Two departures from what was proposed
+
+**No fifth nav tab.** The proposal put the plan in the bottom bar.
+`NourishlyBottomNav` asserts exactly four destinations around the centre
+action, which is prototype screen 3's approved shape — a fifth is a
+redesign of an approved screen, not a side effect of a feature. `/plan` is
+pushed over the shell like `/recipes` and `/templates`, reached from a row
+on the dashboard.
+
+**Pregnancy sits last on the profile screen,** not beside *Reference
+values* where it arguably belongs. It is the rarest row there, and the
+rows above it are the ones people actually open the screen to change.
+
+### The planned state is never colour alone
+
+A planned meal reads as planned two ways at once: a dashed card edge and
+the word *Planned* — on a plain `NourishlyChip`, not a `StatusChip`.
+ok/low/high/unknown and the score's accent all mean something specific
+about a *nutrient*, and "planned" is a state of an *entry*; reusing one of
+them here would dilute the palette exactly as the meal-slot tag did before
+`NourishlyChip` existed. On a bar, the planned segment is
+**hatched** rather than a second shade of the fill colour — a lighter
+tint of the same hue is colour carrying meaning by itself, which NFR-A-04
+does not allow. The screen-reader label states the planned amount and the
+total it reaches, separately from the eaten amount.
+
 ## What happens next
 
 These decisions became the implementation targets, one feature module per screen under the structure in §12.3 of the architecture. The prototype is the reference for layout and hierarchy; `tokens/nourishly-indigo.json` is the reference for every value.

@@ -9,6 +9,7 @@ import '../features/profile/data/profile_providers.dart';
 import '../features/reminders/data/local_notification_scheduler.dart';
 import '../features/reminders/data/reminder_providers.dart';
 import '../features/settings/presentation/appearance.dart';
+import 'providers.dart';
 import 'router.dart';
 
 /// The Nourishly application shell: theme + routing, nothing else. Actual
@@ -37,7 +38,10 @@ class _NourishlyAppState extends ConsumerState<NourishlyApp>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    WidgetsBinding.instance.addPostFrameCallback((_) => _startReminders());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _startReminders();
+      unawaited(_advanceLifestage());
+    });
   }
 
   @override
@@ -58,6 +62,9 @@ class _NourishlyAppState extends ConsumerState<NourishlyApp>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       unawaited(_resyncReminders());
+      // A phone left open across a trimester boundary would otherwise
+      // keep last week's targets until it was next cold-started.
+      unawaited(_advanceLifestage());
     }
   }
 
@@ -74,6 +81,33 @@ class _NourishlyAppState extends ConsumerState<NourishlyApp>
     // happened to be showing last.
     if (launchRoute != null) appRouter.go(launchRoute);
     await _resyncReminders();
+  }
+
+  /// Moves a pregnancy or nursing profile on to the stage its due date
+  /// now puts it in (FR-U-17).
+  ///
+  /// Here rather than on the profile screen because the whole point is
+  /// that nobody has to go and look: the trimester changes on a date, and
+  /// the app notices. A no-op for every profile without a due date, which
+  /// is the normal case and costs one indexed read.
+  Future<void> _advanceLifestage() async {
+    try {
+      final ownerId = await ref.read(defaultOwnerProvider.future);
+      final moved = await ref
+          .read(profileDaoProvider)
+          .advanceLifestageIfDue(
+            ownerId: ownerId,
+            on: ref.read(clockProvider).now(),
+          );
+      if (moved != null && mounted) {
+        ref.read(summaryRevisionProvider.notifier).bump();
+      }
+    } on Object catch (error) {
+      // Same stance as reminders: a failure here must not stop the app
+      // from starting, and the stored lifestage stays whatever it was —
+      // which is the previous stage, not a wrong one.
+      debugPrint('Nourishly: could not advance the lifestage ($error).');
+    }
   }
 
   Future<void> _resyncReminders() async {

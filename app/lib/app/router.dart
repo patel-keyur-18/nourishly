@@ -8,6 +8,7 @@ import '../features/food_logging/presentation/screens/day_log_screen.dart';
 import '../features/food_logging/presentation/screens/food_logging_screen.dart';
 import '../features/food_logging/presentation/screens/food_portion_screen.dart';
 import '../features/goals/presentation/screens/goals_screen.dart';
+import '../features/meal_plan/presentation/screens/week_plan_screen.dart';
 import '../features/meal_templates/presentation/screens/meal_templates_screen.dart';
 import '../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../features/profile/presentation/screens/profile_screen.dart';
@@ -62,12 +63,18 @@ final GoRouter appRouter = GoRouter(
       parentNavigatorKey: rootNavigatorKey,
       pageBuilder: (context, state) => MaterialPage(
         fullscreenDialog: true,
-        child: FoodLoggingScreen(mealSlotId: state.uri.queryParameters['meal']),
+        child: FoodLoggingScreen(
+          mealSlotId: state.uri.queryParameters['meal'],
+          planDate: state.uri.queryParameters['plan'],
+        ),
       ),
       routes: [
         // `?entryId=<id>` reuses this same screen to edit an
         // already-logged entry (FR-M-05) rather than log a new one —
         // reached from the day log's "Edit portion" action.
+        // `?plan=YYYY-MM-DD` sends the same flow to the week plan
+        // instead of to today: the entry is written against that date and
+        // marked planned. One search screen, two destinations.
         GoRoute(
           path: 'food/:foodId',
           parentNavigatorKey: rootNavigatorKey,
@@ -75,13 +82,19 @@ final GoRouter appRouter = GoRouter(
             foodId: state.pathParameters['foodId']!,
             initialMealSlotId: state.uri.queryParameters['meal'],
             entryId: state.uri.queryParameters['entryId'],
+            planDate: DateTime.tryParse(
+              state.uri.queryParameters['plan'] ?? '',
+            ),
           ),
         ),
         GoRoute(
           path: 'new',
           parentNavigatorKey: rootNavigatorKey,
-          builder: (context, state) =>
-              CustomFoodScreen(initialName: state.uri.queryParameters['name']),
+          builder: (context, state) => CustomFoodScreen(
+            initialName: state.uri.queryParameters['name'],
+            mealSlotId: state.uri.queryParameters['meal'],
+            planDate: state.uri.queryParameters['plan'],
+          ),
         ),
       ],
     ),
@@ -110,6 +123,17 @@ final GoRouter appRouter = GoRouter(
               RecipeBuilderScreen(foodId: state.pathParameters['foodId']!),
         ),
       ],
+    ),
+    // Over the shell, like `/recipes` and `/templates`, and for the same
+    // reason: planning a week is a job you finish and come back from.
+    //
+    // Not a fifth tab. `NourishlyBottomNav` asserts exactly four
+    // destinations around the centre action, which is prototype screen
+    // 3's approved shape — adding one is a redesign, not a side effect.
+    GoRoute(
+      path: '/plan',
+      parentNavigatorKey: rootNavigatorKey,
+      builder: (context, state) => const WeekPlanScreen(),
     ),
     // Over the shell, like `/recipes` — reached from the add-food flow.
     GoRoute(

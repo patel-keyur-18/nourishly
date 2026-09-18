@@ -44,6 +44,16 @@ class ProfileEditor {
 
   Future<void> setGoal(GoalType goal) => _edit(goal: goal);
 
+  /// Sets or clears the due date, and with it the pregnancy lifestage
+  /// (FR-U-17).
+  ///
+  /// The lifestage is never chosen directly — it is derived here and
+  /// re-derived at every launch by
+  /// [ProfileDao.advanceLifestageIfDue], so the trimester moves on by
+  /// itself. Clearing the date puts the profile back to `adult`.
+  Future<void> setDueDate(DateTime? dueDate) =>
+      _edit(dueDate: dueDate, clearDueDate: dueDate == null);
+
   /// Weight goes through [BodyWeightDao] rather than straight to the
   /// profile, because FR-U-14 keeps weight as a series: the entry is the
   /// record, and the profile version it appends is the consequence. Doing
@@ -96,6 +106,8 @@ class ProfileEditor {
     double? weightKg,
     ActivityLevel? activityLevel,
     GoalType? goal,
+    DateTime? dueDate,
+    bool clearDueDate = false,
   }) async {
     final ownerId = await _ref.read(defaultOwnerProvider.future);
     final dao = _ref.read(profileDaoProvider);
@@ -107,14 +119,16 @@ class ProfileEditor {
     }
     final currentGoal = await dao.currentGoal(ownerId);
     final birth = dateOfBirth ?? profile.dateOfBirth;
+    final now = _ref.read(clockProvider).now();
+    final newDueDate = clearDueDate ? null : dueDate ?? profile.dueDate;
+    final lifestage = newDueDate == null
+        ? Lifestage.adult
+        : lifestageOn(now, newDueDate);
 
     await dao.saveProfileAndDeriveTargets(
       ownerId: ownerId,
       inputs: ProfileInputs(
-        ageYears: ageFromDateOfBirth(
-          birth,
-          now: _ref.read(clockProvider).now(),
-        ),
+        ageYears: ageFromDateOfBirth(birth, now: now),
         heightCm: heightCm ?? profile.heightCm,
         weightKg: weightKg ?? profile.weightKg,
         activityLevel:
@@ -122,7 +136,8 @@ class ProfileEditor {
         biologicalSex: clearBiologicalSex
             ? null
             : biologicalSex ?? BiologicalSex.fromId(profile.biologicalSex),
-        lifestage: Lifestage.fromId(profile.lifestage),
+        lifestage: lifestage,
+        dueDate: newDueDate,
         region: profile.regionRef,
       ),
       dateOfBirth: birth,

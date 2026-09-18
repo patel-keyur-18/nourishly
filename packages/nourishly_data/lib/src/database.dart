@@ -83,7 +83,7 @@ class NourishlyDatabase extends _$NourishlyDatabase {
       );
 
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 7;
 
   /// v1 -> v2 adds FR-U-16's dietary preference (plus the one-time
   /// onboarding flag) and the diet class the catalog importer computes.
@@ -108,20 +108,27 @@ class NourishlyDatabase extends _$NourishlyDatabase {
   /// forked from, so the two can be compared. One nullable column, no
   /// backfill: a recipe written before this simply has no parent, which is
   /// the truth about it.
+  ///
+  /// v6 -> v7 is the week planner: one status column on the log, and the
+  /// due date the pregnancy lifestage is derived from. Both are additive
+  /// and neither needs a backfill — every entry written before this was
+  /// something actually eaten, which is exactly what the `logged` default
+  /// says, and a profile with no due date is not pregnant, which is what
+  /// a null says.
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (m) => m.createAll(),
     onUpgrade: (m, from, to) async {
-      if (from < 2) {
+      if (from < 2 && to >= 2) {
         await m.addColumn(userPreferences, userPreferences.dietaryPreference);
         await m.addColumn(userPreferences, userPreferences.onboardingSeen);
         await m.addColumn(foodItems, foodItems.dietClass);
       }
-      if (from < 3) {
+      if (from < 3 && to >= 3) {
         await (update(userPreferences)..where((p) => p.theme.equals('system')))
             .write(const UserPreferencesCompanion(theme: Value('light')));
       }
-      if (from < 4) {
+      if (from < 4 && to >= 4) {
         await m.addColumn(userPreferences, userPreferences.remindersEnabled);
         await m.addColumn(userPreferences, userPreferences.lastExportedAt);
         await m.addColumn(
@@ -135,13 +142,17 @@ class NourishlyDatabase extends _$NourishlyDatabase {
       // the point: the performance budgets in §7.4 were being met on a
       // week of logging and a table scan, and that stops being true
       // somewhere in the first year.
-      if (from < 5) {
+      if (from < 5 && to >= 5) {
         for (final index in allSchemaEntities.whereType<Index>()) {
           await m.create(index);
         }
       }
-      if (from < 6) {
+      if (from < 6 && to >= 6) {
         await m.addColumn(foodItems, foodItems.forkedFromFoodId);
+      }
+      if (from < 7 && to >= 7) {
+        await m.addColumn(foodLogEntries, foodLogEntries.status);
+        await m.addColumn(userProfileVersions, userProfileVersions.dueDate);
       }
     },
   );

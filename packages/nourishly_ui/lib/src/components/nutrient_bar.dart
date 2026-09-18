@@ -11,6 +11,13 @@ import '../tokens.g.dart';
 /// The track runs to 125% of target (§27.11) and the tick marks 100%, so a
 /// bar is read *against a target* rather than filled to an edge — and
 /// overshoot has somewhere to go instead of pinning full.
+///
+/// [planned] draws the week planner's forecast: a hatched segment
+/// continuing from the solid fill, showing where the day lands if the rest
+/// of the plan is eaten. Hatched rather than merely paler, because a
+/// second shade of the same colour is colour carrying meaning on its own
+/// (NFR-A-04) — the texture, the value text and the screen-reader label
+/// all say the same thing independently.
 class NutrientBar extends StatelessWidget {
   const NutrientBar({
     super.key,
@@ -19,6 +26,7 @@ class NutrientBar extends StatelessWidget {
     required this.target,
     required this.color,
     this.unit = 'g',
+    this.planned = 0,
   });
 
   final String name;
@@ -26,6 +34,10 @@ class NutrientBar extends StatelessWidget {
   final double target;
   final Color color;
   final String unit;
+
+  /// Additional amount that is planned but not yet eaten. Zero everywhere
+  /// outside the planner.
+  final double planned;
 
   @override
   Widget build(BuildContext context) {
@@ -42,13 +54,37 @@ class NutrientBar extends StatelessWidget {
     // to the tick, so it is stated rather than left to be inferred from a
     // shape nobody can see.
     final percent = target <= 0 ? null : (value / target * 100).round();
+    final plannedFraction = target <= 0 || planned <= 0
+        ? 0.0
+        : (planned / target / NourishlyChart.trackToTargetRatio).clamp(
+            0.0,
+            1.0 - fraction,
+          );
+    final projectedPercent = target <= 0
+        ? null
+        : ((value + planned) / target * 100).round();
+
+    final base = percent == null
+        ? '$name: ${_round(value)} $unit, no target set'
+        : '$name: ${_round(value)} $unit of ${_round(target)} $unit '
+              'target, $percent per cent';
+    final projected = projectedPercent == null
+        ? ''
+        : ', $projectedPercent per cent';
     return Semantics(
-      label: percent == null
-          ? '$name: ${_round(value)} $unit, no target set'
-          : '$name: ${_round(value)} $unit of ${_round(target)} $unit '
-                'target, $percent per cent',
+      label: planned <= 0
+          ? base
+          : '$base. Planned but not yet eaten: ${_round(planned)} $unit, '
+                'reaching ${_round(value + planned)} $unit$projected',
       excludeSemantics: true,
-      child: _bar(context, colors, text, fraction, tickFraction),
+      child: _bar(
+        context,
+        colors,
+        text,
+        fraction,
+        plannedFraction,
+        tickFraction,
+      ),
     );
   }
 
@@ -60,6 +96,7 @@ class NutrientBar extends StatelessWidget {
     NourishlyColors colors,
     NourishlyTypography text,
     double fraction,
+    double plannedFraction,
     double tickFraction,
   ) {
     return Padding(
@@ -105,6 +142,21 @@ class NutrientBar extends StatelessWidget {
                           ),
                         ),
                       ),
+                      if (plannedFraction > 0)
+                        Positioned(
+                          left: constraints.maxWidth * fraction,
+                          width: constraints.maxWidth * plannedFraction,
+                          top: 0,
+                          bottom: 0,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(
+                              NourishlyStroke.bar,
+                            ),
+                            child: CustomPaint(
+                              painter: _PlannedHatchPainter(color: color),
+                            ),
+                          ),
+                        ),
                       Positioned(
                         left: constraints.maxWidth * tickFraction,
                         top: -2,
@@ -161,4 +213,41 @@ class NutrientBar extends StatelessWidget {
     return '${rounded ~/ 1000},'
         '${(rounded % 1000).toString().padLeft(3, '0')}';
   }
+}
+
+/// The planned segment's diagonal hatch.
+///
+/// Drawn rather than tinted so the distinction survives greyscale, a
+/// screenshot, and colour-blindness — the same reason every status in this
+/// app is a dot *and* a word.
+class _PlannedHatchPainter extends CustomPainter {
+  const _PlannedHatchPainter({required this.color});
+
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.drawRect(
+      Offset.zero & size,
+      Paint()..color = color.withValues(alpha: 0.16),
+    );
+    final stroke = Paint()
+      ..color = color.withValues(alpha: 0.75)
+      ..strokeWidth = 1.6
+      ..strokeCap = StrokeCap.butt;
+    // Diagonals at 45 degrees, stepping by the bar's own height so the
+    // spacing reads the same however long the segment is.
+    const step = 4.0;
+    for (var x = -size.height; x < size.width + size.height; x += step) {
+      canvas.drawLine(
+        Offset(x, size.height),
+        Offset(x + size.height, 0),
+        stroke,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(_PlannedHatchPainter oldDelegate) =>
+      oldDelegate.color != color;
 }

@@ -275,7 +275,23 @@ flowchart LR
 
 Without this, every goal change silently falsifies all historical reports — a bug that is invisible in testing and corrosive in production.
 
-**Pregnancy/lactation lifestages** materially change micronutrient targets. [ASSUMPTION A-6] Out of scope for v1.0: they carry clinical implications the app is not positioned to own (§30.8). If added, they require explicit medical disclaimers and probably a professional-guidance referral.
+**Pregnancy/lactation lifestages** materially change micronutrient targets. [ASSUMPTION A-6 — **superseded 2026-09-18**] Originally out of scope for v1.0. Built with the week planner, at the author's request, as a capability the household wants available. Q-27 in §0.7 still records the answer it was given — no health conditions or pregnancy in the household at the time it was asked — and nothing here updates it: this is a feature that exists when it is needed, not a statement that it is.
+
+What was built, and what was not:
+
+- `Lifestage` is split by trimester (`pregnant_t1`..`t3`) and by stage of nursing (`lactating_0_6`, `lactating_7_12`), because the requirements differ and one number for the whole of pregnancy is wrong for six months out of nine.
+- The stage is **derived from a due date**, never chosen, and re-derived at every launch and resume. A setting somebody has to change at week 14 and again at week 28 is a setting that gets forgotten, and a forgotten one means weeks of quietly wrong targets.
+- The third trimester **holds for two weeks past the due date**. The date is an estimate, roughly one pregnancy in ten runs past it, and the app has no way to know a birth happened — flipping to nursing targets on the estimated date would add 600 kcal a day and drop the iron target mid-pregnancy.
+- **Every field of the profile flows through `ProfileDao.inputsFrom`.** Rebuilding `ProfileInputs` by hand at each call site is how `dueDate` got dropped by *recording a weight* and by *reset to derived* — both of which silently ended the pregnancy, and the first of which then froze the lifestage, because the launch-time advance had nothing left to read.
+- Adding a row to `rda_icmr_nin_2020.json` **requires bumping `rulesetVersion`**. The importer skips a version it already holds, so an edit without a bump reaches nothing but a fresh install. `rda_importer_test.dart` asserts this against the real asset.
+- Energy and protein increments live in `target_derivation.dart` with the WHO energy-share rules, for the same reason: they are additions to a number derived per-profile, which a table keyed by age and sex cannot express.
+- Micronutrient rows carry a `lifestage` and are looked up with a **fallback to the adult row**, so the data states only the nutrients whose requirement actually changes. A missing row means "unchanged", never "no target".
+- A weight-loss goal is **refused**, not floored, while a pregnancy or nursing stage is set: an increment and a deficit can cancel into a number that looks reasonable and is not.
+- The §30.8 disclaimer appears on the goals screen and the profile screen — where the numbers are, not only in a settings page nobody opens.
+
+Deliberately **not** built, and said out loud on the screen rather than engineered around: **no per-food pregnancy warnings** (a clinical claim over 1,613 dishes with no sourced list behind it), and **no supplement logging** — so iron and folate will read low for anyone taking a prenatal, which the disclaimer states.
+
+The transcribed values in `rda_icmr_nin_2020.json` and the increments in `target_derivation.dart` are `pending_review` exactly as the adult values are, and the asset's notes list which nutrients were left without a pregnancy row rather than guessed at.
 
 ### 20.5 Snapshotting — the rule that makes history immutable
 

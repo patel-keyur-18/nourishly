@@ -40,6 +40,7 @@ class DerivedTargets {
     required this.tdeeKcal,
     required this.explanations,
     required this.safetyFloorApplied,
+    this.goalRefusedForLifestage = false,
   });
 
   final Map<NutrientId, NutrientTarget> targets;
@@ -57,7 +58,49 @@ class DerivedTargets {
   /// asked for is worse than one that explains itself.
   final bool safetyFloorApplied;
 
+  /// True when a weight-loss goal was refused because the profile is on a
+  /// pregnancy or lactation lifestage. Same reasoning as the floor, and
+  /// the same obligation: the screen says so rather than quietly showing
+  /// a number that is not what was asked for.
+  final bool goalRefusedForLifestage;
+
   double get energyKcal => targets['energy']!.amount;
+}
+
+/// The extra energy and protein a pregnancy or lactation lifestage adds on
+/// top of the derived adult numbers (§20.4).
+///
+/// Here rather than in `rda_icmr_nin_2020.json` for the same reason
+/// saturated fat and sugar are: these are increments on a number derived
+/// per-profile, and a table keyed by age and sex cannot express "whatever
+/// this person's requirement is, plus 350".
+///
+/// [REVIEW PENDING] Transcribed from ICMR-NIN, *Nutrient Requirements for
+/// Indians* (2020), and carrying exactly the status the adult values in
+/// the RDA asset carry: they are here so the app can derive a target at
+/// all, and they are not a substitute for the nutrition review packet
+/// (§0.6). Every figure below is to be checked against the report before
+/// anyone relies on it.
+const Map<Lifestage, LifestageIncrement> lifestageIncrements = {
+  // ICMR-NIN 2020 adds nothing in the first trimester: the requirement
+  // rises with the pregnancy, and an increment from week one would be
+  // three months of a target nobody needs.
+  Lifestage.pregnantT1: LifestageIncrement(energyKcal: 0, proteinG: 0),
+  Lifestage.pregnantT2: LifestageIncrement(energyKcal: 350, proteinG: 7.6),
+  Lifestage.pregnantT3: LifestageIncrement(energyKcal: 350, proteinG: 17.6),
+  Lifestage.lactating0to6: LifestageIncrement(energyKcal: 600, proteinG: 13.6),
+  Lifestage.lactating7to12: LifestageIncrement(energyKcal: 520, proteinG: 10.6),
+};
+
+/// One lifestage's additions to the derived energy and protein targets.
+@immutable
+class LifestageIncrement {
+  const LifestageIncrement({required this.energyKcal, required this.proteinG});
+
+  final double energyKcal;
+  final double proteinG;
+
+  static const none = LifestageIncrement(energyKcal: 0, proteinG: 0);
 }
 
 /// §20.4's minimum energy targets. The app will not compute a target below
@@ -81,15 +124,28 @@ DerivedTargets deriveTargets({
   final bmr = mifflinStJeorBmr(profile);
   final tdee = bmr * profile.activityLevel.pal;
 
-  final (energy, floorApplied) = _energyForGoal(
+  // A deficit is refused outright on a pregnancy or lactation lifestage,
+  // not merely floored (§21.8's stance, extended). The floor alone is not
+  // enough: a 350 kcal increment and a 350 kcal deficit cancel into a
+  // number that looks entirely reasonable and is not what anybody asked
+  // for. The refusal is reported rather than applied silently.
+  final refusesDeficit =
+      profile.lifestage.refusesDeficit && goal == GoalType.loseWeight;
+  final effectiveGoal = refusesDeficit ? GoalType.maintain : goal;
+
+  final (baseEnergy, floorApplied) = _energyForGoal(
     tdee: tdee,
-    goal: goal,
+    goal: effectiveGoal,
     profile: profile,
     rateKgPerWeek: goalRateKgPerWeek,
   );
 
-  final proteinGPerKg = _proteinGramsPerKg(goal);
-  final protein = proteinGPerKg * profile.weightKg;
+  final increment =
+      lifestageIncrements[profile.lifestage] ?? LifestageIncrement.none;
+  final energy = baseEnergy + increment.energyKcal;
+
+  final proteinGPerKg = _proteinGramsPerKg(effectiveGoal);
+  final protein = proteinGPerKg * profile.weightKg + increment.proteinG;
   // Fat as the midpoint of §20.4's 20-35% range; carbohydrate takes the
   // remainder, which is what makes the three add up to the energy target
   // instead of to something near it.
@@ -164,12 +220,15 @@ DerivedTargets deriveTargets({
     bmrKcal: bmr,
     tdeeKcal: tdee,
     safetyFloorApplied: floorApplied,
+    goalRefusedForLifestage: refusesDeficit,
     explanations: {
       'energy':
           'Mifflin-St Jeor from your height, weight and age, times your '
-          'activity level${goal == GoalType.maintain || goal == GoalType.generalHealth ? '' : ', adjusted for your goal'}.',
+          'activity level${effectiveGoal == GoalType.maintain || effectiveGoal == GoalType.generalHealth ? '' : ', adjusted for your goal'}'
+          '${increment.energyKcal > 0 ? ', plus ${increment.energyKcal.round()} kcal for ${profile.lifestage.label.toLowerCase()}' : ''}.',
       'protein':
-          '$proteinGPerKg g per kg of body weight for ${goal.label.toLowerCase()}.',
+          '$proteinGPerKg g per kg of body weight for ${effectiveGoal.label.toLowerCase()}'
+          '${increment.proteinG > 0 ? ', plus ${increment.proteinG} g for ${profile.lifestage.label.toLowerCase()}' : ''}.',
       'fat': '27.5% of your energy target — the middle of the 20-35% range.',
       'carbs': 'Whatever energy is left after protein and fat.',
       'fibre': '14 g per 1,000 kcal.',

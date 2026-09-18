@@ -783,6 +783,17 @@ class $UserProfileVersionsTable extends UserProfileVersions
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _dueDateMeta = const VerificationMeta(
+    'dueDate',
+  );
+  @override
+  late final GeneratedColumn<DateTime> dueDate = GeneratedColumn<DateTime>(
+    'due_date',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _regionRefMeta = const VerificationMeta(
     'regionRef',
   );
@@ -817,6 +828,7 @@ class $UserProfileVersionsTable extends UserProfileVersions
     weightKg,
     activityLevel,
     lifestage,
+    dueDate,
     regionRef,
     source,
   ];
@@ -929,6 +941,12 @@ class $UserProfileVersionsTable extends UserProfileVersions
     } else if (isInserting) {
       context.missing(_lifestageMeta);
     }
+    if (data.containsKey('due_date')) {
+      context.handle(
+        _dueDateMeta,
+        dueDate.isAcceptableOrUnknown(data['due_date']!, _dueDateMeta),
+      );
+    }
     if (data.containsKey('region_ref')) {
       context.handle(
         _regionRefMeta,
@@ -1002,6 +1020,10 @@ class $UserProfileVersionsTable extends UserProfileVersions
         DriftSqlType.string,
         data['${effectivePrefix}lifestage'],
       )!,
+      dueDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}due_date'],
+      ),
       regionRef: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}region_ref'],
@@ -1037,8 +1059,22 @@ class UserProfileVersion extends DataClass
   /// `sedentary` | `light` | `moderate` | `active` | `very_active`.
   final String activityLevel;
 
-  /// e.g. `adult`, `pregnant`, `lactating` — selects the RDA lifestage row.
+  /// `adult`, `pregnant_t1`..`pregnant_t3`, `lactating_0_6`,
+  /// `lactating_7_12` — selects the RDA lifestage row.
+  ///
+  /// Stored rather than derived on read, because it is what the target set
+  /// of the day was actually built from; [dueDate] is what moves it on.
   final String lifestage;
+
+  /// Set when the profile is pregnant or nursing. The lifestage follows
+  /// from it rather than from a setting somebody has to remember to change
+  /// at week 14 and again at week 28 — a forgotten switch is a stretch of
+  /// quietly wrong micronutrient targets, which is the one failure this
+  /// feature exists to prevent.
+  ///
+  /// Null for everyone else, which is also what makes it the flag for
+  /// "this profile is not on a pregnancy lifestage".
+  final DateTime? dueDate;
 
   /// Which `RdaReferences.region` applies, e.g. `IN`.
   final String regionRef;
@@ -1058,6 +1094,7 @@ class UserProfileVersion extends DataClass
     required this.weightKg,
     required this.activityLevel,
     required this.lifestage,
+    this.dueDate,
     required this.regionRef,
     required this.source,
   });
@@ -1080,6 +1117,9 @@ class UserProfileVersion extends DataClass
     map['weight_kg'] = Variable<double>(weightKg);
     map['activity_level'] = Variable<String>(activityLevel);
     map['lifestage'] = Variable<String>(lifestage);
+    if (!nullToAbsent || dueDate != null) {
+      map['due_date'] = Variable<DateTime>(dueDate);
+    }
     map['region_ref'] = Variable<String>(regionRef);
     map['source'] = Variable<String>(source);
     return map;
@@ -1103,6 +1143,9 @@ class UserProfileVersion extends DataClass
       weightKg: Value(weightKg),
       activityLevel: Value(activityLevel),
       lifestage: Value(lifestage),
+      dueDate: dueDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(dueDate),
       regionRef: Value(regionRef),
       source: Value(source),
     );
@@ -1126,6 +1169,7 @@ class UserProfileVersion extends DataClass
       weightKg: serializer.fromJson<double>(json['weightKg']),
       activityLevel: serializer.fromJson<String>(json['activityLevel']),
       lifestage: serializer.fromJson<String>(json['lifestage']),
+      dueDate: serializer.fromJson<DateTime?>(json['dueDate']),
       regionRef: serializer.fromJson<String>(json['regionRef']),
       source: serializer.fromJson<String>(json['source']),
     );
@@ -1146,6 +1190,7 @@ class UserProfileVersion extends DataClass
       'weightKg': serializer.toJson<double>(weightKg),
       'activityLevel': serializer.toJson<String>(activityLevel),
       'lifestage': serializer.toJson<String>(lifestage),
+      'dueDate': serializer.toJson<DateTime?>(dueDate),
       'regionRef': serializer.toJson<String>(regionRef),
       'source': serializer.toJson<String>(source),
     };
@@ -1164,6 +1209,7 @@ class UserProfileVersion extends DataClass
     double? weightKg,
     String? activityLevel,
     String? lifestage,
+    Value<DateTime?> dueDate = const Value.absent(),
     String? regionRef,
     String? source,
   }) => UserProfileVersion(
@@ -1181,6 +1227,7 @@ class UserProfileVersion extends DataClass
     weightKg: weightKg ?? this.weightKg,
     activityLevel: activityLevel ?? this.activityLevel,
     lifestage: lifestage ?? this.lifestage,
+    dueDate: dueDate.present ? dueDate.value : this.dueDate,
     regionRef: regionRef ?? this.regionRef,
     source: source ?? this.source,
   );
@@ -1206,6 +1253,7 @@ class UserProfileVersion extends DataClass
           ? data.activityLevel.value
           : this.activityLevel,
       lifestage: data.lifestage.present ? data.lifestage.value : this.lifestage,
+      dueDate: data.dueDate.present ? data.dueDate.value : this.dueDate,
       regionRef: data.regionRef.present ? data.regionRef.value : this.regionRef,
       source: data.source.present ? data.source.value : this.source,
     );
@@ -1226,6 +1274,7 @@ class UserProfileVersion extends DataClass
           ..write('weightKg: $weightKg, ')
           ..write('activityLevel: $activityLevel, ')
           ..write('lifestage: $lifestage, ')
+          ..write('dueDate: $dueDate, ')
           ..write('regionRef: $regionRef, ')
           ..write('source: $source')
           ..write(')'))
@@ -1246,6 +1295,7 @@ class UserProfileVersion extends DataClass
     weightKg,
     activityLevel,
     lifestage,
+    dueDate,
     regionRef,
     source,
   );
@@ -1265,6 +1315,7 @@ class UserProfileVersion extends DataClass
           other.weightKg == this.weightKg &&
           other.activityLevel == this.activityLevel &&
           other.lifestage == this.lifestage &&
+          other.dueDate == this.dueDate &&
           other.regionRef == this.regionRef &&
           other.source == this.source);
 }
@@ -1282,6 +1333,7 @@ class UserProfileVersionsCompanion extends UpdateCompanion<UserProfileVersion> {
   final Value<double> weightKg;
   final Value<String> activityLevel;
   final Value<String> lifestage;
+  final Value<DateTime?> dueDate;
   final Value<String> regionRef;
   final Value<String> source;
   final Value<int> rowid;
@@ -1298,6 +1350,7 @@ class UserProfileVersionsCompanion extends UpdateCompanion<UserProfileVersion> {
     this.weightKg = const Value.absent(),
     this.activityLevel = const Value.absent(),
     this.lifestage = const Value.absent(),
+    this.dueDate = const Value.absent(),
     this.regionRef = const Value.absent(),
     this.source = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -1315,6 +1368,7 @@ class UserProfileVersionsCompanion extends UpdateCompanion<UserProfileVersion> {
     required double weightKg,
     required String activityLevel,
     required String lifestage,
+    this.dueDate = const Value.absent(),
     required String regionRef,
     required String source,
     this.rowid = const Value.absent(),
@@ -1341,6 +1395,7 @@ class UserProfileVersionsCompanion extends UpdateCompanion<UserProfileVersion> {
     Expression<double>? weightKg,
     Expression<String>? activityLevel,
     Expression<String>? lifestage,
+    Expression<DateTime>? dueDate,
     Expression<String>? regionRef,
     Expression<String>? source,
     Expression<int>? rowid,
@@ -1358,6 +1413,7 @@ class UserProfileVersionsCompanion extends UpdateCompanion<UserProfileVersion> {
       if (weightKg != null) 'weight_kg': weightKg,
       if (activityLevel != null) 'activity_level': activityLevel,
       if (lifestage != null) 'lifestage': lifestage,
+      if (dueDate != null) 'due_date': dueDate,
       if (regionRef != null) 'region_ref': regionRef,
       if (source != null) 'source': source,
       if (rowid != null) 'rowid': rowid,
@@ -1377,6 +1433,7 @@ class UserProfileVersionsCompanion extends UpdateCompanion<UserProfileVersion> {
     Value<double>? weightKg,
     Value<String>? activityLevel,
     Value<String>? lifestage,
+    Value<DateTime?>? dueDate,
     Value<String>? regionRef,
     Value<String>? source,
     Value<int>? rowid,
@@ -1394,6 +1451,7 @@ class UserProfileVersionsCompanion extends UpdateCompanion<UserProfileVersion> {
       weightKg: weightKg ?? this.weightKg,
       activityLevel: activityLevel ?? this.activityLevel,
       lifestage: lifestage ?? this.lifestage,
+      dueDate: dueDate ?? this.dueDate,
       regionRef: regionRef ?? this.regionRef,
       source: source ?? this.source,
       rowid: rowid ?? this.rowid,
@@ -1439,6 +1497,9 @@ class UserProfileVersionsCompanion extends UpdateCompanion<UserProfileVersion> {
     if (lifestage.present) {
       map['lifestage'] = Variable<String>(lifestage.value);
     }
+    if (dueDate.present) {
+      map['due_date'] = Variable<DateTime>(dueDate.value);
+    }
     if (regionRef.present) {
       map['region_ref'] = Variable<String>(regionRef.value);
     }
@@ -1466,6 +1527,7 @@ class UserProfileVersionsCompanion extends UpdateCompanion<UserProfileVersion> {
           ..write('weightKg: $weightKg, ')
           ..write('activityLevel: $activityLevel, ')
           ..write('lifestage: $lifestage, ')
+          ..write('dueDate: $dueDate, ')
           ..write('regionRef: $regionRef, ')
           ..write('source: $source, ')
           ..write('rowid: $rowid')
@@ -11075,6 +11137,16 @@ class $FoodLogEntriesTable extends FoodLogEntries
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(logStatusLogged),
+  );
   static const VerificationMeta _noteMeta = const VerificationMeta('note');
   @override
   late final GeneratedColumn<String> note = GeneratedColumn<String>(
@@ -11110,6 +11182,7 @@ class $FoodLogEntriesTable extends FoodLogEntries
     gramsConsumed,
     loggedAt,
     source,
+    status,
     note,
     updatedAt,
   ];
@@ -11226,6 +11299,12 @@ class $FoodLogEntriesTable extends FoodLogEntries
     } else if (isInserting) {
       context.missing(_sourceMeta);
     }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    }
     if (data.containsKey('note')) {
       context.handle(
         _noteMeta,
@@ -11295,6 +11374,10 @@ class $FoodLogEntriesTable extends FoodLogEntries
         DriftSqlType.string,
         data['${effectivePrefix}source'],
       )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
       note: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}note'],
@@ -11327,8 +11410,19 @@ class FoodLogEntry extends DataClass implements Insertable<FoodLogEntry> {
   final double gramsConsumed;
   final DateTime loggedAt;
 
-  /// `manual` | `template` | `copy` | `barcode` | `ai_suggested`.
+  /// `manual` | `template` | `copy` | `plan` | `barcode` | `ai_suggested`.
   final String source;
+
+  /// [logStatusLogged] | [logStatusPlanned] | [logStatusSkipped].
+  ///
+  /// The whole of the week planner is this column. A planned entry is a
+  /// real row with a real frozen snapshot that simply has not happened
+  /// yet; confirming it flips the status and rewrites [loggedAt], and
+  /// nothing else about the row moves. Every read that means *actual
+  /// intake* — the dashboard, the summaries, the reports, the score, the
+  /// export — goes through `isActual` in `dao/log_status.dart` rather
+  /// than spelling this out again.
+  final String status;
   final String? note;
   final DateTime updatedAt;
   const FoodLogEntry({
@@ -11344,6 +11438,7 @@ class FoodLogEntry extends DataClass implements Insertable<FoodLogEntry> {
     required this.gramsConsumed,
     required this.loggedAt,
     required this.source,
+    required this.status,
     this.note,
     required this.updatedAt,
   });
@@ -11366,6 +11461,7 @@ class FoodLogEntry extends DataClass implements Insertable<FoodLogEntry> {
     map['grams_consumed'] = Variable<double>(gramsConsumed);
     map['logged_at'] = Variable<DateTime>(loggedAt);
     map['source'] = Variable<String>(source);
+    map['status'] = Variable<String>(status);
     if (!nullToAbsent || note != null) {
       map['note'] = Variable<String>(note);
     }
@@ -11391,6 +11487,7 @@ class FoodLogEntry extends DataClass implements Insertable<FoodLogEntry> {
       gramsConsumed: Value(gramsConsumed),
       loggedAt: Value(loggedAt),
       source: Value(source),
+      status: Value(status),
       note: note == null && nullToAbsent ? const Value.absent() : Value(note),
       updatedAt: Value(updatedAt),
     );
@@ -11414,6 +11511,7 @@ class FoodLogEntry extends DataClass implements Insertable<FoodLogEntry> {
       gramsConsumed: serializer.fromJson<double>(json['gramsConsumed']),
       loggedAt: serializer.fromJson<DateTime>(json['loggedAt']),
       source: serializer.fromJson<String>(json['source']),
+      status: serializer.fromJson<String>(json['status']),
       note: serializer.fromJson<String?>(json['note']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
     );
@@ -11434,6 +11532,7 @@ class FoodLogEntry extends DataClass implements Insertable<FoodLogEntry> {
       'gramsConsumed': serializer.toJson<double>(gramsConsumed),
       'loggedAt': serializer.toJson<DateTime>(loggedAt),
       'source': serializer.toJson<String>(source),
+      'status': serializer.toJson<String>(status),
       'note': serializer.toJson<String?>(note),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
     };
@@ -11452,6 +11551,7 @@ class FoodLogEntry extends DataClass implements Insertable<FoodLogEntry> {
     double? gramsConsumed,
     DateTime? loggedAt,
     String? source,
+    String? status,
     Value<String?> note = const Value.absent(),
     DateTime? updatedAt,
   }) => FoodLogEntry(
@@ -11469,6 +11569,7 @@ class FoodLogEntry extends DataClass implements Insertable<FoodLogEntry> {
     gramsConsumed: gramsConsumed ?? this.gramsConsumed,
     loggedAt: loggedAt ?? this.loggedAt,
     source: source ?? this.source,
+    status: status ?? this.status,
     note: note.present ? note.value : this.note,
     updatedAt: updatedAt ?? this.updatedAt,
   );
@@ -11494,6 +11595,7 @@ class FoodLogEntry extends DataClass implements Insertable<FoodLogEntry> {
           : this.gramsConsumed,
       loggedAt: data.loggedAt.present ? data.loggedAt.value : this.loggedAt,
       source: data.source.present ? data.source.value : this.source,
+      status: data.status.present ? data.status.value : this.status,
       note: data.note.present ? data.note.value : this.note,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
@@ -11514,6 +11616,7 @@ class FoodLogEntry extends DataClass implements Insertable<FoodLogEntry> {
           ..write('gramsConsumed: $gramsConsumed, ')
           ..write('loggedAt: $loggedAt, ')
           ..write('source: $source, ')
+          ..write('status: $status, ')
           ..write('note: $note, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -11534,6 +11637,7 @@ class FoodLogEntry extends DataClass implements Insertable<FoodLogEntry> {
     gramsConsumed,
     loggedAt,
     source,
+    status,
     note,
     updatedAt,
   );
@@ -11553,6 +11657,7 @@ class FoodLogEntry extends DataClass implements Insertable<FoodLogEntry> {
           other.gramsConsumed == this.gramsConsumed &&
           other.loggedAt == this.loggedAt &&
           other.source == this.source &&
+          other.status == this.status &&
           other.note == this.note &&
           other.updatedAt == this.updatedAt);
 }
@@ -11570,6 +11675,7 @@ class FoodLogEntriesCompanion extends UpdateCompanion<FoodLogEntry> {
   final Value<double> gramsConsumed;
   final Value<DateTime> loggedAt;
   final Value<String> source;
+  final Value<String> status;
   final Value<String?> note;
   final Value<DateTime> updatedAt;
   final Value<int> rowid;
@@ -11586,6 +11692,7 @@ class FoodLogEntriesCompanion extends UpdateCompanion<FoodLogEntry> {
     this.gramsConsumed = const Value.absent(),
     this.loggedAt = const Value.absent(),
     this.source = const Value.absent(),
+    this.status = const Value.absent(),
     this.note = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -11603,6 +11710,7 @@ class FoodLogEntriesCompanion extends UpdateCompanion<FoodLogEntry> {
     required double gramsConsumed,
     required DateTime loggedAt,
     required String source,
+    this.status = const Value.absent(),
     this.note = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -11629,6 +11737,7 @@ class FoodLogEntriesCompanion extends UpdateCompanion<FoodLogEntry> {
     Expression<double>? gramsConsumed,
     Expression<DateTime>? loggedAt,
     Expression<String>? source,
+    Expression<String>? status,
     Expression<String>? note,
     Expression<DateTime>? updatedAt,
     Expression<int>? rowid,
@@ -11646,6 +11755,7 @@ class FoodLogEntriesCompanion extends UpdateCompanion<FoodLogEntry> {
       if (gramsConsumed != null) 'grams_consumed': gramsConsumed,
       if (loggedAt != null) 'logged_at': loggedAt,
       if (source != null) 'source': source,
+      if (status != null) 'status': status,
       if (note != null) 'note': note,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (rowid != null) 'rowid': rowid,
@@ -11665,6 +11775,7 @@ class FoodLogEntriesCompanion extends UpdateCompanion<FoodLogEntry> {
     Value<double>? gramsConsumed,
     Value<DateTime>? loggedAt,
     Value<String>? source,
+    Value<String>? status,
     Value<String?>? note,
     Value<DateTime>? updatedAt,
     Value<int>? rowid,
@@ -11682,6 +11793,7 @@ class FoodLogEntriesCompanion extends UpdateCompanion<FoodLogEntry> {
       gramsConsumed: gramsConsumed ?? this.gramsConsumed,
       loggedAt: loggedAt ?? this.loggedAt,
       source: source ?? this.source,
+      status: status ?? this.status,
       note: note ?? this.note,
       updatedAt: updatedAt ?? this.updatedAt,
       rowid: rowid ?? this.rowid,
@@ -11727,6 +11839,9 @@ class FoodLogEntriesCompanion extends UpdateCompanion<FoodLogEntry> {
     if (source.present) {
       map['source'] = Variable<String>(source.value);
     }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
     if (note.present) {
       map['note'] = Variable<String>(note.value);
     }
@@ -11754,6 +11869,7 @@ class FoodLogEntriesCompanion extends UpdateCompanion<FoodLogEntry> {
           ..write('gramsConsumed: $gramsConsumed, ')
           ..write('loggedAt: $loggedAt, ')
           ..write('source: $source, ')
+          ..write('status: $status, ')
           ..write('note: $note, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('rowid: $rowid')
@@ -18243,6 +18359,7 @@ typedef $$UserProfileVersionsTableCreateCompanionBuilder =
       required double weightKg,
       required String activityLevel,
       required String lifestage,
+      Value<DateTime?> dueDate,
       required String regionRef,
       required String source,
       Value<int> rowid,
@@ -18261,6 +18378,7 @@ typedef $$UserProfileVersionsTableUpdateCompanionBuilder =
       Value<double> weightKg,
       Value<String> activityLevel,
       Value<String> lifestage,
+      Value<DateTime?> dueDate,
       Value<String> regionRef,
       Value<String> source,
       Value<int> rowid,
@@ -18377,6 +18495,11 @@ class $$UserProfileVersionsTableFilterComposer
 
   ColumnFilters<String> get lifestage => $composableBuilder(
     column: $table.lifestage,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get dueDate => $composableBuilder(
+    column: $table.dueDate,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -18503,6 +18626,11 @@ class $$UserProfileVersionsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<DateTime> get dueDate => $composableBuilder(
+    column: $table.dueDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get regionRef => $composableBuilder(
     column: $table.regionRef,
     builder: (column) => ColumnOrderings(column),
@@ -18586,6 +18714,9 @@ class $$UserProfileVersionsTableAnnotationComposer
 
   GeneratedColumn<String> get lifestage =>
       $composableBuilder(column: $table.lifestage, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get dueDate =>
+      $composableBuilder(column: $table.dueDate, builder: (column) => column);
 
   GeneratedColumn<String> get regionRef =>
       $composableBuilder(column: $table.regionRef, builder: (column) => column);
@@ -18690,6 +18821,7 @@ class $$UserProfileVersionsTableTableManager
                 Value<double> weightKg = const Value.absent(),
                 Value<String> activityLevel = const Value.absent(),
                 Value<String> lifestage = const Value.absent(),
+                Value<DateTime?> dueDate = const Value.absent(),
                 Value<String> regionRef = const Value.absent(),
                 Value<String> source = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
@@ -18706,6 +18838,7 @@ class $$UserProfileVersionsTableTableManager
                 weightKg: weightKg,
                 activityLevel: activityLevel,
                 lifestage: lifestage,
+                dueDate: dueDate,
                 regionRef: regionRef,
                 source: source,
                 rowid: rowid,
@@ -18724,6 +18857,7 @@ class $$UserProfileVersionsTableTableManager
                 required double weightKg,
                 required String activityLevel,
                 required String lifestage,
+                Value<DateTime?> dueDate = const Value.absent(),
                 required String regionRef,
                 required String source,
                 Value<int> rowid = const Value.absent(),
@@ -18740,6 +18874,7 @@ class $$UserProfileVersionsTableTableManager
                 weightKg: weightKg,
                 activityLevel: activityLevel,
                 lifestage: lifestage,
+                dueDate: dueDate,
                 regionRef: regionRef,
                 source: source,
                 rowid: rowid,
@@ -26606,6 +26741,7 @@ typedef $$FoodLogEntriesTableCreateCompanionBuilder =
       required double gramsConsumed,
       required DateTime loggedAt,
       required String source,
+      Value<String> status,
       Value<String?> note,
       Value<DateTime> updatedAt,
       Value<int> rowid,
@@ -26624,6 +26760,7 @@ typedef $$FoodLogEntriesTableUpdateCompanionBuilder =
       Value<double> gramsConsumed,
       Value<DateTime> loggedAt,
       Value<String> source,
+      Value<String> status,
       Value<String?> note,
       Value<DateTime> updatedAt,
       Value<int> rowid,
@@ -26764,6 +26901,11 @@ class $$FoodLogEntriesTableFilterComposer
 
   ColumnFilters<String> get source => $composableBuilder(
     column: $table.source,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -26915,6 +27057,11 @@ class $$FoodLogEntriesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get note => $composableBuilder(
     column: $table.note,
     builder: (column) => ColumnOrderings(column),
@@ -26996,6 +27143,9 @@ class $$FoodLogEntriesTableAnnotationComposer
 
   GeneratedColumn<String> get source =>
       $composableBuilder(column: $table.source, builder: (column) => column);
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
 
   GeneratedColumn<String> get note =>
       $composableBuilder(column: $table.note, builder: (column) => column);
@@ -27124,6 +27274,7 @@ class $$FoodLogEntriesTableTableManager
                 Value<double> gramsConsumed = const Value.absent(),
                 Value<DateTime> loggedAt = const Value.absent(),
                 Value<String> source = const Value.absent(),
+                Value<String> status = const Value.absent(),
                 Value<String?> note = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
@@ -27140,6 +27291,7 @@ class $$FoodLogEntriesTableTableManager
                 gramsConsumed: gramsConsumed,
                 loggedAt: loggedAt,
                 source: source,
+                status: status,
                 note: note,
                 updatedAt: updatedAt,
                 rowid: rowid,
@@ -27158,6 +27310,7 @@ class $$FoodLogEntriesTableTableManager
                 required double gramsConsumed,
                 required DateTime loggedAt,
                 required String source,
+                Value<String> status = const Value.absent(),
                 Value<String?> note = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
@@ -27174,6 +27327,7 @@ class $$FoodLogEntriesTableTableManager
                 gramsConsumed: gramsConsumed,
                 loggedAt: loggedAt,
                 source: source,
+                status: status,
                 note: note,
                 updatedAt: updatedAt,
                 rowid: rowid,

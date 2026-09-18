@@ -102,7 +102,7 @@ Resolved by two scope changes rather than by process: barcode scanning is deferr
 | ~~A-3~~ | ~~Supabase tier adequate~~ | **Retired** — no backend |
 | **A-4** | Household-measure gram weights carry ±20–30% variance and users accept estimation | Still holds. **Better mitigated here than anywhere:** you can weigh your own katori once and set the exact figure for your household |
 | **A-5** | ~35 ml/kg is a reasonable default water target | Adjustable per profile; low consequence |
-| **A-6** | Pregnancy/lactation lifestages are out of scope | **Now a concrete question, not an assumption** — see §0.7 question 2 and R-28 |
+| **A-6** | Pregnancy/lactation lifestages are out of scope | **Superseded 2026-09-18.** Built with the week planner at the author's request — see §20.4 for what was and was not included. Q-27's recorded answer is unchanged |
 | **A-7** | The §21.4 scoring weights are a defensible starting point | ADR-010 stays Proposed pending the review packet (§0.6) |
 | ~~A-8~~ | ~~DPDP + GDPR + store policies baseline~~ | **Retired.** Personal and domestic use; no third parties receive data. §30.3 (device storage) and §30.8 (medical boundary) still apply |
 | ~~A-9~~ | ~~18+ only~~ | **Now a real question.** If a family member under 18 will use it, growth-stage RDA values differ materially from adult ones. Tell me and I'll extend the reference tables |

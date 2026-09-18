@@ -129,15 +129,24 @@ class ProfileDao {
   /// A sex-independent row is used when no sex-specific one matches, which
   /// is also what a profile that declined to state one gets — the neutral
   /// reference §27.1 promises, rather than a silent default to either.
+  ///
+  /// A lifestage row is used when one exists, and the adult row otherwise.
+  /// That fallback is what lets the pregnancy data state only the handful
+  /// of nutrients whose requirement actually changes: for everything else
+  /// the adult value stands, which is a defensible default. Without it, a
+  /// missing pregnancy row would mean *no target at all* for that
+  /// nutrient — silently dropping it out of the score rather than leaving
+  /// it where it was.
   Future<List<RdaReference>> referencesFor(
     UserProfileVersion profile, {
     required int ageYears,
   }) async {
+    const adult = 'adult';
     final rows =
         await (_db.select(_db.rdaReferences)..where(
               (r) =>
                   r.region.equals(profile.regionRef) &
-                  r.lifestage.equals(profile.lifestage) &
+                  r.lifestage.isIn([profile.lifestage, adult]) &
                   r.ageMin.isSmallerOrEqualValue(ageYears) &
                   r.ageMax.isBiggerOrEqualValue(ageYears),
             ))
@@ -146,9 +155,20 @@ class ProfileDao {
     final byNutrient = <String, dynamic>{};
     for (final row in rows) {
       final existing = byNutrient[row.nutrientId];
+      if (existing == null) {
+        byNutrient[row.nutrientId] = row;
+        continue;
+      }
+      // Lifestage beats adult outright; within one lifestage, a row that
+      // names this profile's sex beats a sex-independent one.
+      final rowIsLifestage = row.lifestage != adult;
+      final existingIsLifestage = existing.lifestage != adult;
+      if (rowIsLifestage != existingIsLifestage) {
+        if (rowIsLifestage) byNutrient[row.nutrientId] = row;
+        continue;
+      }
       final matchesSex = row.sex == profile.biologicalSex;
-      if (existing == null ||
-          (matchesSex && existing.sex != profile.biologicalSex)) {
+      if (matchesSex && existing.sex != profile.biologicalSex) {
         byNutrient[row.nutrientId] = row;
       }
     }
@@ -211,6 +231,7 @@ class ProfileDao {
               weightKg: inputs.weightKg,
               activityLevel: inputs.activityLevel.id,
               lifestage: inputs.lifestage.id,
+              dueDate: Value(inputs.dueDate),
               regionRef: inputs.region,
               source: 'user',
             ),
@@ -257,6 +278,71 @@ class ProfileDao {
     });
 
     return manualOnly ? previousSet!.id : targetSetId;
+  }
+
+  /// Moves a pregnancy or lactation profile on to the lifestage its due
+  /// date now puts it in, if that has changed (FR-U-17).
+  ///
+  /// Called once at launch. It appends a profile version and derives a new
+  /// target set through the ordinary effective-dated path rather than
+  /// editing anything, so the change is explainable afterwards — a report
+  /// from the first trimester keeps being read against first-trimester
+  /// targets, which is invariant I-3 and the reason this is not a simple
+  /// `UPDATE`.
+  ///
+  /// Returns the new lifestage when it moved, null when nothing changed.
+  Future<Lifestage?> advanceLifestageIfDue({
+    required String ownerId,
+    DateTime? on,
+  }) async {
+    final at = on ?? DateTime.now();
+    final profile = await currentProfile(ownerId, on: at);
+    final dueDate = profile?.dueDate;
+    if (profile == null || dueDate == null) return null;
+
+    final expected = lifestageOn(at, dueDate);
+    if (expected.id == profile.lifestage) return null;
+
+    final goal = await currentGoal(ownerId, on: at);
+    await saveProfileAndDeriveTargets(
+      ownerId: ownerId,
+      inputs: inputsFrom(profile, on: at).copyWith(lifestage: expected),
+      dateOfBirth: profile.dateOfBirth,
+      goal: GoalType.fromId(goal?.goalType ?? GoalType.maintain.id),
+      goalRateKgPerWeek: goal?.targetRateKgPerWeek,
+      // From [at], not from the real today. They are the same in the app,
+      // which is exactly why getting it wrong here would never have shown
+      // up: the new version has to sort *after* the one it supersedes, and
+      // a profile edited later than `at` would otherwise keep winning and
+      // the stage would advance again on every single call.
+      effectiveFrom: DateTime(at.year, at.month, at.day),
+    );
+    return expected;
+  }
+
+  /// The pure-Dart view of a stored profile version, as target derivation
+  /// wants it.
+  ProfileInputs inputsFrom(UserProfileVersion profile, {DateTime? on}) {
+    final at = on ?? DateTime.now();
+    return ProfileInputs(
+      ageYears: _ageOn(profile.dateOfBirth, at),
+      heightCm: profile.heightCm,
+      weightKg: profile.weightKg,
+      activityLevel: ActivityLevel.fromId(profile.activityLevel),
+      biologicalSex: BiologicalSex.fromId(profile.biologicalSex),
+      lifestage: Lifestage.fromId(profile.lifestage),
+      dueDate: profile.dueDate,
+      region: profile.regionRef,
+    );
+  }
+
+  static int _ageOn(DateTime dateOfBirth, DateTime at) {
+    var age = at.year - dateOfBirth.year;
+    final hadBirthday =
+        at.month > dateOfBirth.month ||
+        (at.month == dateOfBirth.month && at.day >= dateOfBirth.day);
+    if (!hadBirthday) age--;
+    return age;
   }
 
   /// Overrides one target from today forward (§27.12). Copies the whole set

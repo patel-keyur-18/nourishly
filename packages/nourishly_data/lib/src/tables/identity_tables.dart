@@ -32,8 +32,22 @@ class UserProfileVersions extends Table
   /// `sedentary` | `light` | `moderate` | `active` | `very_active`.
   TextColumn get activityLevel => text()();
 
-  /// e.g. `adult`, `pregnant`, `lactating` — selects the RDA lifestage row.
+  /// `adult`, `pregnant_t1`..`pregnant_t3`, `lactating_0_6`,
+  /// `lactating_7_12` — selects the RDA lifestage row.
+  ///
+  /// Stored rather than derived on read, because it is what the target set
+  /// of the day was actually built from; [dueDate] is what moves it on.
   TextColumn get lifestage => text()();
+
+  /// Set when the profile is pregnant or nursing. The lifestage follows
+  /// from it rather than from a setting somebody has to remember to change
+  /// at week 14 and again at week 28 — a forgotten switch is a stretch of
+  /// quietly wrong micronutrient targets, which is the one failure this
+  /// feature exists to prevent.
+  ///
+  /// Null for everyone else, which is also what makes it the flag for
+  /// "this profile is not on a pregnancy lifestage".
+  DateTimeColumn get dueDate => dateTime().nullable()();
 
   /// Which `RdaReferences.region` applies, e.g. `IN`.
   TextColumn get regionRef => text()();

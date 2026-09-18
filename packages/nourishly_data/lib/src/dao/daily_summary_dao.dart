@@ -5,6 +5,7 @@ import 'package:uuid/uuid.dart';
 // See ProfileDao: the Drift row class `NutrientTarget` shadows the core value
 // object of the same name.
 import '../database.dart' hide DailyScore, NutrientTarget;
+import 'log_status.dart';
 import 'profile_dao.dart';
 
 const _uuid = Uuid();
@@ -182,7 +183,7 @@ class DailySummaryDao {
               (e) =>
                   e.ownerId.equals(ownerId) &
                   e.logDate.equals(date) &
-                  e.deletedAt.isNull(),
+                  isActual(e),
             ))
             .get();
 
@@ -499,7 +500,7 @@ class DailySummaryDao {
               (e) =>
                   e.ownerId.equals(ownerId) &
                   e.logDate.equals(date) &
-                  e.deletedAt.isNull(),
+                  isActual(e),
             ))
             .get();
     if (entries.isEmpty) return const [];
@@ -545,7 +546,7 @@ class DailySummaryDao {
               (e) =>
                   e.ownerId.equals(ownerId) &
                   e.logDate.equals(date) &
-                  e.deletedAt.isNull(),
+                  isActual(e),
             ))
             .get();
     if (entries.isEmpty) {
