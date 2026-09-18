@@ -275,7 +275,7 @@ flowchart LR
 
 Without this, every goal change silently falsifies all historical reports — a bug that is invisible in testing and corrosive in production.
 
-**Pregnancy/lactation lifestages** materially change micronutrient targets. [ASSUMPTION A-6 — **superseded 2026-09-18**] Originally out of scope for v1.0. Built with the week planner, because Q-27 was answered: someone in the household is pregnant, and general-population targets being wrong for them stopped being hypothetical.
+**Pregnancy/lactation lifestages** materially change micronutrient targets. [ASSUMPTION A-6 — **superseded 2026-09-18**] Originally out of scope for v1.0. Built with the week planner, at the author's request, as a capability the household wants available. Q-27 in §0.7 still records the answer it was given — no health conditions or pregnancy in the household at the time it was asked — and nothing here updates it: this is a feature that exists when it is needed, not a statement that it is.
 
 What was built, and what was not:
 
