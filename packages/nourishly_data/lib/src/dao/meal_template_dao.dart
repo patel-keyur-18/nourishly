@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:uuid/uuid.dart';
 
 import '../database.dart';
+import '../tables/logging_tables.dart';
 import 'food_logging_dao.dart';
 
 const _uuid = Uuid();
@@ -207,11 +208,16 @@ class MealTemplateDao {
   /// items were actually logged — an item whose food has no serving size
   /// recorded is skipped rather than guessed at (AP-4's spirit: no
   /// fabricated portion).
+  ///
+  /// [status] lets the week planner reuse this unchanged: filling
+  /// Thursday's dinner from a template writes the same rows the same way,
+  /// planned instead of logged.
   Future<int> applyTemplate({
     required String templateId,
     required String ownerId,
     required DateTime logDate,
     String? mealSlotId,
+    String status = logStatusLogged,
   }) async {
     final template = await (_db.select(
       _db.mealTemplates,
@@ -240,6 +246,8 @@ class MealTemplateDao {
         quantity: item.quantity,
         mealSlotId: slot,
         logDate: logDate,
+        status: status,
+        source: 'template',
       );
       logged++;
     }

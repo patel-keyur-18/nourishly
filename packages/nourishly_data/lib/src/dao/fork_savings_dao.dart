@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 
 import '../database.dart';
+import 'log_status.dart';
 
 /// What one household recipe saves against the catalog recipe it was
 /// forked from, per 100 g of finished dish.
@@ -167,7 +168,7 @@ class ForkSavingsDao {
           FROM food_log_entries e
           JOIN food_items f ON f.id = e.food_id
           WHERE e.owner_id = ?
-            AND e.deleted_at IS NULL
+            AND $isActualSql
             AND e.log_date >= ?
             AND e.log_date <= ?
             AND f.forked_from_food_id IS NOT NULL

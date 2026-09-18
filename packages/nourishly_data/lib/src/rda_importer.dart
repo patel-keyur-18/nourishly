@@ -39,19 +39,26 @@ class RdaImporter {
         final sex = r['sex'] as String?;
         final ageMin = r['ageMin'] as int;
         final ageMax = r['ageMax'] as int;
+        final lifestage = (r['lifestage'] as String?) ?? 'adult';
         batch.insert(
           _db.rdaReferences,
           RdaReferencesCompanion.insert(
             // Deterministic rather than a UUID: re-importing the same
             // table must not create a second copy of a row, and the tuple
             // it is keyed on is exactly what makes a reference unique.
-            id: '$rulesetVersion.$region.$nutrientId.${sex ?? 'any'}.$ageMin-$ageMax',
+            //
+            // Lifestage is part of that tuple. Leaving it out would make a
+            // pregnancy row and the adult row it sits beside collide on
+            // one id, and the later one would silently replace the other.
+            id:
+                '$rulesetVersion.$region.$nutrientId.${sex ?? 'any'}'
+                '.$ageMin-$ageMax.$lifestage',
             nutrientId: nutrientId,
             region: region,
             sex: Value(sex),
             ageMin: ageMin,
             ageMax: ageMax,
-            lifestage: (r['lifestage'] as String?) ?? 'adult',
+            lifestage: lifestage,
             rdaAmount: (r['rdaAmount'] as num).toDouble(),
             aiAmount: Value((r['aiAmount'] as num?)?.toDouble()),
             upperLimit: Value((r['upperLimit'] as num?)?.toDouble()),

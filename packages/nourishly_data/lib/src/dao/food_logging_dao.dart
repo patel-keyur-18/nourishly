@@ -2,7 +2,9 @@ import 'package:drift/drift.dart';
 import 'package:uuid/uuid.dart';
 
 import '../database.dart';
+import '../tables/logging_tables.dart';
 import 'daily_summary_dao.dart';
+import 'log_status.dart';
 
 const _uuid = Uuid();
 
@@ -28,6 +30,12 @@ class FoodLoggingDao {
 
   /// Logs [quantity] servings of [servingId] against [foodId], in
   /// [mealSlotId], on [logDate]. Returns the new entry's id.
+  ///
+  /// [status] is what makes this the planner's write path too: a planned
+  /// entry takes the identical route, snapshot included, so a plan is
+  /// scored by exactly the code that scores a meal. What differs is one
+  /// column and the meaning of [loggedAt], which for a planned entry is
+  /// when the plan was made and is rewritten when it is confirmed.
   Future<String> logFood({
     required String ownerId,
     required String foodId,
@@ -35,6 +43,8 @@ class FoodLoggingDao {
     required double quantity,
     required String mealSlotId,
     required DateTime logDate,
+    String status = logStatusLogged,
+    String source = 'manual',
   }) async {
     final food = await (_db.select(
       _db.foodItems,
@@ -64,7 +74,8 @@ class FoodLoggingDao {
           quantity: quantity,
           gramsConsumed: gramsConsumed,
           loggedAt: now,
-          source: 'manual',
+          source: source,
+          status: Value(status),
         ),
       );
 
@@ -174,6 +185,60 @@ class FoodLoggingDao {
     await _invalidate(entryId);
   }
 
+  /// Confirms a planned entry as eaten (FR-P-04).
+  ///
+  /// The snapshot is not touched and not recomputed: you ate what was
+  /// planned, and the nutrients frozen when the plan was made are the
+  /// nutrients of the meal. [loggedAt] moves to now, because that is the
+  /// one thing the confirmation actually knows.
+  ///
+  /// A portion that turned out different goes through [updateEntry] first
+  /// — it rescales the frozen snapshot rather than re-reading the catalog
+  /// (ADR-008) — and then through here.
+  Future<void> confirmEntry(String entryId, {DateTime? at}) async {
+    await (_db.update(
+      _db.foodLogEntries,
+    )..where((e) => e.id.equals(entryId))).write(
+      FoodLogEntriesCompanion(
+        status: const Value(logStatusLogged),
+        loggedAt: Value(at ?? DateTime.now()),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
+    await _invalidate(entryId);
+  }
+
+  /// Marks a planned entry as not eaten after all (FR-P-05).
+  ///
+  /// Kept rather than deleted. A plan that was ignored three weeks running
+  /// is the most useful thing the planner can tell you about itself, and a
+  /// deleted row tells you nothing.
+  Future<void> skipEntry(String entryId) async {
+    await (_db.update(
+      _db.foodLogEntries,
+    )..where((e) => e.id.equals(entryId))).write(
+      FoodLogEntriesCompanion(
+        status: const Value(logStatusSkipped),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
+    await _invalidate(entryId);
+  }
+
+  /// Puts a confirmed or skipped entry back to planned — the undo for
+  /// either, and the reason both actions can be one tap with no dialog.
+  Future<void> unconfirmEntry(String entryId) async {
+    await (_db.update(
+      _db.foodLogEntries,
+    )..where((e) => e.id.equals(entryId))).write(
+      FoodLogEntriesCompanion(
+        status: const Value(logStatusPlanned),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
+    await _invalidate(entryId);
+  }
+
   /// Today's logged entries for [ownerId], newest first, joined to the
   /// food and meal slot names — what the minimal Today screen (§27.2,
   /// pending the real dashboard in Phase 3) shows to confirm a log
@@ -204,7 +269,7 @@ class FoodLoggingDao {
           ..where(
             _db.foodLogEntries.ownerId.equals(ownerId) &
                 _db.foodLogEntries.logDate.equals(logDate) &
-                _db.foodLogEntries.deletedAt.isNull(),
+                isActual(_db.foodLogEntries),
           )
           ..orderBy([OrderingTerm.desc(_db.foodLogEntries.loggedAt)]);
 

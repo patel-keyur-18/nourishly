@@ -336,6 +336,63 @@ void main() {
 
     tearDown(() => fresh.close());
 
+    test('a planned entry survives the round trip as planned', () async {
+      await db
+          .into(db.foodLogEntries)
+          .insert(
+            FoodLogEntriesCompanion.insert(
+              id: 'entry-planned',
+              ownerId: ownerId,
+              logDate: DateTime(2026, 9, 24),
+              mealSlotId: 'slot-lunch',
+              foodId: 'food-dal',
+              foodRevision: 1,
+              quantity: 1,
+              gramsConsumed: 180,
+              loggedAt: DateTime(2026, 9, 20, 9),
+              source: 'plan',
+              status: const Value(logStatusPlanned),
+              updatedAt: Value(DateTime(2026, 9, 20, 9)),
+            ),
+          );
+
+      final archive = await DataExporter(db).export(ownerId: ownerId);
+      final freshOwner = await ensureDefaultOwner(fresh);
+      await DataImporter(fresh).import(archive, asOwner: freshOwner);
+
+      final restored = await (fresh.select(
+        fresh.foodLogEntries,
+      )..where((e) => e.id.equals('entry-planned'))).getSingle();
+      expect(restored.status, logStatusPlanned);
+
+      final eaten = await (fresh.select(
+        fresh.foodLogEntries,
+      )..where((e) => e.id.equals('entry-1'))).getSingle();
+      expect(eaten.status, logStatusLogged);
+    });
+
+    test('an archive written before the planner restores as eaten', () async {
+      final archive = await DataExporter(db).export(ownerId: ownerId);
+      // Exactly what a v6 backup looks like: no status column at all.
+      for (final row in archive.tables['food_log_entries']!) {
+        row.remove('status');
+      }
+
+      final freshOwner = await ensureDefaultOwner(fresh);
+      await DataImporter(fresh).import(archive, asOwner: freshOwner);
+
+      final restored = await (fresh.select(
+        fresh.foodLogEntries,
+      )..where((e) => e.id.equals('entry-1'))).getSingle();
+      expect(
+        restored.status,
+        logStatusLogged,
+        reason:
+            'an older backup is a record of meals, and must not come '
+            'back as a plan nobody ate',
+      );
+    });
+
     test('restores everything, and says so only after reconciling', () async {
       final archive = await DataExporter(db).export(ownerId: ownerId);
       final freshOwner = await ensureDefaultOwner(fresh);

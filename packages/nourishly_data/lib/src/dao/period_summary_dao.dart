@@ -6,6 +6,7 @@ import 'package:nutrition_core/nutrition_core.dart';
 import '../database.dart' hide DailyScore, NutrientTarget;
 // The stored score row, whose class name the core value object shadows.
 import '../database.dart' as rows show DailyScore;
+import 'log_status.dart';
 import 'daily_summary_dao.dart';
 import 'profile_dao.dart';
 
@@ -190,7 +191,7 @@ class PeriodSummaryDao {
                 _db.foodLogEntries.ownerId.equals(ownerId) &
                     _db.foodLogEntries.logDate.isBiggerOrEqualValue(from) &
                     _db.foodLogEntries.logDate.isSmallerOrEqualValue(to) &
-                    _db.foodLogEntries.deletedAt.isNull(),
+                    isActual(_db.foodLogEntries),
               ))
             .map((row) => row.read(_db.foodLogEntries.logDate)!)
             .get();

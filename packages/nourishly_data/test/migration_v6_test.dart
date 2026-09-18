@@ -80,6 +80,6 @@ void main() {
   });
 
   test('the database reports the new schema version', () {
-    expect(db.schemaVersion, 6);
+    expect(db.schemaVersion, 7);
   });
 }

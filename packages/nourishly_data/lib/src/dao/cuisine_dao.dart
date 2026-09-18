@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 
 import '../cuisine_tags.dart';
 import '../database.dart';
+import 'log_status.dart';
 
 /// One cuisine and how much of it there is.
 class CuisineCount {
@@ -119,7 +120,7 @@ class CuisineDao {
           FROM food_log_entries e
           JOIN food_items f ON f.id = e.food_id
           WHERE e.owner_id = ?
-            AND e.deleted_at IS NULL
+            AND $isActualSql
             AND e.log_date >= ?
             AND f.cuisine_tags LIKE ?
           GROUP BY f.cuisine_tags
@@ -167,7 +168,7 @@ class CuisineDao {
           FROM food_log_entries e
           JOIN food_items f ON f.id = e.food_id
           WHERE e.owner_id = ?
-            AND e.deleted_at IS NULL
+            AND $isActualSql
             AND e.log_date >= ?
             AND e.log_date <= ?
           GROUP BY f.cuisine_tags

@@ -2,6 +2,21 @@ import 'package:drift/drift.dart';
 
 import 'common.dart';
 
+/// A [FoodLogEntries] row that records something actually eaten. Every
+/// entry written before the week planner existed is one of these, which
+/// is why it is the column default.
+const String logStatusLogged = 'logged';
+
+/// An intention: decided in advance, not yet eaten. It carries a full
+/// nutrient snapshot so a week can be scored before it happens, and it is
+/// invisible to every actual-intake read until it is confirmed.
+const String logStatusPlanned = 'planned';
+
+/// Planned and deliberately not eaten. Kept rather than deleted — "this
+/// plan did not survive contact with the week" is the signal that makes
+/// the next plan better.
+const String logStatusSkipped = 'skipped';
+
 /// Breakfast/lunch/dinner/snack, or a user-defined category (§22.5).
 /// System rows have `ownerId == null`; a profile's custom slots set it
 /// (FR-M-11).
@@ -45,8 +60,21 @@ class FoodLogEntries extends Table with Identifiable, Owned, SoftDeletable {
   RealColumn get gramsConsumed => real()();
   DateTimeColumn get loggedAt => dateTime()();
 
-  /// `manual` | `template` | `copy` | `barcode` | `ai_suggested`.
+  /// `manual` | `template` | `copy` | `plan` | `barcode` | `ai_suggested`.
   TextColumn get source => text()();
+
+  /// [logStatusLogged] | [logStatusPlanned] | [logStatusSkipped].
+  ///
+  /// The whole of the week planner is this column. A planned entry is a
+  /// real row with a real frozen snapshot that simply has not happened
+  /// yet; confirming it flips the status and rewrites [loggedAt], and
+  /// nothing else about the row moves. Every read that means *actual
+  /// intake* — the dashboard, the summaries, the reports, the score, the
+  /// export — goes through `isActual` in `dao/log_status.dart` rather
+  /// than spelling this out again.
+  TextColumn get status =>
+      text().withDefault(const Constant(logStatusLogged))();
+
   TextColumn get note => text().nullable()();
   DateTimeColumn get updatedAt =>
       dateTime().clientDefault(() => DateTime.now())();
