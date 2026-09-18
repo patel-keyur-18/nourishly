@@ -1,0 +1,17 @@
+{
+  "query": "noodles chinese chow mein [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 168905,
+      "description": "Noodles, chinese, chow mein"
+    },
+    {
+      "fdcId": 168083,
+      "description": "Restaurant, Chinese, chicken chow mein"
+    },
+    {
+      "fdcId": 168084,
+      "description": "Restaurant, Chinese, vegetable chow mein, without meat or noodles"
+    }
+  ]
+}

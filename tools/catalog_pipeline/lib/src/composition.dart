@@ -1,0 +1,234 @@
+import 'package:meta/meta.dart';
+
+/// A quantified ingredient parsed out of a recipe composition string, e.g.
+/// "Toor dal 28 g raw" → `RecipeIngredient('Toor dal', 28, 'g', note: 'raw')`.
+@immutable
+class RecipeIngredient {
+  const RecipeIngredient(this.name, this.amount, this.unit, {this.note});
+
+  final String name;
+  final double amount;
+  final String unit;
+
+  /// Trailing text after the quantity, e.g. `raw` in "Toor dal 28 g raw".
+  final String? note;
+
+  @override
+  bool operator ==(Object other) =>
+      other is RecipeIngredient &&
+      other.name == name &&
+      other.amount == amount &&
+      other.unit == unit &&
+      other.note == note;
+
+  @override
+  int get hashCode => Object.hash(name, amount, unit, note);
+
+  @override
+  String toString() => '$name $amount$unit${note != null ? ' ($note)' : ''}';
+}
+
+/// How a [CatalogSourceEntry.rawComposition] string resolves, per catalog
+/// spec §0.2: every dish is a recipe over ingredients or names its USDA
+/// sourcing basis directly — there is no third path where a value is
+/// invented.
+sealed class Composition {
+  const Composition();
+}
+
+/// `Composition` started with "USDA" — a direct ingredient lookup, not a
+/// multi-ingredient recipe. [hint] is the rest of the text, a search hint
+/// for [FdcClient] (e.g. "rice white long-grain cooked").
+final class UsdaLookup extends Composition {
+  const UsdaLookup(this.hint, {this.fdcId});
+
+  /// The search terms, when there is no [fdcId]: the descriptor a curator
+  /// wrote after `USDA`, named the way FoodData Central names the food.
+  ///
+  /// With an [fdcId] it is documentation rather than a query — it says in
+  /// words which record the number is, so a reader of the table does not
+  /// have to look it up.
+  final String hint;
+
+  /// The FoodData Central id this row is **pinned** to, from a
+  /// composition reading `USDA #170393 potatoes flesh and skin raw`.
+  ///
+  /// A pin removes the search from the decision. FDC's ranking is what
+  /// put salt on `Butter, salted`, rice on `Potatoes, au gratin` and
+  /// spinach on spinach souffle, and because the search reran on every
+  /// fetch, every fetch was a fresh chance to pick wrong. A row that
+  /// names its id is settled: the same record comes back for as long as
+  /// the id exists, and no later run can quietly change what a dish is
+  /// made of.
+  final int? fdcId;
+
+  @override
+  String toString() => 'UsdaLookup(${fdcId == null ? '' : '#$fdcId '}$hint)';
+}
+
+/// A recipe: quantified ingredients plus whatever couldn't be quantified
+/// (spices, "no added fat", curry leaves — negligible-mass notes per
+/// catalog spec §0.2's worked example).
+final class Recipe extends Composition {
+  const Recipe(this.ingredients, this.unquantifiedNotes);
+
+  final List<RecipeIngredient> ingredients;
+  final List<String> unquantifiedNotes;
+
+  @override
+  String toString() =>
+      'Recipe(${ingredients.join(', ')}${unquantifiedNotes.isEmpty ? '' : ' + ${unquantifiedNotes.join(', ')}'})';
+}
+
+/// The composition text refers to another catalog row instead of stating
+/// its own ingredients (e.g. "As above + spices, ajwain", "Bhakhri + spice
+/// mix, extra ghee 2 g"). Resolving the reference means matching it
+/// against another [CatalogSourceEntry] by name, which this parser
+/// deliberately does not attempt — a wrong guess here silently produces
+/// the wrong recipe. Left for a human curator, or a later pass with a
+/// full entry list to match against.
+final class NeedsManualReview extends Composition {
+  const NeedsManualReview(this.reason, this.rawText);
+
+  final String reason;
+  final String rawText;
+
+  @override
+  String toString() => 'NeedsManualReview($reason: "$rawText")';
+}
+
+final _usdaPrefix = RegExp(r'^USDA\b', caseSensitive: false);
+
+/// `USDA #170393 potatoes flesh and skin raw` — the leading `#<digits>`
+/// that pins a row to one FoodData Central record.
+final _pinnedFdcId = RegExp(r'^#(?<id>\d+)\s*');
+final _explicitSelfReference = RegExp(
+  r'^(As above|Above)\b',
+  caseSensitive: false,
+);
+final _quantity = RegExp(
+  r'^(?<name>.*?)\s+(?<amount>\d+(?:\.\d+)?)\s*'
+  r'(?<unit>g|ml|kg|l|tsp|tbsp|tumbler)\b(?<note>.*)$',
+);
+
+/// A count, for the few ingredients a recipe states as whole items rather
+/// than by weight: "Egg 2 pieces" in the regional egg curries and
+/// biryanis. What one piece weighs is not decided here — it is read off
+/// the target row's own serving columns (`pieceGramsFor`), because the
+/// catalog already states it: `Egg, boiled | 1 large | 50 g`.
+///
+/// Tried only after [_quantity] fails, so a segment that states both —
+/// Misal pav's "pav 1 piece 60 g" — keeps the grams it was given rather
+/// than being re-derived from the Pav row.
+final _countQuantity = RegExp(
+  r'^(?<name>.*?)\s+(?<amount>\d+(?:\.\d+)?)\s*'
+  r'(?<unit>pieces|piece)\b(?<note>.*)$',
+);
+
+/// [_quantity] if it matches, else [_countQuantity].
+RegExpMatch? _matchQuantity(String segment) =>
+    _quantity.firstMatch(segment) ?? _countQuantity.firstMatch(segment);
+
+/// Markdown emphasis used inside a composition cell for prose, not for
+/// meaning: Benne dose reads "Dosa batter 80 g, **butter 22 g** — the
+/// defining ingredient". Left in, the asterisks become part of the
+/// ingredient name and "**butter" matches nothing.
+final _emphasis = RegExp(r'\*+');
+
+/// A spaced em-dash ends the ingredient list and starts the curator's
+/// note: "…coconut 10 g — the highest-fat dish in this list", "USDA —
+/// note higher fat than cow". Everything after it is prose about the
+/// dish, and reading it as ingredients invents food: Idli podi's
+/// "…sesame — usually eaten with 5 g oil or ghee added" parses as an
+/// ingredient named "sesame — usually eaten with" weighing 5 g.
+///
+/// One row puts a real quantity after the dash (More milagai,
+/// "Curd-soaked chilli, sun-dried, fried — oil 5 g"). It has no quantity
+/// in its first segment either, so it is already held for manual review
+/// and loses nothing here.
+final _curatorNote = RegExp(r'\s+—\s+');
+
+/// A parenthetical restates what a preceding quantity already covers,
+/// rather than adding to it: Idli reads "Idli batter 90 g (rice 45 g +
+/// urad 16 g raw basis), steamed". Parsed as ingredients, that 90 g of
+/// batter is counted a second time as its own components — the dish
+/// comes out at 151 g of ingredients for a 90 g serving.
+final _parenthetical = RegExp(r'\([^)]*\)');
+
+/// Classifies and, for recipes, parses a raw `Composition` cell.
+class CompositionParser {
+  Composition parse(String raw) {
+    final text = raw
+        .replaceAll(_emphasis, '')
+        .split(_curatorNote)
+        .first
+        .replaceAll(_parenthetical, ' ')
+        .trim();
+
+    if (_usdaPrefix.hasMatch(text)) {
+      final rest = text.replaceFirst(_usdaPrefix, '').trim();
+      final pin = _pinnedFdcId.firstMatch(rest);
+      if (pin != null) {
+        return UsdaLookup(
+          rest.replaceFirst(_pinnedFdcId, '').trim(),
+          fdcId: int.parse(pin.namedGroup('id')!),
+        );
+      }
+      return UsdaLookup(rest);
+    }
+
+    if (_explicitSelfReference.hasMatch(text)) {
+      return NeedsManualReview(
+        'references another catalog row by name ("as above")',
+        text,
+      );
+    }
+
+    final segments = text
+        .split(RegExp(r'[,;+]'))
+        .map((s) => s.trim())
+        .where((s) => s.isNotEmpty)
+        .toList();
+
+    if (segments.isEmpty) {
+      return NeedsManualReview('empty composition', text);
+    }
+
+    // Every genuine recipe in the source tables lists its quantified
+    // ingredients before any unquantified note ("Toor dal 28 g raw,
+    // jaggery 6 g, ..., curry leaves, spices" — never the reverse). A
+    // composition whose first segment carries no quantity ("Bhakhri +
+    // spice mix, extra ghee 2 g") is a reference to another dish, not an
+    // ingredient list — flag it rather than silently dropping "Bhakhri"'s
+    // own nutrient contribution into a negligible-mass note alongside
+    // curry leaves.
+    if (_matchQuantity(segments.first) == null) {
+      return NeedsManualReview(
+        'first segment has no quantity — likely references another dish by name',
+        text,
+      );
+    }
+
+    final ingredients = <RecipeIngredient>[];
+    final notes = <String>[];
+
+    for (final segment in segments) {
+      final match = _matchQuantity(segment);
+      if (match == null) {
+        // No quantity in this segment — a negligible-mass note (spices,
+        // curry leaves, "no added fat"), per catalog spec §0.2.
+        notes.add(segment);
+        continue;
+      }
+      final name = match.namedGroup('name')!.trim();
+      final amount = double.parse(match.namedGroup('amount')!);
+      final unit = match.namedGroup('unit')!;
+      final note = match.namedGroup('note')!.trim();
+      ingredients.add(
+        RecipeIngredient(name, amount, unit, note: note.isEmpty ? null : note),
+      );
+    }
+
+    return Recipe(ingredients, notes);
+  }
+}

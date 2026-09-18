@@ -1,0 +1,17 @@
+{
+  "query": "cherries sweet raw [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 171719,
+      "description": "Cherries, sweet, raw"
+    },
+    {
+      "fdcId": 2346399,
+      "description": "Cherries, sweet, dark red, raw"
+    },
+    {
+      "fdcId": 170008,
+      "description": "Onions, sweet, raw"
+    }
+  ]
+}

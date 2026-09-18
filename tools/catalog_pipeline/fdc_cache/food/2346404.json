@@ -1,0 +1,252 @@
+{
+  "fdcId": 2346404,
+  "description": "Sweet potatoes, orange flesh, without skin, raw",
+  "dataType": "Foundation",
+  "foodNutrients": [
+    {
+      "nutrient": {
+        "name": "Water",
+        "unitName": "g"
+      },
+      "amount": 79.54
+    },
+    {
+      "nutrient": {
+        "name": "Energy (Atwater General Factors)",
+        "unitName": "kcal"
+      },
+      "amount": 78.999
+    },
+    {
+      "nutrient": {
+        "name": "Energy (Atwater Specific Factors)",
+        "unitName": "kcal"
+      },
+      "amount": 77.35727375
+    },
+    {
+      "nutrient": {
+        "name": "Nitrogen",
+        "unitName": "g"
+      },
+      "amount": 0.2525
+    },
+    {
+      "nutrient": {
+        "name": "Protein",
+        "unitName": "g"
+      },
+      "amount": 1.578125
+    },
+    {
+      "nutrient": {
+        "name": "Total lipid (fat)",
+        "unitName": "g"
+      },
+      "amount": 0.375
+    },
+    {
+      "nutrient": {
+        "name": "Ash",
+        "unitName": "g"
+      },
+      "amount": 1.179
+    },
+    {
+      "nutrient": {
+        "name": "Carbohydrate, by difference",
+        "unitName": "g"
+      },
+      "amount": 17.327875
+    },
+    {
+      "nutrient": {
+        "name": "Total dietary fiber (AOAC 2011.25)",
+        "unitName": "g"
+      },
+      "amount": 4.441
+    },
+    {
+      "nutrient": {
+        "name": "High Molecular Weight Dietary Fiber (HMWDF)",
+        "unitName": "g"
+      },
+      "amount": 4.251
+    },
+    {
+      "nutrient": {
+        "name": "Low Molecular Weight Dietary Fiber (LMWDF)",
+        "unitName": "g"
+      },
+      "amount": 0.1571
+    },
+    {
+      "nutrient": {
+        "name": "Sugars, Total",
+        "unitName": "g"
+      },
+      "amount": 6.0588
+    },
+    {
+      "nutrient": {
+        "name": "Sucrose",
+        "unitName": "g"
+      },
+      "amount": 3.056
+    },
+    {
+      "nutrient": {
+        "name": "Glucose",
+        "unitName": "g"
+      },
+      "amount": 0.9763
+    },
+    {
+      "nutrient": {
+        "name": "Fructose",
+        "unitName": "g"
+      },
+      "amount": 0.9275
+    },
+    {
+      "nutrient": {
+        "name": "Lactose",
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Maltose",
+        "unitName": "g"
+      },
+      "amount": 1.099
+    },
+    {
+      "nutrient": {
+        "name": "Calcium, Ca",
+        "unitName": "mg"
+      },
+      "amount": 22.33
+    },
+    {
+      "nutrient": {
+        "name": "Iron, Fe",
+        "unitName": "mg"
+      },
+      "amount": 0.398
+    },
+    {
+      "nutrient": {
+        "name": "Magnesium, Mg",
+        "unitName": "mg"
+      },
+      "amount": 19.14
+    },
+    {
+      "nutrient": {
+        "name": "Phosphorus, P",
+        "unitName": "mg"
+      },
+      "amount": 36.73
+    },
+    {
+      "nutrient": {
+        "name": "Potassium, K",
+        "unitName": "mg"
+      },
+      "amount": 486.4
+    },
+    {
+      "nutrient": {
+        "name": "Sodium, Na",
+        "unitName": "mg"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Zinc, Zn",
+        "unitName": "mg"
+      },
+      "amount": 0.3374
+    },
+    {
+      "nutrient": {
+        "name": "Copper, Cu",
+        "unitName": "mg"
+      },
+      "amount": 0.1866
+    },
+    {
+      "nutrient": {
+        "name": "Manganese, Mn",
+        "unitName": "mg"
+      },
+      "amount": 0.4174
+    },
+    {
+      "nutrient": {
+        "name": "Selenium, Se",
+        "unitName": "µg"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Molybdenum, Mo",
+        "unitName": "µg"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Vitamin C, total ascorbic acid",
+        "unitName": "mg"
+      },
+      "amount": 14.84
+    },
+    {
+      "nutrient": {
+        "name": "Thiamin",
+        "unitName": "mg"
+      },
+      "amount": 0.045
+    },
+    {
+      "nutrient": {
+        "name": "Niacin",
+        "unitName": "mg"
+      },
+      "amount": 0.4325
+    },
+    {
+      "nutrient": {
+        "name": "Vitamin B-6",
+        "unitName": "mg"
+      },
+      "amount": 0.1241
+    },
+    {
+      "nutrient": {
+        "name": "Vitamin K (phylloquinone)",
+        "unitName": "µg"
+      },
+      "amount": 0.2
+    },
+    {
+      "nutrient": {
+        "name": "Vitamin K (Dihydrophylloquinone)",
+        "unitName": "µg"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Vitamin K (Menaquinone-4)",
+        "unitName": "µg"
+      },
+      "amount": 0.0
+    }
+  ]
+}

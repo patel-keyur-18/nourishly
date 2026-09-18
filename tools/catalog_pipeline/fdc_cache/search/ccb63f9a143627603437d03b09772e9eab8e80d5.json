@@ -1,0 +1,17 @@
+{
+  "query": "tomatoes red ripe raw year round average [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 170457,
+      "description": "Tomatoes, red, ripe, raw, year round average"
+    },
+    {
+      "fdcId": 170050,
+      "description": "Tomatoes, red, ripe, cooked"
+    },
+    {
+      "fdcId": 333281,
+      "description": "Tomatoes, canned, red, ripe, diced"
+    }
+  ]
+}

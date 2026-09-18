@@ -1,0 +1,17 @@
+{
+  "query": "cucumber with peel raw [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 169225,
+      "description": "Cucumber, peeled, raw"
+    },
+    {
+      "fdcId": 2346406,
+      "description": "Cucumber, with peel, raw"
+    },
+    {
+      "fdcId": 168409,
+      "description": "Cucumber, with peel, raw"
+    }
+  ]
+}

@@ -1,0 +1,322 @@
+{
+  "fdcId": 2259792,
+  "description": "Buttermilk, low fat",
+  "dataType": "Foundation",
+  "foodNutrients": [
+    {
+      "nutrient": {
+        "name": "Water",
+        "unitName": "g"
+      },
+      "amount": 89.79
+    },
+    {
+      "nutrient": {
+        "name": "Energy (Atwater General Factors)",
+        "unitName": "kcal"
+      },
+      "amount": 42.835
+    },
+    {
+      "nutrient": {
+        "name": "Energy (Atwater Specific Factors)",
+        "unitName": "kcal"
+      },
+      "amount": 42.9180362
+    },
+    {
+      "nutrient": {
+        "name": "Nitrogen",
+        "unitName": "g"
+      },
+      "amount": 0.5431
+    },
+    {
+      "nutrient": {
+        "name": "Protein",
+        "unitName": "g"
+      },
+      "amount": 3.464978
+    },
+    {
+      "nutrient": {
+        "name": "Total lipid (fat)",
+        "unitName": "g"
+      },
+      "amount": 1.081
+    },
+    {
+      "nutrient": {
+        "name": "Ash",
+        "unitName": "g"
+      },
+      "amount": 0.8525
+    },
+    {
+      "nutrient": {
+        "name": "Carbohydrate, by difference",
+        "unitName": "g"
+      },
+      "amount": 4.811522
+    },
+    {
+      "nutrient": {
+        "name": "Sucrose",
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Glucose",
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Fructose",
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Lactose",
+        "unitName": "g"
+      },
+      "amount": 3.657
+    },
+    {
+      "nutrient": {
+        "name": "Maltose",
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Galactose",
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Calcium, Ca",
+        "unitName": "mg"
+      },
+      "amount": 120.1
+    },
+    {
+      "nutrient": {
+        "name": "Iron, Fe",
+        "unitName": "mg"
+      },
+      "amount": 0.01325
+    },
+    {
+      "nutrient": {
+        "name": "Magnesium, Mg",
+        "unitName": "mg"
+      },
+      "amount": 11.03
+    },
+    {
+      "nutrient": {
+        "name": "Phosphorus, P",
+        "unitName": "mg"
+      },
+      "amount": 92.19
+    },
+    {
+      "nutrient": {
+        "name": "Potassium, K",
+        "unitName": "mg"
+      },
+      "amount": 158.0
+    },
+    {
+      "nutrient": {
+        "name": "Sodium, Na",
+        "unitName": "mg"
+      },
+      "amount": 92.49
+    },
+    {
+      "nutrient": {
+        "name": "Zinc, Zn",
+        "unitName": "mg"
+      },
+      "amount": 0.4263
+    },
+    {
+      "nutrient": {
+        "name": "Copper, Cu",
+        "unitName": "mg"
+      },
+      "amount": 0.00135
+    },
+    {
+      "nutrient": {
+        "name": "Manganese, Mn",
+        "unitName": "mg"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Iodine, I",
+        "unitName": "µg"
+      },
+      "amount": 34.16
+    },
+    {
+      "nutrient": {
+        "name": "Thiamin",
+        "unitName": "mg"
+      },
+      "amount": 0.0485
+    },
+    {
+      "nutrient": {
+        "name": "Riboflavin",
+        "unitName": "mg"
+      },
+      "amount": 0.1963
+    },
+    {
+      "nutrient": {
+        "name": "Niacin",
+        "unitName": "mg"
+      },
+      "amount": 0.1275
+    },
+    {
+      "nutrient": {
+        "name": "Vitamin B-6",
+        "unitName": "mg"
+      },
+      "amount": 0.03931
+    },
+    {
+      "nutrient": {
+        "name": "Biotin",
+        "unitName": "µg"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Retinol",
+        "unitName": "µg"
+      },
+      "amount": 36.01
+    },
+    {
+      "nutrient": {
+        "name": "Vitamin D (D2 + D3), International Units",
+        "unitName": "IU"
+      },
+      "amount": 21.7
+    },
+    {
+      "nutrient": {
+        "name": "Vitamin D (D2 + D3)",
+        "unitName": "µg"
+      },
+      "amount": 0.543
+    },
+    {
+      "nutrient": {
+        "name": "Vitamin D2 (ergocalciferol)",
+        "unitName": "µg"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Vitamin D3 (cholecalciferol)",
+        "unitName": "µg"
+      },
+      "amount": 0.5434
+    },
+    {
+      "nutrient": {
+        "name": "Vitamin K (phylloquinone)",
+        "unitName": "µg"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Vitamin K (Dihydrophylloquinone)",
+        "unitName": "µg"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Vitamin K (Menaquinone-4)",
+        "unitName": "µg"
+      },
+      "amount": 0.3
+    },
+    {
+      "nutrient": {
+        "name": "Fatty acids, total saturated",
+        "unitName": "g"
+      },
+      "amount": 0.5525
+    },
+    {
+      "nutrient": {
+        "name": "SFA 12:0",
+        "unitName": "g"
+      },
+      "amount": 0.02788
+    },
+    {
+      "nutrient": {
+        "name": "SFA 14:0",
+        "unitName": "g"
+      },
+      "amount": 0.08863
+    },
+    {
+      "nutrient": {
+        "name": "SFA 16:0",
+        "unitName": "g"
+      },
+      "amount": 0.2579
+    },
+    {
+      "nutrient": {
+        "name": "SFA 18:0",
+        "unitName": "g"
+      },
+      "amount": 0.08525
+    },
+    {
+      "nutrient": {
+        "name": "Fatty acids, total monounsaturated",
+        "unitName": "g"
+      },
+      "amount": 0.1988
+    },
+    {
+      "nutrient": {
+        "name": "PUFA 18:2 n-6 c,c",
+        "unitName": "g"
+      },
+      "amount": 0.02238
+    },
+    {
+      "nutrient": {
+        "name": "Cholesterol",
+        "unitName": "mg"
+      },
+      "amount": 4.793
+    }
+  ]
+}

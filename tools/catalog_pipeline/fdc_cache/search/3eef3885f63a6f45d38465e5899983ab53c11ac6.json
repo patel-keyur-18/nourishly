@@ -1,0 +1,17 @@
+{
+  "query": "sweetpotato raw unprepared [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 169208,
+      "description": "Asparagus, frozen, unprepared"
+    },
+    {
+      "fdcId": 174592,
+      "description": "Bacon, turkey, unprepared"
+    },
+    {
+      "fdcId": 167869,
+      "description": "Canadian bacon, unprepared"
+    }
+  ]
+}

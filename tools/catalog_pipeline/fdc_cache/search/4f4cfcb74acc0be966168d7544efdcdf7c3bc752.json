@@ -1,0 +1,17 @@
+{
+  "query": "grape juice canned unsweetened [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 173041,
+      "description": "Grape juice, canned or bottled, unsweetened, with added ascorbic acid"
+    },
+    {
+      "fdcId": 169099,
+      "description": "Orange juice, canned, unsweetened"
+    },
+    {
+      "fdcId": 168207,
+      "description": "Grape juice, canned or bottled, unsweetened, with added ascorbic acid and calcium"
+    }
+  ]
+}

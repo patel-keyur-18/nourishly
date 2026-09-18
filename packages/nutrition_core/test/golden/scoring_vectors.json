@@ -1,0 +1,320 @@
+{
+  "rulesetVersion": "1.0.0",
+  "about": [
+    "Executable specification of \u00a721.3-21.6, written before the engine (\u00a737 item 9).",
+    "Each vector states an input and the score it must produce. A change to the",
+    "engine that moves any of these numbers is a change to the ruleset, and needs",
+    "a ruleset_version bump so historical days keep the scores they were given",
+    "(\u00a725.7) \u2014 not a quiet edit to the expectation."
+  ],
+  "curves": [
+    {
+      "name": "range: inside the band scores full",
+      "curve": "range",
+      "target": 2050,
+      "tolerance": 0.1,
+      "cases": [
+        {
+          "x": 2050,
+          "score": 100
+        },
+        {
+          "x": 1845,
+          "score": 100
+        },
+        {
+          "x": 2255,
+          "score": 100
+        }
+      ]
+    },
+    {
+      "name": "range: over the band decays at kHigh, under at the gentler kLow (\u00a721.8)",
+      "curve": "range",
+      "target": 2000,
+      "tolerance": 0.1,
+      "cases": [
+        {
+          "x": 2200,
+          "score": 100,
+          "note": "exactly the band edge is still full credit"
+        },
+        {
+          "x": 2400,
+          "score": 80,
+          "note": "0.1 of target beyond the band x 200"
+        },
+        {
+          "x": 3000,
+          "score": 20
+        },
+        {
+          "x": 3200,
+          "score": 0
+        },
+        {
+          "x": 3600,
+          "score": 0,
+          "note": "floored, not negative"
+        },
+        {
+          "x": 1800,
+          "score": 100
+        },
+        {
+          "x": 1600,
+          "score": 85,
+          "note": "the same 0.1 beyond, x the gentler 150"
+        },
+        {
+          "x": 1200,
+          "score": 55
+        },
+        {
+          "x": 800,
+          "score": 25
+        },
+        {
+          "x": 0,
+          "score": 0
+        }
+      ]
+    },
+    {
+      "name": "floor: ramps to target then caps \u2014 3x protein cannot buy fibre",
+      "curve": "floor",
+      "target": 95,
+      "cases": [
+        {
+          "x": 0,
+          "score": 0
+        },
+        {
+          "x": 47.5,
+          "score": 50
+        },
+        {
+          "x": 95,
+          "score": 100
+        },
+        {
+          "x": 285,
+          "score": 100
+        }
+      ]
+    },
+    {
+      "name": "ceiling: full credit to the limit, then linear to zero at twice it",
+      "curve": "ceiling",
+      "target": 2000,
+      "cases": [
+        {
+          "x": 0,
+          "score": 100
+        },
+        {
+          "x": 2000,
+          "score": 100
+        },
+        {
+          "x": 2500,
+          "score": 75
+        },
+        {
+          "x": 3000,
+          "score": 50
+        },
+        {
+          "x": 4000,
+          "score": 0
+        },
+        {
+          "x": 6000,
+          "score": 0
+        }
+      ]
+    },
+    {
+      "name": "plateau: ramp to the RDA, hold, taper into the upper limit",
+      "curve": "plateau",
+      "target": 19,
+      "upperLimit": 45,
+      "plateauTaper": 0.2,
+      "cases": [
+        {
+          "x": 0,
+          "score": 0
+        },
+        {
+          "x": 9.5,
+          "score": 50
+        },
+        {
+          "x": 19,
+          "score": 100
+        },
+        {
+          "x": 36,
+          "score": 100,
+          "note": "taper begins at 0.8 x UL"
+        },
+        {
+          "x": 40.5,
+          "score": 50
+        },
+        {
+          "x": 45,
+          "score": 0
+        },
+        {
+          "x": 60,
+          "score": 0
+        }
+      ]
+    }
+  ],
+  "composite": [
+    {
+      "name": "the floor guard costs a perfect day 15% when one component is zero",
+      "components": [
+        {
+          "key": "energy",
+          "score": 100,
+          "weight": 0.25
+        },
+        {
+          "key": "macros",
+          "score": 0,
+          "weight": 0.3
+        },
+        {
+          "key": "micros",
+          "score": 100,
+          "weight": 0.2
+        },
+        {
+          "key": "limits",
+          "score": 100,
+          "weight": 0.15
+        },
+        {
+          "key": "hydration",
+          "score": 100,
+          "weight": 0.1
+        }
+      ],
+      "weighted": 70,
+      "composite": 59.5,
+      "band": "fair",
+      "note": "0 g of protein must not hide behind four good components (\u00a721.4)"
+    },
+    {
+      "name": "an all-100 day is exactly 100 \u2014 the dampener cannot cost a perfect day",
+      "components": [
+        {
+          "key": "energy",
+          "score": 100,
+          "weight": 0.25
+        },
+        {
+          "key": "macros",
+          "score": 100,
+          "weight": 0.3
+        },
+        {
+          "key": "micros",
+          "score": 100,
+          "weight": 0.2
+        },
+        {
+          "key": "limits",
+          "score": 100,
+          "weight": 0.15
+        },
+        {
+          "key": "hydration",
+          "score": 100,
+          "weight": 0.1
+        }
+      ],
+      "weighted": 100,
+      "composite": 100,
+      "band": "excellent"
+    },
+    {
+      "name": "an excluded component redistributes its weight proportionally (\u00a721.4)",
+      "components": [
+        {
+          "key": "energy",
+          "score": 80,
+          "weight": 0.25
+        },
+        {
+          "key": "macros",
+          "score": 70,
+          "weight": 0.3
+        },
+        {
+          "key": "micros",
+          "score": null,
+          "weight": 0.2,
+          "excluded": "insufficient_coverage"
+        },
+        {
+          "key": "limits",
+          "score": 90,
+          "weight": 0.15
+        },
+        {
+          "key": "hydration",
+          "score": 60,
+          "weight": 0.1
+        }
+      ],
+      "appliedWeights": {
+        "energy": 0.3125,
+        "macros": 0.375,
+        "limits": 0.1875,
+        "hydration": 0.125
+      },
+      "weighted": 75.625,
+      "composite": 71.0875,
+      "band": "good",
+      "note": "weights over the four scored components sum to 1; micros' 0.20 is spread pro rata"
+    }
+  ],
+  "bands": [
+    {
+      "score": 100,
+      "band": "excellent"
+    },
+    {
+      "score": 85,
+      "band": "excellent"
+    },
+    {
+      "score": 84.9,
+      "band": "good"
+    },
+    {
+      "score": 70,
+      "band": "good"
+    },
+    {
+      "score": 69.9,
+      "band": "fair"
+    },
+    {
+      "score": 50,
+      "band": "fair"
+    },
+    {
+      "score": 49.9,
+      "band": "needs_attention"
+    },
+    {
+      "score": 0,
+      "band": "needs_attention"
+    }
+  ]
+}

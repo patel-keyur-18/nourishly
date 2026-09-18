@@ -1,0 +1,17 @@
+{
+  "query": "oil sunflower linoleic [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 171025,
+      "description": "Oil, sunflower, linoleic, (approx. 65%)"
+    },
+    {
+      "fdcId": 172328,
+      "description": "Oil, sunflower, linoleic, (partially hydrogenated)"
+    },
+    {
+      "fdcId": 171017,
+      "description": "Oil, sunflower, linoleic (less than 60%)"
+    }
+  ]
+}

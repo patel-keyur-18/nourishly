@@ -1,0 +1,17 @@
+{
+  "query": "whey protein powder isolate [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 173177,
+      "description": "Beverages, Whey protein powder isolate"
+    },
+    {
+      "fdcId": 173180,
+      "description": "Beverages, Protein powder whey based"
+    },
+    {
+      "fdcId": 173167,
+      "description": "Beverages, ABBOTT, EAS whey protein powder"
+    }
+  ]
+}

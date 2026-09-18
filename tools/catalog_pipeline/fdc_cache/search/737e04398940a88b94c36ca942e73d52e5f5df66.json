@@ -1,0 +1,17 @@
+{
+  "query": "chicken broilers or fryers meat and skin raw [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 171447,
+      "description": "Chicken, broilers or fryers, meat and skin, raw"
+    },
+    {
+      "fdcId": 171469,
+      "description": "Chicken, broilers or fryers, back, meat and skin, raw"
+    },
+    {
+      "fdcId": 171474,
+      "description": "Chicken, broilers or fryers, breast, meat and skin, raw"
+    }
+  ]
+}

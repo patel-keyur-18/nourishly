@@ -1,0 +1,17 @@
+{
+  "query": "strawberries raw [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 167762,
+      "description": "Strawberries, raw"
+    },
+    {
+      "fdcId": 2346409,
+      "description": "Strawberries, raw"
+    },
+    {
+      "fdcId": 173045,
+      "description": "Guavas, strawberry, raw"
+    }
+  ]
+}

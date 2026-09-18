@@ -1,0 +1,140 @@
+{
+  "fdcId": 2644283,
+  "description": "Lentils, dry",
+  "dataType": "Foundation",
+  "foodNutrients": [
+    {
+      "nutrient": {
+        "name": "Water",
+        "unitName": "g"
+      },
+      "amount": 9.451
+    },
+    {
+      "nutrient": {
+        "name": "Energy (Atwater General Factors)",
+        "unitName": "kcal"
+      },
+      "amount": 360.285
+    },
+    {
+      "nutrient": {
+        "name": "Energy (Atwater Specific Factors)",
+        "unitName": "kcal"
+      },
+      "amount": 350.9328
+    },
+    {
+      "nutrient": {
+        "name": "Nitrogen",
+        "unitName": "g"
+      },
+      "amount": 3.771
+    },
+    {
+      "nutrient": {
+        "name": "Protein",
+        "unitName": "g"
+      },
+      "amount": 23.56875
+    },
+    {
+      "nutrient": {
+        "name": "Total lipid (fat)",
+        "unitName": "g"
+      },
+      "amount": 1.925
+    },
+    {
+      "nutrient": {
+        "name": "Ash",
+        "unitName": "g"
+      },
+      "amount": 2.884
+    },
+    {
+      "nutrient": {
+        "name": "Carbohydrate, by difference",
+        "unitName": "g"
+      },
+      "amount": 62.17125
+    },
+    {
+      "nutrient": {
+        "name": "Starch",
+        "unitName": "g"
+      },
+      "amount": 37.13
+    },
+    {
+      "nutrient": {
+        "name": "Resistant starch",
+        "unitName": "g"
+      },
+      "amount": 16.0
+    },
+    {
+      "nutrient": {
+        "name": "Calcium, Ca",
+        "unitName": "mg"
+      },
+      "amount": 61.85
+    },
+    {
+      "nutrient": {
+        "name": "Iron, Fe",
+        "unitName": "mg"
+      },
+      "amount": 7.158
+    },
+    {
+      "nutrient": {
+        "name": "Magnesium, Mg",
+        "unitName": "mg"
+      },
+      "amount": 106.7
+    },
+    {
+      "nutrient": {
+        "name": "Phosphorus, P",
+        "unitName": "mg"
+      },
+      "amount": 373.6
+    },
+    {
+      "nutrient": {
+        "name": "Potassium, K",
+        "unitName": "mg"
+      },
+      "amount": 948.9
+    },
+    {
+      "nutrient": {
+        "name": "Sodium, Na",
+        "unitName": "mg"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Zinc, Zn",
+        "unitName": "mg"
+      },
+      "amount": 3.863
+    },
+    {
+      "nutrient": {
+        "name": "Copper, Cu",
+        "unitName": "mg"
+      },
+      "amount": 0.8376
+    },
+    {
+      "nutrient": {
+        "name": "Manganese, Mn",
+        "unitName": "mg"
+      },
+      "amount": 1.569
+    }
+  ]
+}

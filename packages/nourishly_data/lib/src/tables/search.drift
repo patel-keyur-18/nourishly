@@ -1,0 +1,16 @@
+-- FTS5 search index over food names (§22.7, NFR-P-03).
+--
+-- One row per searchable name variant — a food's canonical_name plus every
+-- FoodAltNames row for it (regional spellings, transliterations: "panir",
+-- "paneer", "पनीर" each get their own row pointing at the same food_id).
+-- Kept as a standalone index rather than an FTS5 "external content" table
+-- linked to food_items: that would need SQLite triggers to stay in sync,
+-- and catalog writes are a batch import, not a high-frequency path — the
+-- DAO keeps this index in sync explicitly instead (see FoodSearchDao).
+--
+-- food_id is UNINDEXED: stored and returned, never tokenized or matched
+-- against.
+CREATE VIRTUAL TABLE food_search_index USING fts5(
+  food_id UNINDEXED,
+  name
+) AS FoodSearchEntries;

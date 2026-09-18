@@ -1,0 +1,882 @@
+{
+  "fdcId": 169736,
+  "description": "Pasta, dry, enriched",
+  "dataType": "SR Legacy",
+  "foodNutrients": [
+    {
+      "nutrient": {
+        "name": "Water",
+        "unitName": "g"
+      },
+      "amount": 9.9
+    },
+    {
+      "nutrient": {
+        "name": "Energy",
+        "unitName": "kcal"
+      },
+      "amount": 371.0
+    },
+    {
+      "nutrient": {
+        "name": "Energy",
+        "unitName": "kJ"
+      },
+      "amount": 1553.0
+    },
+    {
+      "nutrient": {
+        "name": "Protein",
+        "unitName": "g"
+      },
+      "amount": 13.04
+    },
+    {
+      "nutrient": {
+        "name": "Total lipid (fat)",
+        "unitName": "g"
+      },
+      "amount": 1.51
+    },
+    {
+      "nutrient": {
+        "name": "Ash",
+        "unitName": "g"
+      },
+      "amount": 0.88
+    },
+    {
+      "nutrient": {
+        "name": "Carbohydrate, by difference",
+        "unitName": "g"
+      },
+      "amount": 74.67
+    },
+    {
+      "nutrient": {
+        "name": "Fiber, total dietary",
+        "unitName": "g"
+      },
+      "amount": 3.2
+    },
+    {
+      "nutrient": {
+        "name": "Total Sugars",
+        "unitName": "g"
+      },
+      "amount": 2.67
+    },
+    {
+      "nutrient": {
+        "name": "Sucrose",
+        "unitName": "g"
+      },
+      "amount": 0.48
+    },
+    {
+      "nutrient": {
+        "name": "Glucose",
+        "unitName": "g"
+      },
+      "amount": 0.12
+    },
+    {
+      "nutrient": {
+        "name": "Fructose",
+        "unitName": "g"
+      },
+      "amount": 0.11
+    },
+    {
+      "nutrient": {
+        "name": "Lactose",
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Maltose",
+        "unitName": "g"
+      },
+      "amount": 1.96
+    },
+    {
+      "nutrient": {
+        "name": "Galactose",
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Starch",
+        "unitName": "g"
+      },
+      "amount": 62.45
+    },
+    {
+      "nutrient": {
+        "name": "Calcium, Ca",
+        "unitName": "mg"
+      },
+      "amount": 21.0
+    },
+    {
+      "nutrient": {
+        "name": "Iron, Fe",
+        "unitName": "mg"
+      },
+      "amount": 3.3
+    },
+    {
+      "nutrient": {
+        "name": "Magnesium, Mg",
+        "unitName": "mg"
+      },
+      "amount": 53.0
+    },
+    {
+      "nutrient": {
+        "name": "Phosphorus, P",
+        "unitName": "mg"
+      },
+      "amount": 189.0
+    },
+    {
+      "nutrient": {
+        "name": "Potassium, K",
+        "unitName": "mg"
+      },
+      "amount": 223.0
+    },
+    {
+      "nutrient": {
+        "name": "Sodium, Na",
+        "unitName": "mg"
+      },
+      "amount": 6.0
+    },
+    {
+      "nutrient": {
+        "name": "Zinc, Zn",
+        "unitName": "mg"
+      },
+      "amount": 1.41
+    },
+    {
+      "nutrient": {
+        "name": "Copper, Cu",
+        "unitName": "mg"
+      },
+      "amount": 0.289
+    },
+    {
+      "nutrient": {
+        "name": "Manganese, Mn",
+        "unitName": "mg"
+      },
+      "amount": 0.917
+    },
+    {
+      "nutrient": {
+        "name": "Selenium, Se",
+        "unitName": "µg"
+      },
+      "amount": 63.2
+    },
+    {
+      "nutrient": {
+        "name": "Fluoride, F",
+        "unitName": "µg"
+      },
+      "amount": 18.0
+    },
+    {
+      "nutrient": {
+        "name": "Vitamin C, total ascorbic acid",
+        "unitName": "mg"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Thiamin",
+        "unitName": "mg"
+      },
+      "amount": 0.891
+    },
+    {
+      "nutrient": {
+        "name": "Riboflavin",
+        "unitName": "mg"
+      },
+      "amount": 0.4
+    },
+    {
+      "nutrient": {
+        "name": "Niacin",
+        "unitName": "mg"
+      },
+      "amount": 7.177
+    },
+    {
+      "nutrient": {
+        "name": "Pantothenic acid",
+        "unitName": "mg"
+      },
+      "amount": 0.431
+    },
+    {
+      "nutrient": {
+        "name": "Vitamin B-6",
+        "unitName": "mg"
+      },
+      "amount": 0.142
+    },
+    {
+      "nutrient": {
+        "name": "Folate, total",
+        "unitName": "µg"
+      },
+      "amount": 237.0
+    },
+    {
+      "nutrient": {
+        "name": "Folic acid",
+        "unitName": "µg"
+      },
+      "amount": 219.0
+    },
+    {
+      "nutrient": {
+        "name": "Folate, food",
+        "unitName": "µg"
+      },
+      "amount": 18.0
+    },
+    {
+      "nutrient": {
+        "name": "Folate, DFE",
+        "unitName": "µg"
+      },
+      "amount": 391.0
+    },
+    {
+      "nutrient": {
+        "name": "Choline, total",
+        "unitName": "mg"
+      },
+      "amount": 15.1
+    },
+    {
+      "nutrient": {
+        "name": "Betaine",
+        "unitName": "mg"
+      },
+      "amount": 142.4
+    },
+    {
+      "nutrient": {
+        "name": "Vitamin B-12",
+        "unitName": "µg"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Vitamin B-12, added",
+        "unitName": "µg"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Vitamin A, RAE",
+        "unitName": "µg"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Retinol",
+        "unitName": "µg"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Carotene, beta",
+        "unitName": "µg"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Carotene, alpha",
+        "unitName": "µg"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Cryptoxanthin, beta",
+        "unitName": "µg"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Vitamin A, IU",
+        "unitName": "IU"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Lycopene",
+        "unitName": "µg"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Lutein + zeaxanthin",
+        "unitName": "µg"
+      },
+      "amount": 18.0
+    },
+    {
+      "nutrient": {
+        "name": "Vitamin E (alpha-tocopherol)",
+        "unitName": "mg"
+      },
+      "amount": 0.11
+    },
+    {
+      "nutrient": {
+        "name": "Vitamin E, added",
+        "unitName": "mg"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Tocopherol, beta",
+        "unitName": "mg"
+      },
+      "amount": 0.06
+    },
+    {
+      "nutrient": {
+        "name": "Tocopherol, gamma",
+        "unitName": "mg"
+      },
+      "amount": 0.88
+    },
+    {
+      "nutrient": {
+        "name": "Tocopherol, delta",
+        "unitName": "mg"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Tocotrienol, alpha",
+        "unitName": "mg"
+      },
+      "amount": 0.13
+    },
+    {
+      "nutrient": {
+        "name": "Tocotrienol, beta",
+        "unitName": "mg"
+      },
+      "amount": 0.01
+    },
+    {
+      "nutrient": {
+        "name": "Tocotrienol, gamma",
+        "unitName": "mg"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Tocotrienol, delta",
+        "unitName": "mg"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Vitamin D (D2 + D3), International Units",
+        "unitName": "IU"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Vitamin D (D2 + D3)",
+        "unitName": "µg"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Vitamin K (phylloquinone)",
+        "unitName": "µg"
+      },
+      "amount": 0.1
+    },
+    {
+      "nutrient": {
+        "name": "Vitamin K (Dihydrophylloquinone)",
+        "unitName": "µg"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Fatty acids, total saturated",
+        "unitName": "g"
+      },
+      "amount": 0.277
+    },
+    {
+      "nutrient": {
+        "name": "SFA 4:0",
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "SFA 6:0",
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "SFA 8:0",
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "SFA 10:0",
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "SFA 12:0",
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "SFA 13:0",
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "SFA 14:0",
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "SFA 15:0",
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "SFA 16:0",
+        "unitName": "g"
+      },
+      "amount": 0.251
+    },
+    {
+      "nutrient": {
+        "name": "SFA 17:0",
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "SFA 18:0",
+        "unitName": "g"
+      },
+      "amount": 0.025
+    },
+    {
+      "nutrient": {
+        "name": "SFA 20:0",
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "SFA 22:0",
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "SFA 24:0",
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Fatty acids, total monounsaturated",
+        "unitName": "g"
+      },
+      "amount": 0.171
+    },
+    {
+      "nutrient": {
+        "name": "MUFA 14:1",
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "MUFA 15:1",
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "MUFA 16:1",
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "MUFA 17:1",
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "MUFA 18:1",
+        "unitName": "g"
+      },
+      "amount": 0.171
+    },
+    {
+      "nutrient": {
+        "name": "MUFA 18:1 c",
+        "unitName": "g"
+      },
+      "amount": 0.171
+    },
+    {
+      "nutrient": {
+        "name": "MUFA 20:1",
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "MUFA 22:1",
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "MUFA 24:1 c",
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Fatty acids, total polyunsaturated",
+        "unitName": "g"
+      },
+      "amount": 0.564
+    },
+    {
+      "nutrient": {
+        "name": "PUFA 18:2",
+        "unitName": "g"
+      },
+      "amount": 0.54
+    },
+    {
+      "nutrient": {
+        "name": "PUFA 18:3",
+        "unitName": "g"
+      },
+      "amount": 0.024
+    },
+    {
+      "nutrient": {
+        "name": "PUFA 18:3 n-3 c,c,c (ALA)",
+        "unitName": "g"
+      },
+      "amount": 0.024
+    },
+    {
+      "nutrient": {
+        "name": "PUFA 18:3 n-6 c,c,c",
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "PUFA 18:4",
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "PUFA 20:2 n-6 c,c",
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "PUFA 20:3",
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "PUFA 20:4",
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "PUFA 20:5 n-3 (EPA)",
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "PUFA 22:5 n-3 (DPA)",
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "PUFA 22:6 n-3 (DHA)",
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Fatty acids, total trans",
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Fatty acids, total trans-monoenoic",
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "TFA 18:1 t",
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Cholesterol",
+        "unitName": "mg"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Tryptophan",
+        "unitName": "g"
+      },
+      "amount": 0.185
+    },
+    {
+      "nutrient": {
+        "name": "Threonine",
+        "unitName": "g"
+      },
+      "amount": 0.462
+    },
+    {
+      "nutrient": {
+        "name": "Isoleucine",
+        "unitName": "g"
+      },
+      "amount": 0.511
+    },
+    {
+      "nutrient": {
+        "name": "Leucine",
+        "unitName": "g"
+      },
+      "amount": 0.988
+    },
+    {
+      "nutrient": {
+        "name": "Lysine",
+        "unitName": "g"
+      },
+      "amount": 0.298
+    },
+    {
+      "nutrient": {
+        "name": "Methionine",
+        "unitName": "g"
+      },
+      "amount": 0.147
+    },
+    {
+      "nutrient": {
+        "name": "Cystine",
+        "unitName": "g"
+      },
+      "amount": 0.255
+    },
+    {
+      "nutrient": {
+        "name": "Phenylalanine",
+        "unitName": "g"
+      },
+      "amount": 0.668
+    },
+    {
+      "nutrient": {
+        "name": "Tyrosine",
+        "unitName": "g"
+      },
+      "amount": 0.243
+    },
+    {
+      "nutrient": {
+        "name": "Valine",
+        "unitName": "g"
+      },
+      "amount": 0.588
+    },
+    {
+      "nutrient": {
+        "name": "Arginine",
+        "unitName": "g"
+      },
+      "amount": 0.474
+    },
+    {
+      "nutrient": {
+        "name": "Histidine",
+        "unitName": "g"
+      },
+      "amount": 0.298
+    },
+    {
+      "nutrient": {
+        "name": "Alanine",
+        "unitName": "g"
+      },
+      "amount": 0.438
+    },
+    {
+      "nutrient": {
+        "name": "Aspartic acid",
+        "unitName": "g"
+      },
+      "amount": 0.624
+    },
+    {
+      "nutrient": {
+        "name": "Glutamic acid",
+        "unitName": "g"
+      },
+      "amount": 4.596
+    },
+    {
+      "nutrient": {
+        "name": "Glycine",
+        "unitName": "g"
+      },
+      "amount": 0.441
+    },
+    {
+      "nutrient": {
+        "name": "Proline",
+        "unitName": "g"
+      },
+      "amount": 1.569
+    },
+    {
+      "nutrient": {
+        "name": "Serine",
+        "unitName": "g"
+      },
+      "amount": 0.617
+    },
+    {
+      "nutrient": {
+        "name": "Hydroxyproline",
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Alcohol, ethyl",
+        "unitName": "g"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Caffeine",
+        "unitName": "mg"
+      },
+      "amount": 0.0
+    },
+    {
+      "nutrient": {
+        "name": "Theobromine",
+        "unitName": "mg"
+      },
+      "amount": 0.0
+    }
+  ]
+}

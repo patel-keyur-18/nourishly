@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Android Auto Backup, API 30 and below (§0.5's mechanism 1).
+
+  Exclusion rules only, deliberately. Auto Backup includes everything it
+  is not told to exclude, so a rule set written as exclusions cannot fail
+  by omitting user data — the worst outcome is that something harmless
+  gets backed up. An include-list with one wrong path fails the other way:
+  silently, and only discovered on the day somebody restores a phone. For
+  a design whose entire disaster-recovery story is this file plus a manual
+  export, that asymmetry decides the shape.
+
+  On the catalog. §0.5 says to exclude the food catalog replica, on the
+  reasoning that a 20-40 MB replica would blow Auto Backup's 25 MB
+  per-app quota. `backup_footprint_test.dart` measures the real database
+  instead of estimating it.
+
+  **Decided 2026-09-12: back up everything, catalog included.** §0.5's
+  exclusion is superseded — it was an optimisation for a size problem
+  that did not exist at 383 foods and 1.9 MB. The whole
+  `nourishly.sqlite` file is backed up, so a restored phone comes back
+  with the catalog already in place rather than rebuilding it on first
+  launch.
+
+  **Re-measured 2026-09-15, after the regional CSV import.** The catalog
+  is now 1,591 foods and 11.0 MB — 44% of the quota, six times what the
+  2026-09-12 decision was taken against. It still holds, but the margin
+  is no longer comfortable, and it is worth being exact about why:
+
+    catalog                     11.0 MB
+    a person-year of logging     0.5 MB   (measured, not assumed)
+    after ten years             15.8 MB   63% of the quota
+
+  User data is not what fills this backup and will not be for decades;
+  the catalog is. So the guard now asserts the thing that actually binds
+  — the whole database, projected over ten years of logging, against the
+  real 25 MB with a fifth of it spare — rather than a flat third of the
+  quota, which was a proxy that only happened to be right while the
+  catalog was small.
+
+  **What trips it next.** Roughly one more import of this size. At that
+  point §0.5's exclusion stops being optional and the database has to be
+  split so the catalog can carry its own rule — or the seed has to
+  shrink, its largest table (`food_nutrient_values`) being more than half
+  id strings. `backup_footprint_test.dart` fails with both numbers and
+  sends the reader back here.
+
+  Nothing excluded below is user data. The two `exports` entries are
+  copies the user has already saved wherever they chose; the two caches
+  are rebuilt from the APK.
+-->
+<full-backup-content>
+    <!--
+      Generated export files. They are written on demand, the user has
+      already been handed a copy wherever they chose to put it, and a
+      complete JSON archive is the one file here that could rival the
+      database for size.
+    -->
+    <exclude domain="file" path="exports" />
+    <exclude domain="external" path="exports" />
+
+    <!--
+      Flutter's own asset and engine caches under the data dir. Rebuilt
+      from the APK on first launch, so backing them up stores a copy of
+      something the app already ships with.
+    -->
+    <exclude domain="root" path="cache" />
+    <exclude domain="root" path="code_cache" />
+</full-backup-content>

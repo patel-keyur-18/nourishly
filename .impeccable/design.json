@@ -1,0 +1,160 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-17T10:40:11Z",
+  "title": "Design System: Nourishly",
+  "extensions": {
+    "colorMeta": {
+      "ledger-indigo": { "role": "primary", "displayName": "Ledger Indigo", "canonical": "#3b4d9e", "canonicalDark": "#8b99ea", "tonalRamp": ["#141a37", "#1f2a5c", "#2a3878", "#334389", "#3b4d9e", "#5d6cb3", "#8b99ea", "#c3cbf7"] },
+      "terracotta-protein": { "role": "series", "displayName": "Terracotta Protein", "canonical": "#c1572d", "canonicalDark": "#d16536", "tonalRamp": ["#3a1a0e", "#5c2a17", "#813a20", "#a34627", "#c1572d", "#d16536", "#e08a5f", "#f0b89a"] },
+      "slate-blue-carbs": { "role": "series", "displayName": "Slate Blue Carbs", "canonical": "#1f6fa5", "canonicalDark": "#3f92cf", "tonalRamp": ["#0d2536", "#123a53", "#175577", "#1c6291", "#1f6fa5", "#3f92cf", "#7bb3e0", "#b6d7ef"] },
+      "ochre-fat": { "role": "series", "displayName": "Ochre Fat", "canonical": "#c7961a", "canonicalDark": "#bb8a0c", "tonalRamp": ["#3a2c07", "#5c440b", "#815f0f", "#a37913", "#c7961a", "#e0b13f", "#eecb7d", "#f7e3b8"] },
+      "forest-fibre": { "role": "series", "displayName": "Forest Fibre", "canonical": "#0f8a5e", "canonicalDark": "#2a9b6e", "tonalRamp": ["#062e1f", "#0a4630", "#0e6141", "#0e7750", "#0f8a5e", "#2a9b6e", "#5cbb92", "#a3dcc3"] },
+      "verdant-ok": { "role": "status", "displayName": "Verdant OK", "canonical": "#2e7d4f", "canonicalDark": "#4aa873" },
+      "amber-low": { "role": "status", "displayName": "Amber Low", "canonical": "#a06d0c", "canonicalDark": "#d0a03a" },
+      "violet-high": { "role": "status", "displayName": "Violet High", "canonical": "#7a5ea8", "canonicalDark": "#a893d8" },
+      "slate-unknown": { "role": "status", "displayName": "Slate Unknown", "canonical": "#7b8098", "canonicalDark": "#787e96" },
+      "danger-red": { "role": "danger", "displayName": "Danger Red", "canonical": "#a52a1f", "canonicalDark": "#f0a49c" },
+      "cool-paper": { "role": "neutral", "displayName": "Cool Paper", "canonical": "#f2f3f8", "canonicalDark": "#0f1119" },
+      "surface-white": { "role": "neutral", "displayName": "Surface White", "canonical": "#ffffff", "canonicalDark": "#161927" },
+      "soft-surface": { "role": "neutral", "displayName": "Soft Surface", "canonical": "#e9ebf4", "canonicalDark": "#1e2233" },
+      "hairline": { "role": "neutral", "displayName": "Hairline", "canonical": "#d6d9e8", "canonicalDark": "#2b3045" },
+      "hairline-strong": { "role": "neutral", "displayName": "Hairline Strong", "canonical": "#b9bed6", "canonicalDark": "#3b4160" },
+      "ink": { "role": "neutral", "displayName": "Ink", "canonical": "#161829", "canonicalDark": "#e9ebf6" },
+      "ink-secondary": { "role": "neutral", "displayName": "Ink Secondary", "canonical": "#4b4f66", "canonicalDark": "#a8adc4" },
+      "ink-tertiary": { "role": "neutral", "displayName": "Ink Tertiary", "canonical": "#7b8098", "canonicalDark": "#787e96" },
+      "ink-disabled": { "role": "neutral", "displayName": "Ink Disabled", "canonical": "#a3a7bb", "canonicalDark": "#5b6079" }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Screen-level hero numbers and headline moments (e.g. onboarding)." },
+      "title": { "displayName": "Title", "purpose": "App-bar and section titles." },
+      "heading": { "displayName": "Heading", "purpose": "Card and group headings." },
+      "bodyLarge": { "displayName": "Body Large", "purpose": "Base reading size for prose (lede copy, onboarding body)." },
+      "body": { "displayName": "Body", "purpose": "Default UI text: list rows, form labels, most in-app copy." },
+      "label": { "displayName": "Label", "purpose": "Button labels and compact emphasis text." },
+      "caption": { "displayName": "Caption", "purpose": "Secondary/meta text under a row." },
+      "overline": { "displayName": "Overline", "purpose": "Uppercase section eyebrows and group headers." },
+      "numeral": { "displayName": "Numeral", "purpose": "The large ring/hero number on dashboard and report screens; tabular, monospace." }
+    },
+    "shadows": [
+      { "name": "el-1", "value": "0 1px 2px rgba(22,24,41,.06)", "purpose": "Minimal lift for a small control resting on a track, e.g. a slider handle." },
+      { "name": "el-2", "value": "0 2px 4px rgba(22,24,41,.06), 0 8px 20px -12px rgba(22,24,41,.18)", "purpose": "The floating action button." },
+      { "name": "el-3", "value": "0 8px 34px -14px rgba(22,24,41,.34)", "purpose": "Bottom sheets and modal dialogs, presented over a scrim." }
+    ],
+    "motion": [
+      { "name": "fast", "value": "120ms cubic-bezier(0.2, 0, 0, 1)", "purpose": "Micro state changes (toggle, chip select)." },
+      { "name": "base", "value": "200ms cubic-bezier(0.2, 0, 0, 1)", "purpose": "Default transition duration (sheet reveal, tab switch)." },
+      { "name": "slow", "value": "320ms cubic-bezier(0.2, 0, 0, 1)", "purpose": "Larger surface transitions." }
+    ],
+    "breakpoints": []
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Highest-emphasis action per screen (Save, Add, Continue).",
+      "html": "<button class=\"ds-btn-primary\">Save changes</button>",
+      "css": ".ds-btn-primary { font-family: 'IBM Plex Sans', system-ui, sans-serif; font-weight: 600; font-size: 14px; cursor: pointer; border-radius: 999px; padding: 12px 18px; min-height: 46px; border: 1px solid transparent; background: #3b4d9e; color: #ffffff; transition: background 200ms cubic-bezier(0.2,0,0,1); } .ds-btn-primary:hover { background: #334389; } .ds-btn-primary:focus-visible { outline: 2px solid #3b4d9e; outline-offset: 2px; }"
+    },
+    {
+      "name": "Soft Button",
+      "kind": "button",
+      "refersTo": "button-soft",
+      "description": "Secondary-emphasis action beside a primary button.",
+      "html": "<button class=\"ds-btn-soft\">Not now</button>",
+      "css": ".ds-btn-soft { font-family: 'IBM Plex Sans', system-ui, sans-serif; font-weight: 600; font-size: 14px; cursor: pointer; border-radius: 999px; padding: 12px 18px; min-height: 46px; background: #dfe3f4; color: #2c3a7a; border: 1px solid #d6d9e8; transition: background 200ms cubic-bezier(0.2,0,0,1); } .ds-btn-soft:hover { background: #d3d8ee; }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Lowest-emphasis / dismissive action.",
+      "html": "<button class=\"ds-btn-ghost\">Cancel</button>",
+      "css": ".ds-btn-ghost { font-family: 'IBM Plex Sans', system-ui, sans-serif; font-weight: 600; font-size: 14px; cursor: pointer; border-radius: 999px; padding: 12px 18px; min-height: 46px; background: transparent; color: #4b4f66; border: 1px solid transparent; } .ds-btn-ghost:hover { color: #161829; }"
+    },
+    {
+      "name": "Nutrient Chip",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "A tag-shaped label, e.g. a source or category marker on a search result.",
+      "html": "<span class=\"ds-chip\">USDA</span>",
+      "css": ".ds-chip { display: inline-flex; align-items: center; gap: 5px; font-family: 'IBM Plex Sans', system-ui, sans-serif; font-size: 11.5px; font-weight: 600; background: #e9ebf4; color: #4b4f66; border: 1px solid #d6d9e8; border-radius: 999px; padding: 4px 10px; }"
+    },
+    {
+      "name": "Score Chip",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "A chip carrying a computed value, e.g. a coverage or score readout.",
+      "html": "<span class=\"ds-chip-score\">58% covered</span>",
+      "css": ".ds-chip-score { display: inline-flex; align-items: center; gap: 5px; font-family: 'IBM Plex Sans', system-ui, sans-serif; font-size: 12px; font-weight: 600; background: #dfe3f4; color: #2c3a7a; border: none; border-radius: 999px; padding: 4px 10px; }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "The base container for grouped content throughout the app.",
+      "html": "<div class=\"ds-card\"><div class=\"ds-card-title\">Today</div><div class=\"ds-card-body\">1,840 kcal remaining</div></div>",
+      "css": ".ds-card { background: #ffffff; border: 1px solid #d6d9e8; border-radius: 16px; padding: 12px 14px; } .ds-card-title { font-family: 'IBM Plex Sans', system-ui, sans-serif; font-size: 17px; font-weight: 600; letter-spacing: -0.01em; color: #161829; margin-bottom: 4px; } .ds-card-body { font-family: 'IBM Plex Sans', system-ui, sans-serif; font-size: 14px; color: #4b4f66; }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Standard text input, e.g. custom food name or amount entry.",
+      "html": "<input class=\"ds-input\" type=\"text\" placeholder=\"Search foods\" />",
+      "css": ".ds-input { width: 100%; font-family: 'IBM Plex Sans', system-ui, sans-serif; font-size: 14px; color: #161829; background: #ffffff; border: 1px solid #d6d9e8; border-radius: 12px; padding: 11px 12px; min-height: 44px; box-sizing: border-box; } .ds-input:focus-visible { border-color: #3b4d9e; outline: none; }"
+    },
+    {
+      "name": "Target Progress Bar",
+      "kind": "custom",
+      "refersTo": "progress-bar",
+      "description": "The signature component: a track running to 125% of target, tick at 80%, fill colour keyed to the nutrient's series colour. Never filled edge-to-edge at 100%.",
+      "html": "<div class=\"ds-bar\"><div class=\"ds-bar-track\"><div class=\"ds-bar-fill\" style=\"width:56%\"></div><div class=\"ds-bar-tick\" style=\"left:80%\"></div></div></div>",
+      "css": ".ds-bar-track { position: relative; height: 9px; background: #e3e6f1; border-radius: 999px; } .ds-bar-fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px; background: #c1572d; box-shadow: 0 0 0 2px #ffffff; } .ds-bar-tick { position: absolute; top: -3px; bottom: -3px; width: 2px; background: #4b4f66; opacity: 0.6; border-radius: 2px; }"
+    },
+    {
+      "name": "Status Dot",
+      "kind": "custom",
+      "refersTo": "status-dot",
+      "description": "Always paired with a text label; never used to convey status alone.",
+      "html": "<span class=\"ds-status\"><i class=\"ds-dot ds-dot-high\"></i>Over target</span>",
+      "css": ".ds-status { display: inline-flex; align-items: center; gap: 6px; font-family: 'IBM Plex Sans', system-ui, sans-serif; font-size: 12.5px; font-weight: 600; color: #4b4f66; } .ds-dot { width: 7px; height: 7px; border-radius: 50%; flex: none; } .ds-dot-high { background: #7a5ea8; } .ds-dot-ok { background: #2e7d4f; } .ds-dot-low { background: #a06d0c; } .ds-dot-unknown { background: #7b8098; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Honest Instrument",
+    "overview": "Nourishly reads like a precise measuring device that has been placed in a kitchen, not a fitness app performing motivation. It shows what it knows, states plainly what it doesn't (\"Calcium — no data\"), and never rounds an absence up to zero. The score withholds itself rather than pretend confidence it hasn't earned. Nothing here scolds: exceeding a target is drawn in violet, not red, because a food tracker's job is to inform a household, not shame it.\n\nThe system is precise, restrained, and quietly confident. One accent — Ledger Indigo — carries almost all interactive weight; brand and measurement are kept visibly distinct, because an earlier draft that let the accent double as the carbs series colour made the two unreadable apart. Everything else is neutral surface and hairline structure, so the numbers — tabular, aligned, unmissable — are what the eye lands on.\n\nNourishly deliberately avoids the gamified fitness-app register: no streaks, badges, flame icons, confetti, or bright celebratory gradients. Progress is shown as a bar read against a target tick, not a meter filled to its own edge, and even that bar runs to 125% of target so going over has somewhere honest to go.",
+    "keyCharacteristics": [
+      "One accent hue (Ledger Indigo) does all interactive and brand work; it never doubles as a data colour.",
+      "Four nutrient-series colours are fixed by role (protein, carbs, fat, fibre) and never reassigned or cycled.",
+      "Status is read as a dot plus a label, never colour alone.",
+      "Surfaces are flat and bordered at rest; shadow appears only on things that float above the page.",
+      "One typeface (IBM Plex Sans) carries the whole hierarchy through weight and size, not a second face.",
+      "Numbers are tabular and right-aligned wherever they appear in a column."
+    ],
+    "rules": [
+      { "name": "The One Voice Rule", "body": "The accent is never used for a data series, and no data series is ever used for a UI action. Brand and measurement stay visually distinct so a user can never mistake \"the app is highlighting this\" for \"this is a nutrient reading.\"", "section": "colors" },
+      { "name": "The No-Red-For-Over Rule", "body": "Exceeding a target renders in Violet High, never red or orange. Red is reserved for destructive actions. A tracker that scolds gets abandoned; the palette is built so it structurally can't.", "section": "colors" },
+      { "name": "The Never-Colour-Alone Rule", "body": "Every status carries a small dot and a text label. No status is communicated by hue alone anywhere in the system.", "section": "colors" },
+      { "name": "The Tabular Figures Rule", "body": "Any digits that align in a column use tabular (monospace-width) numerals so the column stays straight regardless of digit shape.", "section": "typography" },
+      { "name": "The Flat-By-Default Rule", "body": "Surfaces are flat and bordered at rest. Shadow is earned only by floating above the page — a sheet, a dialog, a FAB — never applied to a resting card \"for depth.\"", "section": "elevation" }
+    ],
+    "dos": [
+      "Do use the accent (Ledger Indigo) for interactive and brand elements only — never for a nutrient series or a status.",
+      "Do pair every status with a dot and a text label; never colour alone.",
+      "Do run progress tracks to 125% of target with the tick at 80%, never fill a bar to its own 100% edge.",
+      "Do render a nutrient with no data as an explicit \"no data\" state (em dash + explanation), never as zero.",
+      "Do use tabular numerals for any digits that align in a column.",
+      "Do keep touch targets at least 48dp for primary controls, 44dp minimum for compact list affordances.",
+      "Do reserve shadow for things that float above the page (sheets, dialogs, the FAB); keep resting cards flat with a hairline border."
+    ],
+    "donts": [
+      "Don't use red or orange for \"over target.\" Over-target is Violet High; red is reserved for destructive actions only.",
+      "Don't introduce gamification chrome — streaks, badges, flame icons, confetti, celebratory gradients. The system reads as an instrument, not a game.",
+      "Don't reassign or cycle the four nutrient-series colours by rank; protein/carbs/fat/fibre keep their hue permanently.",
+      "Don't add a second display typeface. Hierarchy comes from IBM Plex Sans's weight and size scale, not a companion face.",
+      "Don't add a drop shadow to a resting card \"for depth\" — depth is reserved for overlays.",
+      "Don't show energy as \"consumed so far.\" The large number is what's remaining, not what's eaten."
+    ]
+  }
+}

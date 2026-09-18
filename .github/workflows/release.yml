@@ -1,0 +1,123 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+env:
+  FLUTTER_VERSION: "3.47.3"
+
+jobs:
+  tag-and-release:
+    runs-on: ubuntu-latest
+    outputs:
+      new_tag: ${{ steps.pick_tag.outputs.new_tag }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # main starts with no tags at all, and the first release is defined
+      # to be v1.0.0 regardless of what the triggering commit says -- so
+      # that case is handled directly here, before the bump logic below
+      # ever gets a "previous tag" to compute from.
+      - name: Check for an existing release baseline
+        id: baseline
+        run: |
+          if git tag -l 'v*.*.*' | grep -q .; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Seed the v1.0.0 baseline tag
+        if: steps.baseline.outputs.exists == 'false'
+        id: seed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a v1.0.0 -m "v1.0.0 - release baseline"
+          git push origin v1.0.0
+          echo "new_tag=v1.0.0" >> "$GITHUB_OUTPUT"
+
+      # Conventional-commit driven semver, from the second release onward:
+      # breaking changes bump major, feat: bumps minor, everything else
+      # recognised below (fix, chore, perf, refactor, docs, style, test,
+      # build, ci, revert) bumps patch. default_bump: false means a push
+      # with none of these types creates no tag/release at all, instead of
+      # silently patch-bumping.
+      - name: Bump version and push tag
+        id: tag_version
+        if: steps.baseline.outputs.exists == 'true'
+        uses: mathieudutour/github-tag-action@v6.2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          release_branches: main
+          default_bump: false
+          custom_release_rules: >-
+            breaking:major,
+            feat:minor,
+            fix:patch,chore:patch,perf:patch,refactor:patch,docs:patch,style:patch,test:patch,build:patch,ci:patch,revert:patch
+
+      - name: Pick resulting tag
+        id: pick_tag
+        run: |
+          echo "new_tag=${{ steps.seed.outputs.new_tag || steps.tag_version.outputs.new_tag }}" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub release
+        if: steps.pick_tag.outputs.new_tag != ''
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.pick_tag.outputs.new_tag }}
+          name: ${{ steps.pick_tag.outputs.new_tag }}
+          body: ${{ steps.tag_version.outputs.changelog || 'Initial release baseline.' }}
+
+  build-android:
+    needs: tag-and-release
+    if: needs.tag-and-release.outputs.new_tag != ''
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.tag-and-release.outputs.new_tag }}
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        working-directory: app
+        run: flutter pub get
+
+      # No release keystore is configured yet, so this ships signed with
+      # the Flutter debug key (see app/android/app/build.gradle.kts). Good
+      # enough to sideload for testing; swap in a real keystore before a
+      # Play Store release.
+      - name: Build release APK
+        working-directory: app
+        run: flutter build apk --release
+
+      - name: Rename APK with version tag
+        run: |
+          mkdir -p dist
+          cp app/build/app/outputs/flutter-apk/app-release.apk \
+            "dist/nourishly-${{ needs.tag-and-release.outputs.new_tag }}-android.apk"
+
+      - name: Attach APK to release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ needs.tag-and-release.outputs.new_tag }}
+          allowUpdates: true
+          omitBodyDuringUpdate: true
+          omitNameDuringUpdate: true
+          artifacts: dist/*.apk

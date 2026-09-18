@@ -1,0 +1,17 @@
+{
+  "query": "gourd white-flowered calabash raw [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 169232,
+      "description": "Gourd, white-flowered (calabash), raw"
+    },
+    {
+      "fdcId": 169353,
+      "description": "Gourd, white-flowered (calabash), cooked, boiled, drained, with salt"
+    },
+    {
+      "fdcId": 169233,
+      "description": "Gourd, white-flowered (calabash), cooked, boiled, drained, without salt"
+    }
+  ]
+}

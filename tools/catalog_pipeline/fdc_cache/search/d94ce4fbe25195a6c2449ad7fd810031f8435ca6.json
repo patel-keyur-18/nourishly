@@ -1,0 +1,17 @@
+{
+  "query": "coriander cilantro leaves raw [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 169997,
+      "description": "Coriander (cilantro) leaves, raw"
+    },
+    {
+      "fdcId": 168416,
+      "description": "Drumstick leaves, raw"
+    },
+    {
+      "fdcId": 168385,
+      "description": "Amaranth leaves, raw"
+    }
+  ]
+}

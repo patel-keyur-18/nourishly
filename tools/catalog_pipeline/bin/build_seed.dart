@@ -1,0 +1,381 @@
+// Turns the reviewed build/catalog_seed_draft.json into the actual
+// bundled catalog seed the app imports on first run.
+//
+// Run from the repository root, after fetch_catalog.dart:
+//   dart run tools/catalog_pipeline/bin/build_seed.dart
+//
+// Writes app/assets/catalog/seed_v1.json (committed — public-domain USDA
+// data + our own catalog structure, safe per scope doc §0.7).
+//
+// Recipe entries are in the draft too (fetch_catalog.dart resolves each
+// ingredient and applies `resolveRecipeYield`'s cooking yield factor —
+// pressure cooker for dal, open pot for rice and everything else, per the
+// 2026-09-10 household decision) and get their own FoodItems row
+// (`kind: 'recipe'`, `yieldFactor` set) plus RecipeComponents rows tracing
+// back to their ingredients, same as any other catalog food.
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:catalog_pipeline/catalog_pipeline.dart';
+import 'package:uuid/uuid.dart';
+
+const _uuid = Uuid();
+
+/// A fixed namespace for this catalog's derived ids. Any constant would
+/// do; it is written out rather than imported so that changing it is an
+/// obvious, deliberate act — every id in the seed depends on it.
+const _idNamespace = '6f1a2c30-0b1d-5e4a-9c8b-2f7d4e1a5b60';
+
+/// The seed id for [name], derived rather than random.
+///
+/// `build_seed` used to mint a fresh `uuid.v7()` for every row on every
+/// run, which had two costs. Regenerating the seed rewrote all 2.3 MB, so
+/// `git diff` showed everything changed and nothing readable — there was
+/// no way to see what a new row actually did. And because the app's
+/// catalog import is keyed on ids, shipping a second seed to a device that
+/// already had one would have imported a duplicate of the entire catalog
+/// rather than an update.
+///
+/// A v5 id fixes both: same input, same id, forever. Child rows derive
+/// from their parent's key plus what they are, so a re-import updates a
+/// serving size or an alt name in place instead of adding a second one.
+String _idFor(String name) => _uuid.v5(_idNamespace, 'nourishly:catalog:$name');
+
+/// `Foundation`/`SR Legacy` are USDA's measured, lab-analysed data;
+/// anything else (here: `Branded`, for jaggery) is manufacturer-reported
+/// (§19.11's quality tiers).
+(String qualityTier, String valueSource) _tierFor(String fdcDataType) {
+  return fdcDataType == 'Foundation' || fdcDataType == 'SR Legacy'
+      ? ('verified', 'measured')
+      : ('derived', 'label');
+}
+
+/// The draft's row key, written by `fetch_catalog.dart`.
+///
+/// Required rather than re-derived: a draft without it was produced by an
+/// older fetch, and silently deriving the key here would let a stale
+/// draft build a seed whose ids do not match the one the current
+/// pipeline would produce.
+String _keyOf(Map<String, dynamic> food) {
+  final key = food['key'] as String?;
+  if (key == null || key.isEmpty) {
+    throw StateError(
+      'Draft entry "${food['foodName']}" has no row key. It was produced by '
+      'an older fetch_catalog.dart — rerun it before building the seed.',
+    );
+  }
+  return key;
+}
+
+void main() {
+  final draftFile = File('build/catalog_seed_draft.json');
+  if (!draftFile.existsSync()) {
+    stderr.writeln(
+      'Run fetch_catalog.dart first — build/catalog_seed_draft.json not found.',
+    );
+    exit(1);
+  }
+  final draft =
+      jsonDecode(draftFile.readAsStringSync()) as Map<String, dynamic>;
+  final resolvedFoods = (draft['resolved'] as List)
+      .cast<Map<String, dynamic>>();
+  if ((draft['failures'] as List).isNotEmpty) {
+    stderr.writeln(
+      'Warning: draft has unresolved failures; they are excluded from the seed: ${draft['failures']}',
+    );
+  }
+
+  final foodItems = <Map<String, dynamic>>[];
+  final nutrientValues = <Map<String, dynamic>>[];
+  final servingSizes = <Map<String, dynamic>>[];
+  final altNames = <Map<String, dynamic>>[];
+  final recipeComponents = <Map<String, dynamic>>[];
+
+  // An ingredient FDC id -> its FoodItems id, shared across every recipe
+  // (and the direct-lookup foods below) so an ingredient used by both a
+  // Tier-1 entry and a recipe (e.g. toor dal) gets one row, not two.
+  final ingredientFoodIdByFdcId = <int, String>{};
+
+  // One FoodItems id per draft entry, minted up front because a recipe can
+  // list another catalog dish as an ingredient ("Bhel" lists `sev`, resolved
+  // to the "Sev, thin" row) and the two rows are not in dependency order in
+  // the draft. Those components point at the dish's own FoodItems row rather
+  // than minting a duplicate. Keyed by entry identity, not by name — a name
+  // can repeat across state files (Idli, Puri, Coconut rice), and those are
+  // separate rows with separate ids.
+  final foodIdByEntry = {
+    for (final food in resolvedFoods) food: _idFor(_keyOf(food)),
+  };
+
+  // Row key -> id, for resolving an ingredient's `catalogRow`. Keys are
+  // unique by construction, so unlike the name map this replaced there is
+  // no ambiguity to drop: "Coconut rice" is three rows and three keys.
+  final foodIdByKey = {
+    for (final food in resolvedFoods) _keyOf(food): foodIdByEntry[food]!,
+  };
+
+  void addNutrientValues(
+    String foodId,
+    Map<String, dynamic> nutrientsPer100g,
+    String valueSource,
+  ) {
+    for (final entry in nutrientsPer100g.entries) {
+      nutrientValues.add({
+        'id': _idFor('$foodId/nutrient/${entry.key}'),
+        'foodId': foodId,
+        'nutrientId': entry.key,
+        'amountPer100g': entry.value,
+        'valueSource': valueSource,
+      });
+    }
+  }
+
+  for (final food in resolvedFoods) {
+    if (food['kind'] != 'ingredient') continue;
+
+    final foodId = foodIdByEntry[food]!;
+    final (qualityTier, valueSource) = _tierFor(food['fdcDataType'] as String);
+    ingredientFoodIdByFdcId[food['fdcId'] as int] = foodId;
+
+    foodItems.add({
+      'id': foodId,
+      'kind': 'ingredient',
+      'canonicalName': food['foodName'],
+      'cuisineTags': food['cuisineTags'] ?? const <String>[],
+      'qualityTier': qualityTier,
+      'provenanceSource': 'usda_fdc',
+      'provenanceId': '${food['fdcId']}',
+      'isVerified': qualityTier == 'verified',
+    });
+
+    addNutrientValues(
+      foodId,
+      (food['nutrientsPer100g'] as Map).cast<String, dynamic>(),
+      valueSource,
+    );
+
+    servingSizes.add({
+      'id': _idFor('$foodId/serving'),
+      'foodId': foodId,
+      'label': food['servingLabel'],
+      'grams': food['servingAmount'],
+      'isHouseholdMeasure': true,
+      'isDefault': true,
+      'sortOrder': 0,
+    });
+
+    for (final alsoName in (food['alsoNames'] as List).cast<String>()) {
+      altNames.add({
+        'id': _idFor('$foodId/alt/$alsoName'),
+        'foodId': foodId,
+        'name': alsoName,
+        'nameNormalized': alsoName.toLowerCase(),
+        'language': 'en',
+        'isTransliteration': true,
+      });
+    }
+  }
+
+  for (final food in resolvedFoods) {
+    if (food['kind'] != 'recipe') continue;
+
+    final foodId = foodIdByEntry[food]!;
+    final ingredients = (food['ingredients'] as List)
+        .cast<Map<String, dynamic>>();
+
+    foodItems.add({
+      'id': foodId,
+      'kind': 'recipe',
+      'canonicalName': food['foodName'],
+      'cuisineTags': food['cuisineTags'] ?? const <String>[],
+      // Derived from summed ingredient nutrients, not a single measured
+      // source — always the 'derived' tier (§19.11).
+      'qualityTier': 'derived',
+      'provenanceSource': 'catalog_pipeline_recipe',
+      'provenanceId': null,
+      'isVerified': false,
+      'yieldFactor': food['yieldFactor'],
+    });
+
+    addNutrientValues(
+      foodId,
+      (food['nutrientsPer100g'] as Map).cast<String, dynamic>(),
+      'derived',
+    );
+
+    servingSizes.add({
+      'id': _idFor('$foodId/serving'),
+      'foodId': foodId,
+      'label': food['servingLabel'],
+      'grams': food['servingAmount'],
+      'isHouseholdMeasure': true,
+      'isDefault': true,
+      'sortOrder': 0,
+    });
+
+    for (final alsoName in (food['alsoNames'] as List).cast<String>()) {
+      altNames.add({
+        'id': _idFor('$foodId/alt/$alsoName'),
+        'foodId': foodId,
+        'name': alsoName,
+        'nameNormalized': alsoName.toLowerCase(),
+        'language': 'en',
+        'isTransliteration': true,
+      });
+    }
+
+    for (var i = 0; i < ingredients.length; i++) {
+      final ingredient = ingredients[i];
+      final catalogRow = ingredient['catalogRow'] as String?;
+      final fdcId = ingredient['fdcId'] as int?;
+
+      final String ingredientFoodId;
+      if (catalogRow != null) {
+        // The ingredient is another catalog dish, already getting its own
+        // recipe row in this same loop — point at it instead of minting a
+        // duplicate, which is what makes the component chain traceable
+        // (Bhel -> Sev, thin -> besan + oil).
+        ingredientFoodId =
+            foodIdByKey[catalogRow] ??
+            (throw StateError(
+              '${food['foodName']} lists "${ingredient['name']}", resolved to '
+              'catalog row key "$catalogRow", which is not in the draft. '
+              'Rerun fetch_catalog.dart.',
+            ));
+      } else if (fdcId != null) {
+        // Reuse the ingredient's FoodItems row if this exact FDC food is
+        // already in the catalog (as a direct-lookup entry or an earlier
+        // recipe's ingredient); otherwise mint one so the ingredient is
+        // traceable even if it isn't its own Tier-1/2/3 catalog entry.
+        ingredientFoodId = ingredientFoodIdByFdcId.putIfAbsent(fdcId, () {
+          // Keyed on the FDC id, not on which recipe reached it first —
+          // the same component row has to come out with the same id
+          // whatever order the draft happens to be in.
+          final newId = _idFor('fdc/$fdcId');
+          final (qualityTier, valueSource) = _tierFor(
+            ingredient['fdcDataType'] as String,
+          );
+          foodItems.add({
+            'id': newId,
+            'kind': 'ingredient',
+            'canonicalName': ingredient['fdcDescription'],
+            // A component-only row is a provenance trail, not something
+            // anyone searches or browses, so it carries no tags.
+            'cuisineTags': const <String>[],
+            'qualityTier': qualityTier,
+            // Not `usda_fdc`: this row exists only so the recipe's
+            // components trace back to a source. Its name is a raw USDA
+            // description ("Cereals ready-to-eat, rice, puffed, fortified")
+            // and it has no serving size, so it is kept out of the search
+            // index rather than shown to someone logging a meal.
+            'provenanceSource': 'usda_fdc_component',
+            'provenanceId': '$fdcId',
+            'isVerified': qualityTier == 'verified',
+          });
+          addNutrientValues(
+            newId,
+            (ingredient['nutrientsPer100g'] as Map).cast<String, dynamic>(),
+            valueSource,
+          );
+          return newId;
+        });
+      } else if (waterIngredients.contains(
+        catalogKey(ingredient['name'] as String),
+      )) {
+        // Water: mass without nutrients (fetch_catalog.dart resolves it to
+        // an empty nutrient map, so it has no fdcId to trace to). It still
+        // counts toward the recipe's yield factor, but there is no
+        // FoodItems row for it to point a component at, so it gets none.
+        continue;
+      } else {
+        throw StateError(
+          '${food['foodName']} ingredient "${ingredient['name']}" has neither '
+          'an fdcId nor a catalogRow. Rerun fetch_catalog.dart.',
+        );
+      }
+
+      recipeComponents.add({
+        'id': _idFor('$foodId/component/$ingredientFoodId/$i'),
+        'recipeFoodItemId': foodId,
+        'ingredientFoodItemId': ingredientFoodId,
+        'quantityGrams': ingredient['quantityGrams'],
+        'sortOrder': i,
+      });
+    }
+  }
+
+  final seed = {
+    'catalogVersion': {
+      'version': 1,
+      'foodCount': foodItems.length,
+      'checksum': 'usda-fdc-v1',
+      'notes': 'Tier-1/2/3 direct-USDA ingredients plus recipes (cooking yield factor applied per recipe_yield.dart).',
+    },
+    'nutrientGroups': [
+      for (final g in nutrientGroups)
+        {'id': g.$1, 'name': g.$2, 'sortOrder': nutrientGroups.indexOf(g)},
+    ],
+    'nutrients': [
+      for (final n in nutrientRegistry)
+        {
+          'id': n.id,
+          'groupId': n.groupId,
+          'displayName': n.displayName,
+          'canonicalUnit': n.canonicalUnit,
+          'displayPrecision': n.canonicalUnit == 'kcal' ? 0 : 1,
+          'defaultCurveType': 'floor',
+          'isLimitNutrient':
+              n.id == 'sodium' || n.id == 'saturated_fat' || n.id == 'sugar',
+          'sortOrder': nutrientRegistry.indexOf(n),
+          'isCore': const [
+            'energy',
+            'protein',
+            'carbs',
+            'fat',
+            'fibre',
+          ].contains(n.id),
+          'minCoverageForScoring': 0.5,
+        },
+    ],
+    'mealSlots': [
+      {
+        'id': _idFor('meal-slot/breakfast'),
+        'key': 'breakfast',
+        'displayName': 'Breakfast',
+        'sortOrder': 0,
+      },
+      {
+        'id': _idFor('meal-slot/lunch'),
+        'key': 'lunch',
+        'displayName': 'Lunch',
+        'sortOrder': 1,
+      },
+      {
+        'id': _idFor('meal-slot/dinner'),
+        'key': 'dinner',
+        'displayName': 'Dinner',
+        'sortOrder': 2,
+      },
+      {
+        'id': _idFor('meal-slot/snack'),
+        'key': 'snack',
+        'displayName': 'Snack',
+        'sortOrder': 3,
+      },
+    ],
+    'foodItems': foodItems,
+    'foodNutrientValues': nutrientValues,
+    'servingSizes': servingSizes,
+    'foodAltNames': altNames,
+    'recipeComponents': recipeComponents,
+  };
+
+  final outFile = File('app/assets/catalog/seed_v1.json');
+  outFile.parent.createSync(recursive: true);
+  outFile.writeAsStringSync(const JsonEncoder.withIndent('  ').convert(seed));
+
+  stdout.writeln('Wrote ${outFile.path}');
+  stdout.writeln(
+    '${foodItems.length} foods, ${nutrientValues.length} nutrient values, ${servingSizes.length} servings, ${altNames.length} alt names.',
+  );
+}

@@ -1,0 +1,305 @@
+import 'package:drift/drift.dart';
+import 'package:uuid/uuid.dart';
+
+import '../database.dart';
+import '../tables/logging_tables.dart';
+import 'daily_summary_dao.dart';
+import 'log_status.dart';
+
+const _uuid = Uuid();
+
+/// Writes a [FoodLogEntries] row plus its immutable [LogEntryNutrients]
+/// snapshot in one transaction (I-1, §20.5) — the snapshot is frozen at
+/// log time so a later catalog correction never rewrites history (ADR-008).
+class FoodLoggingDao {
+  FoodLoggingDao(this._db);
+
+  final NourishlyDatabase _db;
+
+  /// Marks the affected day for rebuild (§25.3). Every mutation here goes
+  /// through it, so no caller has to remember that the dashboard reads a
+  /// materialised summary rather than the entries themselves.
+  Future<void> _invalidate(String entryId) async {
+    final rows = await (_db.select(
+      _db.foodLogEntries,
+    )..where((e) => e.id.equals(entryId))).get();
+    if (rows.isEmpty) return;
+    await DailySummaryDao(_db)
+        .markStale(ownerId: rows.first.ownerId, logDate: rows.first.logDate);
+  }
+
+  /// Logs [quantity] servings of [servingId] against [foodId], in
+  /// [mealSlotId], on [logDate]. Returns the new entry's id.
+  ///
+  /// [status] is what makes this the planner's write path too: a planned
+  /// entry takes the identical route, snapshot included, so a plan is
+  /// scored by exactly the code that scores a meal. What differs is one
+  /// column and the meaning of [loggedAt], which for a planned entry is
+  /// when the plan was made and is rewritten when it is confirmed.
+  Future<String> logFood({
+    required String ownerId,
+    required String foodId,
+    required String servingId,
+    required double quantity,
+    required String mealSlotId,
+    required DateTime logDate,
+    String status = logStatusLogged,
+    String source = 'manual',
+  }) async {
+    final food = await (_db.select(
+      _db.foodItems,
+    )..where((f) => f.id.equals(foodId))).getSingle();
+    final serving = await (_db.select(
+      _db.servingSizes,
+    )..where((s) => s.id.equals(servingId))).getSingle();
+    final nutrientValues = await (_db.select(
+      _db.foodNutrientValues,
+    )..where((v) => v.foodId.equals(foodId))).get();
+
+    final gramsConsumed = serving.grams * quantity;
+    final entryId = _uuid.v7();
+    final now = DateTime.now();
+
+    await _db.batch((batch) {
+      batch.insert(
+        _db.foodLogEntries,
+        FoodLogEntriesCompanion.insert(
+          id: entryId,
+          ownerId: ownerId,
+          logDate: logDate,
+          mealSlotId: mealSlotId,
+          foodId: foodId,
+          foodRevision: food.revision,
+          servingSizeId: Value(servingId),
+          quantity: quantity,
+          gramsConsumed: gramsConsumed,
+          loggedAt: now,
+          source: source,
+          status: Value(status),
+        ),
+      );
+
+      batch.insertAll(_db.logEntryNutrients, [
+        for (final v in nutrientValues)
+          LogEntryNutrientsCompanion.insert(
+            entryId: entryId,
+            nutrientId: v.nutrientId,
+            amount: v.amountPer100g * gramsConsumed / 100,
+          ),
+      ]);
+    });
+
+    await DailySummaryDao(_db).markStale(ownerId: ownerId, logDate: logDate);
+    return entryId;
+  }
+
+  /// Soft-deletes one entry — the inline-undo path (UX-7, FR-M-05). The
+  /// row and its nutrient snapshot stay put so [restore] can bring the
+  /// entry back without recomputing anything.
+  Future<void> deleteEntry(String entryId) async {
+    await _invalidate(entryId);
+    await (_db.update(
+      _db.foodLogEntries,
+    )..where((e) => e.id.equals(entryId))).write(
+      FoodLogEntriesCompanion(
+        deletedAt: Value(DateTime.now()),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
+  }
+
+  /// Undoes [deleteEntry].
+  Future<void> restore(String entryId) async {
+    await (_db.update(_db.foodLogEntries)..where((e) => e.id.equals(entryId)))
+        .write(const FoodLogEntriesCompanion(deletedAt: Value(null)));
+    await _invalidate(entryId);
+  }
+
+  /// Edits an entry's portion and/or meal slot (FR-M-05).
+  ///
+  /// The nutrient snapshot is replaced wholesale, as [LogEntryNutrients]
+  /// requires — but by rescaling the *frozen* amounts to the new gram
+  /// weight, not by re-reading the catalog. A correction to the portion
+  /// you ate must not quietly pull in catalog edits made since you logged
+  /// it; that is what ADR-008's immutable history protects.
+  Future<void> updateEntry({
+    required String entryId,
+    double? quantity,
+    String? servingId,
+    String? mealSlotId,
+  }) async {
+    final entry = await (_db.select(
+      _db.foodLogEntries,
+    )..where((e) => e.id.equals(entryId))).getSingle();
+
+    final newServingId = servingId ?? entry.servingSizeId;
+    final newQuantity = quantity ?? entry.quantity;
+
+    var newGrams = entry.gramsConsumed;
+    if (newServingId != null) {
+      final serving = await (_db.select(
+        _db.servingSizes,
+      )..where((s) => s.id.equals(newServingId))).getSingle();
+      newGrams = serving.grams * newQuantity;
+    } else if (entry.quantity != 0) {
+      // No serving to measure against (a grams-only entry): scale by the
+      // change in quantity alone.
+      newGrams = entry.gramsConsumed / entry.quantity * newQuantity;
+    }
+
+    final snapshot = await (_db.select(
+      _db.logEntryNutrients,
+    )..where((n) => n.entryId.equals(entryId))).get();
+    final scale = entry.gramsConsumed == 0
+        ? 0.0
+        : newGrams / entry.gramsConsumed;
+
+    await _db.batch((batch) {
+      batch.update(
+        _db.foodLogEntries,
+        FoodLogEntriesCompanion(
+          quantity: Value(newQuantity),
+          gramsConsumed: Value(newGrams),
+          servingSizeId: Value(newServingId),
+          mealSlotId: mealSlotId == null
+              ? const Value.absent()
+              : Value(mealSlotId),
+          updatedAt: Value(DateTime.now()),
+        ),
+        where: (e) => e.id.equals(entryId),
+      );
+
+      batch.deleteWhere(
+        _db.logEntryNutrients,
+        (n) => n.entryId.equals(entryId),
+      );
+      batch.insertAll(_db.logEntryNutrients, [
+        for (final n in snapshot)
+          LogEntryNutrientsCompanion.insert(
+            entryId: entryId,
+            nutrientId: n.nutrientId,
+            amount: n.amount * scale,
+          ),
+      ]);
+    });
+    await _invalidate(entryId);
+  }
+
+  /// Confirms a planned entry as eaten (FR-P-04).
+  ///
+  /// The snapshot is not touched and not recomputed: you ate what was
+  /// planned, and the nutrients frozen when the plan was made are the
+  /// nutrients of the meal. [loggedAt] moves to now, because that is the
+  /// one thing the confirmation actually knows.
+  ///
+  /// A portion that turned out different goes through [updateEntry] first
+  /// — it rescales the frozen snapshot rather than re-reading the catalog
+  /// (ADR-008) — and then through here.
+  Future<void> confirmEntry(String entryId, {DateTime? at}) async {
+    await (_db.update(
+      _db.foodLogEntries,
+    )..where((e) => e.id.equals(entryId))).write(
+      FoodLogEntriesCompanion(
+        status: const Value(logStatusLogged),
+        loggedAt: Value(at ?? DateTime.now()),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
+    await _invalidate(entryId);
+  }
+
+  /// Marks a planned entry as not eaten after all (FR-P-05).
+  ///
+  /// Kept rather than deleted. A plan that was ignored three weeks running
+  /// is the most useful thing the planner can tell you about itself, and a
+  /// deleted row tells you nothing.
+  Future<void> skipEntry(String entryId) async {
+    await (_db.update(
+      _db.foodLogEntries,
+    )..where((e) => e.id.equals(entryId))).write(
+      FoodLogEntriesCompanion(
+        status: const Value(logStatusSkipped),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
+    await _invalidate(entryId);
+  }
+
+  /// Puts a confirmed or skipped entry back to planned — the undo for
+  /// either, and the reason both actions can be one tap with no dialog.
+  Future<void> unconfirmEntry(String entryId) async {
+    await (_db.update(
+      _db.foodLogEntries,
+    )..where((e) => e.id.equals(entryId))).write(
+      FoodLogEntriesCompanion(
+        status: const Value(logStatusPlanned),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
+    await _invalidate(entryId);
+  }
+
+  /// Today's logged entries for [ownerId], newest first, joined to the
+  /// food and meal slot names — what the minimal Today screen (§27.2,
+  /// pending the real dashboard in Phase 3) shows to confirm a log
+  /// actually saved.
+  Stream<List<LoggedFood>> watchToday({
+    required String ownerId,
+    required DateTime logDate,
+  }) {
+    final query =
+        _db.select(_db.foodLogEntries).join([
+            innerJoin(
+              _db.foodItems,
+              _db.foodItems.id.equalsExp(_db.foodLogEntries.foodId),
+            ),
+            innerJoin(
+              _db.mealSlots,
+              _db.mealSlots.id.equalsExp(_db.foodLogEntries.mealSlotId),
+            ),
+            // I-2: a food that doesn't report energy has no row here, not
+            // a zero row — the outer join is what makes that distinction
+            // survive rather than collapsing it to 0 kcal.
+            leftOuterJoin(
+              _db.logEntryNutrients,
+              _db.logEntryNutrients.entryId.equalsExp(_db.foodLogEntries.id) &
+                  _db.logEntryNutrients.nutrientId.equals('energy'),
+            ),
+          ])
+          ..where(
+            _db.foodLogEntries.ownerId.equals(ownerId) &
+                _db.foodLogEntries.logDate.equals(logDate) &
+                isActual(_db.foodLogEntries),
+          )
+          ..orderBy([OrderingTerm.desc(_db.foodLogEntries.loggedAt)]);
+
+    return query.watch().map(
+      (rows) => [
+        for (final row in rows)
+          LoggedFood(
+            entry: row.readTable(_db.foodLogEntries),
+            foodName: row.readTable(_db.foodItems).canonicalName,
+            mealSlotName: row.readTable(_db.mealSlots).displayName,
+            energyKcal: row.readTableOrNull(_db.logEntryNutrients)?.amount ?? 0,
+          ),
+      ],
+    );
+  }
+}
+
+/// A [FoodLogEntry] with the food and meal slot names — and its logged
+/// energy — already joined in, what a list screen needs without an N+1
+/// lookup per row.
+class LoggedFood {
+  const LoggedFood({
+    required this.entry,
+    required this.foodName,
+    required this.mealSlotName,
+    required this.energyKcal,
+  });
+
+  final FoodLogEntry entry;
+  final String foodName;
+  final String mealSlotName;
+  final double energyKcal;
+}

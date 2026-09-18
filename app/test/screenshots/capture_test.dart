@@ -1,0 +1,687 @@
+@Tags(['screenshots'])
+library;
+
+import 'dart:io';
+import 'dart:ui' as ui;
+
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart' show FontLoader;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:nourishly/app/app.dart';
+import 'package:nourishly/app/router.dart';
+import 'package:nourishly/features/reminders/data/local_notification_scheduler.dart';
+import 'package:nourishly/features/reminders/data/reminder_providers.dart';
+import 'package:nourishly/features/food_catalog/data/food_catalog_providers.dart';
+
+import 'package:nourishly_data/nourishly_data.dart';
+import 'package:nourishly_ui/nourishly_ui.dart';
+import 'package:nutrition_core/nutrition_core.dart' hide NutrientTarget;
+import 'package:drift/drift.dart' show Value, InsertMode;
+
+/// Renders each Phase 3 screen at iPhone-13 size and writes a PNG, so the
+/// result can be held next to `docs/design/prototype.html` rather than
+/// taken on trust.
+///
+/// Tagged so it does not run in CI: it writes files, and a screenshot is a
+/// review artefact rather than an assertion. Run it with
+/// `flutter test --tags screenshots`.
+///
+/// `captureImage` must be inside `tester.runAsync()`: outside it, the
+/// second capture in a file deadlocks waiting on a frame the fake async
+/// zone will never produce.
+void main() {
+  const outputDir = 'build/screenshots';
+  // iPhone 13 logical size — the device this is actually tested on.
+  const size = Size(390, 844);
+
+  late NourishlyDatabase db;
+  late String ownerId;
+
+  setUpAll(() async {
+    // Without this every glyph renders as a filled box (flutter_test's
+    // default font), which makes a screenshot useless for judging a design
+    // and makes every overflow warning a false positive — the test font is
+    // full-width for every character, so text measures far wider than it
+    // ever will on a phone.
+    for (final family in const ['IBM Plex Sans', 'IBM Plex Mono']) {
+      final loader = FontLoader(family);
+      for (final path in const [
+        '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
+        '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf',
+      ]) {
+        loader.addFont(
+          Future.value(File(path).readAsBytesSync().buffer.asByteData()),
+        );
+      }
+      await loader.load();
+    }
+  });
+
+  setUp(() async {
+    Directory(outputDir).createSync(recursive: true);
+    db = NourishlyDatabase.forTesting();
+    ownerId = await ensureDefaultOwner(db);
+    await _seedReferenceData(db);
+    await PreferencesDao(db).update(ownerId, onboardingSeen: true);
+    await _seedProfile(db, ownerId);
+    await _seedDay(db, ownerId);
+    await _seedHistory(db, ownerId);
+  });
+
+  tearDown(() => db.close());
+
+  final captureKey = GlobalKey();
+
+  Future<void> pump(WidgetTester tester, String location) async {
+    tester.view.physicalSize = size * 3;
+    tester.view.devicePixelRatio = 3;
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          nourishlyDatabaseProvider.overrideWithValue(db),
+          catalogReadyProvider.overrideWith((ref) async {}),
+          // No notification plugin answers a widget test, and a screen
+          // that needs one is a screen that cannot be tested (§29.3's
+          // port exists for exactly this).
+          reminderSchedulerProvider.overrideWithValue(NoopReminderScheduler()),
+        ],
+        child: RepaintBoundary(key: captureKey, child: const NourishlyApp()),
+      ),
+    );
+    // Navigate before settling. `appRouter` is a module-level singleton,
+    // so a fresh tree starts wherever the previous test left it — and
+    // settling on someone else's screen, against this test's fresh
+    // database, is a hang waiting to happen.
+    await tester.pump();
+    appRouter.go(location);
+    await tester.pumpAndSettle();
+  }
+
+  Future<void> shoot(WidgetTester tester, String name) async {
+    await tester.runAsync(() async {
+      // The boundary wraps the whole app rather than being looked up
+      // inside it: a route pushed on the root navigator (the report, the
+      // goals screen, setup) sits *above* the shell, so hunting for the
+      // first boundary in the tree captures the tab underneath it.
+      final boundary =
+          captureKey.currentContext!.findRenderObject()!
+              as RenderRepaintBoundary;
+      final image = await boundary.toImage(pixelRatio: 2);
+      final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
+      File('$outputDir/$name.png')
+          .writeAsBytesSync(bytes!.buffer.asUint8List());
+    });
+  }
+
+  testWidgets('dashboard', (tester) async {
+    await pump(tester, '/today');
+    await shoot(tester, '01-dashboard');
+  });
+
+  testWidgets('daily report', (tester) async {
+    await pump(tester, '/today/report');
+    await shoot(tester, '02-daily-report');
+  });
+
+  testWidgets('goals and targets', (tester) async {
+    await pump(tester, '/profile/goals');
+    await shoot(tester, '03-goals');
+  });
+
+  testWidgets('profile setup', (tester) async {
+    await pump(tester, '/profile/setup');
+    await shoot(tester, '04-profile-setup');
+  });
+
+  testWidgets('settings', (tester) async {
+    await pump(tester, '/profile');
+    await shoot(tester, '05-settings');
+  });
+
+  testWidgets('profile', (tester) async {
+    await pump(tester, '/profile/me');
+    await shoot(tester, '05c-profile');
+  });
+
+  testWidgets('insights', (tester) async {
+    await pump(tester, '/insights');
+    await shoot(tester, '06-insights');
+  });
+
+  testWidgets('weekly report', (tester) async {
+    await pump(tester, '/insights/week');
+    await shoot(tester, '09-weekly-report');
+  });
+
+  testWidgets('monthly report', (tester) async {
+    await pump(tester, '/insights/month');
+    await shoot(tester, '10-monthly-report');
+  });
+
+  testWidgets('weekly report, scrolled', (tester) async {
+    await pump(tester, '/insights/week');
+    await tester.drag(find.byType(ListView), const Offset(0, -700));
+    await tester.pumpAndSettle();
+    await shoot(tester, '09b-weekly-report-lower');
+  });
+
+  testWidgets('monthly report, scrolled', (tester) async {
+    await pump(tester, '/insights/month');
+    await tester.drag(find.byType(ListView), const Offset(0, -700));
+    await tester.pumpAndSettle();
+    await shoot(tester, '10b-monthly-report-lower');
+  });
+
+  testWidgets('weekly nutrient detail', (tester) async {
+    await pump(tester, '/insights/week/nutrient/protein');
+    await shoot(tester, '09c-weekly-nutrient');
+  });
+
+  testWidgets('recipes', (tester) async {
+    await _seedRecipe(db, ownerId);
+    await pump(tester, '/recipes');
+    await shoot(tester, '11-recipes');
+  });
+
+  testWidgets('recipe builder', (tester) async {
+    final recipeId = await _seedRecipe(db, ownerId);
+    await pump(tester, '/recipes/$recipeId');
+    await shoot(tester, '12-recipe-builder');
+  });
+
+  testWidgets('water, filled', (tester) async {
+    await pump(tester, '/water');
+    await shoot(tester, '07-water');
+  });
+
+  testWidgets('settings, scrolled to Your data', (tester) async {
+    await pump(tester, '/profile');
+    await tester.drag(find.byType(ListView), const Offset(0, -900));
+    await tester.pumpAndSettle();
+    await shoot(tester, '05b-settings-your-data');
+  });
+
+  testWidgets('reminders', (tester) async {
+    await PreferencesDao(db).update(ownerId, remindersEnabled: true);
+    await pump(tester, '/profile/reminders');
+    await shoot(tester, '13-reminders');
+  });
+
+  testWidgets('reminders, off', (tester) async {
+    await pump(tester, '/profile/reminders');
+    await shoot(tester, '13b-reminders-off');
+  });
+
+  testWidgets('your data', (tester) async {
+    await pump(tester, '/profile/data');
+    await shoot(tester, '14-your-data');
+  });
+
+  testWidgets('settings in dark mode', (tester) async {
+    await PreferencesDao(db).update(ownerId, theme: 'dark');
+    await pump(tester, '/profile');
+    await shoot(tester, '15-settings-dark');
+  });
+
+  testWidgets('dashboard in dark mode', (tester) async {
+    await PreferencesDao(db).update(ownerId, theme: 'dark');
+    await pump(tester, '/today');
+    await shoot(tester, '16-dashboard-dark');
+  });
+
+  testWidgets('water, mid-pour', (tester) async {
+    // The user's actual report: tap a quick-add and watch. Bounded pumps
+    // rather than `pumpAndSettle`, to catch the vessel part-way up with
+    // the surface still moving — the frame the settled shot cannot show.
+    await pump(tester, '/water');
+    await tester.tap(find.text('+500 ml'));
+    // Let the write land and the stream emit, without settling past the
+    // animation it kicks off.
+    for (var i = 0; i < 8; i++) {
+      await tester.pump(const Duration(milliseconds: 16));
+    }
+    await tester.pump(const Duration(milliseconds: 260));
+    await shoot(tester, '08-water-mid-pour');
+    // The quick-add message is transient and its watchdog is a real timer,
+    // so pump past it rather than ending the test with one pending.
+    await tester.pump(nourishlySnackDuration + const Duration(seconds: 1));
+    await tester.pumpAndSettle();
+    // Leave no timer running behind the test.
+    await tester.pumpAndSettle();
+  });
+}
+
+Future<void> _seedReferenceData(NourishlyDatabase db) async {
+  await db.batch((batch) {
+    for (final (id, name, order) in const [
+      ('macronutrients', 'Macronutrients', 0),
+      ('minerals', 'Minerals', 1),
+      ('vitamins', 'Vitamins', 2),
+    ]) {
+      batch.insert(
+        db.nutrientGroups,
+        NutrientGroupsCompanion.insert(id: id, name: name, sortOrder: order),
+      );
+    }
+    var order = 0;
+    for (final (id, name, unit, group) in const [
+      ('energy', 'Energy', 'kcal', 'macronutrients'),
+      ('protein', 'Protein', 'g', 'macronutrients'),
+      ('carbs', 'Carbohydrate', 'g', 'macronutrients'),
+      ('fat', 'Total fat', 'g', 'macronutrients'),
+      ('fibre', 'Dietary fibre', 'g', 'macronutrients'),
+      ('sodium', 'Sodium', 'mg', 'minerals'),
+      ('iron', 'Iron', 'mg', 'minerals'),
+      ('calcium', 'Calcium', 'mg', 'minerals'),
+      ('vitamin_c', 'Vitamin C', 'mg', 'vitamins'),
+    ]) {
+      batch.insert(
+        db.nutrients,
+        NutrientsCompanion.insert(
+          id: id,
+          groupId: group,
+          displayName: name,
+          canonicalUnit: unit,
+          displayPrecision: 0,
+          defaultCurveType: 'floor',
+          isLimitNutrient: id == 'sodium',
+          sortOrder: order++,
+          isCore: true,
+          minCoverageForScoring: 0.6,
+        ),
+      );
+    }
+    var slotOrder = 0;
+    for (final (id, name) in const [
+      ('breakfast', 'Breakfast'),
+      ('lunch', 'Lunch'),
+      ('snack', 'Snack'),
+      ('dinner', 'Dinner'),
+    ]) {
+      batch.insert(
+        db.mealSlots,
+        MealSlotsCompanion.insert(
+          id: id,
+          key: id,
+          displayName: name,
+          sortOrder: slotOrder++,
+        ),
+      );
+    }
+  });
+
+  await RdaImporter(db).importFromString(
+    File('assets/reference/rda_icmr_nin_2020.json').readAsStringSync(),
+  );
+}
+
+Future<void> _seedProfile(NourishlyDatabase db, String ownerId) {
+  return ProfileDao(db).saveProfileAndDeriveTargets(
+    ownerId: ownerId,
+    inputs: const ProfileInputs(
+      ageYears: 34,
+      heightCm: 174,
+      weightKg: 71,
+      activityLevel: ActivityLevel.light,
+      biologicalSex: BiologicalSex.male,
+    ),
+    dateOfBirth: DateTime(1992, 3, 14),
+    goal: GoalType.generalHealth,
+    effectiveFrom: DateTime.now().subtract(const Duration(days: 30)),
+  );
+}
+
+/// The prototype's sample day, so a screenshot can be held against it.
+Future<void> _seedDay(NourishlyDatabase db, String ownerId) async {
+  final now = DateTime.now();
+  final today = DateTime(now.year, now.month, now.day);
+
+  const meals = <(String, List<(String, double, Map<String, double>)>)>[
+    (
+      'breakfast',
+      [
+        (
+          'Thepla, methi',
+          90,
+          {
+            'energy': 250,
+            'protein': 6,
+            'carbs': 30,
+            'fat': 11,
+            'fibre': 3,
+            'sodium': 320,
+            'iron': 2.1,
+          },
+        ),
+        (
+          'Buttermilk',
+          200,
+          {'energy': 40, 'protein': 2, 'carbs': 4, 'fat': 1.5, 'sodium': 120},
+        ),
+      ],
+    ),
+    (
+      'lunch',
+      [
+        (
+          'Rotli / Chapati',
+          120,
+          {
+            'energy': 265,
+            'protein': 9,
+            'carbs': 52,
+            'fat': 2,
+            'fibre': 6,
+            'iron': 2.8,
+          },
+        ),
+        (
+          'Gujarati dal',
+          200,
+          {
+            'energy': 95,
+            'protein': 5,
+            'carbs': 14,
+            'fat': 2.5,
+            'fibre': 4,
+            'sodium': 410,
+            'iron': 1.6,
+          },
+        ),
+        (
+          'Rice, white, cooked',
+          150,
+          {
+            'energy': 130,
+            'protein': 2.7,
+            'carbs': 28,
+            'fat': 0.3,
+            'fibre': 0.4,
+          },
+        ),
+        (
+          'Bhinda nu shaak',
+          120,
+          {
+            'energy': 90,
+            'protein': 2,
+            'carbs': 8,
+            'fat': 6,
+            'fibre': 3,
+            'sodium': 260,
+            'vitamin_c': 14,
+          },
+        ),
+      ],
+    ),
+    (
+      'snack',
+      [
+        (
+          'Khakhra, plain',
+          30,
+          {'energy': 380, 'protein': 11, 'carbs': 66, 'fat': 8, 'fibre': 7},
+        ),
+        (
+          'Filter coffee',
+          100,
+          {'energy': 55, 'protein': 2, 'carbs': 7, 'fat': 2},
+        ),
+      ],
+    ),
+  ];
+
+  var index = 0;
+  await db.batch((batch) {
+    for (final (slot, foods) in meals) {
+      for (final (name, grams, per100g) in foods) {
+        final foodId = 'food-$index';
+        final entryId = 'entry-$index';
+        index++;
+        batch.insert(
+          db.foodItems,
+          FoodItemsCompanion.insert(
+            id: foodId,
+            kind: 'recipe',
+            canonicalName: name,
+            qualityTier: 'derived',
+            provenanceSource: 'catalog_pipeline_recipe',
+          ),
+          mode: InsertMode.insertOrReplace,
+        );
+        batch.insert(
+          db.foodLogEntries,
+          FoodLogEntriesCompanion.insert(
+            id: entryId,
+            ownerId: ownerId,
+            logDate: today,
+            mealSlotId: slot,
+            foodId: foodId,
+            foodRevision: 1,
+            servingSizeId: const Value(null),
+            quantity: 1,
+            gramsConsumed: grams,
+            loggedAt: today,
+            source: 'manual',
+          ),
+          mode: InsertMode.insertOrReplace,
+        );
+        for (final entry in per100g.entries) {
+          batch.insert(
+            db.logEntryNutrients,
+            LogEntryNutrientsCompanion.insert(
+              entryId: entryId,
+              nutrientId: entry.key,
+              amount: entry.value * grams / 100,
+            ),
+            mode: InsertMode.insertOrReplace,
+          );
+        }
+      }
+    }
+  });
+
+  await WaterLogDao(db)
+      .logWater(ownerId: ownerId, volumeMl: 1600, logDate: today);
+}
+
+/// Six weeks of plausible days behind today, so the weekly and monthly
+/// reports have a shape to draw rather than a single day and six gaps.
+///
+/// The numbers wander the way a real household's do: a couple of days
+/// short, one day nobody finished logging, and two days a week untouched.
+Future<void> _seedHistory(NourishlyDatabase db, String ownerId) async {
+  final now = DateTime.now();
+  final today = DateTime(now.year, now.month, now.day);
+
+  // Deterministic, so two runs of the harness produce the same picture.
+  const energyByOffset = [
+    1980,
+    2120,
+    1840,
+    0,
+    2260,
+    1920,
+    0,
+    2040,
+    1760,
+    2180,
+    620,
+    2100,
+    1880,
+    0,
+    2020,
+    1940,
+    2210,
+    1790,
+    0,
+    2160,
+    1850,
+    1990,
+    2070,
+    0,
+    1830,
+    2240,
+    1910,
+    0,
+    2050,
+    1870,
+    2130,
+    1780,
+    0,
+    2190,
+    1960,
+    2010,
+    1840,
+    0,
+    2080,
+    1900,
+    2150,
+    1820,
+  ];
+
+  await db.batch((batch) {
+    for (var back = 1; back <= energyByOffset.length; back++) {
+      final energy = energyByOffset[back - 1].toDouble();
+      if (energy == 0) continue;
+      final date = today.subtract(Duration(days: back));
+      final key = 'h$back';
+
+      batch.insert(
+        db.foodItems,
+        FoodItemsCompanion.insert(
+          id: 'food-$key',
+          kind: 'dish',
+          canonicalName: 'A day of home cooking',
+          qualityTier: 'derived',
+          provenanceSource: 'catalog_pipeline_recipe',
+        ),
+        mode: InsertMode.insertOrReplace,
+      );
+      batch.insert(
+        db.foodLogEntries,
+        FoodLogEntriesCompanion.insert(
+          id: 'entry-$key',
+          ownerId: ownerId,
+          logDate: date,
+          mealSlotId: 'lunch',
+          foodId: 'food-$key',
+          foodRevision: 1,
+          quantity: 1,
+          gramsConsumed: 900,
+          loggedAt: date,
+          source: 'manual',
+        ),
+        mode: InsertMode.insertOrReplace,
+      );
+
+      // Protein tracks energy; fibre is short most days, which is the
+      // household's actual pattern and what the reports should surface.
+      final scale = energy / 2050;
+      for (final entry in {
+        'energy': energy,
+        'protein': 96 * scale,
+        'carbs': 250 * scale,
+        'fat': 62 * scale,
+        'fibre': (back % 5 == 0 ? 31.0 : 18.0) * scale,
+        'sodium': 2300 * scale,
+        'iron': 14 * scale,
+        'calcium': 780 * scale,
+        'vitamin_c': 62 * scale,
+      }.entries) {
+        batch.insert(
+          db.logEntryNutrients,
+          LogEntryNutrientsCompanion.insert(
+            entryId: 'entry-$key',
+            nutrientId: entry.key,
+            amount: entry.value,
+          ),
+          mode: InsertMode.insertOrReplace,
+        );
+      }
+    }
+  });
+
+  for (var back = 1; back <= energyByOffset.length; back++) {
+    if (energyByOffset[back - 1] == 0) continue;
+    await WaterLogDao(db).logWater(
+      ownerId: ownerId,
+      volumeMl: back % 3 == 0 ? 1900 : 2700,
+      logDate: today.subtract(Duration(days: back)),
+    );
+  }
+}
+
+/// One saved recipe, so the recipe screens have something on them.
+Future<String> _seedRecipe(NourishlyDatabase db, String ownerId) async {
+  Future<String> ingredient(String name, Map<String, double> per100g) async {
+    final id = 'ing-${name.hashCode}';
+    await db
+        .into(db.foodItems)
+        .insert(
+          FoodItemsCompanion.insert(
+            id: id,
+            kind: 'ingredient',
+            canonicalName: name,
+            qualityTier: 'verified',
+            provenanceSource: 'usda_fdc',
+            dietClass: const Value('vegan'),
+          ),
+          mode: InsertMode.insertOrReplace,
+        );
+    await db.batch((batch) {
+      for (final entry in per100g.entries) {
+        batch.insert(
+          db.foodNutrientValues,
+          FoodNutrientValuesCompanion.insert(
+            id: 'fnv-$id-${entry.key}',
+            foodId: id,
+            nutrientId: entry.key,
+            amountPer100g: entry.value,
+            valueSource: 'analytical',
+          ),
+          mode: InsertMode.insertOrReplace,
+        );
+      }
+    });
+    return id;
+  }
+
+  final dal = await ingredient('Toor dal', {
+    'energy': 343,
+    'protein': 22,
+    'carbs': 58,
+    'fat': 1.5,
+    'fibre': 15,
+  });
+  final onion = await ingredient('Onion, raw', {
+    'energy': 40,
+    'protein': 1.1,
+    'carbs': 9,
+    'fat': 0.1,
+    'fibre': 1.7,
+  });
+  final oil = await ingredient('Groundnut oil', {
+    'energy': 884,
+    'protein': 0,
+    'carbs': 0,
+    'fat': 100,
+  });
+
+  return RecipeDao(db).saveRecipe(
+    ownerId: ownerId,
+    name: "Mummy's dal",
+    ingredients: [
+      RecipeIngredient(foodId: dal, name: 'Toor dal', grams: 200),
+      RecipeIngredient(foodId: onion, name: 'Onion, raw', grams: 80),
+      RecipeIngredient(foodId: oil, name: 'Groundnut oil', grams: 15),
+    ],
+    servingGrams: 150,
+    servingLabel: '1 katori',
+    cookedGrams: 740,
+  );
+}

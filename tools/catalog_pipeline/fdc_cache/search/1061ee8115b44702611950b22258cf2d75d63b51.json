@@ -1,0 +1,17 @@
+{
+  "query": "salad dressing mayonnaise regular with salt [Foundation,SR Legacy]",
+  "candidates": [
+    {
+      "fdcId": 171009,
+      "description": "Salad dressing, mayonnaise, regular"
+    },
+    {
+      "fdcId": 171403,
+      "description": "Salad dressing, mayonnaise type, regular, with salt"
+    },
+    {
+      "fdcId": 171020,
+      "description": "Salad dressing, french dressing, commercial, regular, without salt"
+    }
+  ]
+}
