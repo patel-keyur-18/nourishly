@@ -275,7 +275,20 @@ flowchart LR
 
 Without this, every goal change silently falsifies all historical reports — a bug that is invisible in testing and corrosive in production.
 
-**Pregnancy/lactation lifestages** materially change micronutrient targets. [ASSUMPTION A-6] Out of scope for v1.0: they carry clinical implications the app is not positioned to own (§30.8). If added, they require explicit medical disclaimers and probably a professional-guidance referral.
+**Pregnancy/lactation lifestages** materially change micronutrient targets. [ASSUMPTION A-6 — **superseded 2026-09-18**] Originally out of scope for v1.0. Built with the week planner, because Q-27 was answered: someone in the household is pregnant, and general-population targets being wrong for them stopped being hypothetical.
+
+What was built, and what was not:
+
+- `Lifestage` is split by trimester (`pregnant_t1`..`t3`) and by stage of nursing (`lactating_0_6`, `lactating_7_12`), because the requirements differ and one number for the whole of pregnancy is wrong for six months out of nine.
+- The stage is **derived from a due date**, never chosen, and re-derived at every launch and resume. A setting somebody has to change at week 14 and again at week 28 is a setting that gets forgotten, and a forgotten one means weeks of quietly wrong targets.
+- Energy and protein increments live in `target_derivation.dart` with the WHO energy-share rules, for the same reason: they are additions to a number derived per-profile, which a table keyed by age and sex cannot express.
+- Micronutrient rows carry a `lifestage` and are looked up with a **fallback to the adult row**, so the data states only the nutrients whose requirement actually changes. A missing row means "unchanged", never "no target".
+- A weight-loss goal is **refused**, not floored, while a pregnancy or nursing stage is set: an increment and a deficit can cancel into a number that looks reasonable and is not.
+- The §30.8 disclaimer appears on the goals screen and the profile screen — where the numbers are, not only in a settings page nobody opens.
+
+Deliberately **not** built, and said out loud on the screen rather than engineered around: **no per-food pregnancy warnings** (a clinical claim over 1,613 dishes with no sourced list behind it), and **no supplement logging** — so iron and folate will read low for anyone taking a prenatal, which the disclaimer states.
+
+The transcribed values in `rda_icmr_nin_2020.json` and the increments in `target_derivation.dart` are `pending_review` exactly as the adult values are, and the asset's notes list which nutrients were left without a pregnancy row rather than guessed at.
 
 ### 20.5 Snapshotting — the rule that makes history immutable
 
