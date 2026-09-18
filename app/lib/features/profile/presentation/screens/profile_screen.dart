@@ -294,12 +294,24 @@ class ProfileScreen extends ConsumerWidget {
       }
     }
 
+    // A year back covers the nursing stages, which the same date drives.
+    final firstDate = now.subtract(const Duration(days: 365));
+    final lastDate = now.add(const Duration(days: 300));
+    // A stored date can fall outside that window — the lifestage returns to
+    // adult after a year but the date itself is kept — and showDatePicker
+    // asserts that the initial date is inside it.
+    final initialDate = switch (existing) {
+      null => now.add(const Duration(days: 180)),
+      final date when date.isBefore(firstDate) => firstDate,
+      final date when date.isAfter(lastDate) => lastDate,
+      final date => date,
+    };
+
     final picked = await showDatePicker(
       context: context,
-      initialDate: existing ?? now.add(const Duration(days: 180)),
-      // A year back covers the nursing stages, which the same date drives.
-      firstDate: now.subtract(const Duration(days: 365)),
-      lastDate: now.add(const Duration(days: 300)),
+      initialDate: initialDate,
+      firstDate: firstDate,
+      lastDate: lastDate,
       helpText: 'Due date',
     );
     if (picked == null || !context.mounted) return;

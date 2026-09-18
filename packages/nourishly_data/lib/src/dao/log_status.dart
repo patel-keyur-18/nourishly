@@ -28,10 +28,6 @@ Expression<bool> isProjected($FoodLogEntriesTable entries) =>
     entries.deletedAt.isNull() &
     entries.status.isIn(const [logStatusLogged, logStatusPlanned]);
 
-/// Entries decided in advance and not yet resolved either way.
-Expression<bool> isPlanned($FoodLogEntriesTable entries) =>
-    entries.deletedAt.isNull() & entries.status.equals(logStatusPlanned);
-
 /// The same restriction as [isActual], for the handful of reads written as
 /// raw SQL. Interpolated into a `WHERE`, with `e` as the table alias.
 const String isActualSql = "e.deleted_at IS NULL AND e.status = 'logged'";

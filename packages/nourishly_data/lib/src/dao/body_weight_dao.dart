@@ -80,15 +80,13 @@ class BodyWeightDao {
     final goalRow = await dao.currentGoal(ownerId);
     return dao.saveProfileAndDeriveTargets(
       ownerId: ownerId,
-      inputs: ProfileInputs(
-        ageYears: ageInYears(profile.dateOfBirth),
-        heightCm: profile.heightCm,
-        weightKg: weightKg,
-        activityLevel: ActivityLevel.fromId(profile.activityLevel),
-        biologicalSex: BiologicalSex.fromId(profile.biologicalSex),
-        lifestage: Lifestage.fromId(profile.lifestage),
-        region: profile.regionRef,
-      ),
+      // Through [ProfileDao.inputsFrom] rather than rebuilt field by
+      // field. Rebuilding it here meant every field added to a profile had
+      // to be remembered in three places, and `dueDate` was not: recording
+      // a weight dropped it, which ended the pregnancy silently and left
+      // the lifestage frozen wherever it happened to be — with weight
+      // being the field a pregnant profile updates most often.
+      inputs: dao.inputsFrom(profile).copyWith(weightKg: weightKg),
       dateOfBirth: profile.dateOfBirth,
       goal: goalRow == null
           ? GoalType.generalHealth

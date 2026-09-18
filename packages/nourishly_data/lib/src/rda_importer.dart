@@ -19,6 +19,20 @@ class RdaImporter {
 
   /// Imports [json] unless a table with the same ruleset version is already
   /// present. Returns true if rows were written.
+  ///
+  /// The version is the whole upgrade mechanism, so **adding a row to the
+  /// asset without bumping `rulesetVersion` ships nothing**: every install
+  /// that already holds the old version short-circuits here, and only a
+  /// fresh install ever sees the new numbers. That is how the pregnancy
+  /// rows were nearly lost.
+  ///
+  /// When the version does change, the region's previous rows are removed
+  /// before the new ones land. [RdaReferences] is a lookup table, not a
+  /// history: two versions of it in place at once would leave
+  /// [ProfileDao.referencesFor] — which filters on region, lifestage and
+  /// age, but not on version — choosing between them arbitrarily. Nothing
+  /// references these rows by id; a derived [NutrientTargets] row holds
+  /// its own copy of the value it was built from.
   Future<bool> importIfNeeded(Map<String, dynamic> json) async {
     final rulesetVersion = json['rulesetVersion'] as String;
     final existing =
@@ -29,6 +43,12 @@ class RdaImporter {
     if (existing.isNotEmpty) return false;
 
     final region = json['region'] as String;
+    await (_db.delete(_db.rdaReferences)..where(
+          (r) =>
+              r.region.equals(region) &
+              r.rulesetVersion.equals(rulesetVersion).not(),
+        ))
+        .go();
     final defaultCitation = json['sourceCitation'] as String;
     final references = (json['references'] as List)
         .cast<Map<String, dynamic>>();

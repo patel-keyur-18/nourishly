@@ -36,7 +36,12 @@ class PlanProjectionCard extends ConsumerWidget {
     if (projection == null || summary == null) {
       return const SizedBox.shrink();
     }
-    if (projection.isEmpty) {
+    // `projectionFor` covers eaten entries too, so a day with meals logged
+    // and nothing planned comes back full. Without this the card would
+    // promise "if you eat this day" and then report on a day that already
+    // happened — which is the daily report's job, not this card's.
+    final hasPlan = projection.values.any((n) => n.planned > 0);
+    if (!hasPlan) {
       return NourishlyCard(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

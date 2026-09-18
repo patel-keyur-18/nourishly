@@ -243,6 +243,27 @@ void main() {
       expect(onTarget.single.quantity, 3);
     });
 
+    test('a day already eaten is not an empty day', () async {
+      await eatLunch(monday);
+      final nextMonday = monday.add(const Duration(days: 7));
+      // Next Monday has already happened and been logged — the most
+      // finished a day can be. A copy must not plan meals on top of it.
+      await eatLunch(nextMonday, quantity: 2);
+
+      final written = await plan.copyWeek(
+        ownerId: ownerId,
+        fromWeekStart: monday,
+        toWeekStart: nextMonday,
+      );
+
+      expect(written, 0);
+      final onTarget = await (db.select(
+        db.foodLogEntries,
+      )..where((e) => e.logDate.equals(nextMonday))).get();
+      expect(onTarget, hasLength(1));
+      expect(onTarget.single.status, logStatusLogged);
+    });
+
     test('skipped entries are not carried forward', () async {
       final skipped = await planLunch(monday);
       await logging.skipEntry(skipped);

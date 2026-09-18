@@ -212,13 +212,12 @@ class _TargetCardState extends ConsumerState<_TargetCard> {
         .resetTargetToDerived(
           ownerId: ownerId,
           nutrientId: widget.nutrientId,
-          inputs: ProfileInputs(
-            ageYears: ageInYears(profile.dateOfBirth),
-            heightCm: profile.heightCm,
-            weightKg: profile.weightKg,
-            activityLevel: ActivityLevel.fromId(profile.activityLevel),
-            biologicalSex: BiologicalSex.fromId(profile.biologicalSex),
-          ),
+          // Through inputsFrom, not rebuilt here: this one silently
+          // dropped lifestage, due date and region, so "reset to derived"
+          // on a pregnant profile handed back the adult number for that
+          // nutrient — the one action on the screen whose whole promise
+          // is that it restores what the app would have chosen.
+          inputs: ref.read(profileDaoProvider).inputsFrom(profile),
           goal: goalRow == null
               ? GoalType.generalHealth
               : GoalType.fromId(goalRow.goalType),

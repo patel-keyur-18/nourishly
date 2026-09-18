@@ -1,5 +1,5 @@
 {
-  "rulesetVersion": "1.0.0",
+  "rulesetVersion": "1.1.0",
   "region": "IN",
   "sourceCitation": "ICMR-NIN, Nutrient Requirements for Indians, 2020 (RDA/EAR report)",
   "reviewStatus": "pending_review",
@@ -15,6 +15,10 @@
     "One adult band (19+) rather than 19-59 and 60+: ICMR's adult recommendations for these",
     "nutrients are given against a reference body weight, and inventing a second band would",
     "imply a distinction this transcription cannot support.",
+    "",
+    "1.1.0 adds the pregnancy and lactation rows below. The version bump is what makes them",
+    "reach a device that already has 1.0.0 — the importer skips a version it already holds,",
+    "so adding a row without bumping this ships nothing but a fresh install.",
     "",
     "PREGNANCY AND LACTATION (added with the week planner). Only the nutrients whose",
     "requirement actually changes carry a lifestage row. Everything else falls back to the",

@@ -41,8 +41,19 @@ void main() {
       );
     });
 
-    test('the due date itself is already nursing', () {
-      expect(lifestageOn(due, due), Lifestage.lactating0to6);
+    test('the due date passing does not end the pregnancy by itself', () {
+      // Roughly one in ten pregnancies runs past the estimated date, and
+      // the app has no way to know a birth happened. Flipping here would
+      // add 600 kcal a day and drop the iron target mid-pregnancy.
+      expect(lifestageOn(due, due), Lifestage.pregnantT3);
+      expect(
+        lifestageOn(due.add(const Duration(days: 13)), due),
+        Lifestage.pregnantT3,
+      );
+      expect(
+        lifestageOn(due.add(Duration(days: postTermGraceDays)), due),
+        Lifestage.lactating0to6,
+      );
     });
 
     test('nursing runs six months, then six more', () {

@@ -90,8 +90,11 @@ final GoRouter appRouter = GoRouter(
         GoRoute(
           path: 'new',
           parentNavigatorKey: rootNavigatorKey,
-          builder: (context, state) =>
-              CustomFoodScreen(initialName: state.uri.queryParameters['name']),
+          builder: (context, state) => CustomFoodScreen(
+            initialName: state.uri.queryParameters['name'],
+            mealSlotId: state.uri.queryParameters['meal'],
+            planDate: state.uri.queryParameters['plan'],
+          ),
         ),
       ],
     ),

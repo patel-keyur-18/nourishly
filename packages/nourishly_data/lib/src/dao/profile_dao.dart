@@ -310,7 +310,12 @@ class ProfileDao {
       dateOfBirth: profile.dateOfBirth,
       goal: GoalType.fromId(goal?.goalType ?? GoalType.maintain.id),
       goalRateKgPerWeek: goal?.targetRateKgPerWeek,
-      effectiveFrom: _startOfToday(),
+      // From [at], not from the real today. They are the same in the app,
+      // which is exactly why getting it wrong here would never have shown
+      // up: the new version has to sort *after* the one it supersedes, and
+      // a profile edited later than `at` would otherwise keep winning and
+      // the stage would advance again on every single call.
+      effectiveFrom: DateTime(at.year, at.month, at.day),
     );
     return expected;
   }

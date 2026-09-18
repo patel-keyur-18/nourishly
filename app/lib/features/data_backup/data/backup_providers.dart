@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart' show Variable;
-import 'package:nourishly_data/nourishly_data.dart' show ProfileEraser;
+import 'package:nourishly_data/nourishly_data.dart'
+    show ProfileEraser, isActualSql;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app/providers.dart';
@@ -66,8 +67,8 @@ final hasAnyHistoryProvider = FutureProvider<bool>((ref) async {
   final db = ref.watch(nourishlyDatabaseProvider);
   final row = await db
       .customSelect(
-        'SELECT COUNT(*) AS c FROM food_log_entries '
-        'WHERE owner_id = ? AND deleted_at IS NULL',
+        'SELECT COUNT(*) AS c FROM food_log_entries e '
+        'WHERE e.owner_id = ? AND $isActualSql',
         variables: [Variable<String>(ownerId)],
       )
       .getSingle();
@@ -83,8 +84,8 @@ final firstEntryDateProvider = FutureProvider<DateTime?>((ref) async {
   final db = ref.watch(nourishlyDatabaseProvider);
   final row = await db
       .customSelect(
-        'SELECT MIN(log_date) AS d FROM food_log_entries '
-        'WHERE owner_id = ? AND deleted_at IS NULL',
+        'SELECT MIN(e.log_date) AS d FROM food_log_entries e '
+        'WHERE e.owner_id = ? AND $isActualSql',
         variables: [Variable<String>(ownerId)],
       )
       .getSingle();

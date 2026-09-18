@@ -91,7 +91,12 @@ class MealPlanDao {
   /// round: the copy is a new intention about the future, not a claim
   /// about the past, and ADR-008 protects the past, not the plan.
   ///
-  /// Refuses to write into a day that already has a plan, per [onConflict].
+  /// Refuses to write into a day that already has something on it, per
+  /// [onConflict]. "Something" is any entry that is not skipped — eaten
+  /// as well as planned. A day you have already eaten is not an empty day,
+  /// and copying a plan over Monday on a Thursday would put meals you did
+  /// not eat next to the ones you did.
+  ///
   /// Returns how many entries were written.
   Future<int> copyWeek({
     required String ownerId,
@@ -117,7 +122,7 @@ class MealPlanDao {
             .get();
     if (source.isEmpty) return 0;
 
-    final existing = await plannedDatesIn(
+    final existing = await daysWithEntries(
       ownerId: ownerId,
       from: targetStart,
       to: targetStart.add(const Duration(days: 6)),
@@ -150,10 +155,14 @@ class MealPlanDao {
     return written;
   }
 
-  /// The dates in `[from, to]` that already hold at least one planned
-  /// entry — what "this day is already planned" means to [copyWeek] and to
-  /// the week screen's day chips.
-  Future<Set<DateTime>> plannedDatesIn({
+  /// The dates in `[from, to]` that already hold at least one entry that
+  /// is not skipped — eaten or planned.
+  ///
+  /// This is what "this day already has something on it" means to
+  /// [copyWeek]. Deliberately not "has a plan": a day whose meals were
+  /// eaten is the *most* finished a day can be, and it would read as empty
+  /// to a check that only looked for planned rows.
+  Future<Set<DateTime>> daysWithEntries({
     required String ownerId,
     required DateTime from,
     required DateTime to,
@@ -169,7 +178,7 @@ class MealPlanDao {
                     _db.foodLogEntries.logDate.isSmallerOrEqualValue(
                       dateOnly(to),
                     ) &
-                    isPlanned(_db.foodLogEntries),
+                    isProjected(_db.foodLogEntries),
               ))
             .get();
     return {

@@ -83,6 +83,16 @@ enum Lifestage {
 /// convention every trimester boundary below is stated in.
 const int gestationDays = 280;
 
+/// How long past the due date [lifestageOn] keeps reporting a third
+/// trimester.
+///
+/// A due date is an estimate, and roughly one pregnancy in ten runs past
+/// it. Flipping to nursing targets on the estimated date would add
+/// 600 kcal a day and drop the iron target while someone is still
+/// pregnant, with nothing in the app to correct it — so the stage holds
+/// until two weeks past, which is where post-term care begins anyway.
+const int postTermGraceDays = 14;
+
 /// Which lifestage a due date puts someone in on [date] (FR-U-17).
 ///
 /// This is the whole reason the app asks for a due date instead of a
@@ -97,12 +107,16 @@ const int gestationDays = 280;
 /// [Lifestage.adult] — a year on, nothing here applies any more, and
 /// continuing to add 500 kcal a day because a date was never cleared is
 /// its own kind of wrong.
+///
+/// The third trimester holds for [postTermGraceDays] past the due date,
+/// because the date is an estimate and the app has no way to know a birth
+/// happened.
 Lifestage lifestageOn(DateTime date, DateTime dueDate) {
   final daysUntilDue = _dateOnly(dueDate).difference(_dateOnly(date)).inDays;
   final gestationalDay = gestationDays - daysUntilDue;
 
   if (gestationalDay < 0) return Lifestage.adult;
-  if (daysUntilDue > 0) {
+  if (daysUntilDue > -postTermGraceDays) {
     if (gestationalDay < 14 * 7) return Lifestage.pregnantT1;
     if (gestationalDay < 28 * 7) return Lifestage.pregnantT2;
     return Lifestage.pregnantT3;
@@ -159,14 +173,15 @@ class ProfileInputs {
 
   final String region;
 
-  ProfileInputs copyWith({Lifestage? lifestage}) => ProfileInputs(
-    ageYears: ageYears,
-    heightCm: heightCm,
-    weightKg: weightKg,
-    activityLevel: activityLevel,
-    biologicalSex: biologicalSex,
-    lifestage: lifestage ?? this.lifestage,
-    dueDate: dueDate,
-    region: region,
-  );
+  ProfileInputs copyWith({Lifestage? lifestage, double? weightKg}) =>
+      ProfileInputs(
+        ageYears: ageYears,
+        heightCm: heightCm,
+        weightKg: weightKg ?? this.weightKg,
+        activityLevel: activityLevel,
+        biologicalSex: biologicalSex,
+        lifestage: lifestage ?? this.lifestage,
+        dueDate: dueDate,
+        region: region,
+      );
 }

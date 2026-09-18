@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:nourishly_ui/nourishly_ui.dart';
 
 import '../../../../app/providers.dart';
+import 'food_logging_screen.dart';
 
 /// Create a food the catalog doesn't have (UX-6, FR-C-01) — the escape
 /// hatch that makes a failed search a starting point rather than a dead
@@ -14,9 +15,21 @@ import '../../../../app/providers.dart';
 /// optional and each one left blank stays *unknown*, not zero (AP-4) —
 /// so a food logged for its portion alone is still honest data.
 class CustomFoodScreen extends ConsumerStatefulWidget {
-  const CustomFoodScreen({super.key, this.initialName});
+  const CustomFoodScreen({
+    super.key,
+    this.initialName,
+    this.mealSlotId,
+    this.planDate,
+  });
 
   final String? initialName;
+
+  /// Carried straight through to the portion screen, both of them. This is
+  /// the third way into that screen, and the one easiest to forget: a
+  /// custom food created while planning Thursday dinner has to land on
+  /// Thursday as a plan, not on today as something eaten.
+  final String? mealSlotId;
+  final String? planDate;
 
   @override
   ConsumerState<CustomFoodScreen> createState() => _CustomFoodScreenState();
@@ -107,7 +120,10 @@ class _CustomFoodScreenState extends ConsumerState<CustomFoodScreen>
       if (!mounted) return;
       // Straight on to the portion screen — creating a food is only ever
       // a step on the way to logging it.
-      context.pushReplacement('/log/food/$foodId');
+      context.pushReplacement(
+        '/log/food/$foodId'
+        '${foodFlowQuery(mealSlotId: widget.mealSlotId, planDate: widget.planDate)}',
+      );
     } on Object catch (error) {
       if (!mounted) return;
       setState(() => _saving = false);

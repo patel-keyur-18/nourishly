@@ -299,7 +299,11 @@ class _Results extends StatelessWidget {
           ),
         ],
         const NourishlySectionHeader(label: 'Not finding it?'),
-        _CreateCustomFoodRow(query: query),
+        _CreateCustomFoodRow(
+          query: query,
+          mealSlotId: mealSlotId,
+          planDate: planDate,
+        ),
         const SizedBox(height: NourishlySpace.s2),
         const _BuildRecipeRow(),
       ],
@@ -311,9 +315,15 @@ class _Results extends StatelessWidget {
 /// search is never a dead end (UX-6). Creation itself lands with custom
 /// foods in a later phase.
 class _CreateCustomFoodRow extends StatelessWidget {
-  const _CreateCustomFoodRow({required this.query});
+  const _CreateCustomFoodRow({
+    required this.query,
+    required this.mealSlotId,
+    required this.planDate,
+  });
 
   final String query;
+  final String? mealSlotId;
+  final String? planDate;
 
   @override
   Widget build(BuildContext context) {
@@ -321,7 +331,9 @@ class _CreateCustomFoodRow extends StatelessWidget {
     final text = context.nourishlyText;
     return NourishlyCard(
       onTap: () => context.push(
-        '/log/new?name=${Uri.encodeQueryComponent(query.trim())}',
+        '/log/new?name=${Uri.encodeQueryComponent(query.trim())}'
+        '${mealSlotId == null ? '' : '&meal=$mealSlotId'}'
+        '${planDate == null ? '' : '&plan=$planDate'}',
       ),
       child: Row(
         children: [
