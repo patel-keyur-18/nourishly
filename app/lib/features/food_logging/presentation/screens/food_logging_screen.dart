@@ -13,7 +13,7 @@ import '../widgets/food_search_result_tile.dart';
 /// (prototype screens 4 and 5 — full screen, search first; results grouped
 /// by source so provenance stays visible, §19.11).
 class FoodLoggingScreen extends ConsumerStatefulWidget {
-  const FoodLoggingScreen({super.key, this.mealSlotId});
+  const FoodLoggingScreen({super.key, this.mealSlotId, this.planDate});
 
   /// The slot the user came in through, when they came in through one —
   /// "Add breakfast" on the dashboard rather than the nav bar's centre
@@ -21,8 +21,26 @@ class FoodLoggingScreen extends ConsumerStatefulWidget {
   /// chosen there.
   final String? mealSlotId;
 
+  /// Set when the flow started from the week plan, and carried through to
+  /// the portion screen so the entry lands on that date as an intention
+  /// rather than on today as intake.
+  final String? planDate;
+
   @override
   ConsumerState<FoodLoggingScreen> createState() => _FoodLoggingScreenState();
+}
+
+/// The `?meal=…&plan=…` suffix every push out of this screen carries.
+///
+/// One function rather than a concatenation at each call site: the flow
+/// has three ways into the portion screen, and a destination that silently
+/// drops the plan date on one of them writes the meal into today.
+String foodFlowQuery({String? mealSlotId, String? planDate}) {
+  final parts = [
+    if (mealSlotId != null) 'meal=$mealSlotId',
+    if (planDate != null) 'plan=$planDate',
+  ];
+  return parts.isEmpty ? '' : '?${parts.join('&')}';
 }
 
 class _FoodLoggingScreenState extends ConsumerState<FoodLoggingScreen> {
@@ -113,12 +131,16 @@ class _FoodLoggingScreenState extends ConsumerState<FoodLoggingScreen> {
               ),
               data: (results) {
                 if (query.trim().isEmpty) {
-                  return _BrowseByCuisine(mealSlotId: widget.mealSlotId);
+                  return _BrowseByCuisine(
+                    mealSlotId: widget.mealSlotId,
+                    planDate: widget.planDate,
+                  );
                 }
                 return _Results(
                   query: query,
                   results: results,
                   mealSlotId: widget.mealSlotId,
+                  planDate: widget.planDate,
                 );
               },
             ),
@@ -142,9 +164,10 @@ class _FoodLoggingScreenState extends ConsumerState<FoodLoggingScreen> {
 /// is what a seed built before §0.8 looks like. An empty shelf would be
 /// worse than no shelf.
 class _BrowseByCuisine extends ConsumerWidget {
-  const _BrowseByCuisine({required this.mealSlotId});
+  const _BrowseByCuisine({required this.mealSlotId, required this.planDate});
 
   final String? mealSlotId;
+  final String? planDate;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -217,7 +240,7 @@ class _BrowseByCuisine extends ConsumerWidget {
               food: food,
               onTap: () => context.push(
                 '/log/food/${food.id}'
-                '${mealSlotId == null ? '' : '?meal=$mealSlotId'}',
+                '${foodFlowQuery(mealSlotId: mealSlotId, planDate: planDate)}',
               ),
             ),
         ],
@@ -234,11 +257,13 @@ class _Results extends StatelessWidget {
     required this.query,
     required this.results,
     required this.mealSlotId,
+    required this.planDate,
   });
 
   final String query;
   final List<FoodItem> results;
   final String? mealSlotId;
+  final String? planDate;
 
   @override
   Widget build(BuildContext context) {
@@ -265,7 +290,7 @@ class _Results extends StatelessWidget {
                     food: results[i],
                     onTap: () => context.push(
                       '/log/food/${results[i].id}'
-                      '${mealSlotId == null ? '' : '?meal=$mealSlotId'}',
+                      '${foodFlowQuery(mealSlotId: mealSlotId, planDate: planDate)}',
                     ),
                   ),
                 ],

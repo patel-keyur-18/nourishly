@@ -6,6 +6,7 @@ import 'package:nourishly_ui/nourishly_ui.dart';
 
 import '../../../../app/providers.dart';
 import '../../../data_backup/presentation/widgets/export_prompt_banner.dart';
+import '../../../meal_plan/presentation/widgets/planned_meal_card.dart';
 import '../../../profile/data/profile_providers.dart';
 import '../widgets/day_header.dart';
 import '../widgets/dashboard_cards.dart';
@@ -75,7 +76,13 @@ class DashboardScreen extends ConsumerWidget {
                 FocusNutrientsCard(summary: summary),
                 StatusChipRow(summary: summary),
                 const SizedBox(height: NourishlySpace.s3),
+                // Above the meals list, below everything that says how the
+                // day is going: a planned meal is the next thing you act
+                // on, not part of the record of what has happened.
+                const PlannedMealsSection(),
                 MealsCard(summary: summary),
+                const SizedBox(height: NourishlySpace.s3),
+                const _WeekPlanLink(),
                 if (summary.hasAnything) ...[
                   const SizedBox(height: NourishlySpace.s3),
                   const _DayLogLink(),
@@ -92,6 +99,43 @@ class DashboardScreen extends ConsumerWidget {
 
   void _shiftDay(WidgetRef ref, int days) {
     ref.read(selectedDateProvider.notifier).shiftBy(days);
+  }
+}
+
+/// The way into the week plan (screen 14).
+///
+/// Ungated, unlike the day-log and report links: those two need a day with
+/// something in it, and the plan is most useful on a week with nothing in
+/// it yet. It sits here rather than in the nav bar because
+/// [NourishlyBottomNav] is four destinations around the centre action by
+/// construction — see `/plan` in the router.
+class _WeekPlanLink extends StatelessWidget {
+  const _WeekPlanLink();
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.nourishlyColors;
+    final text = context.nourishlyText;
+    return NourishlyCard(
+      padding: EdgeInsets.zero,
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: NourishlySpace.s4,
+          vertical: NourishlySpace.s1,
+        ),
+        leading: Icon(Icons.calendar_month_rounded, color: colors.accent),
+        title: Text(
+          'Week plan',
+          style: text.body.copyWith(fontWeight: FontWeight.w600),
+        ),
+        subtitle: Text(
+          'Decide the week, then confirm what you ate',
+          style: text.caption.copyWith(color: colors.ink3),
+        ),
+        trailing: Icon(Icons.chevron_right_rounded, color: colors.ink3),
+        onTap: () => context.push('/plan'),
+      ),
+    );
   }
 }
 

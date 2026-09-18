@@ -28,6 +28,7 @@ class FoodPortionScreen extends ConsumerStatefulWidget {
     required this.foodId,
     this.initialMealSlotId,
     this.entryId,
+    this.planDate,
   });
 
   final String foodId;
@@ -39,6 +40,12 @@ class FoodPortionScreen extends ConsumerStatefulWidget {
   /// Present when editing an already-logged entry rather than adding a
   /// new one.
   final String? entryId;
+
+  /// Set when the flow started from the week plan: the entry is written
+  /// against this date and marked planned, so it is an intention rather
+  /// than something eaten. The screen is otherwise identical — one flow,
+  /// two destinations.
+  final DateTime? planDate;
 
   @override
   ConsumerState<FoodPortionScreen> createState() => _FoodPortionScreenState();
@@ -54,6 +61,7 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen>
   bool _saving = false;
 
   bool get _editing => widget.entryId != null;
+  bool get _planning => widget.planDate != null;
 
   @override
   String? get restorationId => 'food_portion_${widget.foodId}';
@@ -128,7 +136,9 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen>
         servingId: _servingId.value!,
         quantity: _quantity.value,
         mealSlotId: _mealSlotId.value!,
-        logDate: ref.read(todayProvider),
+        logDate: widget.planDate ?? ref.read(todayProvider),
+        status: _planning ? logStatusPlanned : logStatusLogged,
+        source: _planning ? 'plan' : 'manual',
       );
     }
 
@@ -140,6 +150,14 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen>
       // that screen so the edit is immediately visible, rather than
       // unwinding past it to the dashboard.
       context.pop();
+    } else if (_planning) {
+      // Exactly the two routes this flow pushed — the portion screen and
+      // the `/log` modal — so the user lands back on the week plan they
+      // came from. Unwinding to the shell here would answer "add a meal
+      // to Thursday" by closing the plan.
+      for (var i = 0; i < 2 && context.canPop(); i++) {
+        context.pop();
+      }
     } else {
       // Pop back through the portion screen and the /log modal to
       // wherever the user was (§28.4: logging is a task, not a place).
@@ -150,10 +168,11 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen>
         context.pop();
       }
     }
-    showNourishlySnackOn(
-      messenger,
-      _editing ? 'Changes saved.' : 'Added to your log.',
-    );
+    showNourishlySnackOn(messenger, switch ((_editing, _planning)) {
+      (true, _) => 'Changes saved.',
+      (false, true) => 'Added to your plan.',
+      (false, false) => 'Added to your log.',
+    });
   }
 
   /// A catalog recipe can be forked into one of your own; your own
@@ -234,6 +253,7 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen>
                     _mealSlotId.value != null,
                 saving: _saving,
                 editing: _editing,
+                planning: _planning,
                 onPressed: _save,
               ),
             ],
@@ -524,12 +544,14 @@ class _SaveBar extends StatelessWidget {
     required this.enabled,
     required this.saving,
     required this.editing,
+    required this.planning,
     required this.onPressed,
   });
 
   final bool enabled;
   final bool saving;
   final bool editing;
+  final bool planning;
   final VoidCallback onPressed;
 
   @override
@@ -549,7 +571,13 @@ class _SaveBar extends StatelessWidget {
           child: FilledButton(
             onPressed: enabled ? onPressed : null,
             child: Text(
-              saving ? 'Saving…' : (editing ? 'Save changes' : 'Add to log'),
+              saving
+                  ? 'Saving…'
+                  : switch ((editing, planning)) {
+                      (true, _) => 'Save changes',
+                      (false, true) => 'Add to plan',
+                      (false, false) => 'Add to log',
+                    },
             ),
           ),
         ),

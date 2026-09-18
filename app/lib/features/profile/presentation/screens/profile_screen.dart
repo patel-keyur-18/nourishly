@@ -175,6 +175,37 @@ class ProfileScreen extends ConsumerWidget {
                 ],
               ),
 
+              // Last, not beside "Reference values" where it arguably
+              // belongs: this is the rarest row on the screen, and the
+              // rows above it are the ones people actually come here to
+              // change.
+              const NourishlySectionHeader(label: 'Pregnancy'),
+              NourishlyRowGroup(
+                children: [
+                  NourishlyListRow(
+                    title: 'Due date',
+                    value: profile?.dueDate == null
+                        ? 'Not set'
+                        : _formatDate(profile!.dueDate!),
+                    // The stage is shown but never chosen: it is derived
+                    // from the date, and re-derived at every launch. A
+                    // setting somebody has to remember to change at week
+                    // 14 is a setting that gets forgotten.
+                    subtitle: profile?.dueDate == null
+                        ? 'Sets pregnancy and nursing targets, and moves '
+                              'them on by itself.'
+                        : _lifestageSubtitle(profile!.dueDate!, today),
+                    onTap: profile == null
+                        ? null
+                        : () => _editDueDate(context, ref, profile),
+                  ),
+                ],
+              ),
+              if (profile?.dueDate != null) ...[
+                const SizedBox(height: NourishlySpace.s2),
+                const _MedicalDisclaimerCard(),
+              ],
+
               if (profile == null) ...[
                 const SizedBox(height: NourishlySpace.s5),
                 const _NoProfileCard(),
@@ -228,6 +259,56 @@ class ProfileScreen extends ConsumerWidget {
     final messenger = ScaffoldMessenger.of(context);
     await ref.read(profileEditorProvider).setDateOfBirth(picked);
     showNourishlySnackOn(messenger, 'Date of birth saved.');
+  }
+
+  Future<void> _editDueDate(
+    BuildContext context,
+    WidgetRef ref,
+    UserProfileVersion profile,
+  ) async {
+    final now = ref.read(clockProvider).now();
+    final existing = profile.dueDate;
+    if (existing != null) {
+      final action = await showNourishlyOptions<String>(
+        context: context,
+        title: 'Due date',
+        message:
+            'Targets follow this date on their own — through the '
+            'trimesters, then nursing, then back to normal a year on.',
+        selected: 'change',
+        options: const [
+          NourishlyOption(value: 'change', label: 'Change the date'),
+          NourishlyOption(
+            value: 'clear',
+            label: 'Clear it',
+            subtitle: 'Back to standard adult targets',
+          ),
+        ],
+      );
+      if (action == null || !context.mounted) return;
+      if (action == 'clear') {
+        final messenger = ScaffoldMessenger.of(context);
+        await ref.read(profileEditorProvider).setDueDate(null);
+        showNourishlySnackOn(messenger, 'Back to standard adult targets.');
+        return;
+      }
+    }
+
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: existing ?? now.add(const Duration(days: 180)),
+      // A year back covers the nursing stages, which the same date drives.
+      firstDate: now.subtract(const Duration(days: 365)),
+      lastDate: now.add(const Duration(days: 300)),
+      helpText: 'Due date',
+    );
+    if (picked == null || !context.mounted) return;
+    final messenger = ScaffoldMessenger.of(context);
+    await ref.read(profileEditorProvider).setDueDate(picked);
+    showNourishlySnackOn(
+      messenger,
+      'Targets updated for ${lifestageOn(now, picked).label.toLowerCase()}.',
+    );
   }
 
   Future<void> _editReference(
@@ -615,4 +696,47 @@ String _formatDate(DateTime date) {
     'December',
   ];
   return '${date.day} ${months[date.month - 1]} ${date.year}';
+}
+
+/// The trimester or nursing stage a due date puts the profile in today,
+/// plus how far along it is.
+String _lifestageSubtitle(DateTime dueDate, DateTime today) {
+  final stage = lifestageOn(today, dueDate);
+  if (stage == Lifestage.adult) {
+    return 'A year past — standard adult targets apply again.';
+  }
+  final weeks = gestationalWeeksOn(today, dueDate);
+  return weeks == null ? stage.label : '${stage.label} · $weeks weeks';
+}
+
+/// §30.8's disclaimer, on the screen where the targets are, not only in a
+/// settings page nobody opens.
+class _MedicalDisclaimerCard extends StatelessWidget {
+  const _MedicalDisclaimerCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.nourishlyColors;
+    final text = context.nourishlyText;
+    return NourishlyCard(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.info_outline_rounded, size: 18, color: colors.statusLow),
+          const SizedBox(width: NourishlySpace.s3),
+          Expanded(
+            child: Text(
+              'These are reference values, not medical advice. Nourishly '
+              'is not a medical device. For decisions about a pregnancy or '
+              'a specific diet, speak to a qualified healthcare '
+              'professional.\n\nSupplements cannot be logged yet, so iron '
+              'and folate may read lower here than what you are actually '
+              'taking in.',
+              style: text.caption.copyWith(color: colors.ink2),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

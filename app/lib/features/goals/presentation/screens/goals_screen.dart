@@ -54,6 +54,10 @@ class GoalsScreen extends ConsumerWidget {
               NourishlySpace.s7,
             ),
             children: [
+              if (profile?.dueDate case final dueDate?) ...[
+                _LifestageBanner(dueDate: dueDate, today: today),
+                const SizedBox(height: NourishlySpace.s3),
+              ],
               const NourishlySectionHeader(label: 'The six you look at'),
               for (final id in _headline)
                 if (targets[id] case final target?)
@@ -501,6 +505,87 @@ class _NoTargetsYet extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// What stage the profile is at, what that changed, and the disclaimer —
+/// on the screen where the numbers are, which is §30.8's whole point.
+class _LifestageBanner extends ConsumerWidget {
+  const _LifestageBanner({required this.dueDate, required this.today});
+
+  final DateTime dueDate;
+  final DateTime today;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colors = context.nourishlyColors;
+    final text = context.nourishlyText;
+    final stage = lifestageOn(today, dueDate);
+    final weeks = gestationalWeeksOn(today, dueDate);
+    final increment = lifestageIncrements[stage];
+    final goal = ref.watch(currentGoalProvider).value;
+    final deficitRefused =
+        stage.refusesDeficit &&
+        GoalType.fromId(goal?.goalType ?? 'general_health') ==
+            GoalType.loseWeight;
+
+    return NourishlyCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(child: Text(stage.label, style: text.heading)),
+              if (weeks != null)
+                Text(
+                  '$weeks weeks',
+                  style: text.caption.copyWith(color: colors.ink3),
+                ),
+            ],
+          ),
+          if (increment != null && increment.energyKcal > 0) ...[
+            const SizedBox(height: NourishlySpace.s2),
+            Text(
+              'Your energy target is ${increment.energyKcal.round()} kcal '
+              'higher than it would otherwise be, and protein is '
+              '${increment.proteinG} g higher.',
+              style: text.caption.copyWith(color: colors.ink2),
+            ),
+          ],
+          if (deficitRefused) ...[
+            const SizedBox(height: NourishlySpace.s3),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const StatusChip(
+                  label: 'Goal not applied',
+                  status: NourishlyStatus.low,
+                ),
+                const SizedBox(width: NourishlySpace.s2),
+                Expanded(
+                  child: Text(
+                    'Your goal is set to lose weight. While a pregnancy or '
+                    'nursing stage is set, targets are derived for '
+                    'maintenance instead — an energy deficit is not '
+                    'something this app will calculate for you here.',
+                    style: text.caption.copyWith(color: colors.ink2),
+                  ),
+                ),
+              ],
+            ),
+          ],
+          const SizedBox(height: NourishlySpace.s3),
+          Text(
+            'These are reference values, not medical advice. Nourishly is '
+            'not a medical device. For decisions about a pregnancy or a '
+            'specific diet, speak to a qualified healthcare professional. '
+            'Supplements cannot be logged yet, so iron and folate may read '
+            'lower here than what you are actually taking in.',
+            style: text.caption.copyWith(color: colors.ink3),
+          ),
+        ],
       ),
     );
   }
