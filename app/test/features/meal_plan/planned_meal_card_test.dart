@@ -5,6 +5,7 @@ import 'package:nourishly/app/providers.dart';
 import 'package:nourishly/features/food_catalog/data/food_catalog_providers.dart';
 import 'package:nourishly/features/meal_plan/presentation/widgets/planned_meal_card.dart';
 import 'package:nourishly_data/nourishly_data.dart';
+import 'package:nourishly_domain/nourishly_domain.dart';
 import 'package:nourishly_ui/nourishly_ui.dart';
 
 /// The confirm flow has to be one tap when the plan was right, and it has
@@ -84,7 +85,7 @@ void main() {
       ProviderScope(
         overrides: [
           nourishlyDatabaseProvider.overrideWithValue(db),
-          todayProvider.overrideWithValue(today),
+          clockProvider.overrideWithValue(FakeClock(today)),
         ],
         child: MaterialApp(
           theme: NourishlyTheme.light(),

@@ -6,6 +6,7 @@ import 'package:uuid/uuid.dart';
 // object of the same name.
 import '../database.dart' hide DailyScore, NutrientTarget;
 import 'log_status.dart';
+import 'preferences_dao.dart';
 import 'profile_dao.dart';
 
 const _uuid = Uuid();
@@ -137,12 +138,43 @@ class DailySummaryDao {
     DateTime? now,
   }) async {
     final date = dateOnly(logDate);
+    final at = now ?? DateTime.now();
     final cached = await _cachedRow(ownerId, date);
-    if (cached == null || cached.isStale) {
-      await recompute(ownerId: ownerId, logDate: date, now: now);
+    if (cached == null ||
+        cached.isStale ||
+        await _hasSinceEnded(ownerId, date, cached, at)) {
+      await recompute(ownerId: ownerId, logDate: date, now: at);
     }
-    return _read(ownerId: ownerId, logDate: date, now: now);
+    return _read(ownerId: ownerId, logDate: date, now: at);
   }
+
+  /// Whether [cached] was built while the day was still running, and the
+  /// day has since ended.
+  ///
+  /// [DailySummaries.isStale] cannot cover this: it is set by writes, and
+  /// a day ending is not a write. Without this check a summary computed at
+  /// lunchtime keeps its `day_incomplete` score for good, and every screen
+  /// reading the stored score — the dashboard's day header, the daily
+  /// report, the weekly averages — goes on calling a finished day "In
+  /// progress".
+  ///
+  /// Self-limiting: the recompute stamps `computedAt` past the boundary,
+  /// so a settled day is served from the cache on every later visit.
+  Future<bool> _hasSinceEnded(
+    String ownerId,
+    DateTime date,
+    DailySummary cached,
+    DateTime at,
+  ) async {
+    final rollover = await _rolloverMinutes(ownerId);
+    return _isDayComplete(date, at, rollover) &&
+        !_isDayComplete(date, cached.computedAt, rollover);
+  }
+
+  /// The profile's rollover time (FR-U-08) — where the day boundary
+  /// actually falls, which is not always midnight.
+  Future<int> _rolloverMinutes(String ownerId) async =>
+      (await PreferencesDao(_db).forOwner(ownerId)).dayRolloverTime;
 
   /// Marks a day for rebuild. Called by every write that changes what a day
   /// contains — cheap, and it means no caller has to remember to
@@ -236,7 +268,11 @@ class DailySummaryDao {
         ? GoalType.generalHealth
         : GoalType.fromId(goalRow.goalType);
 
-    final isComplete = _isDayComplete(date, at);
+    final isComplete = _isDayComplete(
+      date,
+      at,
+      await _rolloverMinutes(ownerId),
+    );
     final day = DayForScoring(
       nutrients: aggregates,
       targets: Map.of(targets)..remove('water'),
@@ -369,6 +405,7 @@ class DailySummaryDao {
   }) async {
     final date = dateOnly(logDate);
     final at = now ?? DateTime.now();
+    final rollover = await _rolloverMinutes(ownerId);
     final summary = await _cachedRow(ownerId, date);
     final nutrientRows = await _db.select(_db.nutrients).get()
       ..sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
@@ -401,7 +438,7 @@ class DailySummaryDao {
         ),
         insights: const [],
         waterMl: waterMl,
-        isComplete: _isDayComplete(date, at),
+        isComplete: _isDayComplete(date, at, rollover),
         energyTargetKcal: targets['energy']?.amount,
         waterTargetMl: targets['water']?.amount,
       );
@@ -478,7 +515,7 @@ class DailySummaryDao {
           ),
       ],
       waterMl: waterMl,
-      isComplete: _isDayComplete(date, at),
+      isComplete: _isDayComplete(date, at, rollover),
       energyTargetKcal: targets['energy']?.amount,
       waterTargetMl: targets['water']?.amount,
     );
@@ -661,8 +698,13 @@ class DailySummaryDao {
 DateTime dateOnly(DateTime value) =>
     DateTime(value.year, value.month, value.day);
 
-/// A day is complete once it is in the past. The rollover time in
-/// [UserPreferences] shifts where the boundary falls; until the settings
-/// screen exposes it, midnight is the boundary.
-bool _isDayComplete(DateTime date, DateTime now) =>
-    dateOnly(date).isBefore(dateOnly(now));
+/// A day is complete once the profile's rollover time has carried the
+/// clock past it (FR-U-08).
+///
+/// With a 04:00 rollover, 1am on Saturday is still Friday — so Friday is
+/// not scored until 4am on Saturday, which is the same boundary
+/// [logDateFor] puts new entries on. Scoring on a different boundary from
+/// the one the log writes to would finalise a day the user is still
+/// eating.
+bool _isDayComplete(DateTime date, DateTime now, int rolloverMinutes) =>
+    dateOnly(date).isBefore(logDateFor(now, rolloverMinutes: rolloverMinutes));
