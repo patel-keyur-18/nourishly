@@ -315,6 +315,108 @@ void main() {
     expect(summary.energyRemainingKcal, isNotNull);
   });
 
+  group('the day ending (§21.5 day-completeness gating)', () {
+    // The same pair the "aggregates, scores, and caches" test relies on:
+    // together they clear the implausibly-low-energy gate, so the only
+    // thing withholding a score is the clock.
+    Future<void> logAFullDay() async {
+      await logFood(
+        name: 'Thepla',
+        per100g: {'energy': 300, 'protein': 8, 'fibre': 4, 'iron': 3},
+        grams: 200,
+      );
+      await logFood(
+        name: 'Gujarati dal',
+        per100g: {'energy': 90, 'protein': 5, 'fibre': 3, 'iron': 2},
+        grams: 400,
+        slot: 'dinner',
+      );
+    }
+
+    Future<DailySummary> cachedRow() => (db.select(
+      db.dailySummaries,
+    )..where((s) => s.logDate.equals(yesterday))).getSingle();
+
+    test('a day read while it was running is rescored once it ends', () async {
+      await setUpProfile();
+      await logAFullDay();
+
+      final during = await DailySummaryDao(db).summaryFor(
+        ownerId: ownerId,
+        logDate: yesterday,
+        now: yesterday.add(const Duration(hours: 20)),
+      );
+      expect(during.score.withheldReason, ScoreWithheldReason.dayIncomplete);
+      expect((await cachedRow()).completenessFlag, 'in_progress');
+
+      // Nothing has been logged since, so nothing marked the day stale.
+      // The only thing that changed is the clock — which is exactly the
+      // case that left "In progress" on the chip forever.
+      final after = await DailySummaryDao(db).summaryFor(
+        ownerId: ownerId,
+        logDate: yesterday,
+        now: yesterday.add(const Duration(days: 1, hours: 9)),
+      );
+      expect(after.score.withheldReason, isNull);
+      expect(after.score.composite, isNotNull);
+      expect(after.score.band, isNotNull);
+      expect(after.isComplete, isTrue);
+      expect((await cachedRow()).completenessFlag, 'complete');
+    });
+
+    test('the rescore happens once, not on every read', () async {
+      await setUpProfile();
+      await logAFullDay();
+      await DailySummaryDao(db).summaryFor(
+        ownerId: ownerId,
+        logDate: yesterday,
+        now: yesterday.add(const Duration(hours: 20)),
+      );
+
+      final at = yesterday.add(const Duration(days: 1, hours: 9));
+      await DailySummaryDao(db)
+          .summaryFor(ownerId: ownerId, logDate: yesterday, now: at);
+      final rescoredAt = (await cachedRow()).computedAt;
+
+      await DailySummaryDao(db).summaryFor(
+        ownerId: ownerId,
+        logDate: yesterday,
+        now: at.add(const Duration(hours: 3)),
+      );
+      expect(
+        (await cachedRow()).computedAt,
+        rescoredAt,
+        reason: 'a settled day is read from the cache, not rebuilt',
+      );
+    });
+
+    test('a 4am rollover holds the day open past midnight', () async {
+      await PreferencesDao(db).update(ownerId, dayRolloverTime: 4 * 60);
+      await setUpProfile();
+      await logAFullDay();
+
+      final atOne = await DailySummaryDao(db).summaryFor(
+        ownerId: ownerId,
+        logDate: yesterday,
+        now: yesterday.add(const Duration(days: 1, hours: 1)),
+      );
+      expect(
+        atOne.score.withheldReason,
+        ScoreWithheldReason.dayIncomplete,
+        reason: '1am still belongs to yesterday under a 4am rollover',
+      );
+      expect(atOne.isComplete, isFalse);
+
+      final atFive = await DailySummaryDao(db).summaryFor(
+        ownerId: ownerId,
+        logDate: yesterday,
+        now: yesterday.add(const Duration(days: 1, hours: 5)),
+      );
+      expect(atFive.score.withheldReason, isNull);
+      expect(atFive.isComplete, isTrue);
+    });
+  });
+
   test('a day with no entries reads as empty rather than failing', () async {
     await setUpProfile();
     final summary = await DailySummaryDao(db)
