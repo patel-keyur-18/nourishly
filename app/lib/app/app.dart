@@ -62,6 +62,9 @@ class _NourishlyAppState extends ConsumerState<NourishlyApp>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
+      // A suspended device does not run timers, so the day boundary can
+      // pass while the app is in the background with nothing to notice.
+      ref.read(todayProvider.notifier).refresh();
       unawaited(_resyncReminders());
       // A phone left open across a trimester boundary would otherwise
       // keep last week's targets until it was next cold-started.
