@@ -395,4 +395,55 @@ void main() {
       expect(plan, isEmpty);
     });
   });
+
+  group('stored conditions default to standing down', () {
+    test('an explicit false is honoured', () {
+      expect(
+        ReminderConditions.decode('{"skip_if_target_met":false}'),
+        ReminderConditions.unconditional,
+      );
+    });
+
+    test('an explicit true is honoured', () {
+      expect(
+        ReminderConditions.decode('{"skip_if_target_met":true}'),
+        const ReminderConditions(),
+      );
+    });
+
+    test('a missing, empty or unreadable column stays conditional', () {
+      // §29.4 makes conditionality a rule, not a preference. A row that
+      // predates the column — or comes back from an archive that never
+      // had it — must not become the one reminder that nags after the
+      // meal is already logged.
+      for (final source in [null, '', 'not json', '[]', '{}']) {
+        expect(
+          ReminderConditions.decode(source),
+          const ReminderConditions(),
+          reason: 'decode(${source == null ? 'null' : '"$source"'})',
+        );
+      }
+    });
+
+    test('a rule with no stored conditions still stands down', () {
+      final plan = const ReminderPlanner().plan(
+        rules: [
+          ReminderRule(
+            id: 'r-lunch',
+            type: ReminderType.meal,
+            enabled: true,
+            mealSlotKey: 'lunch',
+            conditions: ReminderConditions.decode(null),
+            schedule: DailySchedule(time: LocalTime.of(13, 30)),
+          ),
+        ],
+        state: ReminderDayState(
+          now: now,
+          loggedMealSlotKeys: const {'lunch'},
+        ),
+        masterEnabled: true,
+      );
+      expect(plan, isEmpty);
+    });
+  });
 }

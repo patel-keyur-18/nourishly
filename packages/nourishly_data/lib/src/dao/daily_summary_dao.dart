@@ -61,13 +61,22 @@ class MealSummary {
 class NutrientContributor {
   const NutrientContributor({
     required this.foodName,
+    required this.mealSlotId,
     required this.mealName,
+    required this.mealSortOrder,
     required this.amount,
     required this.gramsConsumed,
   });
 
   final String foodName;
+  final String mealSlotId;
   final String mealName;
+
+  /// The slot's own `sort_order`, so the drill-down can group by meal and
+  /// show the meals in the order the day runs rather than in whichever
+  /// order the foods happened to sort by amount.
+  final int mealSortOrder;
+
   final double amount;
   final double gramsConsumed;
 }
@@ -484,7 +493,14 @@ class DailySummaryDao {
     );
   }
 
-  /// The foods that supplied a nutrient on a day, largest first (FR-D-03).
+  /// The foods that supplied a nutrient on a day (FR-D-03), in meal order
+  /// and largest first within each meal.
+  ///
+  /// Only foods that actually *supplied* some of it. A food whose frozen
+  /// snapshot carries a zero for this nutrient contributed nothing, and
+  /// listing it under "where it came from" answers a question nobody
+  /// asked — a Vitamin E breakdown padded with eight foods reporting
+  /// 0 mg buries the two that matter.
   ///
   /// Read from the frozen snapshots, not from the catalog: the report has
   /// to explain the number it actually showed, which is the number that
@@ -522,18 +538,25 @@ class DailySummaryDao {
             .get();
     final foodNames = {for (final f in foods) f.id: f.canonicalName};
     final slots = await _db.select(_db.mealSlots).get();
-    final slotNames = {for (final s in slots) s.id: s.displayName};
+    final slotsById = {for (final s in slots) s.id: s};
 
     final contributors = [
       for (final entry in entries)
-        if (byEntry[entry.id] case final amount?)
+        if (byEntry[entry.id] case final amount? when amount > 0)
           NutrientContributor(
             foodName: foodNames[entry.foodId] ?? 'Unknown food',
-            mealName: slotNames[entry.mealSlotId] ?? '',
+            mealSlotId: entry.mealSlotId,
+            mealName: slotsById[entry.mealSlotId]?.displayName ?? '',
+            // An entry in a slot the catalog no longer has sorts last
+            // rather than silently jumping to the top of the day.
+            mealSortOrder: slotsById[entry.mealSlotId]?.sortOrder ?? 1 << 30,
             amount: amount,
             gramsConsumed: entry.gramsConsumed,
           ),
-    ]..sort((a, b) => b.amount.compareTo(a.amount));
+    ]..sort((a, b) {
+      final byMeal = a.mealSortOrder.compareTo(b.mealSortOrder);
+      return byMeal != 0 ? byMeal : b.amount.compareTo(a.amount);
+    });
     return contributors;
   }
 

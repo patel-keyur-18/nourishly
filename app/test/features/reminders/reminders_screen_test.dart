@@ -96,6 +96,63 @@ void main() {
     expect(find.text('NEXT UP'), findsOneWidget);
   });
 
+  testWidgets('logging the meal takes its reminder out of the tray', (
+    tester,
+  ) async {
+    await PreferencesDao(db).update(ownerId, remindersEnabled: true);
+    final rules = await ReminderDao(db).rulesFor(ownerId);
+    final lunch = rules.firstWhere((r) => r.mealSlotKey == 'lunch');
+    await ReminderDao(db).setEnabled(lunch.id, enabled: true);
+
+    await pump(tester);
+    expect(scheduler.applied.map((r) => r.title), contains('Log lunch'));
+
+    // The whole of the bug: the plan already knew to stand down once the
+    // slot had an entry, but nothing carried that back to the platform
+    // between app launches, so the notification fired anyway.
+    await FoodLoggingDao(db).logFood(
+      ownerId: ownerId,
+      foodId: await _seedFood(db, 'Dal'),
+      servingId: 'serving-dal',
+      quantity: 1,
+      mealSlotId: 'slot-lunch',
+      logDate: DateTime(2026, 9, 9),
+    );
+    await tester.pumpAndSettle();
+
+    expect(scheduler.applied.map((r) => r.title), isNot(contains('Log lunch')));
+  });
+
+  testWidgets('each water log pushes the next nudge three hours out', (
+    tester,
+  ) async {
+    await PreferencesDao(db).update(ownerId, remindersEnabled: true);
+    final rules = await ReminderDao(db).rulesFor(ownerId);
+    final water = rules.firstWhere((r) => r.type == ReminderType.water);
+    await ReminderDao(db).setEnabled(water.id, enabled: true);
+    await _logWaterAt(db, ownerId, DateTime(2026, 9, 9, 9, 20));
+
+    await pump(tester);
+    expect(
+      scheduler.applied
+          .firstWhere((r) => r.type == ReminderType.water)
+          .when,
+      DateTime(2026, 9, 9, 12, 20),
+    );
+
+    // A second glass at 09:50 restarts the three hours rather than
+    // leaving the 12:20 nudge standing.
+    await _logWaterAt(db, ownerId, DateTime(2026, 9, 9, 9, 50));
+    await tester.pumpAndSettle();
+
+    expect(
+      scheduler.applied
+          .firstWhere((r) => r.type == ReminderType.water)
+          .when,
+      DateTime(2026, 9, 9, 12, 50),
+    );
+  });
+
   testWidgets('a denied permission is explained, not re-prompted', (
     tester,
   ) async {
@@ -201,6 +258,56 @@ DaySummary _summary({
     waterMl: 0,
     isComplete: true,
   );
+}
+
+/// A food with one 100 g serving and no nutrient values — enough to log,
+/// which is all these tests need it for.
+Future<String> _seedFood(NourishlyDatabase db, String name) async {
+  final foodId = 'food-${name.toLowerCase()}';
+  await db
+      .into(db.foodItems)
+      .insert(
+        FoodItemsCompanion.insert(
+          id: foodId,
+          kind: 'ingredient',
+          canonicalName: name,
+          qualityTier: 'verified',
+          provenanceSource: 'test',
+        ),
+      );
+  await db
+      .into(db.servingSizes)
+      .insert(
+        ServingSizesCompanion.insert(
+          id: 'serving-${name.toLowerCase()}',
+          foodId: foodId,
+          label: '1 serving',
+          grams: 100,
+        ),
+      );
+  return foodId;
+}
+
+/// Written straight to the table rather than through [WaterLogDao], which
+/// stamps `loggedAt` from the wall clock — and the whole point here is to
+/// control the gap the inactivity schedule measures.
+Future<void> _logWaterAt(
+  NourishlyDatabase db,
+  String ownerId,
+  DateTime at,
+) async {
+  await db
+      .into(db.waterLogEntries)
+      .insert(
+        WaterLogEntriesCompanion.insert(
+          id: 'water-${at.millisecondsSinceEpoch}',
+          ownerId: ownerId,
+          logDate: DateTime(at.year, at.month, at.day),
+          loggedAt: at,
+          volumeMl: 250,
+          source: 'quick_add',
+        ),
+      );
 }
 
 Future<void> _seedReference(NourishlyDatabase db) async {

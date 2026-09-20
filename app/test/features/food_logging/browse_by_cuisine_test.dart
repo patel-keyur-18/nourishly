@@ -54,8 +54,8 @@ void main() {
     }
   }
 
-  Future<void> pumpSearch(WidgetTester tester) async {
-    tester.view.physicalSize = const Size(390, 1600) * 3;
+  Future<void> pumpSearch(WidgetTester tester, {double height = 1600}) async {
+    tester.view.physicalSize = Size(390, height) * 3;
     tester.view.devicePixelRatio = 3;
     addTearDown(tester.view.reset);
 
@@ -100,6 +100,61 @@ void main() {
     expect(find.text('Gujarati dal'), findsOneWidget);
     expect(find.text('Thepla'), findsOneWidget);
     expect(find.text('Idli'), findsNothing);
+  });
+
+  testWidgets('the shelf opens on a cuisine rather than on a blank', (
+    tester,
+  ) async {
+    await food('Gujarati dal', tags: '["cuisine:gujarati","course:gravy"]');
+    await food('Thepla', tags: '["cuisine:gujarati","course:bread"]');
+    await food('Idli', tags: '["cuisine:tamil","course:tiffin"]');
+
+    await pumpSearch(tester);
+
+    // Nothing tapped: the biggest shelf is already open, so the room the
+    // chips take is paid back immediately instead of after a tap.
+    expect(find.text('Gujarati dal'), findsOneWidget);
+    expect(find.text('Thepla'), findsOneWidget);
+    expect(find.text('Idli'), findsNothing);
+  });
+
+  testWidgets('the cuisine chips stay on one line, and the foods fit under '
+      'them on a phone', (tester) async {
+    for (final cuisine in const [
+      'gujarati',
+      'tamil',
+      'kannadiga',
+      'pan-indian',
+      'north-indian',
+      'italian',
+      'modern',
+    ]) {
+      await food('Dish from $cuisine', tags: '["cuisine:$cuisine"]');
+    }
+
+    // A real phone, not the tall harness default — the bug was that four
+    // rows of chips pushed the food list off the bottom of one.
+    await pumpSearch(tester, height: 844);
+
+    final chips = find.byType(ChoiceChip);
+    expect(chips, findsNWidgets(7));
+    final tops = {
+      for (final chip in chips.evaluate())
+        tester.getTopLeft(find.byWidget(chip.widget)).dy,
+    };
+    expect(
+      tops,
+      hasLength(1),
+      reason: 'the strip scrolls sideways instead of wrapping down',
+    );
+
+    // And the food it opened on is on screen, not below the fold.
+    final food0 = find.textContaining('Dish from ').first;
+    expect(
+      tester.getTopLeft(food0).dy,
+      lessThan(844),
+      reason: 'the foods are what the screen is for',
+    );
   });
 
   testWidgets('a catalog with no cuisines shows no shelf at all', (
