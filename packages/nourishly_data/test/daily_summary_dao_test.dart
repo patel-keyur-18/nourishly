@@ -472,11 +472,7 @@ void main() {
     test('meals come in slot order, largest first inside each', () async {
       final rows = await ironContributors();
       expect(rows.map((r) => r.foodName), ['Poha', 'Dal', 'Spinach']);
-      expect(rows.map((r) => r.mealName), [
-        'Breakfast',
-        'Breakfast',
-        'Dinner',
-      ]);
+      expect(rows.map((r) => r.mealName), ['Breakfast', 'Breakfast', 'Dinner']);
       expect(rows.map((r) => r.mealSortOrder), [0, 0, 3]);
     });
 

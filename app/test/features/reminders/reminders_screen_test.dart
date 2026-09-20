@@ -134,9 +134,7 @@ void main() {
 
     await pump(tester);
     expect(
-      scheduler.applied
-          .firstWhere((r) => r.type == ReminderType.water)
-          .when,
+      scheduler.applied.firstWhere((r) => r.type == ReminderType.water).when,
       DateTime(2026, 9, 9, 12, 20),
     );
 
@@ -146,9 +144,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(
-      scheduler.applied
-          .firstWhere((r) => r.type == ReminderType.water)
-          .when,
+      scheduler.applied.firstWhere((r) => r.type == ReminderType.water).when,
       DateTime(2026, 9, 9, 12, 50),
     );
   });

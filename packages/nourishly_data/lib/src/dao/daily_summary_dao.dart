@@ -553,7 +553,8 @@ class DailySummaryDao {
             amount: amount,
             gramsConsumed: entry.gramsConsumed,
           ),
-    ]..sort((a, b) {
+    ];
+    contributors.sort((a, b) {
       final byMeal = a.mealSortOrder.compareTo(b.mealSortOrder);
       return byMeal != 0 ? byMeal : b.amount.compareTo(a.amount);
     });

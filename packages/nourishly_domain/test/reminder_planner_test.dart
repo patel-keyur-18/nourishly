@@ -437,10 +437,7 @@ void main() {
             schedule: DailySchedule(time: LocalTime.of(13, 30)),
           ),
         ],
-        state: ReminderDayState(
-          now: now,
-          loggedMealSlotKeys: const {'lunch'},
-        ),
+        state: ReminderDayState(now: now, loggedMealSlotKeys: const {'lunch'}),
         masterEnabled: true,
       );
       expect(plan, isEmpty);

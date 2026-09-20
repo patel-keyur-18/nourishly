@@ -295,10 +295,7 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen>
                     ),
                     if (!_planning) ...[
                       const NourishlySectionHeader(label: 'Time'),
-                      _TimeRow(
-                        minutes: _minutes.value,
-                        onPressed: _pickTime,
-                      ),
+                      _TimeRow(minutes: _minutes.value, onPressed: _pickTime),
                     ],
                     if (_canFork(food)) ...[
                       const SizedBox(height: NourishlySpace.s5),
@@ -578,11 +575,7 @@ class _TimeRow extends StatelessWidget {
         title: 'Eaten at',
         subtitle: 'Change it if you are logging later',
         value: minutes == null ? '—' : formatMinutesOfDay(minutes!),
-        leading: Icon(
-          Icons.schedule_rounded,
-          size: 20,
-          color: colors.accent,
-        ),
+        leading: Icon(Icons.schedule_rounded, size: 20, color: colors.accent),
         onTap: onPressed,
       ),
     );
