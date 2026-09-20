@@ -6,6 +6,7 @@ import 'package:nourishly_data/nourishly_data.dart';
 import 'package:nourishly_ui/nourishly_ui.dart';
 
 import '../../../../app/providers.dart';
+import '../../../../shared/formatting.dart';
 import '../../../food_catalog/data/food_catalog_providers.dart';
 import '../../../profile/data/profile_providers.dart';
 
@@ -58,6 +59,10 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen>
   final RestorableDouble _quantity = RestorableDouble(1);
   final RestorableStringN _servingId = RestorableStringN(null);
   final RestorableStringN _mealSlotId = RestorableStringN(null);
+
+  /// When the food was eaten, as minutes since midnight on the log date.
+  /// Null until the first build fills it in with the current time.
+  final RestorableIntN _minutes = RestorableIntN(null);
   bool _saving = false;
 
   bool get _editing => widget.entryId != null;
@@ -71,6 +76,7 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen>
     registerForRestoration(_quantity, 'quantity');
     registerForRestoration(_servingId, 'servingId');
     registerForRestoration(_mealSlotId, 'mealSlotId');
+    registerForRestoration(_minutes, 'minutes');
     // `initialRestore` is true on every fresh State object, restored or
     // not (Flutter tracks it per-instance, not per-bucket) — it cannot
     // tell "brand new" apart from "recreated with real prior data" here.
@@ -85,6 +91,7 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen>
     _quantity.dispose();
     _servingId.dispose();
     _mealSlotId.dispose();
+    _minutes.dispose();
     super.dispose();
   }
 
@@ -109,8 +116,37 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen>
       _quantity.value = entry.quantity;
       _servingId.value = entry.servingSizeId;
       _mealSlotId.value = entry.mealSlotId;
+      _minutes.value = entry.loggedAt.hour * 60 + entry.loggedAt.minute;
     }
     return (food, servings, nutrientValues);
+  }
+
+  /// The log date this entry belongs to, and the moment within it the user
+  /// has picked.
+  DateTime get _logDate => widget.planDate ?? ref.read(todayProvider);
+
+  DateTime? get _loggedAt {
+    // A planned entry's `loggedAt` means "when the plan was made" and is
+    // rewritten on confirmation, so there is nothing for the user to set.
+    if (_planning) return null;
+    final minutes = _minutes.value;
+    if (minutes == null) return null;
+    return momentOnLogDate(
+      _logDate,
+      minutes,
+      rolloverMinutes: ref.read(dayRolloverMinutesProvider),
+    );
+  }
+
+  Future<void> _pickTime() async {
+    final minutes = _minutes.value ?? 0;
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay(hour: minutes ~/ 60, minute: minutes % 60),
+      helpText: 'When did you eat this?',
+    );
+    if (picked == null) return;
+    setState(() => _minutes.value = picked.hour * 60 + picked.minute);
   }
 
   Future<void> _save() async {
@@ -127,6 +163,7 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen>
         quantity: _quantity.value,
         servingId: _servingId.value,
         mealSlotId: _mealSlotId.value,
+        loggedAt: _loggedAt,
       );
     } else {
       final ownerId = await ref.read(defaultOwnerProvider.future);
@@ -136,7 +173,8 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen>
         servingId: _servingId.value!,
         quantity: _quantity.value,
         mealSlotId: _mealSlotId.value!,
-        logDate: widget.planDate ?? ref.read(todayProvider),
+        logDate: _logDate,
+        loggedAt: _loggedAt,
         status: _planning ? logStatusPlanned : logStatusLogged,
         source: _planning ? 'plan' : 'manual',
       );
@@ -199,6 +237,12 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen>
           }
           final (food, servings, nutrientValues) = snapshot.data!;
           _servingId.value ??= servings.firstOrNull?.id;
+          // Logging as you eat is the common case, so "now" is the
+          // default and the picker is there for the evening catch-up.
+          if (_minutes.value == null) {
+            final now = ref.read(clockProvider).now();
+            _minutes.value = now.hour * 60 + now.minute;
+          }
           final serving = servings
               .where((s) => s.id == _servingId.value)
               .firstOrNull;
@@ -237,8 +281,22 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen>
                       selectedId: _mealSlotId.value,
                       onSelected: (id) =>
                           setState(() => _mealSlotId.value = id),
-                      onDefault: (id) => _mealSlotId.value ??= id,
+                      // Through setState, not a bare `??=`: the save bar
+                      // reads `_mealSlotId` to decide whether it is
+                      // enabled, and the chips fall back to the first
+                      // slot from a post-frame callback. Assigning
+                      // silently left the button greyed out until the
+                      // user tapped a meal — on the one route that does
+                      // not preselect one, the nav bar's centre action.
+                      onDefault: (id) {
+                        if (_mealSlotId.value != null || !mounted) return;
+                        setState(() => _mealSlotId.value = id);
+                      },
                     ),
+                    if (!_planning) ...[
+                      const NourishlySectionHeader(label: 'Time'),
+                      _TimeRow(minutes: _minutes.value, onPressed: _pickTime),
+                    ],
                     if (_canFork(food)) ...[
                       const SizedBox(height: NourishlySpace.s5),
                       _ForkPrompt(food: food),
@@ -490,6 +548,35 @@ class _QuantityStepper extends StatelessWidget {
             color: colors.accent,
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// When the food was eaten, which is not always when it was typed in.
+///
+/// A row rather than a set of chips: the answer is usually the default and
+/// wants confirming at a glance, and the rare correction is worth a
+/// picker. Logging a whole day at bedtime otherwise stamps every meal with
+/// the same timestamp, which makes the day log's timeline meaningless and
+/// hides which meal actually ran late.
+class _TimeRow extends StatelessWidget {
+  const _TimeRow({required this.minutes, required this.onPressed});
+
+  final int? minutes;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.nourishlyColors;
+    return NourishlyCard(
+      padding: EdgeInsets.zero,
+      child: NourishlyListRow(
+        title: 'Eaten at',
+        subtitle: 'Change it if you are logging later',
+        value: minutes == null ? '—' : formatMinutesOfDay(minutes!),
+        leading: Icon(Icons.schedule_rounded, size: 20, color: colors.accent),
+        onTap: onPressed,
       ),
     );
   }

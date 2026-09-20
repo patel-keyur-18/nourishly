@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nourishly_domain/nourishly_domain.dart';
 import 'package:nourishly_ui/nourishly_ui.dart';
 
 import '../features/food_catalog/data/food_catalog_providers.dart';
@@ -113,6 +114,22 @@ class _NourishlyAppState extends ConsumerState<NourishlyApp>
     }
   }
 
+  /// Makes the pending notifications match a freshly computed plan.
+  ///
+  /// The path that fixes the reminder you have already acted on: logging
+  /// lunch changes the day summary, which changes [ReminderDayState],
+  /// which drops the "Log lunch" entry from the plan — and this is what
+  /// carries that back to the tray. Before it existed the plan was only
+  /// pushed on resume and on rule changes, so a notification scheduled
+  /// this morning fired this afternoon regardless of having been obeyed.
+  Future<void> _applyPlan(List<ScheduledReminder> plan) async {
+    try {
+      await ref.read(reminderSyncProvider).apply(plan);
+    } on Object catch (error) {
+      debugPrint('Nourishly: could not apply the reminder plan ($error).');
+    }
+  }
+
   Future<void> _resyncReminders() async {
     try {
       await ref.read(reminderSyncProvider).resync();
@@ -128,6 +145,17 @@ class _NourishlyAppState extends ConsumerState<NourishlyApp>
   @override
   Widget build(BuildContext context) {
     final catalogReady = ref.watch(catalogReadyProvider);
+
+    // §29.4's third rescheduling trigger, which the original three did not
+    // cover: the state of the day itself. The plan is a pure function of
+    // the rules plus what has been logged, so watching it here means every
+    // write that makes a reminder irrelevant — a meal logged, a glass of
+    // water drunk — takes it out of the tray as a matter of course,
+    // instead of leaving it to fire at a user who has already done it.
+    ref.listen(reminderPlanProvider, (previous, next) {
+      final plan = next.value;
+      if (plan != null) unawaited(_applyPlan(plan));
+    });
 
     // §27.1's one way in.
     //

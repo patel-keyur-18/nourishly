@@ -9,6 +9,7 @@ import 'package:nourishly/features/reminders/data/local_notification_scheduler.d
 import 'package:nourishly/features/reminders/data/reminder_providers.dart';
 import 'package:nourishly_data/nourishly_data.dart';
 import 'package:nourishly_domain/nourishly_domain.dart';
+import 'package:nourishly_ui/nourishly_ui.dart' show nourishlySnackDuration;
 
 void main() {
   late NourishlyDatabase db;
@@ -131,6 +132,52 @@ void main() {
   testWidgets('the stale Phase 3 sentence is gone', (tester) async {
     await pumpPortion(tester);
     expect(find.textContaining('Phase 3 aggregation'), findsNothing);
+  });
+
+  testWidgets('the entry is stamped with the chosen time, not the wall '
+      'clock', (tester) async {
+    await pumpPortion(tester);
+
+    // The Time section sits below the serving and meal choices, so scroll
+    // it into the lazy ListView rather than asserting on an unbuilt row.
+    await tester.scrollUntilVisible(find.text('Eaten at'), 200);
+    await tester.pumpAndSettle();
+    // Defaults to now, which is the common case of logging as you eat.
+    expect(find.text('12:00 PM'), findsOneWidget);
+
+    // "Add to log" is also the AppBar title, so aim at the save button.
+    await tester.tap(
+      find.descendant(
+        of: find.byType(FilledButton),
+        matching: find.text('Add to log'),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final entry = await db.select(db.foodLogEntries).getSingle();
+    // The whole point: before this, `loggedAt` came from DateTime.now(),
+    // so an evening catch-up stamped every meal with the same late time.
+    expect(entry.loggedAt, DateTime(2026, 9, 17, 12, 0));
+
+    // Let the "Added to your log" snack run out its timer.
+    await tester.pump(nourishlySnackDuration + const Duration(seconds: 1));
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('the chosen time survives a simulated state restoration', (
+    tester,
+  ) async {
+    await pumpPortion(tester);
+    await tester.scrollUntilVisible(find.text('Eaten at'), 200);
+    await tester.pumpAndSettle();
+    expect(find.text('12:00 PM'), findsOneWidget);
+
+    await tester.restartAndRestore();
+    await tester.pumpAndSettle();
+
+    await tester.scrollUntilVisible(find.text('Eaten at'), 200);
+    await tester.pumpAndSettle();
+    expect(find.text('12:00 PM'), findsOneWidget);
   });
 
   testWidgets('quantity survives a simulated state restoration', (

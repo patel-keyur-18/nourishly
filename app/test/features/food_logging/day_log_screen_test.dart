@@ -105,7 +105,7 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  testWidgets('lists today\'s entries earliest-first with their kcal', (
+  testWidgets('groups the day into meals, each under one total', (
     tester,
   ) async {
     final oatsServing = await seedFood('Oats', kcalPer100g: 380);
@@ -146,27 +146,38 @@ void main() {
 
     await pumpToDayLog(tester);
 
+    // The default view is By meal: a meal is the unit people eat in.
+    // NourishlySectionHeader upper-cases its label.
+    expect(find.text('BREAKFAST'), findsOneWidget);
+    expect(find.text('LUNCH'), findsOneWidget);
     expect(find.text('Oats'), findsOneWidget);
     expect(find.text('Paneer wrap'), findsOneWidget);
-    expect(find.text('380 kcal'), findsOneWidget);
-    expect(find.text('250 kcal'), findsOneWidget);
+    // Each kcal figure appears twice — once on the food, once as the
+    // meal's total, which is the number that was missing when every food
+    // was its own card.
+    expect(find.text('380 kcal'), findsNWidgets(2));
+    expect(find.text('250 kcal'), findsNWidgets(2));
+    // A meal with nothing in it still says so rather than disappearing.
+    expect(find.text('Add to lunch'), findsOneWidget);
 
     final oatsPosition = tester.getTopLeft(find.text('Oats'));
     final wrapPosition = tester.getTopLeft(find.text('Paneer wrap'));
     expect(
       oatsPosition.dy,
       lessThan(wrapPosition.dy),
-      reason: 'the earlier-logged entry should render above the later one',
+      reason: 'breakfast comes before lunch in slot order',
     );
 
-    // "By meal" groups the same entries under their slot headers.
-    await tester.tap(find.text('By meal'));
+    // "By time" still lays the same entries out as they happened.
+    await tester.tap(find.text('By time'));
     await tester.pumpAndSettle();
-    // NourishlySectionHeader upper-cases its label.
-    expect(find.text('BREAKFAST'), findsOneWidget);
-    expect(find.text('LUNCH'), findsOneWidget);
-    expect(find.text('Oats'), findsOneWidget);
-    expect(find.text('Paneer wrap'), findsOneWidget);
+    expect(find.text('380 kcal'), findsOneWidget);
+    expect(find.text('250 kcal'), findsOneWidget);
+    expect(
+      tester.getTopLeft(find.text('Oats')).dy,
+      lessThan(tester.getTopLeft(find.text('Paneer wrap')).dy),
+      reason: 'the earlier-logged entry should render above the later one',
+    );
 
     // Deleting an entry removes it and offers an undo that brings it back.
     await tester.tap(find.text('Oats'));
@@ -245,7 +256,8 @@ void main() {
       );
 
       await pumpToDayLog(tester);
-      expect(find.text('380 kcal'), findsOneWidget);
+      // On the food row and again on the breakfast total.
+      expect(find.text('380 kcal'), findsNWidgets(2));
 
       // The day log's edit action is the same portion screen used to add
       // food, not a bare grams prompt.
@@ -265,9 +277,10 @@ void main() {
       // leaving it pending when the test ends.
       await tester.pump(nourishlySnackDuration + const Duration(seconds: 1));
 
-      // Back on the day log, the change is already there.
-      expect(find.text('200 g'), findsOneWidget);
-      expect(find.text('760 kcal'), findsOneWidget);
+      // Back on the day log, the change is already there. The grams sit
+      // in the row's subtitle next to the time it was eaten.
+      expect(find.textContaining('200 g'), findsOneWidget);
+      expect(find.text('760 kcal'), findsNWidgets(2));
 
       // And on the dashboard, which reads a materialised summary through a
       // different provider entirely — proving the edit isn't only visible
@@ -278,7 +291,7 @@ void main() {
     },
   );
 
-  testWidgets('Save as template is reachable from the default By-time view', (
+  testWidgets('Save as template is reachable from the AppBar in either view', (
     tester,
   ) async {
     final oatsServing = await seedFood('Oats', kcalPer100g: 380);
@@ -295,8 +308,10 @@ void main() {
     );
 
     await pumpToDayLog(tester);
-    // Default view, never tapped "By meal".
-    expect(find.text('By time'), findsOneWidget);
+    // The By-time view, where the meal groups' own inline action is not
+    // on screen — the AppBar action is the one that has to work here.
+    await tester.tap(find.text('By time'));
+    await tester.pumpAndSettle();
 
     await tester.tap(find.byIcon(Icons.bookmark_add_outlined));
     await tester.pumpAndSettle();

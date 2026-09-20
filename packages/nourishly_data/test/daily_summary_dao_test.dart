@@ -524,4 +524,67 @@ void main() {
       expect(targets['water']!.isUserOverride, isFalse);
     });
   });
+
+  group('the nutrient drill-down (FR-D-03)', () {
+    setUp(() async {
+      await logFood(
+        name: 'Spinach',
+        per100g: {'iron': 3},
+        grams: 100,
+        slot: 'dinner',
+      );
+      await logFood(
+        name: 'Poha',
+        per100g: {'iron': 2},
+        grams: 100,
+        slot: 'breakfast',
+      );
+      await logFood(
+        name: 'Dal',
+        per100g: {'iron': 1},
+        grams: 100,
+        slot: 'breakfast',
+      );
+      // Reports the nutrient, but supplies none of it.
+      await logFood(
+        name: 'Rice',
+        per100g: {'iron': 0},
+        grams: 200,
+        slot: 'breakfast',
+      );
+    });
+
+    Future<List<NutrientContributor>> ironContributors() {
+      return DailySummaryDao(db).contributorsTo(
+        ownerId: ownerId,
+        logDate: yesterday,
+        nutrientId: 'iron',
+      );
+    }
+
+    test('a food supplying none of it is left out', () async {
+      final rows = await ironContributors();
+      expect(
+        rows.map((r) => r.foodName),
+        isNot(contains('Rice')),
+        reason: 'a 0 mg row under "where it came from" answers nothing',
+      );
+    });
+
+    test('meals come in slot order, largest first inside each', () async {
+      final rows = await ironContributors();
+      expect(rows.map((r) => r.foodName), ['Poha', 'Dal', 'Spinach']);
+      expect(rows.map((r) => r.mealName), ['Breakfast', 'Breakfast', 'Dinner']);
+      expect(rows.map((r) => r.mealSortOrder), [0, 0, 3]);
+    });
+
+    test('a nutrient nothing reports comes back empty', () async {
+      final rows = await DailySummaryDao(db).contributorsTo(
+        ownerId: ownerId,
+        logDate: yesterday,
+        nutrientId: 'fibre',
+      );
+      expect(rows, isEmpty);
+    });
+  });
 }

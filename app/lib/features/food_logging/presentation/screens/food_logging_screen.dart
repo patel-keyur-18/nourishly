@@ -174,7 +174,7 @@ class _BrowseByCuisine extends ConsumerWidget {
     final colors = context.nourishlyColors;
     final text = context.nourishlyText;
     final cuisines = ref.watch(catalogCuisinesProvider).value ?? const [];
-    final selected = ref.watch(browsedCuisineProvider);
+    final selected = ref.watch(effectiveBrowsedCuisineProvider);
 
     if (cuisines.isEmpty) {
       return const _Message(
@@ -186,64 +186,110 @@ class _BrowseByCuisine extends ConsumerWidget {
 
     final foods = ref.watch(browsedFoodsProvider).value ?? const <FoodItem>[];
 
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(
-        NourishlySpace.s4,
-        0,
-        NourishlySpace.s4,
-        NourishlySpace.s9,
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        NourishlyCard(
-          onTap: () => context.push('/templates'),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: NourishlySpace.s4),
+          child: NourishlyCard(
+            onTap: () => context.push('/templates'),
+            padding: const EdgeInsets.symmetric(
+              horizontal: NourishlySpace.s4,
+              vertical: NourishlySpace.s3,
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.repeat_rounded, color: colors.accent, size: 20),
+                const SizedBox(width: NourishlySpace.s3),
+                Expanded(
+                  child: Text(
+                    'Log from a saved meal template',
+                    style: text.label.copyWith(color: colors.accent),
+                  ),
+                ),
+                Icon(
+                  Icons.chevron_right_rounded,
+                  color: colors.accent,
+                  size: 18,
+                ),
+              ],
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(
+            NourishlySpace.s4,
+            NourishlySpace.s4,
+            NourishlySpace.s4,
+            NourishlySpace.s2,
+          ),
+          child: Text(
+            'Or browse by cuisine',
+            style: text.caption.copyWith(color: colors.ink3),
+          ),
+        ),
+        // One line that scrolls sideways, rather than a Wrap. Seven
+        // cuisines wrapped to three or four rows on a phone, and those
+        // rows pushed the foods — the thing the screen is for — off the
+        // bottom. A SingleChildScrollView rather than a fixed-height
+        // list so the strip still grows with the text scale (NFR-A-03).
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: NourishlySpace.s4),
           child: Row(
             children: [
-              Icon(Icons.repeat_rounded, color: colors.accent, size: 20),
-              const SizedBox(width: NourishlySpace.s3),
-              Expanded(
-                child: Text(
-                  'Log from a saved meal template',
-                  style: text.label.copyWith(color: colors.accent),
+              for (var i = 0; i < cuisines.length; i++) ...[
+                if (i > 0) const SizedBox(width: NourishlySpace.s2),
+                ChoiceChip(
+                  selected: selected == cuisines[i].cuisine,
+                  label: Text(
+                    '${FoodSearchResultTile.cuisineLabel(cuisines[i].cuisine)} '
+                    '· ${cuisines[i].count}',
+                  ),
+                  // Always selects, never toggles off. A cuisine is
+                  // always showing now, so a chip that cleared itself
+                  // would blank the list under the user's finger.
+                  onSelected: (_) => ref
+                      .read(browsedCuisineProvider.notifier)
+                      .select(cuisines[i].cuisine),
                 ),
-              ),
-              Icon(Icons.chevron_right_rounded, color: colors.accent, size: 18),
+              ],
             ],
           ),
         ),
-        const SizedBox(height: NourishlySpace.s3),
-        Text(
-          'Or browse by cuisine',
-          style: text.caption.copyWith(color: colors.ink3),
-        ),
-        const SizedBox(height: NourishlySpace.s2),
-        Wrap(
-          spacing: NourishlySpace.s2,
-          runSpacing: NourishlySpace.s2,
-          children: [
-            for (final cuisine in cuisines)
-              ChoiceChip(
-                selected: selected == cuisine.cuisine,
-                label: Text(
-                  '${FoodSearchResultTile.cuisineLabel(cuisine.cuisine)} '
-                  '· ${cuisine.count}',
-                ),
-                onSelected: (on) => ref
-                    .read(browsedCuisineProvider.notifier)
-                    .select(on ? cuisine.cuisine : null),
-              ),
-          ],
-        ),
-        if (selected != null) ...[
-          const SizedBox(height: NourishlySpace.s3),
-          for (final food in foods)
-            FoodSearchResultTile(
-              food: food,
-              onTap: () => context.push(
-                '/log/food/${food.id}'
-                '${foodFlowQuery(mealSlotId: mealSlotId, planDate: planDate)}',
-              ),
+        // Everything left over goes to the foods, in one grouped card
+        // like the search results use.
+        Expanded(
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(
+              NourishlySpace.s4,
+              NourishlySpace.s3,
+              NourishlySpace.s4,
+              NourishlySpace.s9,
             ),
-        ],
+            children: [
+              if (foods.isNotEmpty)
+                NourishlyCard(
+                  padding: EdgeInsets.zero,
+                  child: Column(
+                    children: [
+                      for (var i = 0; i < foods.length; i++) ...[
+                        if (i > 0)
+                          Divider(height: 1, thickness: 1, color: colors.line),
+                        FoodSearchResultTile(
+                          food: foods[i],
+                          onTap: () => context.push(
+                            '/log/food/${foods[i].id}'
+                            '${foodFlowQuery(mealSlotId: mealSlotId, planDate: planDate)}',
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+            ],
+          ),
+        ),
       ],
     );
   }

@@ -67,11 +67,22 @@ final notificationPermissionProvider = FutureProvider<NotificationPermission>((
   return ref.watch(reminderSchedulerProvider).permission();
 });
 
+/// Today's summary, specifically — not the day the dashboard happens to be
+/// showing.
+///
+/// [selectedDaySummaryProvider] follows the day header's arrows, and
+/// planning from it meant that scrolling back to last Tuesday re-planned
+/// tomorrow's reminders against last Tuesday's meals: a lunch reminder
+/// would come back from the dead because that day's lunch was empty.
+final _todaySummaryProvider = FutureProvider<DaySummary>((ref) {
+  return ref.watch(daySummaryProvider(ref.watch(todayProvider)).future);
+});
+
 /// Today's state, as the planner needs it (§29.4's conditionality).
 final reminderDayStateProvider = FutureProvider<ReminderDayState>((ref) async {
   final now = ref.watch(clockProvider).now();
   final preferences = ref.watch(preferencesProvider).value;
-  final summary = await ref.watch(selectedDaySummaryProvider.future);
+  final summary = await ref.watch(_todaySummaryProvider.future);
   final water = ref.watch(todayWaterLogProvider).value ?? const [];
 
   final protein = summary.nutrient('protein');
@@ -104,7 +115,7 @@ final reminderPlanProvider = FutureProvider<List<ScheduledReminder>>((
 ) async {
   final rules = await ref.watch(reminderRulesProvider.future);
   final state = await ref.watch(reminderDayStateProvider.future);
-  final summary = await ref.watch(selectedDaySummaryProvider.future);
+  final summary = await ref.watch(_todaySummaryProvider.future);
   return ref
       .watch(reminderPlannerProvider)
       .plan(
@@ -118,18 +129,65 @@ final reminderPlanProvider = FutureProvider<List<ScheduledReminder>>((
 /// Pushes the current plan to the platform.
 ///
 /// §29.4 wants rescheduling "on app resume, on rule change, and after
-/// device reboot". Reboot is the manifest's boot receiver; the other two
-/// both come through here, and because [ReminderScheduler.apply] replaces
-/// the whole pending set, calling it more often than necessary is
-/// harmless rather than a source of duplicates.
+/// device reboot". Reboot is the manifest's boot receiver, and the other
+/// two come through here — but resume and rule changes were never the
+/// whole story. A "log lunch" notification sitting in the tray is
+/// cancelled by *logging lunch*, and logging lunch is neither of those
+/// events. [NourishlyApp] therefore watches [reminderPlanProvider] and
+/// calls [apply] whenever the plan changes, which covers every write that
+/// moves a condition: a meal logged, a glass of water drunk, a target met.
+///
+/// Because [ReminderScheduler.apply] replaces the whole pending set,
+/// calling it again with the same plan is harmless — but it is also
+/// cancel-then-reschedule on the platform side, so [apply] skips a plan
+/// identical to the one already pushed rather than churning the tray.
 class ReminderSync {
-  const ReminderSync(this._ref);
+  ReminderSync(this._ref);
 
   final Ref _ref;
 
+  /// What the platform was last given, as an order-sensitive signature of
+  /// the rule ids and their times.
+  String? _applied;
+
+  /// Applies run one at a time.
+  ///
+  /// [resync] invalidates the day state and then reads the plan, and that
+  /// invalidation also wakes [NourishlyApp]'s plan listener — so two
+  /// applies are routinely in flight together. The adapter cancels the
+  /// whole pending set before it schedules the new one, so interleaving
+  /// two of them can leave the later plan's notifications wiped by the
+  /// earlier one's cancel.
+  Future<void> _pending = Future<void>.value();
+
+  /// Re-reads the plan from scratch and pushes it unconditionally.
+  ///
+  /// For resume and rule changes, where an input may have moved without
+  /// any provider noticing — the clock above all, which [ReminderDayState]
+  /// samples once when it builds and which is exactly what has changed
+  /// while the app was in the background.
   Future<void> resync() async {
-    final plan = await _ref.read(reminderPlanProvider.future);
+    _applied = null;
+    _ref.invalidate(reminderDayStateProvider);
+    await apply(await _ref.read(reminderPlanProvider.future));
+  }
+
+  Future<void> apply(List<ScheduledReminder> plan) {
+    final next = _pending.then((_) => _applyNow(plan));
+    // The chain has to survive a failed link — one scheduler error must
+    // not wedge every later apply — but the caller still sees its own.
+    _pending = next.then((_) {}, onError: (Object _, StackTrace _) {});
+    return next;
+  }
+
+  Future<void> _applyNow(List<ScheduledReminder> plan) async {
+    final signature = [
+      for (final reminder in plan)
+        '${reminder.ruleId}@${reminder.when.toIso8601String()}',
+    ].join('|');
+    if (signature == _applied) return;
     await _ref.read(reminderSchedulerProvider).apply(plan);
+    _applied = signature;
   }
 }
 

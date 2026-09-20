@@ -739,51 +739,22 @@ class _NutrientSheet extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: NourishlySpace.s2),
-            contributors.when(
-              loading: () => const Padding(
-                padding: EdgeInsets.all(NourishlySpace.s3),
-                child: LinearProgressIndicator(),
+            Flexible(
+              child: SingleChildScrollView(
+                child: contributors.when(
+                  loading: () => const Padding(
+                    padding: EdgeInsets.all(NourishlySpace.s3),
+                    child: LinearProgressIndicator(),
+                  ),
+                  error: (error, _) => Text('$error', style: text.caption),
+                  data: (rows) => rows.isEmpty
+                      ? Text(
+                          'Nothing logged today reports this nutrient.',
+                          style: text.caption.copyWith(color: colors.ink3),
+                        )
+                      : _ContributorsByMeal(rows: rows, unit: nutrient.unit),
+                ),
               ),
-              error: (error, _) => Text('$error', style: text.caption),
-              data: (rows) => rows.isEmpty
-                  ? Text(
-                      'Nothing logged today reports this nutrient.',
-                      style: text.caption.copyWith(color: colors.ink3),
-                    )
-                  : Column(
-                      children: [
-                        for (final row in rows.take(8))
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 4),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(row.foodName, style: text.body),
-                                      Text(
-                                        '${row.mealName} \u00b7 '
-                                        '${row.gramsConsumed.round()} g',
-                                        style: text.caption.copyWith(
-                                          color: colors.ink3,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Text(
-                                  '${_round(row.amount)} ${nutrient.unit}',
-                                  style: text.body.copyWith(
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                      ],
-                    ),
             ),
           ],
         ),
@@ -793,6 +764,89 @@ class _NutrientSheet extends ConsumerWidget {
 
   static String _round(double v) =>
       v >= 10 ? formatThousands(v) : v.toStringAsFixed(1);
+}
+
+/// "Where it came from", by meal rather than as one flat ranking.
+///
+/// The flat list answered "which single food had the most iron", which is
+/// rarely the question. Grouped, it answers the one people actually ask:
+/// *which meal* is carrying this nutrient, and which is not — and that is
+/// the read that changes what you cook tomorrow.
+///
+/// [rows] arrive from [DailySummaryDao.contributorsTo] already in meal
+/// order and largest-first within a meal, and already filtered to foods
+/// that supplied some of the nutrient.
+class _ContributorsByMeal extends StatelessWidget {
+  const _ContributorsByMeal({required this.rows, required this.unit});
+
+  final List<NutrientContributor> rows;
+  final String unit;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.nourishlyColors;
+    final text = context.nourishlyText;
+
+    final meals = <String, List<NutrientContributor>>{};
+    for (final row in rows) {
+      meals.putIfAbsent(row.mealSlotId, () => []).add(row);
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (final entry in meals.entries) ...[
+          Padding(
+            padding: const EdgeInsets.only(
+              top: NourishlySpace.s3,
+              bottom: NourishlySpace.s1,
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    entry.value.first.mealName.toUpperCase(),
+                    style: text.overline.copyWith(color: colors.ink3),
+                  ),
+                ),
+                Text(
+                  '${_NutrientSheet._round(entry.value.fold<double>(0, (sum, r) => sum + r.amount))} $unit',
+                  style: text.caption.copyWith(
+                    color: colors.ink3,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          for (final row in entry.value)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(row.foodName, style: text.body),
+                        Text(
+                          '${row.gramsConsumed.round()} g',
+                          style: text.caption.copyWith(color: colors.ink3),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Text(
+                    '${_NutrientSheet._round(row.amount)} $unit',
+                    style: text.body.copyWith(fontWeight: FontWeight.w700),
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ],
+    );
+  }
 }
 
 class _ExplainRow extends StatelessWidget {

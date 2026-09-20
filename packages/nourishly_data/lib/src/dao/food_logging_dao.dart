@@ -34,8 +34,14 @@ class FoodLoggingDao {
   /// [status] is what makes this the planner's write path too: a planned
   /// entry takes the identical route, snapshot included, so a plan is
   /// scored by exactly the code that scores a meal. What differs is one
-  /// column and the meaning of [loggedAt], which for a planned entry is
+  /// column and the meaning of `loggedAt`, which for a planned entry is
   /// when the plan was made and is rewritten when it is confirmed.
+  ///
+  /// [loggedAt] is when the food was *eaten*, which is not always when it
+  /// was typed in: someone catching up at the end of the day would
+  /// otherwise stamp breakfast, lunch and dinner all at 22:00, and the
+  /// day log is meant to read as the day happened. Defaults to now, which
+  /// is the common case of logging as you eat.
   Future<String> logFood({
     required String ownerId,
     required String foodId,
@@ -43,6 +49,7 @@ class FoodLoggingDao {
     required double quantity,
     required String mealSlotId,
     required DateTime logDate,
+    DateTime? loggedAt,
     String status = logStatusLogged,
     String source = 'manual',
   }) async {
@@ -73,7 +80,7 @@ class FoodLoggingDao {
           servingSizeId: Value(servingId),
           quantity: quantity,
           gramsConsumed: gramsConsumed,
-          loggedAt: now,
+          loggedAt: loggedAt ?? now,
           source: source,
           status: Value(status),
         ),
@@ -127,6 +134,7 @@ class FoodLoggingDao {
     double? quantity,
     String? servingId,
     String? mealSlotId,
+    DateTime? loggedAt,
   }) async {
     final entry = await (_db.select(
       _db.foodLogEntries,
@@ -164,6 +172,7 @@ class FoodLoggingDao {
           mealSlotId: mealSlotId == null
               ? const Value.absent()
               : Value(mealSlotId),
+          loggedAt: loggedAt == null ? const Value.absent() : Value(loggedAt),
           updatedAt: Value(DateTime.now()),
         ),
         where: (e) => e.id.equals(entryId),

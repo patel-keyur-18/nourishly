@@ -29,7 +29,8 @@ final preferencesProvider = FutureProvider<UserPreference>((ref) async {
   return ref.watch(preferencesDaoProvider).forOwner(ownerId);
 });
 
-/// Up to three nutrients promoted onto the dashboard (FR-U-09, §27.2).
+/// The nutrients promoted onto the dashboard (FR-U-09, §27.2), up to
+/// [PreferencesDao.maxFocusNutrients].
 final focusNutrientIdsProvider = Provider<List<String>>((ref) {
   final preferences = ref.watch(preferencesProvider).value;
   return preferences == null ? const [] : focusNutrientsOf(preferences);
