@@ -16,6 +16,22 @@ String formatThousands(num value) {
   return negative ? '-$buffer' : buffer.toString();
 }
 
+/// "1.5", "0.8", "0.83" — a serving count with at most two decimals and
+/// no trailing zeros. A typed weight makes any fraction possible (125 g of
+/// a 150 g katori is 0.8333…), and one decimal would round that to a
+/// portion the grams underneath do not match.
+String formatQuantity(double quantity) => _trimZeros(quantity, 2);
+
+/// "120", "92.5" — a weight in grams with at most one decimal, for a field
+/// the user types into, so a whole number reads without a stray ".0".
+String formatGrams(double grams) => _trimZeros(grams, 1);
+
+String _trimZeros(double value, int maxDecimals) {
+  final fixed = value.toStringAsFixed(maxDecimals);
+  if (!fixed.contains('.')) return fixed;
+  return fixed.replaceFirst(RegExp(r'\.?0+$'), '');
+}
+
 /// The catalog's display names are written for a nutrient list, not for a
 /// 70px column: "Dietary fibre" and "Carbohydrate" truncate mid-word in
 /// every bar and table row, which reads as a rendering bug rather than as

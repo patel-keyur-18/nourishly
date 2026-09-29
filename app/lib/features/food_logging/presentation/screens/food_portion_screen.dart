@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart' show OrderingTerm;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nourishly_data/nourishly_data.dart';
@@ -150,7 +151,10 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen>
   }
 
   Future<void> _save() async {
-    if (_servingId.value == null || _mealSlotId.value == null || _saving) {
+    if (_servingId.value == null ||
+        _mealSlotId.value == null ||
+        _quantity.value <= 0 ||
+        _saving) {
       return;
     }
     setState(() => _saving = true);
@@ -276,6 +280,19 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen>
                       grams: (serving?.grams ?? 0) * _quantity.value,
                       onChanged: (q) => setState(() => _quantity.value = q),
                     ),
+                    if (serving != null && serving.grams > 0) ...[
+                      const SizedBox(height: NourishlySpace.s2),
+                      // The weight is stored as a fraction of the chosen
+                      // serving, so `logFood` and `updateEntry` need no
+                      // separate grams path: 120 g of a 150 g katori is
+                      // simply 0.8 katori, and the snapshot comes out at
+                      // exactly 120 g either way.
+                      _GramsField(
+                        grams: serving.grams * _quantity.value,
+                        onChanged: (g) =>
+                            setState(() => _quantity.value = g / serving.grams),
+                      ),
+                    ],
                     const NourishlySectionHeader(label: 'Meal'),
                     _MealChips(
                       selectedId: _mealSlotId.value,
@@ -308,6 +325,7 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen>
                 enabled:
                     !_saving &&
                     _servingId.value != null &&
+                    _quantity.value > 0 &&
                     _mealSlotId.value != null,
                 saving: _saving,
                 editing: _editing,
@@ -513,6 +531,20 @@ class _QuantityStepper extends StatelessWidget {
   final double grams;
   final ValueChanged<double> onChanged;
 
+  /// Doubled quantity, rounded off the float noise a typed weight leaves
+  /// behind (120 / 150 × 2 is not quite 1.6), so the half-steps below land
+  /// where a person would expect.
+  static double _halves(double quantity) =>
+      (quantity * 2 * 1e6).roundToDouble() / 1e6;
+
+  /// The next half-serving above [quantity]: a typed 0.8 steps to 1, not
+  /// 1.3, so the stepper still reads in whole and half servings.
+  static double _stepUp(double quantity) => (_halves(quantity).floor() + 1) / 2;
+
+  /// The next half-serving below [quantity]: 0.8 steps down to 0.5.
+  static double _stepDown(double quantity) =>
+      (_halves(quantity).ceil() - 1) / 2;
+
   @override
   Widget build(BuildContext context) {
     final colors = context.nourishlyColors;
@@ -521,7 +553,9 @@ class _QuantityStepper extends StatelessWidget {
       child: Row(
         children: [
           IconButton(
-            onPressed: quantity > 0.5 ? () => onChanged(quantity - 0.5) : null,
+            onPressed: _stepDown(quantity) >= 0.5
+                ? () => onChanged(_stepDown(quantity))
+                : null,
             icon: const Icon(Icons.remove_circle_outline_rounded),
             iconSize: 30,
             color: colors.accent,
@@ -530,7 +564,7 @@ class _QuantityStepper extends StatelessWidget {
             child: Column(
               children: [
                 Text(
-                  quantity.toStringAsFixed(quantity % 1 == 0 ? 0 : 1),
+                  formatQuantity(quantity),
                   style: text.display.copyWith(height: 1),
                 ),
                 const SizedBox(height: NourishlySpace.s1),
@@ -542,10 +576,104 @@ class _QuantityStepper extends StatelessWidget {
             ),
           ),
           IconButton(
-            onPressed: () => onChanged(quantity + 0.5),
+            onPressed: () => onChanged(_stepUp(quantity)),
             icon: const Icon(Icons.add_circle_outline_rounded),
             iconSize: 30,
             color: colors.accent,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// The exact weight, for when the plate was weighed or the serving chips
+/// are not quite it — 120 g of rice rather than one 150 g katori.
+///
+/// Two-way with the stepper: typing a weight sets the quantity to that
+/// fraction of the chosen serving, and stepping or switching the serving
+/// rewrites the text. A rewrite is skipped while the text already says the
+/// same weight, so the caret is not yanked mid-edit by the round trip.
+class _GramsField extends StatefulWidget {
+  const _GramsField({required this.grams, required this.onChanged});
+
+  final double grams;
+  final ValueChanged<double> onChanged;
+
+  @override
+  State<_GramsField> createState() => _GramsFieldState();
+}
+
+class _GramsFieldState extends State<_GramsField> {
+  late final TextEditingController _controller = TextEditingController(
+    text: formatGrams(widget.grams),
+  );
+
+  @override
+  void didUpdateWidget(_GramsField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final typed = double.tryParse(_controller.text.trim()) ?? 0;
+    if ((typed - widget.grams).abs() >= 0.05) {
+      _controller.text = formatGrams(widget.grams);
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.nourishlyColors;
+    final text = context.nourishlyText;
+    final typed = double.tryParse(_controller.text.trim());
+    return NourishlyCard(
+      child: Row(
+        children: [
+          Icon(Icons.scale_rounded, size: 20, color: colors.accent),
+          const SizedBox(width: NourishlySpace.s3),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Exact weight', style: text.body),
+                Text(
+                  typed == null || typed <= 0
+                      ? 'Enter a weight above 0 g'
+                      : 'Type what you actually ate',
+                  style: text.caption.copyWith(
+                    color: typed == null || typed <= 0
+                        ? colors.danger
+                        : colors.ink3,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            width: 96,
+            child: TextField(
+              key: const Key('portion-grams'),
+              controller: _controller,
+              textAlign: TextAlign.right,
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,1}')),
+              ],
+              style: text.body.copyWith(fontWeight: FontWeight.w700),
+              decoration: const InputDecoration(isDense: true, suffixText: 'g'),
+              onChanged: (value) {
+                // An empty or zero box zeroes the quantity, which greys
+                // out the save button rather than quietly logging
+                // whatever the stepper said before the box was cleared.
+                widget.onChanged(double.tryParse(value.trim()) ?? 0);
+                setState(() {});
+              },
+            ),
           ),
         ],
       ),
