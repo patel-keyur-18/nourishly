@@ -88,12 +88,14 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-        <!-- Serves the share file, read-only, behind the permission above. -->
+        <!-- Serves the share file, read-only, behind the permission above.
+             android:permission guards reads and writes alike, so no other
+             app can even ask to write (ShareProvider's writes do nothing). -->
         <provider
             android:name=".ShareProvider"
             android:authorities="com.nourishly.app.nourishly.share"
             android:exported="true"
-            android:readPermission="com.patelkeyur.permission.NOURISHLY_SHARE" />
+            android:permission="com.patelkeyur.permission.NOURISHLY_SHARE" />
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and
