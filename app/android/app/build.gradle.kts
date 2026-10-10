@@ -66,6 +66,11 @@ android {
         debug {
             signingConfigs.findByName("release")?.let { signingConfig = it }
         }
+        // Flutter makes the profile type from debug before this block runs,
+        // so it needs the owner's key too (`flutter run --profile`).
+        findByName("profile")?.let { profile ->
+            signingConfigs.findByName("release")?.let { profile.signingConfig = it }
+        }
     }
 }
 

@@ -44,10 +44,10 @@ Readers ignore fields they don't know. A new optional field keeps `version` at 1
 The owner plans these as enhancements to both apps (2026-10-10). Nothing is built yet; this is what they would take.
 
 - **Water and weight.** New optional fields, so version 1 readers keep working and `version` stays 1:
-  - `days[].water`: that day's water, in Nourishly's own unit (glasses or ml, with the unit named in the field).
-  - `weight`: her latest weight in kg, with the date it was logged.
+  - `days[].water`: `{ "amount": 6, "unit": "glass" }`, where `unit` is `"glass"` or `"ml"`, as Nourishly logged it.
+  - `weight`: `{ "kg": 61.2, "date": "2026-10-09" }`, her latest logged weight.
 
-  Like everything else here they are values only: no goals, targets or statuses. Turning sharing off still removes them with the file.
+  Like everything else here they are values only: no goals, targets or statuses. Turning sharing off still removes them with the file. Building this lifts two exclusions that stand today: water, and weight from the profile details, under "Never in the file" above and in ADR-012. Both must be amended in the same change, with the owner's approval.
 - **"Open Nourishly" from Navmaas.**
   - **Android:** Navmaas adds `<package android:name="com.nourishly.app.nourishly" />` to its `<queries>` and opens Nourishly by its launch intent. Nourishly needs nothing.
   - **iPhone:** Nourishly declares a `nourishly://` URL scheme in `Info.plist`, and Navmaas lists `nourishly` under `LSApplicationQueriesSchemes`.
