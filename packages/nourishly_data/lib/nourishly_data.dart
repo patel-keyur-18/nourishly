@@ -31,6 +31,7 @@ export 'src/dao/water_log_dao.dart';
 export 'src/database.dart';
 export 'src/diet_classifier.dart';
 export 'src/rda_importer.dart';
+export 'src/share/navmaas_share.dart';
 export 'src/tables/catalog_tables.dart';
 export 'src/tables/common.dart';
 export 'src/tables/derived_tables.dart';
