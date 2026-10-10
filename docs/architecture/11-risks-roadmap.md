@@ -216,7 +216,7 @@ No fixed roadmap, deliberately. Use it for a few months, then decide from real e
 | 4 | **Run the catalog/search spike**: ingest ~500 USDA foods, build an FTS5 index, measure search latency on the actual phone the family uses. Validates NFR-P-03 and the offline-catalog premise in a day |
 | 5 | Finalise the **nutrient registry** and **ICMR-NIN RDA tables**, with a source cited per row |
 | 6 | **Prune the [catalog specification](../catalog/README.md)** to what your household actually eats, and correct any serving weight you know is wrong. ~365 items are specified; Tier 1 (~90) is what the app needs to be usable |
-| 7 | Decide the **keystore storage plan** before generating one (R-26) |
+| 7 | Decide the **keystore storage plan** before generating one (R-26). Decided 2026-10-10: one owner keystore for Nourishly and Navmaas, release builds signed from repository secrets ([ADR-011](./10-adrs.md#adr-011--one-owner-keystore-signs-nourishly-and-navmaas)) |
 
 ### Before the scoring engine (Phase 3)
 
