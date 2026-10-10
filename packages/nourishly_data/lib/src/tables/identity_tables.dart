@@ -144,6 +144,10 @@ class UserPreferences extends Table with Owned, Timestamped {
   TextColumn get theme => text().withDefault(const Constant('light'))();
   TextColumn get locale => text().withDefault(const Constant('en'))();
 
+  /// Share with Navmaas (ADR-012): off until she turns it on.
+  BoolColumn get shareWithNavmaas =>
+      boolean().withDefault(const Constant(false))();
+
   /// `vegetarian` | `vegan` | `eggetarian` | `jain` | `halal` | null
   /// (FR-U-16). Null means not stated, which is the default and stays the
   /// default — the question is skippable.
