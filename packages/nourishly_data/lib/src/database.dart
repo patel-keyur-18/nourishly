@@ -83,7 +83,7 @@ class NourishlyDatabase extends _$NourishlyDatabase {
       );
 
   @override
-  int get schemaVersion => 7;
+  int get schemaVersion => 8;
 
   /// v1 -> v2 adds FR-U-16's dietary preference (plus the one-time
   /// onboarding flag) and the diet class the catalog importer computes.
@@ -115,6 +115,9 @@ class NourishlyDatabase extends _$NourishlyDatabase {
   /// something actually eaten, which is exactly what the `logged` default
   /// says, and a profile with no due date is not pregnant, which is what
   /// a null says.
+  ///
+  /// v7 -> v8 is the Share with Navmaas switch (ADR-012). Additive, and
+  /// off for every existing row: sharing is something she turns on.
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (m) => m.createAll(),
@@ -153,6 +156,9 @@ class NourishlyDatabase extends _$NourishlyDatabase {
       if (from < 7 && to >= 7) {
         await m.addColumn(foodLogEntries, foodLogEntries.status);
         await m.addColumn(userProfileVersions, userProfileVersions.dueDate);
+      }
+      if (from < 8 && to >= 8) {
+        await m.addColumn(userPreferences, userPreferences.shareWithNavmaas);
       }
     },
   );

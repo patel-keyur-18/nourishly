@@ -23,6 +23,17 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
+    <!--
+        Share with Navmaas (ADR-012). A signature permission: Android grants
+        it only to apps signed with the same key as Nourishly, which is the
+        owner's key (ADR-011), so only Navmaas can read the share file.
+        Navmaas declares the same permission, so either app may be
+        installed first.
+    -->
+    <permission
+        android:name="com.patelkeyur.permission.NOURISHLY_SHARE"
+        android:protectionLevel="signature" />
+
     <application
         android:label="nourishly"
         android:name="${applicationName}"
@@ -77,6 +88,12 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        <!-- Serves the share file, read-only, behind the permission above. -->
+        <provider
+            android:name=".ShareProvider"
+            android:authorities="com.nourishly.app.nourishly.share"
+            android:exported="true"
+            android:readPermission="com.patelkeyur.permission.NOURISHLY_SHARE" />
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

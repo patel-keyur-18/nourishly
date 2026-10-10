@@ -67,6 +67,7 @@ That inference surface — not the calorie count — is why this data deserves c
 | Health platform read / write | Per direction and per data type, at the point of enabling | Off | Nothing else is affected; the app never requires it |
 | Photo upload (v1.1) | Per use | Off | Manual logging available |
 | AI meal parsing (v1.1) | Explicit, with a clear statement of what is sent and to whom | Off | Manual logging available |
+| Share with Navmaas | Settings → Your data, with a plain line on what is shared | Off | Navmaas shows nothing from Nourishly; nothing else is affected |
 
 **Every consent is revocable in Settings, and revoking never removes functionality that does not depend on it.**
 
@@ -99,6 +100,8 @@ flowchart LR
     style Third fill:#ffcdd2,stroke:#c62828,stroke-dasharray: 5 5
 ```
 
+**One on-device reader (ADR-012).** With Share with Navmaas on, a values-only file of each day's meals and six totals (the last 90 days) is readable by Navmaas on the same phone: on Android through a provider behind a `signature` permission (only apps signed with the owner's key), on iPhone through the App Group `group.com.patelkeyur.share`. No targets, scores, profile details, water or plans are in it, and it never leaves the device ([format](../navmaas-share.md)).
+
 The dashed red boundary is the one that must be audited before every release: **no health data crosses it.** A concrete verification step — proxy the app and inspect every outbound request — belongs in the pre-release checklist, because this is the kind of guarantee that erodes silently when a well-meaning SDK is added.
 
 ### 30.6 Data export (FR-U-13, NFR-S-07)
@@ -117,6 +120,7 @@ The dashed red boundary is the one that must be audited before every release: **
 | Delete all local data | Available without an account. Two-step; export offered first |
 | Delete account | In-app (an App Store requirement, and now in scope from the first release since accounts exist at launch). Two-step confirmation. Server data erased within 30 days; backups age out on their own retention cycle, which must be stated honestly in the privacy policy rather than glossed as "immediately" |
 | Post-deletion | Local data cleared; the app returns to a fresh guest state rather than an error state |
+| Share with Navmaas | Turning it off deletes the shared file at once; "Delete everything" removes it too (ADR-012) |
 
 **No dark patterns:** deletion is not hidden behind a support email, does not require contacting anyone, and is not made deliberately tedious.
 

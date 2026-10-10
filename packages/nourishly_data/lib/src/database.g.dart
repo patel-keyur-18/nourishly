@@ -3760,6 +3760,21 @@ class $UserPreferencesTable extends UserPreferences
     requiredDuringInsert: false,
     defaultValue: const Constant('en'),
   );
+  static const VerificationMeta _shareWithNavmaasMeta = const VerificationMeta(
+    'shareWithNavmaas',
+  );
+  @override
+  late final GeneratedColumn<bool> shareWithNavmaas = GeneratedColumn<bool>(
+    'share_with_navmaas',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("share_with_navmaas" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   static const VerificationMeta _dietaryPreferenceMeta = const VerificationMeta(
     'dietaryPreference',
   );
@@ -3843,6 +3858,7 @@ class $UserPreferencesTable extends UserPreferences
     hideEnergy,
     theme,
     locale,
+    shareWithNavmaas,
     dietaryPreference,
     onboardingSeen,
     remindersEnabled,
@@ -3989,6 +4005,15 @@ class $UserPreferencesTable extends UserPreferences
         locale.isAcceptableOrUnknown(data['locale']!, _localeMeta),
       );
     }
+    if (data.containsKey('share_with_navmaas')) {
+      context.handle(
+        _shareWithNavmaasMeta,
+        shareWithNavmaas.isAcceptableOrUnknown(
+          data['share_with_navmaas']!,
+          _shareWithNavmaasMeta,
+        ),
+      );
+    }
     if (data.containsKey('dietary_preference')) {
       context.handle(
         _dietaryPreferenceMeta,
@@ -4107,6 +4132,10 @@ class $UserPreferencesTable extends UserPreferences
         DriftSqlType.string,
         data['${effectivePrefix}locale'],
       )!,
+      shareWithNavmaas: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}share_with_navmaas'],
+      )!,
       dietaryPreference: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}dietary_preference'],
@@ -4171,6 +4200,9 @@ class UserPreference extends DataClass implements Insertable<UserPreference> {
   final String theme;
   final String locale;
 
+  /// Share with Navmaas (ADR-012): off until she turns it on.
+  final bool shareWithNavmaas;
+
   /// `vegetarian` | `vegan` | `eggetarian` | `jain` | `halal` | null
   /// (FR-U-16). Null means not stated, which is the default and stays the
   /// default — the question is skippable.
@@ -4227,6 +4259,7 @@ class UserPreference extends DataClass implements Insertable<UserPreference> {
     required this.hideEnergy,
     required this.theme,
     required this.locale,
+    required this.shareWithNavmaas,
     this.dietaryPreference,
     required this.onboardingSeen,
     required this.remindersEnabled,
@@ -4252,6 +4285,7 @@ class UserPreference extends DataClass implements Insertable<UserPreference> {
     map['hide_energy'] = Variable<bool>(hideEnergy);
     map['theme'] = Variable<String>(theme);
     map['locale'] = Variable<String>(locale);
+    map['share_with_navmaas'] = Variable<bool>(shareWithNavmaas);
     if (!nullToAbsent || dietaryPreference != null) {
       map['dietary_preference'] = Variable<String>(dietaryPreference);
     }
@@ -4286,6 +4320,7 @@ class UserPreference extends DataClass implements Insertable<UserPreference> {
       hideEnergy: Value(hideEnergy),
       theme: Value(theme),
       locale: Value(locale),
+      shareWithNavmaas: Value(shareWithNavmaas),
       dietaryPreference: dietaryPreference == null && nullToAbsent
           ? const Value.absent()
           : Value(dietaryPreference),
@@ -4324,6 +4359,7 @@ class UserPreference extends DataClass implements Insertable<UserPreference> {
       hideEnergy: serializer.fromJson<bool>(json['hideEnergy']),
       theme: serializer.fromJson<String>(json['theme']),
       locale: serializer.fromJson<String>(json['locale']),
+      shareWithNavmaas: serializer.fromJson<bool>(json['shareWithNavmaas']),
       dietaryPreference: serializer.fromJson<String?>(
         json['dietaryPreference'],
       ),
@@ -4355,6 +4391,7 @@ class UserPreference extends DataClass implements Insertable<UserPreference> {
       'hideEnergy': serializer.toJson<bool>(hideEnergy),
       'theme': serializer.toJson<String>(theme),
       'locale': serializer.toJson<String>(locale),
+      'shareWithNavmaas': serializer.toJson<bool>(shareWithNavmaas),
       'dietaryPreference': serializer.toJson<String?>(dietaryPreference),
       'onboardingSeen': serializer.toJson<bool>(onboardingSeen),
       'remindersEnabled': serializer.toJson<bool>(remindersEnabled),
@@ -4382,6 +4419,7 @@ class UserPreference extends DataClass implements Insertable<UserPreference> {
     bool? hideEnergy,
     String? theme,
     String? locale,
+    bool? shareWithNavmaas,
     Value<String?> dietaryPreference = const Value.absent(),
     bool? onboardingSeen,
     bool? remindersEnabled,
@@ -4404,6 +4442,7 @@ class UserPreference extends DataClass implements Insertable<UserPreference> {
     hideEnergy: hideEnergy ?? this.hideEnergy,
     theme: theme ?? this.theme,
     locale: locale ?? this.locale,
+    shareWithNavmaas: shareWithNavmaas ?? this.shareWithNavmaas,
     dietaryPreference: dietaryPreference.present
         ? dietaryPreference.value
         : this.dietaryPreference,
@@ -4452,6 +4491,9 @@ class UserPreference extends DataClass implements Insertable<UserPreference> {
           : this.hideEnergy,
       theme: data.theme.present ? data.theme.value : this.theme,
       locale: data.locale.present ? data.locale.value : this.locale,
+      shareWithNavmaas: data.shareWithNavmaas.present
+          ? data.shareWithNavmaas.value
+          : this.shareWithNavmaas,
       dietaryPreference: data.dietaryPreference.present
           ? data.dietaryPreference.value
           : this.dietaryPreference,
@@ -4489,6 +4531,7 @@ class UserPreference extends DataClass implements Insertable<UserPreference> {
           ..write('hideEnergy: $hideEnergy, ')
           ..write('theme: $theme, ')
           ..write('locale: $locale, ')
+          ..write('shareWithNavmaas: $shareWithNavmaas, ')
           ..write('dietaryPreference: $dietaryPreference, ')
           ..write('onboardingSeen: $onboardingSeen, ')
           ..write('remindersEnabled: $remindersEnabled, ')
@@ -4516,6 +4559,7 @@ class UserPreference extends DataClass implements Insertable<UserPreference> {
     hideEnergy,
     theme,
     locale,
+    shareWithNavmaas,
     dietaryPreference,
     onboardingSeen,
     remindersEnabled,
@@ -4542,6 +4586,7 @@ class UserPreference extends DataClass implements Insertable<UserPreference> {
           other.hideEnergy == this.hideEnergy &&
           other.theme == this.theme &&
           other.locale == this.locale &&
+          other.shareWithNavmaas == this.shareWithNavmaas &&
           other.dietaryPreference == this.dietaryPreference &&
           other.onboardingSeen == this.onboardingSeen &&
           other.remindersEnabled == this.remindersEnabled &&
@@ -4566,6 +4611,7 @@ class UserPreferencesCompanion extends UpdateCompanion<UserPreference> {
   final Value<bool> hideEnergy;
   final Value<String> theme;
   final Value<String> locale;
+  final Value<bool> shareWithNavmaas;
   final Value<String?> dietaryPreference;
   final Value<bool> onboardingSeen;
   final Value<bool> remindersEnabled;
@@ -4589,6 +4635,7 @@ class UserPreferencesCompanion extends UpdateCompanion<UserPreference> {
     this.hideEnergy = const Value.absent(),
     this.theme = const Value.absent(),
     this.locale = const Value.absent(),
+    this.shareWithNavmaas = const Value.absent(),
     this.dietaryPreference = const Value.absent(),
     this.onboardingSeen = const Value.absent(),
     this.remindersEnabled = const Value.absent(),
@@ -4613,6 +4660,7 @@ class UserPreferencesCompanion extends UpdateCompanion<UserPreference> {
     this.hideEnergy = const Value.absent(),
     this.theme = const Value.absent(),
     this.locale = const Value.absent(),
+    this.shareWithNavmaas = const Value.absent(),
     this.dietaryPreference = const Value.absent(),
     this.onboardingSeen = const Value.absent(),
     this.remindersEnabled = const Value.absent(),
@@ -4646,6 +4694,7 @@ class UserPreferencesCompanion extends UpdateCompanion<UserPreference> {
     Expression<bool>? hideEnergy,
     Expression<String>? theme,
     Expression<String>? locale,
+    Expression<bool>? shareWithNavmaas,
     Expression<String>? dietaryPreference,
     Expression<bool>? onboardingSeen,
     Expression<bool>? remindersEnabled,
@@ -4671,6 +4720,7 @@ class UserPreferencesCompanion extends UpdateCompanion<UserPreference> {
       if (hideEnergy != null) 'hide_energy': hideEnergy,
       if (theme != null) 'theme': theme,
       if (locale != null) 'locale': locale,
+      if (shareWithNavmaas != null) 'share_with_navmaas': shareWithNavmaas,
       if (dietaryPreference != null) 'dietary_preference': dietaryPreference,
       if (onboardingSeen != null) 'onboarding_seen': onboardingSeen,
       if (remindersEnabled != null) 'reminders_enabled': remindersEnabled,
@@ -4698,6 +4748,7 @@ class UserPreferencesCompanion extends UpdateCompanion<UserPreference> {
     Value<bool>? hideEnergy,
     Value<String>? theme,
     Value<String>? locale,
+    Value<bool>? shareWithNavmaas,
     Value<String?>? dietaryPreference,
     Value<bool>? onboardingSeen,
     Value<bool>? remindersEnabled,
@@ -4722,6 +4773,7 @@ class UserPreferencesCompanion extends UpdateCompanion<UserPreference> {
       hideEnergy: hideEnergy ?? this.hideEnergy,
       theme: theme ?? this.theme,
       locale: locale ?? this.locale,
+      shareWithNavmaas: shareWithNavmaas ?? this.shareWithNavmaas,
       dietaryPreference: dietaryPreference ?? this.dietaryPreference,
       onboardingSeen: onboardingSeen ?? this.onboardingSeen,
       remindersEnabled: remindersEnabled ?? this.remindersEnabled,
@@ -4785,6 +4837,9 @@ class UserPreferencesCompanion extends UpdateCompanion<UserPreference> {
     if (locale.present) {
       map['locale'] = Variable<String>(locale.value);
     }
+    if (shareWithNavmaas.present) {
+      map['share_with_navmaas'] = Variable<bool>(shareWithNavmaas.value);
+    }
     if (dietaryPreference.present) {
       map['dietary_preference'] = Variable<String>(dietaryPreference.value);
     }
@@ -4827,6 +4882,7 @@ class UserPreferencesCompanion extends UpdateCompanion<UserPreference> {
           ..write('hideEnergy: $hideEnergy, ')
           ..write('theme: $theme, ')
           ..write('locale: $locale, ')
+          ..write('shareWithNavmaas: $shareWithNavmaas, ')
           ..write('dietaryPreference: $dietaryPreference, ')
           ..write('onboardingSeen: $onboardingSeen, ')
           ..write('remindersEnabled: $remindersEnabled, ')
@@ -20657,6 +20713,7 @@ typedef $$UserPreferencesTableCreateCompanionBuilder =
       Value<bool> hideEnergy,
       Value<String> theme,
       Value<String> locale,
+      Value<bool> shareWithNavmaas,
       Value<String?> dietaryPreference,
       Value<bool> onboardingSeen,
       Value<bool> remindersEnabled,
@@ -20682,6 +20739,7 @@ typedef $$UserPreferencesTableUpdateCompanionBuilder =
       Value<bool> hideEnergy,
       Value<String> theme,
       Value<String> locale,
+      Value<bool> shareWithNavmaas,
       Value<String?> dietaryPreference,
       Value<bool> onboardingSeen,
       Value<bool> remindersEnabled,
@@ -20802,6 +20860,11 @@ class $$UserPreferencesTableFilterComposer
 
   ColumnFilters<String> get locale => $composableBuilder(
     column: $table.locale,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get shareWithNavmaas => $composableBuilder(
+    column: $table.shareWithNavmaas,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -20938,6 +21001,11 @@ class $$UserPreferencesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<bool> get shareWithNavmaas => $composableBuilder(
+    column: $table.shareWithNavmaas,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get dietaryPreference => $composableBuilder(
     column: $table.dietaryPreference,
     builder: (column) => ColumnOrderings(column),
@@ -21059,6 +21127,11 @@ class $$UserPreferencesTableAnnotationComposer
   GeneratedColumn<String> get locale =>
       $composableBuilder(column: $table.locale, builder: (column) => column);
 
+  GeneratedColumn<bool> get shareWithNavmaas => $composableBuilder(
+    column: $table.shareWithNavmaas,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<String> get dietaryPreference => $composableBuilder(
     column: $table.dietaryPreference,
     builder: (column) => column,
@@ -21154,6 +21227,7 @@ class $$UserPreferencesTableTableManager
                 Value<bool> hideEnergy = const Value.absent(),
                 Value<String> theme = const Value.absent(),
                 Value<String> locale = const Value.absent(),
+                Value<bool> shareWithNavmaas = const Value.absent(),
                 Value<String?> dietaryPreference = const Value.absent(),
                 Value<bool> onboardingSeen = const Value.absent(),
                 Value<bool> remindersEnabled = const Value.absent(),
@@ -21178,6 +21252,7 @@ class $$UserPreferencesTableTableManager
                 hideEnergy: hideEnergy,
                 theme: theme,
                 locale: locale,
+                shareWithNavmaas: shareWithNavmaas,
                 dietaryPreference: dietaryPreference,
                 onboardingSeen: onboardingSeen,
                 remindersEnabled: remindersEnabled,
@@ -21203,6 +21278,7 @@ class $$UserPreferencesTableTableManager
                 Value<bool> hideEnergy = const Value.absent(),
                 Value<String> theme = const Value.absent(),
                 Value<String> locale = const Value.absent(),
+                Value<bool> shareWithNavmaas = const Value.absent(),
                 Value<String?> dietaryPreference = const Value.absent(),
                 Value<bool> onboardingSeen = const Value.absent(),
                 Value<bool> remindersEnabled = const Value.absent(),
@@ -21227,6 +21303,7 @@ class $$UserPreferencesTableTableManager
                 hideEnergy: hideEnergy,
                 theme: theme,
                 locale: locale,
+                shareWithNavmaas: shareWithNavmaas,
                 dietaryPreference: dietaryPreference,
                 onboardingSeen: onboardingSeen,
                 remindersEnabled: remindersEnabled,

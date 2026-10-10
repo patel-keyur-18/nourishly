@@ -77,6 +77,7 @@ class PreferencesDao {
     bool? remindersEnabled,
     DateTime? lastExportedAt,
     DateTime? exportPromptSnoozedUntil,
+    bool? shareWithNavmaas,
   }) async {
     await forOwner(ownerId);
     await (_db.update(
@@ -122,6 +123,9 @@ class PreferencesDao {
         exportPromptSnoozedUntil: exportPromptSnoozedUntil == null
             ? const Value.absent()
             : Value(exportPromptSnoozedUntil),
+        shareWithNavmaas: shareWithNavmaas == null
+            ? const Value.absent()
+            : Value(shareWithNavmaas),
         updatedAt: Value(DateTime.now()),
       ),
     );

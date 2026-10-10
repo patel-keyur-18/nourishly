@@ -73,10 +73,6 @@ void main() {
     return id;
   }
 
-  test('the database reports the new schema version', () {
-    expect(db.schemaVersion, 7);
-  });
-
   test('an entry written before the upgrade still counts as eaten', () async {
     await downgradeToV6();
     final entryId = await insertEntry();

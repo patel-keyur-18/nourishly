@@ -140,7 +140,8 @@ class SettingsScreen extends ConsumerWidget {
             // 13A's third group. §27.13: export and deletion are
             // discoverable, not buried.
             const NourishlySectionHeader(label: 'Your data'),
-            const _YourDataGroup(),
+            _YourDataGroup(preferences: preferences),
+            if (preferences.shareWithNavmaas) const _ShareNote(),
 
             const _AboutFooter(),
           ],
@@ -187,6 +188,7 @@ class SettingsScreen extends ConsumerWidget {
     String? unitSystem,
     List<String>? focusNutrientIds,
     String? theme,
+    bool? shareWithNavmaas,
   }) async {
     final ownerId = await ref.read(defaultOwnerProvider.future);
     await ref
@@ -200,6 +202,7 @@ class SettingsScreen extends ConsumerWidget {
           unitSystem: unitSystem,
           focusNutrientIds: focusNutrientIds,
           theme: theme,
+          shareWithNavmaas: shareWithNavmaas,
         );
     ref.read(summaryRevisionProvider.notifier).bump();
   }
@@ -395,7 +398,9 @@ class _FocusNutrientSheet extends ConsumerWidget {
 /// honest thing to show is what that means, plus the one number the user
 /// can actually act on: when they last took a copy of their own.
 class _YourDataGroup extends ConsumerWidget {
-  const _YourDataGroup();
+  const _YourDataGroup({required this.preferences});
+
+  final UserPreference preferences;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -403,6 +408,15 @@ class _YourDataGroup extends ConsumerWidget {
 
     return NourishlyRowGroup(
       children: [
+        // ADR-012: off until she turns it on; the note below says what goes.
+        NourishlyListRow.switched(
+          title: 'Share with Navmaas',
+          subtitle: preferences.shareWithNavmaas
+              ? 'On · meals and six day totals, last 90 days'
+              : 'Off',
+          value: preferences.shareWithNavmaas,
+          onChanged: (v) => SettingsScreen._update(ref, shareWithNavmaas: v),
+        ),
         NourishlyListRow(
           title: 'Export everything',
           subtitle: 'JSON and CSV',
@@ -442,6 +456,28 @@ class _YourDataGroup extends ConsumerWidget {
 /// all data stays on this phone" — plus §21.8's signposting, which §27.13
 /// requires somewhere and which reads as fine print rather than as a card
 /// demanding to be read first.
+/// What sharing with Navmaas means, in the About footer's fine print
+/// (ADR-012, docs/navmaas-share.md).
+class _ShareNote extends StatelessWidget {
+  const _ShareNote();
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.nourishlyColors;
+    final text = context.nourishlyText;
+    return Padding(
+      padding: const EdgeInsets.only(top: NourishlySpace.s2),
+      child: Text(
+        'Navmaas, on this phone only, can read each day\'s meals and six '
+        'totals (energy, protein, iron, calcium, folate, fibre) from the '
+        'last 90 days. Never your targets, scores, profile or water. '
+        'Nothing leaves your phone. Turn this off to remove the shared copy.',
+        style: text.caption.copyWith(color: colors.ink3, height: 1.5),
+      ),
+    );
+  }
+}
+
 class _AboutFooter extends ConsumerWidget {
   const _AboutFooter();
 
