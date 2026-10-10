@@ -1,0 +1,49 @@
+{
+  "format": "nourishly-share",
+  "version": 1,
+  "generatedAt": "2026-10-10T09:40:00.000+05:30",
+  "days": [
+    {
+      "date": "2026-10-10",
+      "meals": [
+        {
+          "slot": "Breakfast",
+          "items": [{ "name": "Poha", "amount": "1 katori · 150 g" }]
+        }
+      ],
+      "totals": {
+        "energy": 245,
+        "protein": 4.6,
+        "iron": 2.1,
+        "calcium": 18,
+        "fibre": 2.4
+      },
+      "partial": []
+    },
+    {
+      "date": "2026-10-09",
+      "meals": [
+        {
+          "slot": "Lunch",
+          "items": [
+            { "name": "Dal tadka", "amount": "1 katori · 150 g" },
+            { "name": "Phulka", "amount": "2 × 1 piece · 60 g" }
+          ]
+        },
+        {
+          "slot": "Dinner",
+          "items": [{ "name": "Khichdi", "amount": "1 bowl · 250 g" }]
+        }
+      ],
+      "totals": {
+        "energy": 1120,
+        "protein": 38.2,
+        "iron": 9.4,
+        "calcium": 310,
+        "folate": 180,
+        "fibre": 21.5
+      },
+      "partial": ["folate"]
+    }
+  ]
+}

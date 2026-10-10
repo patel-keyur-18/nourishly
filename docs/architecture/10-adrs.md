@@ -322,4 +322,27 @@ The one forfeited capability that needs an active substitute is OTA hot-fixing: 
 
 ---
 
+### ADR-012 — Share with Navmaas: a read-only file, off by default
+
+**Status.** Accepted 2026-10-10.
+
+**Context.** The owner's pregnancy tracker, Navmaas, needs the meals logged here so they don't have to be typed twice. Both apps are offline, on the same phone, with no account or server between them.
+
+**Decision.** While Settings → Your data → Share with Navmaas is on (off by default), Nourishly keeps one JSON file current: each day's meals and six day totals (energy, protein, iron, calcium, folate, fibre) for the last 90 log dates, with partial coverage flagged ([format](../navmaas-share.md)). It is rewritten about 2 seconds after any change to the log and when the app goes to the background, and deleted when sharing is turned off or everything is deleted.
+- **Android:** the file is in the app's private files; a read-only `ContentProvider` serves it behind `com.patelkeyur.permission.NOURISHLY_SHARE`, a `signature` permission, so only apps signed with the owner's key (ADR-011) can read it.
+- **iPhone:** the file is in the App Group `group.com.patelkeyur.share` under the owner's team; Navmaas joins the same group.
+- Never in the file: targets, %, scores, insights, statuses, profile details, water, planned meals.
+
+**Rationale.**
+1. Nothing leaves the phone, and nothing new can read the data except an app the owner signed.
+2. A file pushed by Nourishly, rather than Navmaas reading the database, keeps the schema private: Navmaas depends only on a small versioned format.
+3. Nourishly's targets and scores are general-population numbers; a pregnancy app that never interprets values must not receive them, so the file holds values only.
+
+**Trade-offs accepted.**
+- The file is a plain copy of part of the log (the database itself is not encrypted either, §30.3); it is excluded from platform backups because it is rebuilt from the log.
+- The file is only as fresh as Nourishly's last run; the writes on each change and on backgrounding cover the "log, then switch apps" case.
+- Debug builds (debug key) cannot read each other's files on Android.
+
+---
+
 *Continue to [Part XI — Risks, Assumptions, Open Questions, and Roadmap](./11-risks-roadmap.md).*

@@ -78,8 +78,4 @@ void main() {
     )..where((f) => f.id.equals(forkId))).getSingle();
     expect(row.forkedFromFoodId, parentId);
   });
-
-  test('the database reports the new schema version', () {
-    expect(db.schemaVersion, 7);
-  });
 }

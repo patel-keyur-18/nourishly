@@ -66,4 +66,10 @@
     -->
     <exclude domain="root" path="cache" />
     <exclude domain="root" path="code_cache" />
+    <!--
+      The Navmaas share file (ADR-012): rebuilt from the log whenever
+      sharing is on, so a backup would only store a copy of data it already
+      holds.
+    -->
+    <exclude domain="file" path="share" />
 </full-backup-content>

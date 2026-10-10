@@ -172,7 +172,7 @@ Attributes marked **[sync]** appear on every syncable user-owned entity: `id (UU
 - `is_user_override` is what lets manual overrides survive profile-driven recomputation (FR-U-05).
 
 **UserPreferences** — units, display, and behaviour settings.
-- `user_id`, `unit_system`, `volume_unit` (ml | L | floz_us | floz_imp), `mass_unit`, `height_unit`, `energy_unit`, `week_start_day`, `day_rollover_time`, `focus_nutrient_ids[]`, `quick_add_water_amounts[]`, `show_score`, `hide_energy`, `theme`, `locale`, **[sync]**
+- `user_id`, `unit_system`, `volume_unit` (ml | L | floz_us | floz_imp), `mass_unit`, `height_unit`, `energy_unit`, `week_start_day`, `day_rollover_time`, `focus_nutrient_ids[]`, `quick_add_water_amounts[]`, `show_score`, `hide_energy`, `theme`, `locale`, `share_with_navmaas` (ADR-012; off by default, schema v8), **[sync]**
 
 **BodyWeightEntry** — `id`, `user_id`, `recorded_at`, `weight_kg`, `source`, **[sync]**
 

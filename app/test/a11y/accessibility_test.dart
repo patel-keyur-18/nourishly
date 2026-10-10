@@ -155,6 +155,14 @@ void main() {
       });
     }
 
+    // Settings with Share with Navmaas on adds the fine print under Your
+    // data (ADR-012).
+    testWidgets('/profile with sharing on survives 200% type', (tester) async {
+      await PreferencesDao(db).update(ownerId, shareWithNavmaas: true);
+      await pump(tester, '/profile', textScale: 2);
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('the dashboard survives 200% type on a small phone', (
       tester,
     ) async {
@@ -166,6 +174,15 @@ void main() {
   });
 
   group('NFR-A-05 — primary touch targets are at least 48 dp', () {
+    testWidgets('/profile with sharing on', (tester) async {
+      await PreferencesDao(db).update(ownerId, shareWithNavmaas: true);
+      final handle = tester.ensureSemantics();
+      await pump(tester, '/profile');
+      await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(iOSTapTargetGuideline));
+      handle.dispose();
+    });
+
     for (final route in const [
       '/profile',
       '/profile/me',
