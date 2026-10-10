@@ -318,7 +318,7 @@ The one forfeited capability that needs an active substitute is OTA hot-fixing: 
 
 **Trade-offs accepted.**
 - The keystore is now the key to two apps: lose it and neither updates in place. It is backed up in two places, one off the build machine (R-26, roadmap item 13).
-- A debug build (`flutter run`) can't install over a release build without uninstalling first, unless `key.properties` is present: debug builds then use the owner's key too (2026-10-10). That is required since Navmaas also declares the `NOURISHLY_SHARE` signature permission (ADR-012): Android refuses to install an app that declares it again under another key (`INSTALL_FAILED_DUPLICATE_PERMISSION`). Never uninstall either app to get around it, because that deletes its data.
+- A debug build (`flutter run`) can't install over a release build without uninstalling first, unless `key.properties` is present: debug and profile builds then use the owner's key too (2026-10-10). That is required since Navmaas also declares the `NOURISHLY_SHARE` signature permission (ADR-012): Android refuses to install an app that declares it again under another key (`INSTALL_FAILED_DUPLICATE_PERMISSION`). Never uninstall either app to get around it, because that deletes its data.
 
 ---
 
@@ -341,7 +341,7 @@ The one forfeited capability that needs an active substitute is OTA hot-fixing: 
 **Trade-offs accepted.**
 - The file is a plain copy of part of the log (the database itself is not encrypted either, §30.3); it is excluded from platform backups because it is rebuilt from the log.
 - The file is only as fresh as Nourishly's last run; the writes on each change and on backgrounding cover the "log, then switch apps" case.
-- Debug builds signed with the debug key cannot read each other's files on Android, and can't install beside the other app's release build; with `key.properties` present, debug builds use the owner's key and work like releases (ADR-011).
+- Debug builds signed with the debug key cannot read each other's files on Android, and can't install beside the other app's release build; with `key.properties` present, debug and profile builds use the owner's key and work like releases (ADR-011).
 
 ---
 
