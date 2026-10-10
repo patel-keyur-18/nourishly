@@ -196,6 +196,8 @@ No fixed roadmap, deliberately. Use it for a few months, then decide from real e
 | Home-screen water widget | One-tap water proves to be the most-used action |
 | AI logging (Q-24) | You decide it is worth the cost and the offline compromise |
 | Sync / backend | Only if the scope genuinely changes. ADR-006 documents what that would take |
+| Water and weight to Navmaas | The owner asks (planned enhancement, 2026-10-10). New optional fields in the share file, still version 1 ([Planned additions](../navmaas-share.md#planned-additions)) |
+| "Open Nourishly" from Navmaas | The owner asks (planned enhancement, 2026-10-10). Needs a `nourishly://` URL scheme on iPhone; Android launches by package name ([Planned additions](../navmaas-share.md#planned-additions)) |
 
 ---
 

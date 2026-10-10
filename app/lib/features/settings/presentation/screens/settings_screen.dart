@@ -452,10 +452,6 @@ class _YourDataGroup extends ConsumerWidget {
   }
 }
 
-/// The prototype's centred fine print — "Nourishly v1.0 · catalog 2026.09 ·
-/// all data stays on this phone" — plus §21.8's signposting, which §27.13
-/// requires somewhere and which reads as fine print rather than as a card
-/// demanding to be read first.
 /// What sharing with Navmaas means, in the About footer's fine print
 /// (ADR-012, docs/navmaas-share.md).
 class _ShareNote extends StatelessWidget {
@@ -478,6 +474,10 @@ class _ShareNote extends StatelessWidget {
   }
 }
 
+/// The prototype's centred fine print — "Nourishly v1.0 · catalog 2026.09 ·
+/// all data stays on this phone" — plus §21.8's signposting, which §27.13
+/// requires somewhere and which reads as fine print rather than as a card
+/// demanding to be read first.
 class _AboutFooter extends ConsumerWidget {
   const _AboutFooter();
 

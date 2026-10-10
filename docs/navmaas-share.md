@@ -38,3 +38,16 @@ A sample is in [`packages/nourishly_data/test/fixtures/nourishly-share-v1.sample
 ## Compatibility
 
 Readers ignore fields they don't know. A new optional field keeps `version` at 1; anything that changes or removes a field is version 2, which a version-1 reader treats as unreadable.
+
+## Planned additions
+
+The owner plans these as enhancements to both apps (2026-10-10). Nothing is built yet; this is what they would take.
+
+- **Water and weight.** New optional fields, so version 1 readers keep working and `version` stays 1:
+  - `days[].water`: that day's water, in Nourishly's own unit (glasses or ml, with the unit named in the field).
+  - `weight`: her latest weight in kg, with the date it was logged.
+
+  Like everything else here they are values only: no goals, targets or statuses. Turning sharing off still removes them with the file.
+- **"Open Nourishly" from Navmaas.**
+  - **Android:** Navmaas adds `<package android:name="com.nourishly.app.nourishly" />` to its `<queries>` and opens Nourishly by its launch intent. Nourishly needs nothing.
+  - **iPhone:** Nourishly declares a `nourishly://` URL scheme in `Info.plist`, and Navmaas lists `nourishly` under `LSApplicationQueriesSchemes`.

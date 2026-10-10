@@ -59,6 +59,13 @@ android {
             signingConfig = signingConfigs.findByName("release")
                 ?: signingConfigs.getByName("debug")
         }
+        // Nourishly and Navmaas both declare the NOURISHLY_SHARE signature
+        // permission (ADR-012). Android refuses to install an app that
+        // declares it again under another key, so a debug build uses the
+        // owner's key when it's here, and installs beside Navmaas.
+        debug {
+            signingConfigs.findByName("release")?.let { signingConfig = it }
+        }
     }
 }
 
