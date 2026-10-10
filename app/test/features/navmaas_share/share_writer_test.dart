@@ -16,12 +16,12 @@ void main() {
   late Directory dir;
   late ProviderContainer container;
   late String ownerId;
-  const wait = Duration(milliseconds: 50);
+  const wait = Duration(milliseconds: 300);
 
   File shared() => File('${dir.path}/nourishly-share.json');
 
   /// Past the debounce, with time for the file to land.
-  Future<void> settle() => Future<void>.delayed(wait * 6);
+  Future<void> settle() => Future<void>.delayed(wait * 3);
 
   Future<void> logPoha() async {
     await db
@@ -144,6 +144,17 @@ void main() {
     expect(shared().existsSync(), isTrue);
     await ProfileEraser(db).eraseEverything(ownerId);
     await settle();
+    expect(shared().existsSync(), isFalse);
+  });
+
+  // Review fix: turning sharing off is a privacy promise, kept at once,
+  // not after the debounce.
+  test('turned off, the file goes at once, not after the debounce', () async {
+    await share(true);
+    await settle();
+    expect(shared().existsSync(), isTrue);
+    await share(false);
+    await Future<void>.delayed(wait ~/ 6);
     expect(shared().existsSync(), isFalse);
   });
 }

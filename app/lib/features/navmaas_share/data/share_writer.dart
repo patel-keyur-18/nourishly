@@ -62,7 +62,15 @@ class NavmaasShareWriter extends Notifier<void> {
             db.userPreferences,
           ]),
         )
-        .listen((_) => _schedule());
+        // A change to the switch (or "Delete everything", which touches
+        // every table) acts at once: turning sharing off is a promise to
+        // remove the file now, not after the debounce. Writes stay
+        // chained, so the delete always lands after a write in progress.
+        .listen(
+          (updates) => updates.any((u) => u.table == 'user_preferences')
+              ? unawaited(flush())
+              : _schedule(),
+        );
     ref.onDispose(() {
       _debounce?.cancel();
       unawaited(changes.cancel());
