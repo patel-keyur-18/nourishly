@@ -136,4 +136,14 @@ void main() {
     expect(shared().existsSync(), isFalse);
     expect(File('${shared().path}.tmp').existsSync(), isFalse);
   });
+
+  test('"Delete everything" removes the shared copy too', () async {
+    await logPoha();
+    await share(true);
+    await settle();
+    expect(shared().existsSync(), isTrue);
+    await ProfileEraser(db).eraseEverything(ownerId);
+    await settle();
+    expect(shared().existsSync(), isFalse);
+  });
 }

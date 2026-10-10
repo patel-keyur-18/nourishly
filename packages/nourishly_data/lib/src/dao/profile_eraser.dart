@@ -51,6 +51,9 @@ class ProfileEraser {
         ),
       );
     });
+    // The deletes above are raw SQL, which drift doesn't watch: tell every
+    // listener (open screens, the Navmaas share writer) that it all changed.
+    _db.markTablesUpdated(_db.allTables);
 
     return ErasureReport(rowsRemoved: removed);
   }
