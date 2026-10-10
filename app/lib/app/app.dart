@@ -6,6 +6,7 @@ import 'package:nourishly_domain/nourishly_domain.dart';
 import 'package:nourishly_ui/nourishly_ui.dart';
 
 import '../features/food_catalog/data/food_catalog_providers.dart';
+import '../features/navmaas_share/data/share_writer.dart';
 import '../features/profile/data/profile_providers.dart';
 import '../features/reminders/data/local_notification_scheduler.dart';
 import '../features/reminders/data/reminder_providers.dart';
@@ -42,6 +43,8 @@ class _NourishlyAppState extends ConsumerState<NourishlyApp>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _startReminders();
       unawaited(_advanceLifestage());
+      // ADR-012: keeps the Navmaas share file in step while sharing is on.
+      ref.read(navmaasShareWriterProvider);
     });
   }
 
@@ -61,6 +64,11 @@ class _NourishlyAppState extends ConsumerState<NourishlyApp>
   /// met this afternoon, and nothing else would notice.
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    // Navmaas reads the share file while Nourishly is in the background:
+    // write any pending change now rather than after the debounce.
+    if (state == AppLifecycleState.paused) {
+      unawaited(ref.read(navmaasShareWriterProvider.notifier).flush());
+    }
     if (state == AppLifecycleState.resumed) {
       // A suspended device does not run timers, so the day boundary can
       // pass while the app is in the background with nothing to notice.
