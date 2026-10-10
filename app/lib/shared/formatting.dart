@@ -16,6 +16,22 @@ String formatThousands(num value) {
   return negative ? '-$buffer' : buffer.toString();
 }
 
+/// "1.5", "0.8", "0.83" — a serving count with at most two decimals and
+/// no trailing zeros. A typed weight makes any fraction possible (125 g of
+/// a 150 g katori is 0.8333…), and one decimal would round that to a
+/// portion the grams underneath do not match.
+String formatQuantity(double quantity) => _trimZeros(quantity, 2);
+
+/// "120", "92.5" — a weight in grams with at most one decimal, for a field
+/// the user types into, so a whole number reads without a stray ".0".
+String formatGrams(double grams) => _trimZeros(grams, 1);
+
+String _trimZeros(double value, int maxDecimals) {
+  final fixed = value.toStringAsFixed(maxDecimals);
+  if (!fixed.contains('.')) return fixed;
+  return fixed.replaceFirst(RegExp(r'\.?0+$'), '');
+}
+
 /// The catalog's display names are written for a nutrient list, not for a
 /// 70px column: "Dietary fibre" and "Carbohydrate" truncate mid-word in
 /// every bar and table row, which reads as a rendering bug rather than as
@@ -85,10 +101,17 @@ String weekdayName(int weekday) => _weekdays[weekday - 1];
 String weekdayInitial(int weekday) => _weekdays[weekday - 1][0];
 
 /// "7:42 AM" — a logged-at timestamp, for the day log's timeline.
-String formatTime(DateTime time) {
-  final hour12 = time.hour % 12 == 0 ? 12 : time.hour % 12;
-  final minute = time.minute.toString().padLeft(2, '0');
-  return '$hour12:$minute ${time.hour < 12 ? 'AM' : 'PM'}';
+String formatTime(DateTime time) =>
+    formatMinutesOfDay(time.hour * 60 + time.minute);
+
+/// The same clock format from minutes since local midnight, which is how
+/// the time picker and `UserPreferences.dayRolloverTime` both carry one.
+String formatMinutesOfDay(int minutesFromMidnight) {
+  final normalised = minutesFromMidnight % (24 * 60);
+  final hour = normalised ~/ 60;
+  final minute = (normalised % 60).toString().padLeft(2, '0');
+  final hour12 = hour % 12 == 0 ? 12 : hour % 12;
+  return '$hour12:$minute ${hour < 12 ? 'AM' : 'PM'}';
 }
 
 String relativeDayLabel(DateTime date) {

@@ -24,7 +24,11 @@ class DayLogScreen extends ConsumerStatefulWidget {
 }
 
 class _DayLogScreenState extends ConsumerState<DayLogScreen> {
-  bool _groupByMeal = false;
+  /// By meal, not by time. A meal is the unit people eat in and the unit
+  /// they remember in — "what was lunch" beats "what happened at 13:34" —
+  /// and the chronological view stays one tap away for the days when the
+  /// order is the question.
+  bool _groupByMeal = true;
 
   @override
   Widget build(BuildContext context) {
@@ -271,46 +275,122 @@ class _ByMealList extends ConsumerWidget {
       data: (slots) => ListView(
         padding: const EdgeInsets.fromLTRB(
           NourishlySpace.s4,
-          NourishlySpace.s3,
+          0,
           NourishlySpace.s4,
           NourishlySpace.s7,
         ),
         children: [
-          for (final slot in slots) ...[
-            Builder(
-              builder: (context) {
-                final slotEntries = entries
-                    .where((e) => e.entry.mealSlotId == slot.id)
-                    .toList();
-                return NourishlySectionHeader(
-                  label: slot.displayName,
-                  actionLabel: slotEntries.isEmpty ? null : 'Save as template',
-                  onActionPressed: slotEntries.isEmpty
-                      ? null
-                      : () => _saveAsTemplate(context, ref, slot, slotEntries),
-                );
-              },
+          for (final slot in slots)
+            _MealGroup(
+              slot: slot,
+              // Earliest first inside the meal: you ate the dal before the
+              // second helping of rice, and [FoodLoggingDao.watchToday]
+              // hands back newest-first for the dashboard's use.
+              entries: [
+                for (final food in entries.reversed)
+                  if (food.entry.mealSlotId == slot.id) food,
+              ],
             ),
-            for (final food in entries.where(
-              (e) => e.entry.mealSlotId == slot.id,
-            ))
-              Padding(
-                padding: const EdgeInsets.only(bottom: NourishlySpace.s3),
-                child: _EntryCard(food: food, showMealChip: false),
-              ),
-            if (!entries.any((e) => e.entry.mealSlotId == slot.id))
-              Padding(
-                padding: const EdgeInsets.only(bottom: NourishlySpace.s3),
-                child: Text(
-                  'Nothing logged',
-                  style: context.nourishlyText.caption.copyWith(
-                    color: context.nourishlyColors.ink3,
-                  ),
-                ),
-              ),
-          ],
         ],
       ),
+    );
+  }
+}
+
+/// One meal as one thing: its foods inside a single card, under one total.
+///
+/// Logging happens per food — you add the dal, then the rice — but a meal
+/// is not several separate events, and rendering it as one card per item
+/// made "what did I have for lunch, and what did it come to" a question
+/// you answered by reading four cards and adding them up yourself.
+class _MealGroup extends ConsumerWidget {
+  const _MealGroup({required this.slot, required this.entries});
+
+  final MealSlot slot;
+  final List<LoggedFood> entries;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colors = context.nourishlyColors;
+    final text = context.nourishlyText;
+    final addRow = NourishlyListRow(
+      title: 'Add to ${slot.displayName.toLowerCase()}',
+      style: NourishlyRowStyle.accent,
+      showChevron: false,
+      leading: Icon(
+        Icons.add_circle_outline_rounded,
+        size: 20,
+        color: colors.accent,
+      ),
+      onTap: () => context.push('/log?meal=${slot.id}'),
+    );
+
+    if (entries.isEmpty) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          NourishlySectionHeader(label: slot.displayName),
+          NourishlyCard(padding: EdgeInsets.zero, child: addRow),
+        ],
+      );
+    }
+
+    final total = entries.fold<double>(0, (sum, e) => sum + e.energyKcal);
+    final divider = Divider(height: 1, thickness: 1, color: colors.line);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        NourishlySectionHeader(
+          label: slot.displayName,
+          actionLabel: 'Save as template',
+          onActionPressed: () => _saveAsTemplate(context, ref, slot, entries),
+        ),
+        NourishlyCard(
+          padding: EdgeInsets.zero,
+          child: Column(
+            children: [
+              for (var i = 0; i < entries.length; i++) ...[
+                if (i > 0) divider,
+                NourishlyListRow(
+                  title: entries[i].foodName,
+                  subtitle:
+                      '${formatTime(entries[i].entry.loggedAt)} · '
+                      '${entries[i].entry.gramsConsumed.round()} g',
+                  value: '${formatThousands(entries[i].energyKcal)} kcal',
+                  showChevron: false,
+                  onTap: () => _showEntryActions(context, ref, entries[i]),
+                ),
+              ],
+              divider,
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: NourishlySpace.s4,
+                  vertical: NourishlySpace.s3,
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        entries.length == 1
+                            ? '1 item'
+                            : '${entries.length} items',
+                        style: text.caption.copyWith(color: colors.ink3),
+                      ),
+                    ),
+                    Text(
+                      '${formatThousands(total)} kcal',
+                      style: text.body.copyWith(fontWeight: FontWeight.w700),
+                    ),
+                  ],
+                ),
+              ),
+              divider,
+              addRow,
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
@@ -319,10 +399,9 @@ class _ByMealList extends ConsumerWidget {
 /// a row that opens edit/delete. Two siblings, not one nested tap target,
 /// so the chip's tap never fights the row's.
 class _EntryCard extends ConsumerWidget {
-  const _EntryCard({required this.food, this.showMealChip = true});
+  const _EntryCard({required this.food});
 
   final LoggedFood food;
-  final bool showMealChip;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -331,16 +410,15 @@ class _EntryCard extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (showMealChip)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                NourishlySpace.s4,
-                NourishlySpace.s3,
-                NourishlySpace.s4,
-                0,
-              ),
-              child: _MealChip(food: food),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              NourishlySpace.s4,
+              NourishlySpace.s3,
+              NourishlySpace.s4,
+              0,
             ),
+            child: _MealChip(food: food),
+          ),
           NourishlyListRow(
             title: food.foodName,
             subtitle: '${food.entry.gramsConsumed.round()} g',

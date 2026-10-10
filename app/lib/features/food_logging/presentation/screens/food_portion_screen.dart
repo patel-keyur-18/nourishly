@@ -1,11 +1,13 @@
 import 'package:drift/drift.dart' show OrderingTerm;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nourishly_data/nourishly_data.dart';
 import 'package:nourishly_ui/nourishly_ui.dart';
 
 import '../../../../app/providers.dart';
+import '../../../../shared/formatting.dart';
 import '../../../food_catalog/data/food_catalog_providers.dart';
 import '../../../profile/data/profile_providers.dart';
 
@@ -58,6 +60,10 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen>
   final RestorableDouble _quantity = RestorableDouble(1);
   final RestorableStringN _servingId = RestorableStringN(null);
   final RestorableStringN _mealSlotId = RestorableStringN(null);
+
+  /// When the food was eaten, as minutes since midnight on the log date.
+  /// Null until the first build fills it in with the current time.
+  final RestorableIntN _minutes = RestorableIntN(null);
   bool _saving = false;
 
   bool get _editing => widget.entryId != null;
@@ -71,6 +77,7 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen>
     registerForRestoration(_quantity, 'quantity');
     registerForRestoration(_servingId, 'servingId');
     registerForRestoration(_mealSlotId, 'mealSlotId');
+    registerForRestoration(_minutes, 'minutes');
     // `initialRestore` is true on every fresh State object, restored or
     // not (Flutter tracks it per-instance, not per-bucket) — it cannot
     // tell "brand new" apart from "recreated with real prior data" here.
@@ -85,6 +92,7 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen>
     _quantity.dispose();
     _servingId.dispose();
     _mealSlotId.dispose();
+    _minutes.dispose();
     super.dispose();
   }
 
@@ -109,12 +117,44 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen>
       _quantity.value = entry.quantity;
       _servingId.value = entry.servingSizeId;
       _mealSlotId.value = entry.mealSlotId;
+      _minutes.value = entry.loggedAt.hour * 60 + entry.loggedAt.minute;
     }
     return (food, servings, nutrientValues);
   }
 
+  /// The log date this entry belongs to, and the moment within it the user
+  /// has picked.
+  DateTime get _logDate => widget.planDate ?? ref.read(todayProvider);
+
+  DateTime? get _loggedAt {
+    // A planned entry's `loggedAt` means "when the plan was made" and is
+    // rewritten on confirmation, so there is nothing for the user to set.
+    if (_planning) return null;
+    final minutes = _minutes.value;
+    if (minutes == null) return null;
+    return momentOnLogDate(
+      _logDate,
+      minutes,
+      rolloverMinutes: ref.read(dayRolloverMinutesProvider),
+    );
+  }
+
+  Future<void> _pickTime() async {
+    final minutes = _minutes.value ?? 0;
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay(hour: minutes ~/ 60, minute: minutes % 60),
+      helpText: 'When did you eat this?',
+    );
+    if (picked == null) return;
+    setState(() => _minutes.value = picked.hour * 60 + picked.minute);
+  }
+
   Future<void> _save() async {
-    if (_servingId.value == null || _mealSlotId.value == null || _saving) {
+    if (_servingId.value == null ||
+        _mealSlotId.value == null ||
+        _quantity.value <= 0 ||
+        _saving) {
       return;
     }
     setState(() => _saving = true);
@@ -127,6 +167,7 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen>
         quantity: _quantity.value,
         servingId: _servingId.value,
         mealSlotId: _mealSlotId.value,
+        loggedAt: _loggedAt,
       );
     } else {
       final ownerId = await ref.read(defaultOwnerProvider.future);
@@ -136,7 +177,8 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen>
         servingId: _servingId.value!,
         quantity: _quantity.value,
         mealSlotId: _mealSlotId.value!,
-        logDate: widget.planDate ?? ref.read(todayProvider),
+        logDate: _logDate,
+        loggedAt: _loggedAt,
         status: _planning ? logStatusPlanned : logStatusLogged,
         source: _planning ? 'plan' : 'manual',
       );
@@ -199,6 +241,12 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen>
           }
           final (food, servings, nutrientValues) = snapshot.data!;
           _servingId.value ??= servings.firstOrNull?.id;
+          // Logging as you eat is the common case, so "now" is the
+          // default and the picker is there for the evening catch-up.
+          if (_minutes.value == null) {
+            final now = ref.read(clockProvider).now();
+            _minutes.value = now.hour * 60 + now.minute;
+          }
           final serving = servings
               .where((s) => s.id == _servingId.value)
               .firstOrNull;
@@ -232,13 +280,40 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen>
                       grams: (serving?.grams ?? 0) * _quantity.value,
                       onChanged: (q) => setState(() => _quantity.value = q),
                     ),
+                    if (serving != null && serving.grams > 0) ...[
+                      const SizedBox(height: NourishlySpace.s2),
+                      // The weight is stored as a fraction of the chosen
+                      // serving, so `logFood` and `updateEntry` need no
+                      // separate grams path: 120 g of a 150 g katori is
+                      // simply 0.8 katori, and the snapshot comes out at
+                      // exactly 120 g either way.
+                      _GramsField(
+                        grams: serving.grams * _quantity.value,
+                        onChanged: (g) =>
+                            setState(() => _quantity.value = g / serving.grams),
+                      ),
+                    ],
                     const NourishlySectionHeader(label: 'Meal'),
                     _MealChips(
                       selectedId: _mealSlotId.value,
                       onSelected: (id) =>
                           setState(() => _mealSlotId.value = id),
-                      onDefault: (id) => _mealSlotId.value ??= id,
+                      // Through setState, not a bare `??=`: the save bar
+                      // reads `_mealSlotId` to decide whether it is
+                      // enabled, and the chips fall back to the first
+                      // slot from a post-frame callback. Assigning
+                      // silently left the button greyed out until the
+                      // user tapped a meal — on the one route that does
+                      // not preselect one, the nav bar's centre action.
+                      onDefault: (id) {
+                        if (_mealSlotId.value != null || !mounted) return;
+                        setState(() => _mealSlotId.value = id);
+                      },
                     ),
+                    if (!_planning) ...[
+                      const NourishlySectionHeader(label: 'Time'),
+                      _TimeRow(minutes: _minutes.value, onPressed: _pickTime),
+                    ],
                     if (_canFork(food)) ...[
                       const SizedBox(height: NourishlySpace.s5),
                       _ForkPrompt(food: food),
@@ -250,6 +325,7 @@ class _FoodPortionScreenState extends ConsumerState<FoodPortionScreen>
                 enabled:
                     !_saving &&
                     _servingId.value != null &&
+                    _quantity.value > 0 &&
                     _mealSlotId.value != null,
                 saving: _saving,
                 editing: _editing,
@@ -455,6 +531,20 @@ class _QuantityStepper extends StatelessWidget {
   final double grams;
   final ValueChanged<double> onChanged;
 
+  /// Doubled quantity, rounded off the float noise a typed weight leaves
+  /// behind (120 / 150 × 2 is not quite 1.6), so the half-steps below land
+  /// where a person would expect.
+  static double _halves(double quantity) =>
+      (quantity * 2 * 1e6).roundToDouble() / 1e6;
+
+  /// The next half-serving above [quantity]: a typed 0.8 steps to 1, not
+  /// 1.3, so the stepper still reads in whole and half servings.
+  static double _stepUp(double quantity) => (_halves(quantity).floor() + 1) / 2;
+
+  /// The next half-serving below [quantity]: 0.8 steps down to 0.5.
+  static double _stepDown(double quantity) =>
+      (_halves(quantity).ceil() - 1) / 2;
+
   @override
   Widget build(BuildContext context) {
     final colors = context.nourishlyColors;
@@ -463,7 +553,9 @@ class _QuantityStepper extends StatelessWidget {
       child: Row(
         children: [
           IconButton(
-            onPressed: quantity > 0.5 ? () => onChanged(quantity - 0.5) : null,
+            onPressed: _stepDown(quantity) >= 0.5
+                ? () => onChanged(_stepDown(quantity))
+                : null,
             icon: const Icon(Icons.remove_circle_outline_rounded),
             iconSize: 30,
             color: colors.accent,
@@ -472,7 +564,7 @@ class _QuantityStepper extends StatelessWidget {
             child: Column(
               children: [
                 Text(
-                  quantity.toStringAsFixed(quantity % 1 == 0 ? 0 : 1),
+                  formatQuantity(quantity),
                   style: text.display.copyWith(height: 1),
                 ),
                 const SizedBox(height: NourishlySpace.s1),
@@ -484,12 +576,135 @@ class _QuantityStepper extends StatelessWidget {
             ),
           ),
           IconButton(
-            onPressed: () => onChanged(quantity + 0.5),
+            onPressed: () => onChanged(_stepUp(quantity)),
             icon: const Icon(Icons.add_circle_outline_rounded),
             iconSize: 30,
             color: colors.accent,
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// The exact weight, for when the plate was weighed or the serving chips
+/// are not quite it — 120 g of rice rather than one 150 g katori.
+///
+/// Two-way with the stepper: typing a weight sets the quantity to that
+/// fraction of the chosen serving, and stepping or switching the serving
+/// rewrites the text. A rewrite is skipped while the text already says the
+/// same weight, so the caret is not yanked mid-edit by the round trip.
+class _GramsField extends StatefulWidget {
+  const _GramsField({required this.grams, required this.onChanged});
+
+  final double grams;
+  final ValueChanged<double> onChanged;
+
+  @override
+  State<_GramsField> createState() => _GramsFieldState();
+}
+
+class _GramsFieldState extends State<_GramsField> {
+  late final TextEditingController _controller = TextEditingController(
+    text: formatGrams(widget.grams),
+  );
+
+  @override
+  void didUpdateWidget(_GramsField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final typed = double.tryParse(_controller.text.trim()) ?? 0;
+    if ((typed - widget.grams).abs() >= 0.05) {
+      _controller.text = formatGrams(widget.grams);
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.nourishlyColors;
+    final text = context.nourishlyText;
+    final typed = double.tryParse(_controller.text.trim());
+    return NourishlyCard(
+      child: Row(
+        children: [
+          Icon(Icons.scale_rounded, size: 20, color: colors.accent),
+          const SizedBox(width: NourishlySpace.s3),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Exact weight', style: text.body),
+                Text(
+                  typed == null || typed <= 0
+                      ? 'Enter a weight above 0 g'
+                      : 'Type what you actually ate',
+                  style: text.caption.copyWith(
+                    color: typed == null || typed <= 0
+                        ? colors.danger
+                        : colors.ink3,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            width: 96,
+            child: TextField(
+              key: const Key('portion-grams'),
+              controller: _controller,
+              textAlign: TextAlign.right,
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,1}')),
+              ],
+              style: text.body.copyWith(fontWeight: FontWeight.w700),
+              decoration: const InputDecoration(isDense: true, suffixText: 'g'),
+              onChanged: (value) {
+                // An empty or zero box zeroes the quantity, which greys
+                // out the save button rather than quietly logging
+                // whatever the stepper said before the box was cleared.
+                widget.onChanged(double.tryParse(value.trim()) ?? 0);
+                setState(() {});
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// When the food was eaten, which is not always when it was typed in.
+///
+/// A row rather than a set of chips: the answer is usually the default and
+/// wants confirming at a glance, and the rare correction is worth a
+/// picker. Logging a whole day at bedtime otherwise stamps every meal with
+/// the same timestamp, which makes the day log's timeline meaningless and
+/// hides which meal actually ran late.
+class _TimeRow extends StatelessWidget {
+  const _TimeRow({required this.minutes, required this.onPressed});
+
+  final int? minutes;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.nourishlyColors;
+    return NourishlyCard(
+      padding: EdgeInsets.zero,
+      child: NourishlyListRow(
+        title: 'Eaten at',
+        subtitle: 'Change it if you are logging later',
+        value: minutes == null ? '—' : formatMinutesOfDay(minutes!),
+        leading: Icon(Icons.schedule_rounded, size: 20, color: colors.accent),
+        onTap: onPressed,
       ),
     );
   }

@@ -136,16 +136,22 @@ class ReminderConditions {
 
   static const unconditional = ReminderConditions(skipIfTargetMet: false);
 
+  /// An absent or unreadable column falls back to the *conditional*
+  /// default, not to [unconditional]. §29.4 states conditionality as a
+  /// rule rather than a preference, so a row written before this column
+  /// existed — or imported from an archive that never had it — should
+  /// stand down once the meal is logged, not nag about it. Waiving the
+  /// rule takes a row that explicitly says `skip_if_target_met: false`.
   static ReminderConditions decode(String? source) {
-    if (source == null || source.isEmpty) return unconditional;
+    if (source == null || source.isEmpty) return const ReminderConditions();
     try {
       final decoded = jsonDecode(source);
-      if (decoded is! Map<String, Object?>) return unconditional;
-      return ReminderConditions(
-        skipIfTargetMet: decoded['skip_if_target_met'] == true,
-      );
+      if (decoded is! Map<String, Object?>) return const ReminderConditions();
+      final flag = decoded['skip_if_target_met'];
+      if (flag is! bool) return const ReminderConditions();
+      return ReminderConditions(skipIfTargetMet: flag);
     } on FormatException {
-      return unconditional;
+      return const ReminderConditions();
     }
   }
 

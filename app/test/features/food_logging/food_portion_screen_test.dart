@@ -9,6 +9,7 @@ import 'package:nourishly/features/reminders/data/local_notification_scheduler.d
 import 'package:nourishly/features/reminders/data/reminder_providers.dart';
 import 'package:nourishly_data/nourishly_data.dart';
 import 'package:nourishly_domain/nourishly_domain.dart';
+import 'package:nourishly_ui/nourishly_ui.dart' show nourishlySnackDuration;
 
 void main() {
   late NourishlyDatabase db;
@@ -114,6 +115,16 @@ void main() {
     await tester.pumpAndSettle();
   }
 
+  /// The screen's own list, not the grams box's single-line scrollable.
+  Future<void> scrollTo(WidgetTester tester, Finder finder) async {
+    await tester.scrollUntilVisible(
+      finder,
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+  }
+
   testWidgets('shows computed energy for the selected serving', (tester) async {
     await pumpPortion(tester);
     // 1 katori (200 g) at 120 kcal/100g = 240 kcal.
@@ -131,6 +142,52 @@ void main() {
   testWidgets('the stale Phase 3 sentence is gone', (tester) async {
     await pumpPortion(tester);
     expect(find.textContaining('Phase 3 aggregation'), findsNothing);
+  });
+
+  testWidgets('the entry is stamped with the chosen time, not the wall '
+      'clock', (tester) async {
+    await pumpPortion(tester);
+
+    // The Time section sits below the serving and meal choices, so scroll
+    // it into the lazy ListView rather than asserting on an unbuilt row.
+    await scrollTo(tester, find.text('Eaten at'));
+    await tester.pumpAndSettle();
+    // Defaults to now, which is the common case of logging as you eat.
+    expect(find.text('12:00 PM'), findsOneWidget);
+
+    // "Add to log" is also the AppBar title, so aim at the save button.
+    await tester.tap(
+      find.descendant(
+        of: find.byType(FilledButton),
+        matching: find.text('Add to log'),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final entry = await db.select(db.foodLogEntries).getSingle();
+    // The whole point: before this, `loggedAt` came from DateTime.now(),
+    // so an evening catch-up stamped every meal with the same late time.
+    expect(entry.loggedAt, DateTime(2026, 9, 17, 12, 0));
+
+    // Let the "Added to your log" snack run out its timer.
+    await tester.pump(nourishlySnackDuration + const Duration(seconds: 1));
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('the chosen time survives a simulated state restoration', (
+    tester,
+  ) async {
+    await pumpPortion(tester);
+    await scrollTo(tester, find.text('Eaten at'));
+    await tester.pumpAndSettle();
+    expect(find.text('12:00 PM'), findsOneWidget);
+
+    await tester.restartAndRestore();
+    await tester.pumpAndSettle();
+
+    await scrollTo(tester, find.text('Eaten at'));
+    await tester.pumpAndSettle();
+    expect(find.text('12:00 PM'), findsOneWidget);
   });
 
   testWidgets('quantity survives a simulated state restoration', (
@@ -151,5 +208,64 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('1.5'), findsOneWidget);
+  });
+
+  testWidgets('a typed weight logs exactly that many grams', (tester) async {
+    await pumpPortion(tester);
+
+    // The 200 g katori is the only serving; 150 g is three quarters of it.
+    await scrollTo(tester, find.byKey(const Key('portion-grams')));
+    await tester.enterText(find.byKey(const Key('portion-grams')), '150');
+    await tester.pumpAndSettle();
+    expect(find.text('0.75'), findsOneWidget);
+
+    await tester.tap(
+      find.descendant(
+        of: find.byType(FilledButton),
+        matching: find.text('Add to log'),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final entry = await db.select(db.foodLogEntries).getSingle();
+    expect(entry.gramsConsumed, closeTo(150, 1e-9));
+    expect(entry.quantity, closeTo(0.75, 1e-9));
+    // 150 g at 120 kcal/100g = 180 kcal.
+    final energy = await db.select(db.logEntryNutrients).getSingle();
+    expect(energy.amount, closeTo(180, 1e-9));
+
+    await tester.pump(nourishlySnackDuration + const Duration(seconds: 1));
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('the stepper rewrites the weight and snaps to half servings', (
+    tester,
+  ) async {
+    await pumpPortion(tester);
+    final grams = find.byKey(const Key('portion-grams'));
+    await scrollTo(tester, grams);
+    expect(tester.widget<TextField>(grams).controller!.text, '200');
+
+    await tester.enterText(grams, '120');
+    await tester.pumpAndSettle();
+    expect(find.text('0.6'), findsOneWidget);
+
+    // 0.6 steps up to the next half serving, 1, not to 1.1.
+    await tester.tap(find.byIcon(Icons.add_circle_outline_rounded));
+    await tester.pumpAndSettle();
+    expect(find.text('1'), findsOneWidget);
+    expect(tester.widget<TextField>(grams).controller!.text, '200');
+  });
+
+  testWidgets('an empty weight cannot be saved', (tester) async {
+    await pumpPortion(tester);
+
+    await scrollTo(tester, find.byKey(const Key('portion-grams')));
+    await tester.enterText(find.byKey(const Key('portion-grams')), '');
+    await tester.pumpAndSettle();
+
+    final save = tester.widget<FilledButton>(find.byType(FilledButton));
+    expect(save.onPressed, isNull);
+    expect(find.text('Enter a weight above 0 g'), findsOneWidget);
   });
 }

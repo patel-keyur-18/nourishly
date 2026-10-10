@@ -170,7 +170,12 @@ class SettingsScreen extends ConsumerWidget {
   String _focusSummary(WidgetRef ref) {
     final ids = ref.watch(focusNutrientIdsProvider);
     if (ids.isEmpty) return 'None';
-    return ids.map(_titleCase).join(', ');
+    // The row gives a value 42% of the width and two lines. Seven names do
+    // not fit, and an ellipsis in the middle of the fourth one tells the
+    // reader less than a count of what it is hiding.
+    if (ids.length <= 3) return ids.map(_titleCase).join(', ');
+    final named = ids.take(2).map(_titleCase).join(', ');
+    return '$named +${ids.length - 2} more';
   }
 
   static void _update(
@@ -293,8 +298,7 @@ class SettingsScreen extends ConsumerWidget {
   }
 }
 
-/// FR-U-09: up to three, because the dashboard has room for three and a
-/// focus list of ten focuses on nothing.
+/// FR-U-09, capped at [PreferencesDao.maxFocusNutrients].
 class _FocusNutrientSheet extends ConsumerWidget {
   const _FocusNutrientSheet();
 
@@ -304,6 +308,8 @@ class _FocusNutrientSheet extends ConsumerWidget {
     final text = context.nourishlyText;
     final selected = ref.watch(focusNutrientIdsProvider);
     final nutrients = ref.watch(allNutrientsProvider).value ?? const [];
+    const max = PreferencesDao.maxFocusNutrients;
+    final full = selected.length >= max;
 
     return SafeArea(
       top: false,
@@ -321,7 +327,10 @@ class _FocusNutrientSheet extends ConsumerWidget {
             Text('Focus nutrients', style: text.heading),
             const SizedBox(height: NourishlySpace.s1),
             Text(
-              'Up to three, shown on the dashboard under water.',
+              full
+                  ? '$max of $max chosen — clear one to swap it out.'
+                  : '${selected.length} of $max chosen, shown on the '
+                        'dashboard under water.',
               style: text.caption.copyWith(color: colors.ink3),
             ),
             const SizedBox(height: NourishlySpace.s3),
@@ -332,24 +341,40 @@ class _FocusNutrientSheet extends ConsumerWidget {
                   runSpacing: NourishlySpace.s2,
                   children: [
                     for (final nutrient in nutrients)
-                      FilterChip(
-                        label: Text(nutrient.displayName),
-                        selected: selected.contains(nutrient.id),
-                        onSelected: (on) async {
-                          final next = [...selected];
-                          if (on) {
-                            if (next.length >= 3) next.removeAt(0);
-                            next.add(nutrient.id);
-                          } else {
-                            next.remove(nutrient.id);
-                          }
-                          final ownerId = await ref.read(
-                            defaultOwnerProvider.future,
+                      Builder(
+                        builder: (context) {
+                          final isSelected = selected.contains(nutrient.id);
+                          return FilterChip(
+                            label: Text(nutrient.displayName),
+                            selected: isSelected,
+                            // At the cap, an unpicked chip goes quiet
+                            // rather than silently evicting whichever
+                            // nutrient was chosen first — at three that
+                            // eviction was survivable, at seven it loses
+                            // a choice the user cannot see being lost.
+                            onSelected: !isSelected && full
+                                ? null
+                                : (on) async {
+                                    final next = [...selected];
+                                    if (on) {
+                                      next.add(nutrient.id);
+                                    } else {
+                                      next.remove(nutrient.id);
+                                    }
+                                    final ownerId = await ref.read(
+                                      defaultOwnerProvider.future,
+                                    );
+                                    await ref
+                                        .read(preferencesDaoProvider)
+                                        .update(
+                                          ownerId,
+                                          focusNutrientIds: next,
+                                        );
+                                    ref
+                                        .read(summaryRevisionProvider.notifier)
+                                        .bump();
+                                  },
                           );
-                          await ref
-                              .read(preferencesDaoProvider)
-                              .update(ownerId, focusNutrientIds: next);
-                          ref.read(summaryRevisionProvider.notifier).bump();
                         },
                       ),
                   ],

@@ -92,11 +92,34 @@ final browsedCuisineProvider =
       BrowsedCuisineNotifier.new,
     );
 
+/// The cuisine the shelf is actually showing: whatever the user picked,
+/// or the one it opens on.
+///
+/// The shelf used to open on nothing, so an empty search box was a block
+/// of chips above a blank half-screen — the browse affordance took the
+/// room and gave nothing back until you tapped. Opening on a cuisine the
+/// household actually eats (and otherwise on the catalog's largest) means
+/// the space below the chips is food from the first frame.
+final effectiveBrowsedCuisineProvider = Provider.autoDispose<String?>((ref) {
+  final chosen = ref.watch(browsedCuisineProvider);
+  if (chosen != null) return chosen;
+
+  final cuisines = ref.watch(catalogCuisinesProvider).value ?? const [];
+  if (cuisines.isEmpty) return null;
+  final preferred = ref.watch(preferredCuisinesProvider).value ?? const {};
+  for (final cuisine in cuisines) {
+    if (preferred.contains(cuisine.cuisine)) return cuisine.cuisine;
+  }
+  // [catalogCuisinesProvider] is biggest first, so this is the shelf with
+  // the most on it — the best guess in the absence of any evidence.
+  return cuisines.first.cuisine;
+});
+
 /// The foods in the cuisine being browsed.
 final browsedFoodsProvider = FutureProvider.autoDispose<List<FoodItem>>((
   ref,
 ) async {
-  final cuisine = ref.watch(browsedCuisineProvider);
+  final cuisine = ref.watch(effectiveBrowsedCuisineProvider);
   if (cuisine == null) return const [];
   await ref.watch(catalogReadyProvider.future);
   return CuisineDao(ref.watch(nourishlyDatabaseProvider))

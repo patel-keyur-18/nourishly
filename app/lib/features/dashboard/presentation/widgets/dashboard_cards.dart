@@ -430,9 +430,9 @@ class _KeyValue extends StatelessWidget {
   }
 }
 
-/// §27.2 item 5 — up to three user-chosen nutrients, promoted onto the
-/// dashboard (FR-U-09). Persona 3's screen: someone tracking iron or
-/// sodium should not have to open the report to see it.
+/// §27.2 item 5 — the user-chosen nutrients, promoted onto the dashboard
+/// (FR-U-09). Persona 3's screen: someone tracking iron or sodium should
+/// not have to open the report to see it.
 ///
 /// A focus nutrient with too little coverage says so rather than showing a
 /// bar filled to a number the day cannot support (§21.5).

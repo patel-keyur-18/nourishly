@@ -19,6 +19,16 @@ class PreferencesDao {
   static const defaultQuickAddMl = [250.0, 500.0];
   static const defaultFocusNutrients = <String>['fibre', 'iron', 'sodium'];
 
+  /// How many nutrients may be promoted onto the dashboard (FR-U-09).
+  ///
+  /// Seven rather than §27.12's original three. Three was a statement
+  /// about dashboard real estate, and the focus card grew its own scroll
+  /// position since; someone tracking a pregnancy or an anaemia panel is
+  /// watching more than three numbers, and making them open the full
+  /// report for the fourth is the thing the card exists to avoid. It stays
+  /// capped, because a "focus" list of every nutrient focuses on nothing.
+  static const maxFocusNutrients = 7;
+
   Future<UserPreference> forOwner(String ownerId) async {
     final rows = await (_db.select(
       _db.userPreferences,
@@ -86,12 +96,11 @@ class PreferencesDao {
         unitSystem: unitSystem == null
             ? const Value.absent()
             : Value(unitSystem),
-        // §27.12 caps this at three: the dashboard has room for three rows
-        // between the water card and the meals list, and a "focus" list of
-        // ten focuses on nothing.
         focusNutrientIds: focusNutrientIds == null
             ? const Value.absent()
-            : Value(jsonEncode(focusNutrientIds.take(3).toList())),
+            : Value(
+                jsonEncode(focusNutrientIds.take(maxFocusNutrients).toList()),
+              ),
         // Null is a real answer here ("prefer not to say"), so clearing
         // needs its own flag rather than being indistinguishable from
         // "leave it alone".
@@ -145,4 +154,27 @@ List<String> focusNutrientsOf(UserPreference preferences) {
 DateTime logDateFor(DateTime moment, {required int rolloverMinutes}) {
   final shifted = moment.subtract(Duration(minutes: rolloverMinutes));
   return DateTime(shifted.year, shifted.month, shifted.day);
+}
+
+/// The inverse of [logDateFor]: the moment at [minutesFromMidnight] that
+/// belongs to [logDate].
+///
+/// Needed because a user picking a time for a meal is naming a clock time,
+/// and the clock time alone does not say which calendar day it fell on.
+/// With a 04:00 rollover, "01:30" on Friday's log is half past one on
+/// Saturday morning — so the day rolls forward for any time before the
+/// rollover, which is exactly what [logDateFor] undoes.
+DateTime momentOnLogDate(
+  DateTime logDate,
+  int minutesFromMidnight, {
+  required int rolloverMinutes,
+}) {
+  final day = minutesFromMidnight < rolloverMinutes
+      ? logDate.add(const Duration(days: 1))
+      : logDate;
+  return DateTime(
+    day.year,
+    day.month,
+    day.day,
+  ).add(Duration(minutes: minutesFromMidnight));
 }

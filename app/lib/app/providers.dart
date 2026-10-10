@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:drift/drift.dart' show OrderingTerm;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nourishly_data/nourishly_data.dart';
@@ -22,12 +24,50 @@ final dayRolloverMinutesProvider = Provider<int>((ref) {
   return ref.watch(preferencesProvider).value?.dayRolloverTime ?? 0;
 });
 
-final todayProvider = Provider<DateTime>((ref) {
-  return logDateFor(
-    ref.watch(clockProvider).now(),
-    rolloverMinutes: ref.watch(dayRolloverMinutesProvider),
-  );
-});
+/// The `log_date` "now" falls in, kept current while the app is open.
+///
+/// A plain [Provider] would snapshot the date the first time anything read
+/// it. A phone left on the dashboard overnight would then still call
+/// yesterday "Today" in the day header, and — since [SelectedDate] builds
+/// from this — would file a 00:30 snack under yesterday. So the day
+/// boundary is an event here, not a one-off reading: a timer set for the
+/// next rollover, plus a refresh on resume (see `NourishlyApp`), because a
+/// suspended device does not run timers.
+class Today extends Notifier<DateTime> {
+  Timer? _timer;
+
+  @override
+  DateTime build() {
+    ref.onDispose(() => _timer?.cancel());
+    return _resolve(
+      ref.watch(clockProvider).now(),
+      ref.watch(dayRolloverMinutesProvider),
+    );
+  }
+
+  /// Re-reads the clock, moving the day on if the rollover has passed.
+  void refresh() {
+    final date = _resolve(
+      ref.read(clockProvider).now(),
+      ref.read(dayRolloverMinutesProvider),
+    );
+    if (date != state) state = date;
+  }
+
+  DateTime _resolve(DateTime now, int rolloverMinutes) {
+    final date = logDateFor(now, rolloverMinutes: rolloverMinutes);
+    _timer?.cancel();
+    // The next boundary, not a poll: one timer per day, and it lands on
+    // the same instant `logDateFor` would start counting the new day.
+    final wait = date
+        .add(Duration(days: 1, minutes: rolloverMinutes))
+        .difference(now);
+    _timer = Timer(wait.isNegative ? Duration.zero : wait, refresh);
+    return date;
+  }
+}
+
+final todayProvider = NotifierProvider<Today, DateTime>(Today.new);
 
 /// The device's local profile (§0.4), created on first use — see
 /// [ensureDefaultOwner]'s doc comment for why this stands in for

@@ -88,16 +88,41 @@ void main() {
       expect(preferences.hideEnergy, isTrue);
     });
 
-    test('focus nutrients are capped at three (FR-U-09)', () async {
-      await PreferencesDao(db).update(
-        ownerId,
-        focusNutrientIds: ['iron', 'calcium', 'fibre', 'zinc', 'folate'],
-      );
-      expect(focusNutrientsOf(await PreferencesDao(db).forOwner(ownerId)), [
+    test('seven focus nutrients are kept (FR-U-09)', () async {
+      const chosen = [
         'iron',
         'calcium',
         'fibre',
-      ]);
+        'zinc',
+        'folate',
+        'sodium',
+        'protein',
+      ];
+      await PreferencesDao(db).update(ownerId, focusNutrientIds: chosen);
+      expect(
+        focusNutrientsOf(await PreferencesDao(db).forOwner(ownerId)),
+        chosen,
+      );
+    });
+
+    test('focus nutrients are capped at seven (FR-U-09)', () async {
+      await PreferencesDao(db).update(
+        ownerId,
+        focusNutrientIds: [
+          'iron',
+          'calcium',
+          'fibre',
+          'zinc',
+          'folate',
+          'sodium',
+          'protein',
+          'vitamin_c',
+        ],
+      );
+      expect(
+        focusNutrientsOf(await PreferencesDao(db).forOwner(ownerId)),
+        hasLength(PreferencesDao.maxFocusNutrients),
+      );
     });
 
     test('a profile can be renamed (FR-U-02)', () async {
@@ -131,6 +156,35 @@ void main() {
       expect(
         logDateFor(DateTime(2026, 9, 11, 23, 0), rolloverMinutes: 4 * 60),
         DateTime(2026, 9, 11),
+      );
+    });
+
+    test('picking a time resolves back to the day it was picked for', () {
+      // A user setting the time on a food log names a clock time, which
+      // alone does not say which calendar day it fell on. Round-tripping
+      // through logDateFor is what makes the pair correct.
+      for (final rollover in [0, 4 * 60]) {
+        for (final minutes in [0, 1 * 60 + 30, 12 * 60, 23 * 60 + 59]) {
+          final logDate = DateTime(2026, 9, 11);
+          final moment = momentOnLogDate(
+            logDate,
+            minutes,
+            rolloverMinutes: rollover,
+          );
+          expect(moment.hour * 60 + moment.minute, minutes);
+          expect(
+            logDateFor(moment, rolloverMinutes: rollover),
+            logDate,
+            reason: 'rollover $rollover, minute $minutes',
+          );
+        }
+      }
+    });
+
+    test('a 4am rollover puts a 1:30am meal on the next calendar day', () {
+      expect(
+        momentOnLogDate(DateTime(2026, 9, 10), 90, rolloverMinutes: 4 * 60),
+        DateTime(2026, 9, 11, 1, 30),
       );
     });
   });

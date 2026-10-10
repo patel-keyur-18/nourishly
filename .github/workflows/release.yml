@@ -79,6 +79,9 @@ jobs:
     needs: tag-and-release
     if: needs.tag-and-release.outputs.new_tag != ''
     runs-on: ubuntu-latest
+    env:
+      # `if:` can't read secrets directly.
+      KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -99,13 +102,36 @@ jobs:
         working-directory: app
         run: flutter pub get
 
-      # No release keystore is configured yet, so this ships signed with
-      # the Flutter debug key (see app/android/app/build.gradle.kts). Good
-      # enough to sideload for testing; swap in a real keystore before a
-      # Play Store release.
+      # Releases are signed with the owner's key (one key for Nourishly and
+      # Navmaas, ADR-011). A release on any other key couldn't update the
+      # installed app, so a missing key stops the release here.
+      - name: Use the owner's signing key
+        env:
+          STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+        run: |
+          if [ -z "$KEYSTORE" ]; then
+            echo "::error::ANDROID_KEYSTORE_BASE64 is not set; see ADR-011"
+            exit 1
+          fi
+          echo "$KEYSTORE" | base64 --decode -i > "$RUNNER_TEMP/release.jks"
+          {
+            printf 'storeFile=%s\n' "$RUNNER_TEMP/release.jks"
+            printf 'storePassword=%s\n' "$STORE_PASSWORD"
+            printf 'keyAlias=%s\n' "$KEY_ALIAS"
+            printf 'keyPassword=%s\n' "$KEY_PASSWORD"
+          } > app/android/key.properties
+
       - name: Build release APK
         working-directory: app
         run: flutter build apk --release
+
+      # Compare with the owner's key: every release must show the same digest.
+      - name: Show the APK's signing certificate
+        run: |
+          tools="$ANDROID_HOME/build-tools/$(ls "$ANDROID_HOME/build-tools" | sort -V | tail -1)"
+          "$tools/apksigner" verify --print-certs app/build/app/outputs/flutter-apk/app-release.apk | grep -E 'DN|SHA-256'
 
       - name: Rename APK with version tag
         run: |

@@ -75,9 +75,6 @@ class NourishlyFontTokens {
 }
 ''';
 
-String _typeStyleClassName(String key) =>
-    'NourishlyTypeStyle${key[0].toUpperCase()}${key.substring(1)}';
-
 String _typeScale(Map<String, dynamic> typeScale) {
   final buffer = StringBuffer('''
 class NourishlyTypeStyleSpec {
